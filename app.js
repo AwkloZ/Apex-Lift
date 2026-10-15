@@ -1,7 +1,11 @@
 (() => {
     'use strict';
 
-    const esc = str => typeof str !== 'string' ? str : str.replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t]));
+    // Escapes any value for safe use inside HTML text or attributes
+    const esc = str => (str === null || str === undefined ? '' : String(str)).replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t]));
+    // Turns a value into a safe JS string argument for inline handlers, e.g. onclick="fn(${jsArg(name)})"
+    // (handles names like "Farmer's Walk" and blocks code hidden in imported backups)
+    const jsArg = v => esc(JSON.stringify(v === null || v === undefined ? '' : String(v)));
 
     // 📦 1. MINIFIED DATA (Cleaned Dictionary & Standardized Presets)
     const muscleOptions=["Abductors","Abs","Adductors","Back","Biceps","Calves","Chest","Forearms","Front Delts","Glutes","Hamstrings","Lats","Lower Back","Lower Chest","Neck","Quads","Rear Delts","Shoulders","Side Delts","Traps","Triceps","Upper Chest"];
@@ -84,14 +88,99 @@
     
     const compoundLifts = ['Bench Press', 'Squat', 'Deadlift', 'Overhead Press', 'Front Squat', 'Incline Bench Press', 'Romanian Deadlift', 'Barbell Row', 'T-Bar Row'];
 
+    // 🛡️ DATA VALIDATION (used for saved data and imported backup files)
+    const DAY_NAMES = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+    const isObj = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+    const toStr = (v, fb = '') => (typeof v === 'string' || typeof v === 'number') ? String(v) : fb;
+
+    // Returns a clean plan { weeks: [...] }, or null if the data can't be used.
+    // Accepts the old format too (a plain 7-day array).
+    const sanitizePlan = raw => {
+        let weeks = null;
+        if (Array.isArray(raw)) weeks = [{ id: 'w_restored', name: 'Restored Routine', schedule: raw }];
+        else if (isObj(raw) && Array.isArray(raw.weeks)) weeks = raw.weeks;
+        if (!weeks) return null;
+        const cleanWeeks = [];
+        weeks.forEach((w, wi) => {
+            if (!isObj(w) || !Array.isArray(w.schedule) || w.schedule.length !== 7) return;
+            const schedule = w.schedule.map((d, i) => {
+                d = isObj(d) ? d : {};
+                const isRest = d.isRest === true;
+                return {
+                    id: i + 1,
+                    day: DAY_NAMES.includes(d.day) ? d.day : DAY_NAMES[i],
+                    title: toStr(d.title, 'New Day'),
+                    isRest,
+                    recoveryType: isRest ? (d.recoveryType === 'active' ? 'active' : 'complete') : null,
+                    savedTitle: toStr(d.savedTitle),
+                    exercises: Array.isArray(d.exercises) ? d.exercises.filter(isObj).map(ex => ({
+                        muscle: toStr(ex.muscle, 'Muscle'), name: toStr(ex.name, 'New Exercise'), sets: toStr(ex.sets, '3'), reps: toStr(ex.reps, '10')
+                    })) : []
+                };
+            });
+            let id = toStr(w.id) || `w_${Date.now()}_${wi}`;
+            while (cleanWeeks.some(x => x.id === id)) id += '_';
+            cleanWeeks.push({ id, name: toStr(w.name, 'Routine'), schedule });
+        });
+        return cleanWeeks.length ? { weeks: cleanWeeks.slice(0, 5) } : null;
+    };
+
+    // Returns a clean { exerciseKey: [logs] } history object
+    const sanitizeHistory = raw => {
+        const out = {};
+        if (!isObj(raw)) return out;
+        Object.keys(raw).forEach(k => {
+            if (!Array.isArray(raw[k])) return;
+            const logs = raw[k].filter(l => isObj(l) && typeof l.d === 'string').map(l => {
+                const s = Array.isArray(l.s) ? l.s.map(x => parseInt(x)).filter(x => !isNaN(x)) : toStr(l.s);
+                const log = { d: l.d, w: toStr(l.w), s };
+                if (l.time !== undefined) log.time = toStr(l.time);
+                if (l.week !== undefined) log.week = toStr(l.week);
+                return log;
+            });
+            if (logs.length) out[k] = logs;
+        });
+        return out;
+    };
+
+    // Returns a clean { exerciseKey: value } object (used for weights)
+    const sanitizeValueMap = raw => {
+        const out = {};
+        if (!isObj(raw)) return out;
+        Object.keys(raw).forEach(k => { const v = toStr(raw[k], null); if (v !== null) out[k] = v; });
+        return out;
+    };
+
     // 💾 2. STORAGE MANAGEMENT
+    // Reads JSON safely: if saved data is damaged, keep a copy of it (so nothing is lost) and use the fallback.
+    const readJSON = (key, fallback) => {
+        let raw = null;
+        try { raw = localStorage.getItem(key); } catch (e) { return fallback; }
+        if (raw === null) return fallback;
+        try { return JSON.parse(raw); }
+        catch (e) {
+            try { if (localStorage.getItem(key + '_damaged') === null) localStorage.setItem(key + '_damaged', raw); } catch (e2) {}
+            console.error(`Saved data "${key}" was damaged and has been set aside.`, e);
+            return fallback;
+        }
+    };
+    // Writes safely: shows a message instead of failing silently when storage is full.
+    const writeItem = (key, value) => {
+        try { localStorage.setItem(key, value); return true; }
+        catch (e) {
+            console.error(`Could not save "${key}"`, e);
+            if (window.appActions) window.appActions.showToast("Storage full: data not saved. Backup & delete old records.", "error");
+            return false;
+        }
+    };
+
     const StorageManager = {
         KEY: 'workoutWeights_rakan_final', REPS_KEY: 'workoutReps_rakan_final', HIST_KEY: 'workoutHistory_rakan_final', PLAN_KEY: 'workoutPlan_rakan_final_v3', START_KEY: 'workoutStartDay_rakan_final', BACKUP_DATE: 'workoutLastBackup_rakan_final', ACTIVE_WEEK: 'workoutActiveWeek_rakan_final', AUTO_SYNC: 'workoutAutoSync_rakan_final', LAST_DAY: 'workoutLastDay_rakan_final', ONBOARD_KEY: 'workoutOnboard_rakan_final',
-        get: () => JSON.parse(localStorage.getItem(StorageManager.KEY)) || {}, set: d => localStorage.setItem(StorageManager.KEY, JSON.stringify(d)),
-        getReps: () => JSON.parse(localStorage.getItem(StorageManager.REPS_KEY)) || {}, setReps: d => localStorage.setItem(StorageManager.REPS_KEY, JSON.stringify(d)),
-        getHistory: () => JSON.parse(localStorage.getItem(StorageManager.HIST_KEY)) || {}, setHistory: d => localStorage.setItem(StorageManager.HIST_KEY, JSON.stringify(d)),
-        getPlan: () => JSON.parse(localStorage.getItem(StorageManager.PLAN_KEY)), setPlan: d => localStorage.setItem(StorageManager.PLAN_KEY, JSON.stringify(d)),
-        getStartDay: () => localStorage.getItem(StorageManager.START_KEY) || 'SAT', setStartDay: v => localStorage.setItem(StorageManager.START_KEY, v),
+        get: () => { const v = readJSON(StorageManager.KEY, {}); return isObj(v) ? v : {}; }, set: d => writeItem(StorageManager.KEY, JSON.stringify(d)),
+        getReps: () => { const v = readJSON(StorageManager.REPS_KEY, {}); return isObj(v) ? v : {}; }, setReps: d => writeItem(StorageManager.REPS_KEY, JSON.stringify(d)),
+        getHistory: () => { const v = readJSON(StorageManager.HIST_KEY, {}); return isObj(v) ? v : {}; }, setHistory: d => writeItem(StorageManager.HIST_KEY, JSON.stringify(d)),
+        getPlan: () => readJSON(StorageManager.PLAN_KEY, null), setPlan: d => writeItem(StorageManager.PLAN_KEY, JSON.stringify(d)),
+        getStartDay: () => { const v = localStorage.getItem(StorageManager.START_KEY); return DAY_NAMES.includes(v) ? v : 'SAT'; }, setStartDay: v => localStorage.setItem(StorageManager.START_KEY, v),
         getActiveWeek: () => localStorage.getItem(StorageManager.ACTIVE_WEEK), setActiveWeek: v => localStorage.setItem(StorageManager.ACTIVE_WEEK, v),
         getBackupDate: () => parseInt(localStorage.getItem(StorageManager.BACKUP_DATE)) || 0, setBackupDate: () => localStorage.setItem(StorageManager.BACKUP_DATE, Date.now()),
         getAutoSync: () => localStorage.getItem(StorageManager.AUTO_SYNC) !== 'false', setAutoSync: v => localStorage.setItem(StorageManager.AUTO_SYNC, v),
@@ -102,13 +191,19 @@
     const getExKey = (w, d, i, n) => (n||'').trim() === '' || (n||'').trim() === 'New Exercise' ? `temp_${w}_${d}_${i}` : `global_${(n||'').trim().toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
 
     // ⚙️ 3. APP INITIALIZATION
-    let appData = StorageManager.getPlan() || { weeks: [{ id: 'w_' + Date.now(), name: 'Week 1', schedule: JSON.parse(JSON.stringify(defaultWorkoutData)) }] };
+    const savedPlan = StorageManager.getPlan();
+    let appData = sanitizePlan(savedPlan);
+    if (!appData) {
+        // Saved plan missing or unusable: keep a copy of the unusable one, then start from the default plan
+        if (savedPlan !== null) { try { localStorage.setItem(StorageManager.PLAN_KEY + '_damaged', JSON.stringify(savedPlan)); } catch (e) {} }
+        appData = { weeks: [{ id: 'w_' + Date.now(), name: 'Week 1', schedule: JSON.parse(JSON.stringify(defaultWorkoutData)) }] };
+    }
     let currentWeekId = StorageManager.getActiveWeek() || appData.weeks[0].id;
     if (!appData.weeks.find(w => w.id === currentWeekId)) { currentWeekId = appData.weeks[0].id; StorageManager.setActiveWeek(currentWeekId); }
     
 window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', editMode: false, analyticsView: 'main', hasShownSetupToast: false, sortableInstance: null, mappingConfig: null, volMode: 'all', onboardSlide: 0, awKey: null, awTimer: null, awSeconds: 0 };    let loggedWeights = StorageManager.get();    let loggedReps = StorageManager.getReps();
 
-    const getActiveSchedule = () => appData.weeks.find(w => w.id === currentWeekId).schedule;
+    const getActiveSchedule = () => (appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0]).schedule;
     const getTodayId = () => ((new Date().getDay() - ['SUN','MON','TUE','WED','THU','FRI','SAT'].indexOf(StorageManager.getStartDay()) + 7) % 7) + 1;
     const isDayIncomplete = d => (!d.exercises || d.exercises.length === 0) && d.isRest !== true;
     
@@ -153,7 +248,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
 
     // 🎨 4. CORE UI RENDERING
     const renderSidePanel = () => {
-        document.getElementById('weeks-container').innerHTML = appData.weeks.map(w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek('${w.id}', this.value)" class="bg-transparent text-white text-[13px] font-bold uppercase tracking-wider w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[9px] font-black tracking-widest uppercase shrink-0">Active</span>`:`<button onclick="window.appActions.switchWeek('${w.id}')" class="text-slate-400 hover:text-white text-[10px] font-bold tracking-widest uppercase tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">Select</button>`}${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek('${w.id}')" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`).join('');
+        document.getElementById('weeks-container').innerHTML = appData.weeks.map(w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold uppercase tracking-wider w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[9px] font-black tracking-widest uppercase shrink-0">Active</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[10px] font-bold tracking-widest uppercase tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">Select</button>`}${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`).join('');
         document.getElementById('active-week-label').innerText = appData.weeks.find(w => w.id === currentWeekId).name;
         if(window.lucide) window.lucide.createIcons();
     };
@@ -461,8 +556,8 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                 html += `<div id="sortable-list">${day.exercises.map((ex, i) => {
                     const k = getExKey(currentWeekId, activeDay, i, ex.name), v = loggedWeights[k]||'', hT = globalAllowedExercises.includes(ex.name);
                     if (isE) {
-                        const oList = (exerciseDictionary[Object.keys(exerciseDictionary).find(kx=>kx.toLowerCase()===ex.muscle.toLowerCase().trim())]||exerciseOptions).map(e=>`<button type="button" onclick="window.appActions.selectOption(${i},'name','${esc(e)}')" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(e)}</button>`).join('');
-                        const mList = muscleOptions.map(m=>`<button type="button" onclick="window.appActions.selectOption(${i},'muscle','${esc(m)}')" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(m)}</button>`).join('');
+                        const oList = (exerciseDictionary[Object.keys(exerciseDictionary).find(kx=>kx.toLowerCase()===ex.muscle.toLowerCase().trim())]||exerciseOptions).map(e=>`<button type="button" onclick="window.appActions.selectOption(${i},'name',${jsArg(e)})" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(e)}</button>`).join('');
+                        const mList = muscleOptions.map(m=>`<button type="button" onclick="window.appActions.selectOption(${i},'muscle',${jsArg(m)})" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(m)}</button>`).join('');
                         
                         // ✨ COMPACT EDIT MODE CARD (MATCHES NORMAL HEIGHT, NO AUTO-SCROLL)
                         return `
@@ -545,7 +640,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                             <div class="border-b border-white/10 pb-3 mb-3 w-full pr-10 relative">
                                 <div class="flex items-center justify-between mb-2 w-full">
                                     <span class="text-[10px] font-black text-[#d4af37] uppercase tracking-[3px] opacity-80">${esc(ex.muscle)}</span>
-                                    <div id="delta-${k}">${dH}</div>
+                                    <div id="delta-${esc(k)}">${dH}</div>
                                 </div>
                                 <h3 class="text-[18px] font-black tracking-tight leading-tight selectable-text text-white">${esc(ex.name)}</h3>
                             </div>
@@ -558,7 +653,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                                         <div class="text-[12px] font-black text-white uppercase tracking-wider mt-0.5">${esc(ex.reps)} <span class="text-[8px] text-slate-500">REPS</span></div>
                                     </div>
                                     
-                                    <button onclick="window.appActions.openHistoryModal('${k}','${esc(ex.name)}')" class="mt-3 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-[#d4af37] tap-feedback transition-colors bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/5 w-fit">
+                                    <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="mt-3 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-[#d4af37] tap-feedback transition-colors bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/5 w-fit">
                                         <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> History
                                     </button>
                                 </div>
@@ -566,20 +661,20 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                                 <div class="flex flex-col gap-2 w-[110px] shrink-0">
                                     <div class="relative w-full">
                                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-slate-500 uppercase tracking-widest pointer-events-none">Load</span>
-                                        <input type="number" inputmode="decimal" id="input-${k}" value="${esc(v)}" 
+                                        <input type="number" inputmode="decimal" id="input-${esc(k)}" value="${esc(v)}" 
                                             onfocus="this.select(); document.getElementById('scroll-buffer').style.height='50vh'; setTimeout(()=>this.closest('.glass-card').scrollIntoView({behavior:'smooth',block:'center'}), 200);" 
-                                            oninput="window.appActions.handleTyping('${k}', 'load', this.value)" 
-                                            onblur="window.appActions.restoreIfEmpty('${k}', this.value); setTimeout(()=>{if(!document.activeElement || document.activeElement.tagName !== 'INPUT') document.getElementById('scroll-buffer').style.height='0px';}, 100);" 
+                                            oninput="window.appActions.handleTyping(${jsArg(k)}, 'load', this.value)" 
+                                            onblur="window.appActions.restoreIfEmpty(${jsArg(k)}, this.value); setTimeout(()=>{if(!document.activeElement || document.activeElement.tagName !== 'INPUT') document.getElementById('scroll-buffer').style.height='0px';}, 100);" 
                                             class="w-full h-[40px] text-[16px] font-black text-[#d4af37] outline-none bg-black/40 border border-white/10 rounded-lg text-right pl-12 pr-3 transition-all focus:bg-black/60 focus:border-[#d4af37] focus:shadow-[0_0_8px_rgba(212,175,55,0.4)]" placeholder="—">
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="flex gap-2 w-full mt-1">
-                                <button onclick="window.appActions.openActiveWorkout('${k}', '${esc(ex.name)}', ${parseInt(ex.sets) || 1}, '${esc(ex.reps)}', false)" class="flex-1 bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] py-3.5 rounded-xl text-[11px] font-black uppercase tracking-widest tap-feedback shadow-sm flex justify-center items-center gap-1.5 transition-all active:scale-[0.98]">
+                                <button onclick="window.appActions.openActiveWorkout(${jsArg(k)}, ${jsArg(ex.name)}, ${parseInt(ex.sets) || 1}, ${jsArg(ex.reps)}, false)" class="flex-1 bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] py-3.5 rounded-xl text-[11px] font-black uppercase tracking-widest tap-feedback shadow-sm flex justify-center items-center gap-1.5 transition-all active:scale-[0.98]">
                                     <i data-lucide="play-circle" class="w-4 h-4"></i> Start Focus
                                 </button>
-                                <button onclick="window.appActions.openActiveWorkout('${k}', '${esc(ex.name)}', ${parseInt(ex.sets) || 1}, '${esc(ex.reps)}', true)" class="flex-1 bg-white/5 border border-white/10 text-slate-300 py-3.5 rounded-xl text-[11px] font-black uppercase tracking-widest tap-feedback flex justify-center items-center gap-1.5 transition-all active:scale-[0.98]">
+                                <button onclick="window.appActions.openActiveWorkout(${jsArg(k)}, ${jsArg(ex.name)}, ${parseInt(ex.sets) || 1}, ${jsArg(ex.reps)}, true)" class="flex-1 bg-white/5 border border-white/10 text-slate-300 py-3.5 rounded-xl text-[11px] font-black uppercase tracking-widest tap-feedback flex justify-center items-center gap-1.5 transition-all active:scale-[0.98]">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i> Log Sets
                                 </button>
                             </div>
@@ -659,13 +754,13 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                 }
             }, 150);
         },filterList: (id, val) => { const l=document.getElementById(id); if(!l)return; const rx=new RegExp('\\b'+val.trim().replace(/[-[\]{}()*+?.,\\^$|#\s]/g,'\\$&'),'i'); Array.from(l.children).forEach(i=>i.style.display=val.trim()===''||rx.test(i.innerText)?'block':'none'); },
-        silentUpdateEx: (idx, f, v) => { const d=getActiveSchedule().find(d=>d.id===activeDay); d.exercises[idx][f]=v; StorageManager.setPlan(appData); if(f==='muscle'){const l=document.getElementById(`e-list-${idx}`);if(l)l.innerHTML=(exerciseDictionary[Object.keys(exerciseDictionary).find(k=>k.toLowerCase()===v.toLowerCase().trim())]||exerciseOptions).map(e=>`<button type="button" onclick="window.appActions.selectOption(${idx},'name','${esc(e)}')" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(e)}</button>`).join('');} },
-        selectOption: (idx, f, v) => { const d=getActiveSchedule().find(d=>d.id===activeDay); d.exercises[idx][f]=v; const inEl=document.getElementById(`${f==='muscle'?'m':'e'}-in-${idx}`); if(inEl)inEl.value=v; window.appActions.hideList(`${f==='muscle'?'m':'e'}-list-${idx}`); if(f==='muscle'){d.exercises[idx].name=''; const n=document.getElementById(`e-in-${idx}`);if(n)n.value=''; const l=document.getElementById(`e-list-${idx}`);if(l)l.innerHTML=(exerciseDictionary[Object.keys(exerciseDictionary).find(k=>k.toLowerCase()===v.toLowerCase().trim())]||exerciseOptions).map(e=>`<button type="button" onclick="window.appActions.selectOption(${idx},'name','${esc(e)}')" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(e)}</button>`).join('');} StorageManager.setPlan(appData); },
+        silentUpdateEx: (idx, f, v) => { const d=getActiveSchedule().find(d=>d.id===activeDay); d.exercises[idx][f]=v; StorageManager.setPlan(appData); if(f==='muscle'){const l=document.getElementById(`e-list-${idx}`);if(l)l.innerHTML=(exerciseDictionary[Object.keys(exerciseDictionary).find(k=>k.toLowerCase()===v.toLowerCase().trim())]||exerciseOptions).map(e=>`<button type="button" onclick="window.appActions.selectOption(${idx},'name',${jsArg(e)})" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(e)}</button>`).join('');} },
+        selectOption: (idx, f, v) => { const d=getActiveSchedule().find(d=>d.id===activeDay); d.exercises[idx][f]=v; const inEl=document.getElementById(`${f==='muscle'?'m':'e'}-in-${idx}`); if(inEl)inEl.value=v; window.appActions.hideList(`${f==='muscle'?'m':'e'}-list-${idx}`); if(f==='muscle'){d.exercises[idx].name=''; const n=document.getElementById(`e-in-${idx}`);if(n)n.value=''; const l=document.getElementById(`e-list-${idx}`);if(l)l.innerHTML=(exerciseDictionary[Object.keys(exerciseDictionary).find(k=>k.toLowerCase()===v.toLowerCase().trim())]||exerciseOptions).map(e=>`<button type="button" onclick="window.appActions.selectOption(${idx},'name',${jsArg(e)})" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(e)}</button>`).join('');} StorageManager.setPlan(appData); },
         openHistoryModal: (k, t) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=t; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); },
         closeHistoryModal: () => { const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex');},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
         refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-500 text-[12px] font-bold uppercase tracking-widest">No records</div>`;return;} let html='',cG=''; const cY=new Date().getFullYear(), getDt=ds=>{const p=ds.split(' • ')[0]; return new Date(p.match(/\d{4}/)?p:`${p} ${cY}`);}, sD=getDt(hA[0].d); sD.setHours(0,0,0,0); const ms=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; [...hA].reverse().forEach((h,i)=>{const dt=getDt(h.d); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`WEEK ${wN} • ${cWS.getDate()} ${ms[cWS.getMonth()]} - ${cWE.getDate()} ${ms[cWE.getMonth()]}`; if(gN!==cG){html+=`<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-[2px] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
-         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${h.w?`${esc(h.w)} <span class="text-[10px] text-slate-400">KG</span>`:''} ${h.s?`<span class="ml-2 text-[#d4af37]">${Array.isArray(h.s) ? h.s.join(', ') : esc(h.s)} <span class="text-[10px] text-slate-400">REPS</span></span>`:''}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(h.d)} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord('${k}', ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=html; if(window.lucide) window.lucide.createIcons({root:c}); },
+         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${h.w?`${esc(h.w)} <span class="text-[10px] text-slate-400">KG</span>`:''} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">REPS</span></span>`:''}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(h.d)} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=html; if(window.lucide) window.lucide.createIcons({root:c}); },
         deleteHistoryRecord: (k, i) => window.appActions.showConfirm("Delete Record", "Remove this record?", () => { let h=StorageManager.getHistory(); if(h[k]){h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast("Deleted","error");} }, true),
         handleLoadTyping: (k, v) => {
             // 1. If load is completely deleted, automatically wipe the reps too
@@ -1001,7 +1096,19 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
             const r=new FileReader();
             r.onload=ev=>{
                 try {
-                    const d=JSON.parse(ev.target.result); window.appState.pendingRestoreData = d;
+                    const raw=JSON.parse(ev.target.result);
+                    if(!isObj(raw)) throw new Error('Backup is not an object');
+                    // Clean everything in the file before using it
+                    const d = {
+                        w: raw.w !== undefined ? sanitizeValueMap(raw.w) : undefined,
+                        h: sanitizeHistory(raw.h),
+                        p: raw.p !== undefined ? sanitizePlan(raw.p) : null,
+                        aw: toStr(raw.aw) || null,
+                        s: DAY_NAMES.includes(raw.s) ? raw.s : null
+                    };
+                    if(raw.p !== undefined && !d.p) window.appActions.showToast("Routine in file is damaged: skipped","error");
+                    if(!d.w && !d.p && !d.s) throw new Error('Nothing usable in backup');
+                    window.appState.pendingRestoreData = d;
                     document.getElementById('restore-progress-desc').innerText = d.w && Object.keys(d.w).length ? `${Object.keys(d.w).length} exercises found` : 'No progress found';
                     document.getElementById('restore-schedule-desc').innerText = d.p ? `Custom schedule found` : 'No schedule found';
                     document.getElementById('restore-settings-desc').innerText = d.s ? `Start Day: ${d.s}` : 'No settings found';
@@ -1079,7 +1186,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                 if(tKeyMatch) autoMatch = tKeyMatch.name;
                 let opts = `<option value="SKIP" ${!autoMatch ? 'selected' : ''}>-- Skip (Do Not Import) --</option>`;
                 filteredTargets.forEach(tx => { opts += `<option value="${esc(tx.name)}" ${autoMatch === tx.name ? 'selected' : ''}>${esc(tx.name)}</option>`; });
-                html += `<div class="bg-black/40 p-3 rounded-xl border border-white/5 mb-3 last:mb-0"><div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 pb-1 border-b border-white/5 flex justify-between items-center"><span class="truncate pr-2">Old: ${esc(readable)}</span><span class="text-[8px] text-[#d4af37] bg-[#d4af37]/10 px-1.5 py-0.5 rounded shadow-sm shrink-0 border border-[#d4af37]/20">${esc(oldGroup.toUpperCase())}</span></div><select id="map_${oldKey}" class="w-full bg-black/60 p-2.5 rounded-lg text-[12px] font-bold text-white outline-none cursor-pointer border border-white/10 tap-feedback">${opts}</select></div>`;
+                html += `<div class="bg-black/40 p-3 rounded-xl border border-white/5 mb-3 last:mb-0"><div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 pb-1 border-b border-white/5 flex justify-between items-center"><span class="truncate pr-2">Old: ${esc(readable)}</span><span class="text-[8px] text-[#d4af37] bg-[#d4af37]/10 px-1.5 py-0.5 rounded shadow-sm shrink-0 border border-[#d4af37]/20">${esc(oldGroup.toUpperCase())}</span></div><select id="map_${esc(oldKey)}" class="w-full bg-black/60 p-2.5 rounded-lg text-[12px] font-bold text-white outline-none cursor-pointer border border-white/10 tap-feedback">${opts}</select></div>`;
             });
             ml.innerHTML = html || `<div class="text-center text-[10px] font-bold text-slate-500 uppercase py-4">No exercises found</div>`;
             const o = document.getElementById('smart-mapping-overlay'), b = document.getElementById('smart-mapping-box');
@@ -1100,7 +1207,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                 if(sel && sel.value !== 'SKIP') {
                     const newKey = getExKey('','','',sel.value);
                     currW[newKey] = d.w[oldKey];
-                    let oldHist = d.h[oldKey] || [];
+                    let oldHist = (d.h && d.h[oldKey]) || [];
                     if(oldHist.length > 0) {
                         let mergedH = [...(currH[newKey] || []), ...oldHist];
                         let unique = [];
@@ -1120,9 +1227,10 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
         finishRestore: (didProg, doSched, doSet, d) => {
             let count = didProg ? 1 : 0;
             if (doSched && d.p) {
-                let iP = d.p;
-                if (Array.isArray(iP)) { const aW = 'w_restored_'+Date.now(); iP = {weeks:[{id:aW,name:'Restored Routine',schedule:iP}]}; StorageManager.setActiveWeek(aW); currentWeekId = aW; } 
-                else if (iP.weeks) { if(d.aw) { StorageManager.setActiveWeek(d.aw); currentWeekId=d.aw; } else { StorageManager.setActiveWeek(iP.weeks[0].id); currentWeekId=iP.weeks[0].id; } }
+                const iP = d.p; // already cleaned by sanitizePlan when the file was opened
+                // Only use the saved active week if it really exists in this routine
+                currentWeekId = (d.aw && iP.weeks.some(w => w.id === d.aw)) ? d.aw : iP.weeks[0].id;
+                StorageManager.setActiveWeek(currentWeekId);
                 StorageManager.setPlan(iP); appData = iP; count++;
             }
             if (doSet && d.s) { 
