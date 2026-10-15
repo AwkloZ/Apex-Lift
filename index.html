@@ -63,6 +63,18 @@
                 </div>
             </div>
             
+            <div id="aw-rest" class="hidden items-center justify-between px-5 py-3 bg-[#22c55e]/10 border-b border-[#22c55e]/20 shrink-0">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="timer" class="w-4 h-4 text-[#22c55e]"></i>
+                    <span id="aw-rest-label" class="text-[10px] font-black uppercase tracking-widest text-[#22c55e]">Rest</span>
+                    <span id="aw-rest-time" class="text-xl font-black text-white tabular-nums leading-none">1:30</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="window.appActions.restAdd(30)" class="text-[10px] font-black uppercase tracking-widest text-white bg-white/10 px-3 py-1.5 rounded-lg tap-feedback">+30s</button>
+                    <button onclick="window.appActions.restSkip()" class="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-white/5 px-3 py-1.5 rounded-lg tap-feedback">Skip</button>
+                </div>
+            </div>
+
             <div id="aw-countdown-container" class="flex-1 flex items-center justify-center py-20">
                 <div id="aw-countdown-text" class="text-8xl font-black text-white animate-pulse">3</div>
             </div>
@@ -122,7 +134,7 @@
                 <label class="flex items-center justify-between p-3.5 bg-black/40 rounded-xl border border-white/5 cursor-pointer tap-feedback">
                     <div class="flex flex-col">
                         <span class="text-[12px] font-black text-white uppercase tracking-wider">App Settings</span>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Saves Start Day preference</span>
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Saves Start Day & Rest Timer</span>
                     </div>
                     <input type="checkbox" id="backup-opt-settings" class="w-5 h-5 accent-[#d4af37] bg-white/10 border-none rounded" checked>
                 </label>
@@ -163,7 +175,7 @@
                 <label class="flex items-center justify-between p-3.5 bg-black/40 rounded-xl border border-white/5 cursor-pointer tap-feedback">
                     <div class="flex flex-col">
                         <span class="text-[12px] font-black text-white uppercase tracking-wider">App Settings</span>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5" id="restore-settings-desc">Restores Start Day preference</span>
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5" id="restore-settings-desc">Restores Start Day & Rest Timer</span>
                     </div>
                     <input type="checkbox" id="restore-opt-settings" class="w-5 h-5 accent-[#d4af37] bg-white/10 border-none rounded">
                 </label>
@@ -230,6 +242,16 @@
                 <option value="THU" class="bg-[#1a1a1a]">THU</option>
                 <option value="FRI" class="bg-[#1a1a1a]">FRI</option>
                 <option value="SAT" class="bg-[#1a1a1a]">SAT</option>
+            </select>
+        </label>
+
+        <label class="flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-white/5 active:bg-white/10 w-full text-left text-[11px] font-bold uppercase tracking-wider text-white transition-colors cursor-pointer border border-white/5">
+            <div class="flex items-start gap-3"><i data-lucide="timer" class="w-4 h-4 text-[#d4af37]"></i> Rest Timer</div>
+            <select id="setting-rest" onchange="window.appActions.updateRest(this.value)" class="bg-transparent text-[#d4af37] outline-none font-black text-[12px] text-right appearance-none cursor-pointer">
+                <option value="60" class="bg-[#1a1a1a]">1:00</option>
+                <option value="90" class="bg-[#1a1a1a]">1:30</option>
+                <option value="120" class="bg-[#1a1a1a]">2:00</option>
+                <option value="180" class="bg-[#1a1a1a]">3:00</option>
             </select>
         </label>
 
