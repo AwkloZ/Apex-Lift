@@ -136,6 +136,10 @@
                 const log = { d: l.d, w: toStr(l.w), s };
                 if (l.time !== undefined) log.time = toStr(l.time);
                 if (l.week !== undefined) log.week = toStr(l.week);
+                if (typeof l.ts === 'number' && isFinite(l.ts)) log.ts = l.ts;
+                if (typeof l.dayId === 'number' && l.dayId >= 1 && l.dayId <= 7) log.dayId = l.dayId;
+                if (l.weekId !== undefined) log.weekId = toStr(l.weekId);
+                if (l.u === 's') log.u = 's';
                 return log;
             });
             if (logs.length) out[k] = logs;
@@ -190,6 +194,64 @@
 
     const getExKey = (w, d, i, n) => (n||'').trim() === '' || (n||'').trim() === 'New Exercise' ? `temp_${w}_${d}_${i}` : `global_${(n||'').trim().toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
 
+    // 📅 DATES
+    // New logs store `ts` (a timestamp). Older logs only have the text date `d` ("15 Oct 2026 • 5:03 PM"),
+    // which we read with our own parser instead of relying on the browser (handles "Sept", missing year, etc).
+    const MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    const parseLogDate = str => {
+        if (typeof str !== 'string') return NaN;
+        const [datePart, timePart = ''] = str.split('•').map(x => x.trim());
+        const m = datePart.match(/(\d{1,2})\s+([A-Za-z]+)\.?(?:\s+(\d{4}))?/);
+        if (!m) { const t = Date.parse(datePart); return isNaN(t) ? NaN : t; }
+        const mon = MONTHS.indexOf(m[2].slice(0, 3).toLowerCase());
+        if (mon < 0) return NaN;
+        const year = m[3] ? parseInt(m[3]) : new Date().getFullYear();
+        let h = 12, min = 0;
+        const tm = timePart.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+        if (tm) { h = parseInt(tm[1]); min = parseInt(tm[2]); if (tm[3]) h = (h % 12) + (tm[3].toUpperCase() === 'PM' ? 12 : 0); }
+        return new Date(year, mon, parseInt(m[1]), h, min).getTime();
+    };
+    const logTime = log => typeof log.ts === 'number' ? log.ts : parseLogDate(log.d);
+    const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
+    const isToday = t => !isNaN(t) && startOfDay(t) === startOfDay(Date.now());
+    const formatLogDate = n => { const hr = n.getHours(); return `${n.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})} • ${hr%12||12}:${n.getMinutes().toString().padStart(2,'0')} ${hr>=12?'PM':'AM'}`; };
+
+    // 🏋️ SETS, SESSIONS & PROGRESSION (one rule shared by the Workout tab and the Analytics tab)
+    const logSets = log => Array.isArray(log.s) ? log.s.map(x => parseInt(x)).filter(x => x > 0) : (parseInt(log.s) > 0 ? [parseInt(log.s)] : []);
+    const parseRange = repsStr => {
+        const m = (repsStr || '').match(/(\d+)\s*-\s*(\d+)/);
+        let minR = m ? parseInt(m[1]) : parseInt(repsStr), maxR = m ? parseInt(m[2]) : parseInt(repsStr);
+        if (isNaN(minR)) minR = 8; if (isNaN(maxR)) maxR = 12;
+        return { minR, maxR };
+    };
+    // Timed exercises use seconds instead of reps, e.g. "30 - 45s" or "60 sec"
+    const isTimed = repsStr => /\d\s*(s|sec|secs|seconds)\s*$/i.test((repsStr || '').trim());
+    const unitOf = repsStr => isTimed(repsStr) ? 's' : '';
+    // Exercises that can be logged without a load (0 / empty = bodyweight)
+    const BODYWEIGHT = ['Bicycle Crunch','Bird Dog','Chest Dip','Chin-up','Clamshell','Close-Grip Push-up','Copenhagen Plank','Crunch','Dead Bug','Decline Crunch','Decline Push-up','Deficit Push-up','Diamond Push-up','Dragon Flag','Fire Hydrant','Glute Bridge','Glute-Ham Raise','Hanging Knee Raise','Hanging Leg Raise','Hollow Body Hold','Incline Push-up','Inverted Row','Leg Raise','Nordic Hamstring Curl','Pistol Squat','Plank','Pull-up','Push-up','Reverse Crunch','Russian Twist','Sissy Squat','Sit-up','Superman','Toe Touch','Tricep Dip','V-up','Wall Sit','Back Extension','Frog Pump','Standing Leg Raise','Neck Curl','Neck Extension','Neck Lateral Flexion'];
+    const isBodyweight = name => BODYWEIGHT.includes((name || '').trim());
+    const fmtW = w => (parseFloat(w) > 0 ? `${parseFloat(w)}kg` : 'BW');
+
+    // The last training session: all logs from the most recent day are combined into one session
+    const getLastSession = (hA, skipToday = false) => {
+        const logs = (hA || []).filter(l => !isNaN(logTime(l)) && !(skipToday && isToday(logTime(l))));
+        if (!logs.length) return null;
+        const last = logs[logs.length - 1], day = startOfDay(logTime(last));
+        const sameDay = logs.filter(l => startOfDay(logTime(l)) === day);
+        const sets = sameDay.flatMap(logSets);
+        return sets.length ? { w: parseFloat(last.w) || 0, sets } : null;
+    };
+    // Rule: Level Up when EVERY set reached the top of the range, Deload when even the BEST set
+    // was below the bottom of the range, otherwise Build (+1 rep on your weakest set).
+    const getProgression = (session, repsStr) => {
+        if (!session || !session.sets.length) return null;
+        const { minR, maxR } = parseRange(repsStr);
+        const w = session.w, low = Math.min(...session.sets), best = Math.max(...session.sets);
+        if (low >= maxR) return { type: 'up', w, sets: session.sets, minR, maxR, tW: w + 2.5, tR: minR };
+        if (best < minR) return { type: 'down', w, sets: session.sets, minR, maxR, tW: Math.round(w * 0.9 * 10) / 10, tR: maxR };
+        return { type: 'build', w, sets: session.sets, minR, maxR, tW: w, tR: Math.min(low + 1, maxR) };
+    };
+
     // ⚙️ 3. APP INITIALIZATION
     const savedPlan = StorageManager.getPlan();
     let appData = sanitizePlan(savedPlan);
@@ -218,28 +280,44 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
         return d;
     };
 
-    const isDayCompleted = (d) => {
+    // Which day of the routine (1-7) a log belongs to. New logs remember it (dayId);
+    // for older logs we work it out from the date they were logged.
+    const logDayId = log => {
+        if (typeof log.dayId === 'number') return log.dayId;
+        const t = logTime(log);
+        if (isNaN(t)) return null;
+        return ((new Date(t).getDay() - DAY_NAMES.indexOf(StorageManager.getStartDay()) + 7) % 7) + 1;
+    };
+    // Sets logged this week for one exercise on one specific day of the active routine
+    const setsThisWeekForDay = (h, dayId) => {
+        const weekStart = getWeekStart().getTime();
+        return (h || []).reduce((sum, log) => {
+            const t = logTime(log);
+            if (isNaN(t) || t < weekStart) return sum;
+            if (log.weekId && log.weekId !== currentWeekId) return sum;
+            if (logDayId(log) !== dayId) return sum;
+            return sum + logSets(log).length;
+        }, 0);
+    };
+
+    const isDayCompleted = (d, history = StorageManager.getHistory()) => {
         if (d.isRest) return true;
         if (!d.exercises || d.exercises.length === 0) return false;
-        const history = StorageManager.getHistory();
-        const currWeekStart = getWeekStart().getTime();
-        let allComplete = true;
-        d.exercises.forEach((ex, i) => {
+        return d.exercises.every((ex, i) => {
             const k = getExKey(currentWeekId, d.id, i, ex.name);
-            const h = history[k] || [];
-            const plannedSets = parseInt(ex.sets) || 0;
-            let cSets = 0;
-            h.forEach(log => {
-                const [dStr] = log.d.split(' • ');
-                const logDate = new Date(dStr).getTime();
-                if (logDate >= currWeekStart) {
-                    cSets += Array.isArray(log.s) ? log.s.length : 1;
-                }
-            });
-            if (cSets < plannedSets) allComplete = false;
+            return setsThisWeekForDay(history[k], d.id) >= (parseInt(ex.sets) || 0);
         });
-        return allComplete;
     };
+
+    // One-time upgrade: give older logs an exact timestamp (their text date is kept as-is)
+    (() => {
+        const h = StorageManager.getHistory();
+        let changed = false;
+        Object.keys(h).forEach(k => { if (Array.isArray(h[k])) h[k].forEach(log => {
+            if (log && typeof log.ts !== 'number') { const t = parseLogDate(log.d); if (!isNaN(t)) { log.ts = t; changed = true; } }
+        }); });
+        if (changed) StorageManager.setHistory(h);
+    })();
 
     let activeDay = StorageManager.getAutoSync() ? getTodayId() : (StorageManager.getLastDay() || getTodayId());
     const firstEmpty = getActiveSchedule().find(isDayIncomplete);
@@ -256,8 +334,9 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
     const renderNav = (shouldScroll = true) => {
         const schedule = getActiveSchedule();
         if (schedule.find(isDayIncomplete) && !window.appState.hasShownSetupToast) { window.appState.hasShownSetupToast = true; requestAnimationFrame(() => window.appActions.showToast("Schedule Incomplete: Set up empty days.", "error")); }
+        const history = StorageManager.getHistory();
         document.getElementById('nav-container').innerHTML = schedule.map(d => {
-            const comp = isDayCompleted(d);
+            const comp = isDayCompleted(d, history);
             const checkHTML = comp && !d.isRest ? `<div class="absolute -top-1 -right-1 w-4 h-4 bg-[#22c55e] rounded-full flex items-center justify-center shadow-md border-[1.5px] border-black z-10"><i data-lucide="check" class="w-2.5 h-2.5 text-black"></i></div>` : '';
             return `<button onclick="window.appActions.setActiveDay(${d.id})" class="snap-start tap-feedback nav-pill px-5 py-4 min-w-[100px] transition-all relative ${activeDay===d.id?'active-day shadow-lg':'bg-white/5'} ${activeDay!==d.id&&(getTodayId()===d.id&&!isDayIncomplete(d)?'gold-corners':(isDayIncomplete(d)?'border border-red-500/50 shadow-[0_0_10px_rgba(239,68,68,0.3)] animate-pulse':'border border-white/5'))}">${checkHTML}<div class="text-[8px] font-bold uppercase ${activeDay===d.id?'text-black/60':(isDayIncomplete(d)?'text-red-400':'text-[#d4af37]')} mb-1">${esc(d.day)}</div><div class="font-black text-[14px] uppercase tracking-tighter ${activeDay===d.id?'text-black':'text-white'}">DAY ${d.id}</div></button>`;
         }).join('');
@@ -296,28 +375,10 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
             const wLogged = parseFloat(weights[k]) || 0;
             const h = history[k] || [];
             
-            if (h.length > 0) {
-                const lastLog = h[h.length-1];
-                const w = parseFloat(lastLog.w) || 0;
-                const r = Array.isArray(lastLog.s) ? Math.max(...lastLog.s) : (parseInt(lastLog.s) || 0);
-                
-                const match = (ex.reps||'').match(/(\d+)\s*-\s*(\d+)/);
-                let minR = match ? parseInt(match[1]) : parseInt(ex.reps);
-                let maxR = match ? parseInt(match[2]) : parseInt(ex.reps);
-                if (isNaN(minR)) minR = 8; if (isNaN(maxR)) maxR = 12;
-
-                if (r > 0) {
-                    if (!actionItems[ex.name]) actionItems[ex.name] = { muscle: ex.muscle, w, r, targets: [] };
-                    
-                    let type = '';
-                    if (r >= maxR) type = 'up';
-                    else if (r < minR) type = 'down';
-                    else type = 'build';
-
-                    if (actionItems[ex.name].targets.length === 0) {
-                        actionItems[ex.name].targets.push({ dayTitle: d.title || `Day ${d.id}`, minR, maxR, type });
-                    }
-                }
+            // Same rule as the Workout tab (getProgression), based on your latest session
+            if (!actionItems[ex.name]) {
+                const prog = getProgression(getLastSession(h), ex.reps);
+                if (prog) actionItems[ex.name] = { muscle: ex.muscle, unit: unitOf(ex.reps), ...prog };
             }
 
             const rawSets = parseInt(ex.sets);
@@ -327,16 +388,15 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
             if (!processedExKeys.has(k)) {
                 processedExKeys.add(k);
                 h.forEach(log => {
-                    const [dStr] = log.d.split(' • ');
-                    const logDate = new Date(dStr);
-                    logDate.setHours(0,0,0,0);
-                    const diff = Math.floor((now - logDate) / 86400000);
-                    const logSets = Array.isArray(log.s) ? log.s.length : (parseInt(log.s) ? s : 0);
+                    const t = logTime(log);
+                    if (isNaN(t)) return;
+                    const diff = Math.round((now - startOfDay(t)) / 86400000);
+                    const nSets = logSets(log).length;
                     
-                    if(diff >= 0 && diff <= 6) { cSets += logSets; weeklyVol.w0 += logSets; }
-                    else if(diff >= 7 && diff <= 13) { weeklyVol.w1 += logSets; }
-                    else if(diff >= 14 && diff <= 20) { weeklyVol.w2 += logSets; }
-                    else if(diff >= 21 && diff <= 27) { weeklyVol.w3 += logSets; }
+                    if(diff >= 0 && diff <= 6) { cSets += nSets; weeklyVol.w0 += nSets; }
+                    else if(diff >= 7 && diff <= 13) { weeklyVol.w1 += nSets; }
+                    else if(diff >= 14 && diff <= 20) { weeklyVol.w2 += nSets; }
+                    else if(diff >= 21 && diff <= 27) { weeklyVol.w3 += nSets; }
                 });
             }
 
@@ -362,14 +422,10 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
 
         let actionLevelUp = [], actionBuild = [], actionDeload = [];
         Object.keys(actionItems).forEach(name => {
-            const item = actionItems[name];
-            if (item.targets.length > 0) {
-                const t = item.targets[0];
-                const data = { name, muscle: item.muscle, w: item.w, r: item.r, maxR: t.maxR, minR: t.minR };
-                if (t.type === 'up') actionLevelUp.push(data);
-                else if (t.type === 'build') actionBuild.push(data);
-                else if (t.type === 'down') actionDeload.push(data);
-            }
+            const item = { name, ...actionItems[name] };
+            if (item.type === 'up') actionLevelUp.push(item);
+            else if (item.type === 'build') actionBuild.push(item);
+            else if (item.type === 'down') actionDeload.push(item);
         });
 
         const createAccordionBar = (key, g) => {
@@ -413,17 +469,17 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
 
         const createActionItem = (item, type) => {
             let badge = '', actionTxt = '';
+            const u = item.unit === 's' ? 'SEC' : 'REPS', us = item.unit;
+            const wBadge = w => w > 0 ? `<span class="block text-[14px] leading-none mb-0.5">${w}</span><span class="text-[7px]">KG</span>` : `<span class="block text-[14px] leading-none mb-0.5">BW</span><span class="text-[7px]">&nbsp;</span>`;
             if (type === 'up') {
-                badge = `<div class="bg-[#22c55e]/10 text-[#22c55e] py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-[#22c55e]/20 text-center shadow-sm w-[55px]"><span class="block text-[14px] leading-none mb-0.5">${item.w + 2.5}</span><span class="text-[7px]">KG</span></div>`;
-                actionTxt = `<span class="text-[#22c55e] shrink-0 whitespace-nowrap"><i data-lucide="arrow-up" class="w-3 h-3 inline -mt-0.5"></i> Target: ${item.w + 2.5}kg × ${item.minR}</span>`;
+                badge = `<div class="bg-[#22c55e]/10 text-[#22c55e] py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-[#22c55e]/20 text-center shadow-sm w-[55px]">${wBadge(item.tW)}</div>`;
+                actionTxt = `<span class="text-[#22c55e] shrink-0 whitespace-nowrap"><i data-lucide="arrow-up" class="w-3 h-3 inline -mt-0.5"></i> Target: ${fmtW(item.tW)} × ${item.tR}${us}</span>`;
             } else if (type === 'build') {
-                const targetReps = item.r + 1;
-                badge = `<div class="bg-[#3b82f6]/10 text-[#3b82f6] py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-[#3b82f6]/20 text-center shadow-sm w-[55px]"><span class="block text-[14px] leading-none mb-0.5">${targetReps}</span><span class="text-[7px]">REPS</span></div>`;
-                actionTxt = `<span class="text-[#3b82f6] shrink-0 whitespace-nowrap"><i data-lucide="refresh-cw" class="w-3 h-3 inline -mt-0.5"></i> Target: ${item.w}kg × ${targetReps}</span>`;
+                badge = `<div class="bg-[#3b82f6]/10 text-[#3b82f6] py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-[#3b82f6]/20 text-center shadow-sm w-[55px]"><span class="block text-[14px] leading-none mb-0.5">${item.tR}</span><span class="text-[7px]">${u}</span></div>`;
+                actionTxt = `<span class="text-[#3b82f6] shrink-0 whitespace-nowrap"><i data-lucide="refresh-cw" class="w-3 h-3 inline -mt-0.5"></i> Target: ${fmtW(item.tW)} × ${item.tR}${us}</span>`;
             } else if (type === 'down') {
-                const drop = (item.w * 0.9).toFixed(1).replace(/\.0$/, '');
-                badge = `<div class="bg-red-500/10 text-red-400 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-red-500/20 text-center shadow-sm w-[55px]"><span class="block text-[14px] leading-none mb-0.5">${drop}</span><span class="text-[7px]">KG</span></div>`;
-                actionTxt = `<span class="text-red-400 shrink-0 whitespace-nowrap"><i data-lucide="arrow-down" class="w-3 h-3 inline -mt-0.5"></i> Target: ${drop}kg × ${item.maxR}</span>`;
+                badge = `<div class="bg-red-500/10 text-red-400 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-red-500/20 text-center shadow-sm w-[55px]">${wBadge(item.tW)}</div>`;
+                actionTxt = `<span class="text-red-400 shrink-0 whitespace-nowrap"><i data-lucide="arrow-down" class="w-3 h-3 inline -mt-0.5"></i> Target: ${fmtW(item.tW)} × ${item.tR}${us}</span>`;
             }
 
             return `
@@ -437,9 +493,9 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                     </div>
                 </div>
                 <div class="shrink-0 flex items-center gap-3">
-                    <div class="text-right w-[45px]">
-                        <div class="text-[12px] font-black text-slate-300 truncate">${item.w}<span class="text-[8px] text-slate-500">KG</span></div>
-                        <div class="text-[10px] font-bold text-slate-400 mt-0.5 truncate">× ${item.r} <span class="text-[8px] text-slate-500">R</span></div>
+                    <div class="text-right w-[60px]">
+                        <div class="text-[12px] font-black text-slate-300 truncate">${item.w > 0 ? `${item.w}<span class="text-[8px] text-slate-500">KG</span>` : 'BW'}</div>
+                        <div class="text-[10px] font-bold text-slate-400 mt-0.5 truncate" title="${esc(item.sets.join(' / '))}">× ${esc(item.sets.join('/'))}${us}</div>
                     </div>
                     ${badge}
                 </div>
@@ -460,7 +516,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                 <div class="flex justify-between items-center px-1 mb-2 text-[8px] font-black text-slate-500 uppercase tracking-widest relative z-10">
                     <span class="pl-1">Exercise</span>
                     <div class="flex gap-3">
-                        <span class="w-[45px] text-right">Last Log</span>
+                        <span class="w-[60px] text-right">Last Log</span>
                         <span class="w-[55px] text-center">Target</span>
                     </div>
                 </div>
@@ -511,6 +567,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
     };
     const renderWorkout = () => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), isE = window.appState.editMode;
+        const allHistory = StorageManager.getHistory();
         
         let html = `<div class="px-2 mb-4 flex justify-between items-center gap-3 h-10">${isE&&!day.isRest?`<input type="text" value="${esc(day.title)}" onfocus="if(this.value==='New Day')this.value='';" onchange="window.appActions.updateDayTitle(this.value)" class="flex-1 bg-transparent border-b-2 border-[#d4af37]/50 text-2xl font-black uppercase text-[#d4af37] outline-none h-full pb-1 leading-none">`:`<h2 class="flex-1 font-black text-2xl uppercase text-white truncate h-full flex items-end pb-1 border-b-2 border-transparent leading-none">${esc(day.title)}</h2>`}<button onclick="window.appActions.toggleEditMode(event)" class="text-[#d4af37] tap-feedback bg-white/5 rounded-xl border border-white/10 shrink-0 h-10 w-10 flex items-center justify-center"><i data-lucide="${isE?'check':'edit-2'}" class="w-5 h-5"></i></button></div>`;if (isE) {
             const opts = schedule.filter(d => d.id !== activeDay).map(d => `<option value="${d.id}">Day ${d.id}</option>`).join('');
@@ -588,45 +645,33 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                             </div>
                         </div>`;
                     } else {
-                        const hA = StorageManager.getHistory()[k]||[], tS = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-                        const pE = hA.filter(h=>!h.d.startsWith(tS));
-                        
-                        let setsLoggedToday = 0;
-                        hA.forEach(log => {
-                            if(log.d.startsWith(tS)) {
-                                setsLoggedToday += Array.isArray(log.s) ? log.s.length : 1;
-                            }
-                        });
-                        const isExCompleted = setsLoggedToday >= (parseInt(ex.sets) || 1);
+                        const hA = allHistory[k]||[];
+                        // ✓ only counts sets logged for THIS day of the routine (not the same exercise on another day)
+                        const isExCompleted = setsThisWeekForDay(hA, activeDay) >= (parseInt(ex.sets) || 1);
                         const cardBorder = isExCompleted ? 'z-10' : '';
                         const checkBadge = isExCompleted ? `<div class="absolute -top-2 -right-2 w-6 h-6 bg-[#22c55e] rounded-full flex items-center justify-center shadow-lg border-2 border-black z-30"><i data-lucide="check" class="w-3.5 h-3.5 text-black"></i></div>` : '';
-                        let lK = null, lR = null; 
-                        if(pE.length>0){ lK = parseFloat(pE[pE.length-1].w); const lastS = pE[pE.length-1].s; lR = Array.isArray(lastS) ? parseInt(lastS[0]) : parseInt(lastS); }
+                        // Today's target comes from your last session before today (same rule as Analytics)
+                        const prevSession = getLastSession(hA, true);
+                        const prog = getProgression(prevSession, ex.reps), us = unitOf(ex.reps);
+                        const lK = prevSession ? prevSession.w : null;
                         let dH=''; 
-                        if(lK && lR){
-                            const match = (ex.reps||'').match(/(\d+)\s*-\s*(\d+)/);
-                            let minR = match ? parseInt(match[1]) : parseInt(ex.reps);
-                            let maxR = match ? parseInt(match[2]) : parseInt(ex.reps);
-                            if(isNaN(minR)) minR=8; if(isNaN(maxR)) maxR=12;
-                            
-                            let tW = lK, tR = lR + 1, pType = 'build';
-                            if(lR >= maxR) { tW = lK + 2.5; tR = minR; pType = 'up'; }
-                            else if(lR < minR && lR > 0) { tW = (lK * 0.9).toFixed(1).replace(/\.0$/, ''); tR = maxR; pType = 'down'; }
-                            
+                        if(prog){
                             if(!v && !(loggedReps[k]||'')){ 
-                                if(pType === 'up') {
-                                    dH=`<div class="text-[9px] font-black text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md border border-[#22c55e]/20 uppercase tracking-widest shadow-sm shadow-[#22c55e]/10 flex items-center gap-1"><i data-lucide="arrow-up-circle" class="w-3 h-3"></i> Level Up: ${tW}kg × ${tR}</div>`;
-                                } else if(pType === 'down') {
-                                    dH=`<div class="text-[9px] font-black text-red-400 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 uppercase tracking-widest shadow-sm flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Deload: ${tW}kg × ${tR}</div>`;
+                                if(prog.type === 'up') {
+                                    dH=`<div class="text-[9px] font-black text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md border border-[#22c55e]/20 uppercase tracking-widest shadow-sm shadow-[#22c55e]/10 flex items-center gap-1"><i data-lucide="arrow-up-circle" class="w-3 h-3"></i> Level Up: ${fmtW(prog.tW)} × ${prog.tR}${us}</div>`;
+                                } else if(prog.type === 'down') {
+                                    dH=`<div class="text-[9px] font-black text-red-400 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 uppercase tracking-widest shadow-sm flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Deload: ${fmtW(prog.tW)} × ${prog.tR}${us}</div>`;
                                 } else {
-                                    dH=`<div class="text-[9px] font-black text-[#d4af37] bg-[#d4af37]/10 px-2 py-1 rounded-md border border-[#d4af37]/20 uppercase tracking-widest shadow-sm shadow-[#d4af37]/10 flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Target: ${tW}kg × ${tR}</div>`;
+                                    dH=`<div class="text-[9px] font-black text-[#d4af37] bg-[#d4af37]/10 px-2 py-1 rounded-md border border-[#d4af37]/20 uppercase tracking-widest shadow-sm shadow-[#d4af37]/10 flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Target: ${fmtW(prog.tW)} × ${prog.tR}${us}</div>`;
                                 }
                             } else {
                                 const df=(parseFloat(v||0)-lK).toFixed(1);
                                 dH=df>0?`<div class="text-[9px] font-black text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md border border-[#22c55e]/20 uppercase tracking-widest shadow-sm">+${df} kg</div>`:df<0?`<div class="text-[9px] font-black text-red-500 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 uppercase tracking-widest shadow-sm">${df} kg</div>`:`<div class="text-[9px] font-black text-slate-400 bg-white/5 px-2 py-1 rounded-md border border-white/5 uppercase tracking-widest shadow-sm">Match</div>`;
                             }
-                        } else if(lK && !v) {
-                             dH=`<div class="text-[9px] font-black text-slate-400 bg-black/40 px-2 py-1 rounded-md border border-white/5 uppercase tracking-widest shadow-sm">Target: ${lK+2.5}kg</div>`;
+                        } else {
+                            // No usable session yet: fall back to the last weight you entered
+                            const lastW = hA.length ? parseFloat(hA[hA.length-1].w) : 0;
+                            if (lastW > 0 && !v) dH=`<div class="text-[9px] font-black text-slate-400 bg-black/40 px-2 py-1 rounded-md border border-white/5 uppercase tracking-widest shadow-sm">Target: ${lastW+2.5}kg</div>`;
                         }
                         
                         // ✨ FLAWLESS NORMAL MODE CARD
@@ -665,7 +710,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                                             onfocus="this.select(); document.getElementById('scroll-buffer').style.height='50vh'; setTimeout(()=>this.closest('.glass-card').scrollIntoView({behavior:'smooth',block:'center'}), 200);" 
                                             oninput="window.appActions.handleTyping(${jsArg(k)}, 'load', this.value)" 
                                             onblur="window.appActions.restoreIfEmpty(${jsArg(k)}, this.value); setTimeout(()=>{if(!document.activeElement || document.activeElement.tagName !== 'INPUT') document.getElementById('scroll-buffer').style.height='0px';}, 100);" 
-                                            class="w-full h-[40px] text-[16px] font-black text-[#d4af37] outline-none bg-black/40 border border-white/10 rounded-lg text-right pl-12 pr-3 transition-all focus:bg-black/60 focus:border-[#d4af37] focus:shadow-[0_0_8px_rgba(212,175,55,0.4)]" placeholder="—">
+                                            class="w-full h-[40px] text-[16px] font-black text-[#d4af37] outline-none bg-black/40 border border-white/10 rounded-lg text-right pl-12 pr-3 transition-all focus:bg-black/60 focus:border-[#d4af37] focus:shadow-[0_0_8px_rgba(212,175,55,0.4)]" placeholder="${isBodyweight(ex.name) ? 'BW' : '—'}">
                                     </div>
                                 </div>
                             </div>
@@ -759,8 +804,8 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
         openHistoryModal: (k, t) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=t; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); },
         closeHistoryModal: () => { const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex');},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
-        refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-500 text-[12px] font-bold uppercase tracking-widest">No records</div>`;return;} let html='',cG=''; const cY=new Date().getFullYear(), getDt=ds=>{const p=ds.split(' • ')[0]; return new Date(p.match(/\d{4}/)?p:`${p} ${cY}`);}, sD=getDt(hA[0].d); sD.setHours(0,0,0,0); const ms=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; [...hA].reverse().forEach((h,i)=>{const dt=getDt(h.d); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`WEEK ${wN} • ${cWS.getDate()} ${ms[cWS.getMonth()]} - ${cWE.getDate()} ${ms[cWE.getMonth()]}`; if(gN!==cG){html+=`<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-[2px] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
-         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${h.w?`${esc(h.w)} <span class="text-[10px] text-slate-400">KG</span>`:''} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">REPS</span></span>`:''}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(h.d)} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=html; if(window.lucide) window.lucide.createIcons({root:c}); },
+        refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-500 text-[12px] font-bold uppercase tracking-widest">No records</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); const ms=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`WEEK ${wN} • ${cWS.getDate()} ${ms[cWS.getMonth()]} - ${cWE.getDate()} ${ms[cWE.getMonth()]}`; if(gN!==cG){html+=`<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-[2px] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
+         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[10px] text-slate-400">KG</span>`:'BW'} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">${h.u==='s'?'SEC':'REPS'}</span></span>`:''}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(h.d)} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=html; if(window.lucide) window.lucide.createIcons({root:c}); },
         deleteHistoryRecord: (k, i) => window.appActions.showConfirm("Delete Record", "Remove this record?", () => { let h=StorageManager.getHistory(); if(h[k]){h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast("Deleted","error");} }, true),
         handleLoadTyping: (k, v) => {
             // 1. If load is completely deleted, automatically wipe the reps too
@@ -841,22 +886,19 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
         restoreIfEmpty: (k, v) => { if(v.trim()===''){const h=StorageManager.getHistory()[k]||[]; if(h.length){loggedWeights[k]=h[h.length-1].w; StorageManager.set(loggedWeights); renderWorkout();}} },
         openActiveWorkout: (k, name, sets, repsStr, isQuickLog = false) => {
             const w = loggedWeights[k];
-            if(!w) return window.appActions.showToast("Enter Load KG first", "error");
+            // Bodyweight exercises (push-ups, planks...) can be logged without a load; "0" also means bodyweight
+            if((w === undefined || String(w).trim() === '') && !isBodyweight(name)) return window.appActions.showToast("Enter Load KG first (0 = bodyweight)", "error");
+            const timed = isTimed(repsStr);
             
             window.appState.awKey = k;
+            window.appState.awTimed = timed;
             document.getElementById('aw-title').innerText = name;
-            document.getElementById('aw-load').innerText = `${w} KG`;
+            document.getElementById('aw-load').innerText = parseFloat(w) > 0 ? `${w} KG` : 'BODYWEIGHT';
             
             const numSets = isNaN(sets) || sets < 1 ? 1 : sets;
             
-            const todayStr = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-            let setsLoggedToday = 0;
-            const h = StorageManager.getHistory()[k] || [];
-            h.forEach(log => {
-                if(log.d.startsWith(todayStr)) {
-                    setsLoggedToday += Array.isArray(log.s) ? log.s.length : 1;
-                }
-            });
+            // Sets already logged this week for this day of the routine
+            const setsLoggedToday = setsThisWeekForDay(StorageManager.getHistory()[k], activeDay);
             const remainingSets = (numSets - setsLoggedToday) > 0 ? (numSets - setsLoggedToday) : 1;
             
             let html = '';
@@ -868,9 +910,9 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                         <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Target: ${esc(repsStr)}</div>
                     </div>
                     <div class="flex items-center bg-black/60 border border-white/10 rounded-xl overflow-hidden focus-within:border-[#d4af37]">
-                        <button type="button" onclick="const i=this.nextElementSibling; i.value=Math.max(0,(parseInt(i.value)||0)-1)" class="w-12 h-12 text-slate-400 font-black text-2xl flex items-center justify-center bg-white/5 active:bg-white/10 border-r border-white/5">-</button>
-                        <input type="number" id="aw-rep-${i}" inputmode="numeric" class="w-16 h-12 bg-transparent text-[#d4af37] font-black text-[18px] text-center outline-none" placeholder="0">
-                        <button type="button" onclick="const i=this.previousElementSibling; i.value=(parseInt(i.value)||0)+1" class="w-12 h-12 text-slate-400 font-black text-2xl flex items-center justify-center bg-white/5 active:bg-white/10 border-l border-white/5">+</button>
+                        <button type="button" onclick="const i=this.nextElementSibling; i.value=Math.max(0,(parseInt(i.value)||0)-${timed ? 5 : 1})" class="w-12 h-12 text-slate-400 font-black text-2xl flex items-center justify-center bg-white/5 active:bg-white/10 border-r border-white/5">-</button>
+                        <input type="number" id="aw-rep-${i}" inputmode="numeric" class="w-16 h-12 bg-transparent text-[#d4af37] font-black text-[18px] text-center outline-none" placeholder="${timed ? 'sec' : '0'}">
+                        <button type="button" onclick="const i=this.previousElementSibling; i.value=(parseInt(i.value)||0)+${timed ? 5 : 1}" class="w-12 h-12 text-slate-400 font-black text-2xl flex items-center justify-center bg-white/5 active:bg-white/10 border-l border-white/5">+</button>
                     </div>
                 </div>`;
             }
@@ -932,9 +974,10 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                     document.getElementById('aw-status-text').innerText = 'Active Focus';
                     document.getElementById('aw-status-text').className = 'text-[10px] font-black text-red-400 uppercase tracking-widest';
 
-                    window.appState.awSeconds = 0;
+                    // Based on the real start time, so it stays correct even if the phone locks
+                    window.appState.awStart = Date.now();
                     window.appState.awTimer = setInterval(() => {
-                        window.appState.awSeconds++;
+                        window.appState.awSeconds = Math.floor((Date.now() - window.appState.awStart) / 1000);
                         const m = String(Math.floor(window.appState.awSeconds / 60)).padStart(2, '0');
                         const s = String(window.appState.awSeconds % 60).padStart(2, '0');
                         document.getElementById('aw-timer').innerText = `${m}:${s}`;
@@ -952,7 +995,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
         },
         finishActiveWorkout: () => {
             const k = window.appState.awKey;
-            const w = loggedWeights[k];
+            const w = loggedWeights[k] === undefined || String(loggedWeights[k]).trim() === '' ? '0' : loggedWeights[k];
             const setsInputs = document.querySelectorAll('[id^="aw-rep-"]');
             let completedReps = [];
             setsInputs.forEach(inp => {
@@ -961,23 +1004,27 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
             });
             
             if(completedReps.length === 0) {
-                return window.appActions.showToast("Enter reps for at least 1 set", "error");
+                return window.appActions.showToast(window.appState.awTimed ? "Enter seconds for at least 1 set" : "Enter reps for at least 1 set", "error");
             }
             
             let h = StorageManager.getHistory(); if(!h[k]) h[k] = []; 
-            const n = new Date(); let hr = n.getHours(); 
-            const ts = `${n.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})} • ${hr%12||12}:${n.getMinutes().toString().padStart(2,'0')} ${hr>=12?'PM':'AM'}`; 
+            const n = new Date();
             
             let timeLogged = document.getElementById('aw-timer').innerText;
             if (timeLogged === "LOG") timeLogged = "";
             
-            h[k].push({
-                d: ts, 
+            const entry = {
+                d: formatLogDate(n),   // text date (for display and older app versions)
+                ts: n.getTime(),       // exact time (used for all date calculations)
                 w: w, 
                 s: completedReps, 
                 time: timeLogged,
-                week: appData.weeks.find(x=>x.id===currentWeekId).name||'Routine'
-            }); 
+                week: (appData.weeks.find(x=>x.id===currentWeekId)||{}).name||'Routine',
+                weekId: currentWeekId, // which routine this was logged in
+                dayId: activeDay       // which day of the routine this was logged for
+            };
+            if (window.appState.awTimed) entry.u = 's';
+            h[k].push(entry); 
             if(h[k].length>150) h[k] = h[k].slice(-150); 
             StorageManager.setHistory(h); 
             
@@ -987,7 +1034,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
             
             const el = document.getElementById(`input-${k}`); if(el){ el.classList.add('save-glow'); setTimeout(() => el.classList.remove('save-glow'), 400); } 
             
-            renderWorkout();
+            renderNav(false); renderWorkout();
         },
         applyGlobalSetsReps: () => {
             const s = document.getElementById('global-sets').value;
