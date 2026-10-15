@@ -1336,4 +1336,8 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
     setTimeout(() => { const lB=StorageManager.getBackupDate(); if(!lB)StorageManager.setBackupDate(); else if(Date.now()-lB>604800000) window.appActions.showConfirm("Backup Reminder","It has been over 7 days. Backup now?",()=>window.appActions.openBackupModal()); }, 1500);
     setTimeout(() => window.appActions.initOnboarding(), 500);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && StorageManager.getAutoSync()) { const tT=getTodayId(), lD=getActiveSchedule().find(isDayIncomplete); if(lD){if(activeDay!==lD.id){activeDay=lD.id; StorageManager.setLastDay(activeDay); window.appState.editMode=true;renderNav();renderWorkout();}}else if(activeDay!==tT&&!window.appState.editMode&&window.appState.currentView==='workout'){activeDay=tT; StorageManager.setLastDay(activeDay); renderNav();renderWorkout();} } });
+    // 📶 OFFLINE SUPPORT: save a copy of the app on the phone (see sw.js)
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(err => console.warn('Offline mode unavailable:', err)));
+    }
 })();
