@@ -37,9 +37,7 @@
     // Automatically removes any duplicates caused by overlapping categories
     const exerciseOptions=[...new Set(Object.values(exerciseDictionary).flat())].sort();
     
-    // Standardized to perfectly match dictionary strings (singular)
-    // Standardized to perfectly match dictionary strings and correct muscle categories
-    // Standardized to perfectly match dictionary strings and correct muscle categories
+    // Default routine (names match the exercise dictionary)
     const defaultWorkoutData=[
         {id:1,day:"SAT",title:"Push & Bi",exercises:[
             {muscle:"Upper Chest",name:"Incline Bench Press",sets:"4",reps:"8 - 10"},
@@ -83,9 +81,6 @@
         {id:7,day:"FRI",title:"Complete Rest",isRest:true,recoveryType:"complete",exercises:[]}
     ];
 
-    // Cleaned whitelist that only uses dictionary terms
-    const globalAllowedExercises=[...exerciseOptions];
-    
     const compoundLifts = ['Bench Press', 'Squat', 'Deadlift', 'Overhead Press', 'Front Squat', 'Incline Bench Press', 'Romanian Deadlift', 'Barbell Row', 'T-Bar Row'];
 
     // 🛡️ DATA VALIDATION (used for saved data and imported backup files)
@@ -263,17 +258,16 @@
     let currentWeekId = StorageManager.getActiveWeek() || appData.weeks[0].id;
     if (!appData.weeks.find(w => w.id === currentWeekId)) { currentWeekId = appData.weeks[0].id; StorageManager.setActiveWeek(currentWeekId); }
     
-window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', editMode: false, analyticsView: 'main', hasShownSetupToast: false, sortableInstance: null, mappingConfig: null, volMode: 'all', onboardSlide: 0, awKey: null, awTimer: null, awSeconds: 0 };    let loggedWeights = StorageManager.get();    let loggedReps = StorageManager.getReps();
+window.appState = { menuOpen: false, currentView: 'workout', editMode: false, hasShownSetupToast: false, sortableInstance: null, mappingConfig: null, onboardSlide: 0, awKey: null, awTimer: null, awSeconds: 0 };    let loggedWeights = StorageManager.get();    let loggedReps = StorageManager.getReps();
 
     const getActiveSchedule = () => (appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0]).schedule;
-    const getTodayId = () => ((new Date().getDay() - ['SUN','MON','TUE','WED','THU','FRI','SAT'].indexOf(StorageManager.getStartDay()) + 7) % 7) + 1;
+    const getTodayId = () => ((new Date().getDay() - DAY_NAMES.indexOf(StorageManager.getStartDay()) + 7) % 7) + 1;
     const isDayIncomplete = d => (!d.exercises || d.exercises.length === 0) && d.isRest !== true;
     
     const getWeekStart = (date = new Date()) => {
         const d = new Date(date);
         d.setHours(0,0,0,0);
-        const dayNames = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-        const startDayIdx = dayNames.indexOf(StorageManager.getStartDay());
+        const startDayIdx = DAY_NAMES.indexOf(StorageManager.getStartDay());
         const currentDayIdx = d.getDay();
         const diff = (currentDayIdx - startDayIdx + 7) % 7;
         d.setDate(d.getDate() - diff);
@@ -324,6 +318,23 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
     if (firstEmpty) { activeDay = firstEmpty.id; window.appState.editMode = true; }
     StorageManager.setLastDay(activeDay);
 
+    // Dropdown of exercises for a muscle (all exercises if the muscle isn't in the dictionary)
+    const exerciseListHTML = (idx, muscle) => (exerciseDictionary[Object.keys(exerciseDictionary).find(k => k.toLowerCase() === (muscle || '').toLowerCase().trim())] || exerciseOptions)
+        .map(e => `<button type="button" onclick="window.appActions.selectOption(${idx},'name',${jsArg(e)})" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(e)}</button>`).join('');
+
+    // Opens / closes a pop-up window (overlay + box) with the fade & zoom animation
+    const openModal = (overlayId, boxId) => {
+        const o = document.getElementById(overlayId), b = document.getElementById(boxId);
+        o.classList.remove('hidden'); o.classList.add('flex');
+        requestAnimationFrame(() => { o.classList.remove('opacity-0'); b.classList.remove('scale-95'); });
+        if (window.lucide) window.lucide.createIcons({ root: b });
+    };
+    const closeModal = (overlayId, boxId, ms = 300, after) => {
+        const o = document.getElementById(overlayId), b = document.getElementById(boxId);
+        o.classList.add('opacity-0'); b.classList.add('scale-95');
+        setTimeout(() => { o.classList.add('hidden'); o.classList.remove('flex'); if (after) after(); }, ms);
+    };
+
     // 🎨 4. CORE UI RENDERING
     const renderSidePanel = () => {
         document.getElementById('weeks-container').innerHTML = appData.weeks.map(w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold uppercase tracking-wider w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[9px] font-black tracking-widest uppercase shrink-0">Active</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[10px] font-bold tracking-widest uppercase tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">Select</button>`}${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`).join('');
@@ -348,31 +359,28 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
     };
 
     const renderAnalytics = () => {
-        const weights = StorageManager.get(); 
         const history = StorageManager.getHistory();
         const c = document.getElementById('workout-container');
         
         const activeTab = window.appState.aTab || 'action';
         
         const pG = {
-            'CHEST': { l: 'Chest', s: 0, c: 0, t: 16, ex: {}, daySets: {} }, 'BACK': { l: 'Back', s: 0, c: 0, t: 16, ex: {}, daySets: {} },
-            'FDELTS': { l: 'Front Delts', s: 0, c: 0, t: 8, ex: {}, daySets: {} }, 'SDELTS': { l: 'Side Delts', s: 0, c: 0, t: 12, ex: {}, daySets: {} }, 'RDELTS': { l: 'Rear Delts', s: 0, c: 0, t: 10, ex: {}, daySets: {} },
-            'BICEPS': { l: 'Biceps', s: 0, c: 0, t: 12, ex: {}, daySets: {} }, 'TRICEPS': { l: 'Triceps', s: 0, c: 0, t: 12, ex: {}, daySets: {} },
-            'QUADS': { l: 'Quads', s: 0, c: 0, t: 14, ex: {}, daySets: {} }, 'HAMS': { l: 'Hamstrings', s: 0, c: 0, t: 14, ex: {}, daySets: {} }, 'CALVES': { l: 'Calves', s: 0, c: 0, t: 12, ex: {}, daySets: {} },
-            'GLUTES': { l: 'Glutes', s: 0, c: 0, t: 12, ex: {}, daySets: {} },
-            'ABS': { l: 'Abs & Core', s: 0, c: 0, t: 10, ex: {}, daySets: {} },
-            'FOREARMS': { l: 'Forearms', s: 0, c: 0, t: 10, ex: {}, daySets: {} }
+            'CHEST': { l: 'Chest', s: 0, c: 0, ex: {} }, 'BACK': { l: 'Back', s: 0, c: 0, ex: {} },
+            'FDELTS': { l: 'Front Delts', s: 0, c: 0, ex: {} }, 'SDELTS': { l: 'Side Delts', s: 0, c: 0, ex: {} }, 'RDELTS': { l: 'Rear Delts', s: 0, c: 0, ex: {} },
+            'BICEPS': { l: 'Biceps', s: 0, c: 0, ex: {} }, 'TRICEPS': { l: 'Triceps', s: 0, c: 0, ex: {} },
+            'QUADS': { l: 'Quads', s: 0, c: 0, ex: {} }, 'HAMS': { l: 'Hamstrings', s: 0, c: 0, ex: {} }, 'CALVES': { l: 'Calves', s: 0, c: 0, ex: {} },
+            'GLUTES': { l: 'Glutes', s: 0, c: 0, ex: {} },
+            'ABS': { l: 'Abs & Core', s: 0, c: 0, ex: {} },
+            'FOREARMS': { l: 'Forearms', s: 0, c: 0, ex: {} }
         };
 
         let actionItems = {}; 
-        let weeklyVol = { w0: 0, w1: 0, w2: 0, w3: 0 };
         let processedExKeys = new Set();
         const now = new Date();
         now.setHours(0,0,0,0);
         
         getActiveSchedule().forEach(d => { if(!d.isRest && d.exercises) d.exercises.forEach((ex,i) => {
             const k = getExKey(currentWeekId, d.id, i, ex.name);
-            const wLogged = parseFloat(weights[k]) || 0;
             const h = history[k] || [];
             
             // Same rule as the Workout tab (getProgression), based on your latest session
@@ -393,10 +401,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                     const diff = Math.round((now - startOfDay(t)) / 86400000);
                     const nSets = logSets(log).length;
                     
-                    if(diff >= 0 && diff <= 6) { cSets += nSets; weeklyVol.w0 += nSets; }
-                    else if(diff >= 7 && diff <= 13) { weeklyVol.w1 += nSets; }
-                    else if(diff >= 14 && diff <= 20) { weeklyVol.w2 += nSets; }
-                    else if(diff >= 21 && diff <= 27) { weeklyVol.w3 += nSets; }
+                    if(diff >= 0 && diff <= 6) cSets += nSets; // last 7 days
                 });
             }
 
@@ -417,7 +422,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
             else if(rm==='ABS'||rm==='CORE'||rm==='OBLIQUES') p = 'ABS';
             else if(rm.includes('FOREARM')) p = 'FOREARMS';
             
-            if(p && pG[p]) { pG[p].s += s; pG[p].c += cSets; pG[p].ex[n] = (pG[p].ex[n]||0) + s; pG[p].daySets[d.id] = (pG[p].daySets[d.id]||0) + s; }
+            if(p && pG[p]) { pG[p].s += s; pG[p].c += cSets; pG[p].ex[n] = (pG[p].ex[n]||0) + s; }
         });});
 
         let actionLevelUp = [], actionBuild = [], actionDeload = [];
@@ -611,9 +616,9 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                 html += `<div class="glass-card p-10 text-center border-dashed border-white/10 mt-4"><div class="flex justify-center mb-4"><i data-lucide="clipboard-edit" class="w-10 h-10 text-slate-500 opacity-50"></i></div><h3 class="font-black text-lg uppercase text-slate-400 tracking-wider mb-2">Empty Day</h3><p class="text-[11px] font-bold text-slate-500 leading-relaxed">Tap the floating edit button to add exercises, apply a preset, or set as a Rest Day.</p></div>`;
             } else {
                 html += `<div id="sortable-list">${day.exercises.map((ex, i) => {
-                    const k = getExKey(currentWeekId, activeDay, i, ex.name), v = loggedWeights[k]||'', hT = globalAllowedExercises.includes(ex.name);
+                    const k = getExKey(currentWeekId, activeDay, i, ex.name), v = loggedWeights[k]||'', hT = exerciseOptions.includes(ex.name);
                     if (isE) {
-                        const oList = (exerciseDictionary[Object.keys(exerciseDictionary).find(kx=>kx.toLowerCase()===ex.muscle.toLowerCase().trim())]||exerciseOptions).map(e=>`<button type="button" onclick="window.appActions.selectOption(${i},'name',${jsArg(e)})" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(e)}</button>`).join('');
+                        const oList = exerciseListHTML(i, ex.muscle);
                         const mList = muscleOptions.map(m=>`<button type="button" onclick="window.appActions.selectOption(${i},'muscle',${jsArg(m)})" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(m)}</button>`).join('');
                         
                         // ✨ COMPACT EDIT MODE CARD (MATCHES NORMAL HEIGHT, NO AUTO-SCROLL)
@@ -754,15 +759,15 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
             setTimeout(()=>{if(c.contains(d)){d.classList.add('opacity-0','translate-y-full');setTimeout(()=>{if(c.contains(d))d.remove();},500);}},3500);
         },
         showConfirm: (t, m, ok, dng=false) => {
-            const o = document.getElementById('custom-confirm-overlay'), b = document.getElementById('custom-confirm-box'), y = document.getElementById('confirm-yes-btn');
+            const y = document.getElementById('confirm-yes-btn');
             document.getElementById('confirm-title').innerText=t; document.getElementById('confirm-message').innerText=m;
             y.className=`flex-1 glass-card py-3.5 text-[11px] font-black uppercase tracking-widest shadow-lg ${dng?'text-white bg-red-500/80 border-red-500/50 shadow-red-500/20':'text-black bg-[#d4af37] border-none shadow-[#d4af37]/20'}`;
             document.getElementById('confirm-icon').innerHTML=`<i data-lucide="${dng?'alert-octagon':'alert-triangle'}" class="w-6 h-6 ${dng?'text-red-500':'text-[#d4af37]'}"></i>`;
             if(window.lucide) window.lucide.createIcons({root: document.getElementById('confirm-icon')});
             const nY = y.cloneNode(true); y.parentNode.replaceChild(nY,y); nY.onclick=()=>{window.appActions.closeConfirm();setTimeout(ok,200);};
-            o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');b.classList.remove('scale-95');});
+            openModal('custom-confirm-overlay','custom-confirm-box');
         },
-        closeConfirm: () => { const o=document.getElementById('custom-confirm-overlay'),b=document.getElementById('custom-confirm-box'); o.classList.add('opacity-0'); b.classList.add('scale-95'); setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex');},300); },
+        closeConfirm: () => closeModal('custom-confirm-overlay','custom-confirm-box'),
         refreshUI: () => window.appState.currentView==='workout'?renderWorkout():renderAnalytics(),
         showList: id => { 
             document.querySelectorAll('.dropdown-list').forEach(e=>{if(e.id!==id){e.classList.add('hidden');const c=e.closest('.glass-card');if(c)c.style.zIndex='';}}); 
@@ -799,89 +804,17 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                 }
             }, 150);
         },filterList: (id, val) => { const l=document.getElementById(id); if(!l)return; const rx=new RegExp('\\b'+val.trim().replace(/[-[\]{}()*+?.,\\^$|#\s]/g,'\\$&'),'i'); Array.from(l.children).forEach(i=>i.style.display=val.trim()===''||rx.test(i.innerText)?'block':'none'); },
-        silentUpdateEx: (idx, f, v) => { const d=getActiveSchedule().find(d=>d.id===activeDay); d.exercises[idx][f]=v; StorageManager.setPlan(appData); if(f==='muscle'){const l=document.getElementById(`e-list-${idx}`);if(l)l.innerHTML=(exerciseDictionary[Object.keys(exerciseDictionary).find(k=>k.toLowerCase()===v.toLowerCase().trim())]||exerciseOptions).map(e=>`<button type="button" onclick="window.appActions.selectOption(${idx},'name',${jsArg(e)})" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(e)}</button>`).join('');} },
-        selectOption: (idx, f, v) => { const d=getActiveSchedule().find(d=>d.id===activeDay); d.exercises[idx][f]=v; const inEl=document.getElementById(`${f==='muscle'?'m':'e'}-in-${idx}`); if(inEl)inEl.value=v; window.appActions.hideList(`${f==='muscle'?'m':'e'}-list-${idx}`); if(f==='muscle'){d.exercises[idx].name=''; const n=document.getElementById(`e-in-${idx}`);if(n)n.value=''; const l=document.getElementById(`e-list-${idx}`);if(l)l.innerHTML=(exerciseDictionary[Object.keys(exerciseDictionary).find(k=>k.toLowerCase()===v.toLowerCase().trim())]||exerciseOptions).map(e=>`<button type="button" onclick="window.appActions.selectOption(${idx},'name',${jsArg(e)})" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(e)}</button>`).join('');} StorageManager.setPlan(appData); },
+        silentUpdateEx: (idx, f, v) => { const d=getActiveSchedule().find(d=>d.id===activeDay); d.exercises[idx][f]=v; StorageManager.setPlan(appData); if(f==='muscle'){const l=document.getElementById(`e-list-${idx}`);if(l)l.innerHTML=exerciseListHTML(idx, v);} },
+        selectOption: (idx, f, v) => { const d=getActiveSchedule().find(d=>d.id===activeDay); d.exercises[idx][f]=v; const inEl=document.getElementById(`${f==='muscle'?'m':'e'}-in-${idx}`); if(inEl)inEl.value=v; window.appActions.hideList(`${f==='muscle'?'m':'e'}-list-${idx}`); if(f==='muscle'){d.exercises[idx].name=''; const n=document.getElementById(`e-in-${idx}`);if(n)n.value=''; const l=document.getElementById(`e-list-${idx}`);if(l)l.innerHTML=exerciseListHTML(idx, v);} StorageManager.setPlan(appData); },
         openHistoryModal: (k, t) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=t; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); },
         closeHistoryModal: () => { const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex');},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
         refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-500 text-[12px] font-bold uppercase tracking-widest">No records</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); const ms=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`WEEK ${wN} • ${cWS.getDate()} ${ms[cWS.getMonth()]} - ${cWE.getDate()} ${ms[cWE.getMonth()]}`; if(gN!==cG){html+=`<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-[2px] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
          html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[10px] text-slate-400">KG</span>`:'BW'} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">${h.u==='s'?'SEC':'REPS'}</span></span>`:''}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(h.d)} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=html; if(window.lucide) window.lucide.createIcons({root:c}); },
         deleteHistoryRecord: (k, i) => window.appActions.showConfirm("Delete Record", "Remove this record?", () => { let h=StorageManager.getHistory(); if(h[k]){h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast("Deleted","error");} }, true),
-        handleLoadTyping: (k, v) => {
-            // 1. If load is completely deleted, automatically wipe the reps too
-            if (v === '') {
-                if (loggedReps[k]) {
-                    loggedReps[k] = '';
-                    StorageManager.setReps(loggedReps);
-                    const rInp = document.getElementById(`reps-input-${k}`);
-                    if (rInp) rInp.value = '';
-                }
-            } else {
-                const h = StorageManager.getHistory()[k] || [];
-                const lastW = h.length ? h[h.length-1].w : null;
-                if (lastW && v && v.toString() !== lastW.toString() && loggedWeights[k] !== v) {
-                    if (loggedReps[k]) {
-                        loggedReps[k] = '';
-                        StorageManager.setReps(loggedReps);
-                        const rInp = document.getElementById(`reps-input-${k}`);
-                        if (rInp) rInp.value = '';
-                    }
-                }
-            }
-            window.appActions.handleTyping(k, 'load', v);
-        },
-        handleLoadBlur: (k, v) => {
-            if (window.appActions.restoreIfEmpty) {
-                window.appActions.restoreIfEmpty(k, v);
-            }
-            const loadInput = document.getElementById(`input-${k}`);
-            const repsInput = document.getElementById(`reps-input-${k}`);
-            
-            if (loadInput && loadInput.value && repsInput && !repsInput.value) {
-                const repsContainer = repsInput.parentElement;
-                repsContainer.classList.add('border-red-500', 'bg-red-500/20', 'shadow-[0_0_10px_rgba(239,68,68,0.5)]');
-                setTimeout(() => repsContainer.classList.remove('border-red-500', 'bg-red-500/20', 'shadow-[0_0_10px_rgba(239,68,68,0.5)]'), 800);
-            }
-        },
-        handleRepsTyping: (k, v) => {
-            // 2. ERROR GATE: Prevent manual typing of reps if load is empty
-            const loadInput = document.getElementById(`input-${k}`);
-            if (loadInput && !loadInput.value && v !== '') {
-                loadInput.classList.add('border-red-500', 'bg-red-500/20');
-                setTimeout(() => loadInput.classList.remove('border-red-500', 'bg-red-500/20'), 600);
-                
-                const rInp = document.getElementById(`reps-input-${k}`);
-                if (rInp) rInp.value = ''; // Force clear the typed rep
-                return;
-            }
-            window.appActions.handleTyping(k, 'reps', v);
-        },
-        stepReps: (k, dir) => {
-            // 3. ERROR GATE: Prevent +/- clicking if load is empty
-            const loadInput = document.getElementById(`input-${k}`);
-            if (loadInput && !loadInput.value) {
-                loadInput.classList.add('border-red-500', 'bg-red-500/20');
-                setTimeout(() => loadInput.classList.remove('border-red-500', 'bg-red-500/20'), 600);
-                return;
-            }
-            
-            let r = parseInt(loggedReps[k]) || 0;
-            r += dir;
-            if (r < 0) r = 0;
-            const newR = r.toString();
-            const rInp = document.getElementById(`reps-input-${k}`);
-            if (rInp) rInp.value = newR;
-            window.appActions.handleTyping(k, 'reps', newR);
-        },
         handleTyping: (k, type, v) => { 
             if (type === 'load') { loggedWeights[k] = v; StorageManager.set(loggedWeights); } 
             else { loggedReps[k] = v; StorageManager.setReps(loggedReps); }
-            const b = document.getElementById(`log-btn-container-${k}`); 
-            if (b) {
-                const hasW = loggedWeights[k] && loggedWeights[k].toString().trim() !== '';
-                const hasR = loggedReps[k] && loggedReps[k].toString().trim() !== '';
-                hasW || hasR ? b.classList.remove('hidden') : b.classList.add('hidden'); 
-            }
         },
         restoreIfEmpty: (k, v) => { if(v.trim()===''){const h=StorageManager.getHistory()[k]||[]; if(h.length){loggedWeights[k]=h[h.length-1].w; StorageManager.set(loggedWeights); renderWorkout();}} },
         openActiveWorkout: (k, name, sets, repsStr, isQuickLog = false) => {
@@ -945,9 +878,7 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                 btn.innerText = 'Finish Workout';
             }
             
-            const o = document.getElementById('active-workout-overlay'), b = document.getElementById('active-workout-box');
-            o.classList.remove('hidden'); o.classList.add('flex');
-            requestAnimationFrame(()=>{o.classList.remove('opacity-0'); b.classList.remove('scale-95');});
+            openModal('active-workout-overlay','active-workout-box');
 
             if (isQuickLog) return;
 
@@ -987,11 +918,8 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
         },
         closeActiveWorkout: () => {
             clearInterval(window.appState.awTimer);
-            if(window.appState.awCountdownInterval) clearInterval(window.appState.awCountdownInterval);
-            clearInterval(window.appState.awTimer);
-            const o = document.getElementById('active-workout-overlay'), b = document.getElementById('active-workout-box');
-            o.classList.add('opacity-0'); b.classList.add('scale-95');
-            setTimeout(()=>{o.classList.add('hidden'); o.classList.remove('flex');}, 300);
+            clearInterval(window.appState.awCountdownInterval);
+            closeModal('active-workout-overlay','active-workout-box');
         },
         finishActiveWorkout: () => {
             const k = window.appState.awKey;
@@ -1100,21 +1028,21 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
             window.scrollTo(0, windowPos);
             setTimeout(() => window.scrollTo(0, windowPos), 10);
         },
-        updateStartOfWeek: v => { const aD=['SUN','MON','TUE','WED','THU','FRI','SAT'], idx=aD.indexOf(v); if(idx===-1)return; StorageManager.setStartDay(v); appData.weeks.forEach(w=>w.schedule.forEach((d,i)=>d.day=aD[(idx+i)%7])); StorageManager.setPlan(appData); if(StorageManager.getAutoSync()){activeDay=getTodayId();StorageManager.setLastDay(activeDay);} const s=document.getElementById('setting-start-day'); if(s)s.value=v; renderNav(false); renderWorkout(); window.appActions.toggleMenu(); setTimeout(()=>window.appActions.showToast(`Week starts on ${v}`,"success"),300); },
+        updateStartOfWeek: v => { const aD=DAY_NAMES, idx=aD.indexOf(v); if(idx===-1)return; StorageManager.setStartDay(v); appData.weeks.forEach(w=>w.schedule.forEach((d,i)=>d.day=aD[(idx+i)%7])); StorageManager.setPlan(appData); if(StorageManager.getAutoSync()){activeDay=getTodayId();StorageManager.setLastDay(activeDay);} const s=document.getElementById('setting-start-day'); if(s)s.value=v; renderNav(false); renderWorkout(); window.appActions.toggleMenu(); setTimeout(()=>window.appActions.showToast(`Week starts on ${v}`,"success"),300); },
         swapDay: tId => { const s=getActiveSchedule(), d1=s.find(d=>d.id===activeDay), d2=s.find(d=>d.id===tId); if(!d1||!d2)return; const tT=d1.title, tE=JSON.stringify(d1.exercises), tIR=d1.isRest, tRT=d1.recoveryType, tST=d1.savedTitle; d1.title=d2.title; d1.exercises=JSON.parse(JSON.stringify(d2.exercises||[])); d1.isRest=d2.isRest; d1.recoveryType=d2.recoveryType; d1.savedTitle=d2.savedTitle; d2.title=tT; d2.exercises=JSON.parse(tE||'[]'); d2.isRest=tIR; d2.recoveryType=tRT; d2.savedTitle=tST; StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },
         updateDayTitle: v => { getActiveSchedule().find(d=>d.id===activeDay).title=v.trim()||'New Day'; StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },
         updateDayType: v => { const d=getActiveSchedule().find(x=>x.id===activeDay); if(v==='workout'){d.isRest=false; d.recoveryType=null; d.title=d.savedTitle||'New Workout'; if(!d.exercises||!d.exercises.length)d.exercises=[{muscle:'Muscle',name:'New Exercise',sets:'3',reps:'10'}];}else{if(!d.isRest)d.savedTitle=d.title; d.isRest=true; d.recoveryType=v; d.title=v==='active'?'Active Rest':'Complete Rest';} window.appState.editMode=true; StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },        deleteEx: i => window.appActions.showConfirm("Delete Exercise", "Remove this exercise?", () => { getActiveSchedule().find(d=>d.id===activeDay).exercises.splice(i,1); StorageManager.setPlan(appData); renderWorkout(); }, true),addEx: () => { const d=getActiveSchedule().find(x=>x.id===activeDay); if(!d.title||d.title.trim().toLowerCase()==='new day'){window.appActions.showToast("Name workout first!","error"); return;} d.exercises.push({muscle:'Muscle',name:'New Exercise',sets:'3',reps:'10'}); StorageManager.setPlan(appData); renderWorkout(); setTimeout(()=>{const l=document.getElementById('sortable-list');if(l&&l.lastElementChild)l.lastElementChild.scrollIntoView({behavior:'smooth',block:'center'});},50); },
         clearDay: () => window.appActions.showConfirm("Clear Day", "Delete all exercises?", () => { const d=getActiveSchedule().find(x=>x.id===activeDay); d.exercises=[]; d.title=""; StorageManager.setPlan(appData); renderWorkout(); }, true),
-        switchTab: t => { window.appState.currentView=t; window.appState.editMode=false; window.appState.analyticsView='main'; document.getElementById('tab-workout').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${t==='workout'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('tab-analytics').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${t==='analytics'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('nav-container').style.display=t==='workout'?'flex':'none'; t==='workout'?renderWorkout():renderAnalytics(); },
+        switchTab: t => { window.appState.currentView=t; window.appState.editMode=false; document.getElementById('tab-workout').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${t==='workout'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('tab-analytics').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${t==='analytics'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('nav-container').style.display=t==='workout'?'flex':'none'; t==='workout'?renderWorkout():renderAnalytics(); },
         toggleMenu: () => { window.appState.menuOpen=!window.appState.menuOpen; const o=document.getElementById('side-panel-overlay'), p=document.getElementById('side-panel'); if(window.appState.menuOpen){o.classList.remove('hidden'); setTimeout(()=>{o.classList.remove('opacity-0');p.classList.add('slide-panel-open');},10);}else{p.classList.remove('slide-panel-open'); o.classList.add('opacity-0'); setTimeout(()=>o.classList.add('hidden'),300);} },
-        addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast("Max 5 schedules","error"); const aD=['SUN','MON','TUE','WED','THU','FRI','SAT'], sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:`Schedule ${appData.weeks.length+1}`,schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
+        addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast("Max 5 schedules","error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:`Schedule ${appData.weeks.length+1}`,schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
         deleteWeek: id => { if(appData.weeks.length<=1)return; window.appActions.showConfirm("Delete Schedule","Delete this week?",()=>{appData.weeks=appData.weeks.filter(w=>w.id!==id); if(currentWeekId===id){currentWeekId=appData.weeks[0].id;StorageManager.setActiveWeek(currentWeekId);window.appActions.refreshUI();renderNav();} StorageManager.setPlan(appData); renderSidePanel(); },true); },
         renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=v||'Unnamed'; StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=appData.weeks.find(x=>x.id===currentWeekId).name; },
         switchWeek: id => { currentWeekId=id; StorageManager.setActiveWeek(id); window.appState.hasShownSetupToast=false; const s=getActiveSchedule(); activeDay=s.some(d=>d.title==='New Day')?s.find(d=>d.title==='New Day').id:(StorageManager.getAutoSync()?getTodayId():(StorageManager.getLastDay()||getTodayId())); window.appState.editMode=false; StorageManager.setLastDay(activeDay); renderSidePanel(); renderNav(); window.appActions.refreshUI(); window.appActions.toggleMenu(); },
         setActiveDay: id => { activeDay=id; StorageManager.setLastDay(id); window.appState.editMode=false; renderNav(); renderWorkout(); },
         toggleAutoSync: v => { StorageManager.setAutoSync(v); if(v && window.appState.currentView==='workout'){activeDay=getTodayId(); StorageManager.setLastDay(activeDay); renderNav(); renderWorkout();} window.appActions.showToast(v ? "Day Tracker Enabled" : "Manual Mode Active", "success"); },
-        openBackupModal: () => { window.appActions.toggleMenu(); const o = document.getElementById('smart-backup-overlay'), b = document.getElementById('smart-backup-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');b.classList.remove('scale-95');}); if(window.lucide) window.lucide.createIcons({root: b}); },
-        closeBackupModal: () => { const o=document.getElementById('smart-backup-overlay'), b=document.getElementById('smart-backup-box'); o.classList.add('opacity-0'); b.classList.add('scale-95'); setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex');},300); },
+        openBackupModal: () => { window.appActions.toggleMenu(); openModal('smart-backup-overlay','smart-backup-box'); },
+        closeBackupModal: () => closeModal('smart-backup-overlay','smart-backup-box'),
         executeSmartBackup: () => {
             const doProg = document.getElementById('backup-opt-progress').checked;
             const doSched = document.getElementById('backup-opt-schedule').checked;
@@ -1165,18 +1093,13 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                     document.getElementById('restore-opt-schedule').disabled = !d.p;
                     document.getElementById('restore-opt-settings').checked = false;
                     document.getElementById('restore-opt-settings').disabled = !d.s;
-                    const o = document.getElementById('smart-restore-overlay'), b = document.getElementById('smart-restore-box');
-                    o.classList.remove('hidden'); o.classList.add('flex');
-                    requestAnimationFrame(()=>{o.classList.remove('opacity-0');b.classList.remove('scale-95');});
-                    if(window.lucide) window.lucide.createIcons({root: b});
+                    openModal('smart-restore-overlay','smart-restore-box');
                 } catch(err) { window.appActions.showToast("Invalid Backup file","error"); }
             };
             r.readAsText(f); e.target.value='';
         },
         closeRestoreModal: () => {
-            const o=document.getElementById('smart-restore-overlay'), b=document.getElementById('smart-restore-box');
-            o.classList.add('opacity-0'); b.classList.add('scale-95');
-            setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex'); window.appState.pendingRestoreData = null;},300);
+            closeModal('smart-restore-overlay','smart-restore-box', 300, () => { window.appState.pendingRestoreData = null; });
         },
         executeSmartRestore: () => {
             const d = window.appState.pendingRestoreData; if(!d) return;
@@ -1236,15 +1159,10 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                 html += `<div class="bg-black/40 p-3 rounded-xl border border-white/5 mb-3 last:mb-0"><div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 pb-1 border-b border-white/5 flex justify-between items-center"><span class="truncate pr-2">Old: ${esc(readable)}</span><span class="text-[8px] text-[#d4af37] bg-[#d4af37]/10 px-1.5 py-0.5 rounded shadow-sm shrink-0 border border-[#d4af37]/20">${esc(oldGroup.toUpperCase())}</span></div><select id="map_${esc(oldKey)}" class="w-full bg-black/60 p-2.5 rounded-lg text-[12px] font-bold text-white outline-none cursor-pointer border border-white/10 tap-feedback">${opts}</select></div>`;
             });
             ml.innerHTML = html || `<div class="text-center text-[10px] font-bold text-slate-500 uppercase py-4">No exercises found</div>`;
-            const o = document.getElementById('smart-mapping-overlay'), b = document.getElementById('smart-mapping-box');
-            o.classList.remove('hidden'); o.classList.add('flex');
-            requestAnimationFrame(()=>{o.classList.remove('opacity-0');b.classList.remove('scale-95');});
-            if(window.lucide) window.lucide.createIcons({root: b});
+            openModal('smart-mapping-overlay','smart-mapping-box');
         },
         closeMappingModal: () => {
-            const o=document.getElementById('smart-mapping-overlay'), b=document.getElementById('smart-mapping-box');
-            o.classList.add('opacity-0'); b.classList.add('scale-95');
-            setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex');},300);
+            closeModal('smart-mapping-overlay','smart-mapping-box');
         },
         executeMappedMerge: () => {
             const { d, doSched, doSet } = window.appState.mappingConfig;
@@ -1281,14 +1199,14 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
                 StorageManager.setPlan(iP); appData = iP; count++;
             }
             if (doSet && d.s) { 
-                const aD=['SUN','MON','TUE','WED','THU','FRI','SAT'], idx=aD.indexOf(d.s);
+                const aD=DAY_NAMES, idx=aD.indexOf(d.s);
                 if(idx!==-1){ StorageManager.setStartDay(d.s); appData.weeks.forEach(w=>w.schedule.forEach((dDay,i)=>dDay.day=aD[(idx+i)%7])); document.getElementById('setting-start-day').value = d.s; }
                 count++; 
             }
             if (count > 0) { StorageManager.setPlan(appData); activeDay = StorageManager.getAutoSync() ? getTodayId() : (StorageManager.getLastDay() || getTodayId()); renderNav(); window.appActions.refreshUI(); window.appActions.showToast("Data Merged Successfully!", "success"); }
             if(!didProg) window.appActions.closeRestoreModal();
     },
-    restoreDefaults: () => { window.appActions.toggleMenu(); window.appActions.showConfirm("Factory Reset","Delete all custom weeks?",()=>{const aD=['SUN','MON','TUE','WED','THU','FRI','SAT'], sI=aD.indexOf('SAT'); const def=JSON.parse(JSON.stringify(defaultWorkoutData)); def.forEach((d,i)=>d.day=aD[(sI+i)%7]); appData={weeks:[{id:'w_default',name:'Main Routine',schedule:def}]}; currentWeekId='w_default'; StorageManager.setActiveWeek('w_default'); StorageManager.setPlan(appData); StorageManager.setStartDay('SAT'); document.getElementById('setting-start-day').value='SAT'; activeDay=getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast("Reset Complete");},true); },
+    restoreDefaults: () => { window.appActions.toggleMenu(); window.appActions.showConfirm("Factory Reset","Delete all custom weeks?",()=>{const aD=DAY_NAMES, sI=aD.indexOf('SAT'); const def=JSON.parse(JSON.stringify(defaultWorkoutData)); def.forEach((d,i)=>d.day=aD[(sI+i)%7]); appData={weeks:[{id:'w_default',name:'Main Routine',schedule:def}]}; currentWeekId='w_default'; StorageManager.setActiveWeek('w_default'); StorageManager.setPlan(appData); StorageManager.setStartDay('SAT'); document.getElementById('setting-start-day').value='SAT'; activeDay=getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast("Reset Complete");},true); },
         renderOnboardingSlide: () => {
             const slides = [
                 { i: 'dumbbell', t: 'Welcome to Apex Lift', d: 'Your premium personal coaching and tracking experience. Stop guessing and start growing with precision data.' },
@@ -1313,17 +1231,13 @@ window.appState = { openHistory: null, menuOpen: false, currentView: 'workout', 
         },
         closeOnboarding: () => {
             StorageManager.setOnboard();
-            const o = document.getElementById('onboarding-overlay'), b = document.getElementById('onboarding-box');
-            o.classList.add('opacity-0'); b.classList.add('scale-95');
-            setTimeout(() => { o.classList.add('hidden'); o.classList.remove('flex'); }, 500);
+            closeModal('onboarding-overlay','onboarding-box', 500);
         },
         initOnboarding: () => {
             if (!StorageManager.getOnboard()) {
                 window.appState.onboardSlide = 0;
                 window.appActions.renderOnboardingSlide();
-                const o = document.getElementById('onboarding-overlay'), b = document.getElementById('onboarding-box');
-                o.classList.remove('hidden'); o.classList.add('flex');
-                requestAnimationFrame(() => { o.classList.remove('opacity-0'); b.classList.remove('scale-95'); });
+                openModal('onboarding-overlay','onboarding-box');
             }
         }
     };
