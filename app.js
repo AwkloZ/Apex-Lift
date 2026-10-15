@@ -7,6 +7,258 @@
     // (handles names like "Farmer's Walk" and blocks code hidden in imported backups)
     const jsArg = v => esc(JSON.stringify(v === null || v === undefined ? '' : String(v)));
 
+    // 🌐 LANGUAGE (English / Arabic). Text is written in English in the code and wrapped in t('...');
+    // the Arabic version comes from AR below. Exercise names stay in English in both languages.
+    const LANG_KEY = 'workoutLang_rakan_final';
+    const LANG = (() => {
+        let v = null; try { v = localStorage.getItem(LANG_KEY); } catch (e) {}
+        if (v === 'ar' || v === 'en') return v;
+        return (navigator.language || '').toLowerCase().startsWith('ar') ? 'ar' : 'en';
+    })();
+    const isAR = LANG === 'ar';
+    const AR = {
+        "-- Skip (Do Not Import) --": "-- تخطي (لا تستورد) --",
+        "1 exercise added": "تمت إضافة تمرين واحد",
+        "3 quick taps to adjust today's targets.": "3 ضغطات سريعة لضبط أهداف اليوم.",
+        "A bit": "قليلاً",
+        "ALL": "الكل",
+        "Action Plan": "خطة التقدّم",
+        "Action Plan Empty": "لا توجد خطة بعد",
+        "Actionable Insights": "توصيات ذكية",
+        "Active": "نشط",
+        "Active Focus": "تركيز",
+        "Active Rest": "راحة نشطة",
+        "Add \"{name}\" to {muscle}": "أضف \"{name}\" إلى {muscle}",
+        "Add 1 exercise": "أضف تمريناً واحداً",
+        "Add Exercise": "إضافة تمرين",
+        "Add New": "إضافة جدول",
+        "Add exercises": "إضافة تمارين",
+        "Add {n} exercises": "أضف {n} تمارين",
+        "All": "الكل",
+        "Analytics": "التحليلات",
+        "App Settings": "إعدادات التطبيق",
+        "Apply": "تطبيق",
+        "BODYWEIGHT": "وزن الجسم",
+        "BW": "وزن الجسم",
+        "Backup Data": "نسخ احتياطي",
+        "Backup Manager": "النسخ الاحتياطي",
+        "Backup Reminder": "تذكير بالنسخ الاحتياطي",
+        "Build Reps": "زِد التكرارات",
+        "Build a routine with exercises to see your weekly workload goals.": "أنشئ جدولاً بالتمارين لترى أهداف حجم التمرين الأسبوعية.",
+        "CORE": "الجذع",
+        "Cancel": "إلغاء",
+        "Change check-in": "تعديل التقييم",
+        "Check-in saved": "تم حفظ التقييم",
+        "Clear": "مسح",
+        "Clear Day": "مسح اليوم",
+        "Complete Rest": "راحة تامة",
+        "Complete a workout and log your sets. The app will analyze your performance and generate smart weight recommendations here.": "أكمل تمريناً وسجّل مجموعاتك، وسيحلل التطبيق أداءك ويعطيك توصيات ذكية للأوزان هنا.",
+        "Complete workouts to unlock your Action Plan. Apex Lift will automatically calculate when you should add weight, push for more reps, or deload.": "أكمل تمارينك لتظهر خطة التقدّم. سيحسب Apex Lift تلقائياً متى تزيد الوزن، ومتى تزيد التكرارات، ومتى تخفف الحمل.",
+        "Completion": "نسبة الإنجاز",
+        "Confirm & Merge": "تأكيد ودمج",
+        "Confirm Action": "تأكيد",
+        "Contact Us": "تواصل معنا",
+        "Continue": "متابعة",
+        "Custom Week...": "قالب جاهز...",
+        "Custom schedule found": "تم العثور على جدول",
+        "Custom, e.g. 5 or 6 - 8": "مخصص، مثل 5 أو 6 - 8",
+        "DAY {n}": "اليوم {n}",
+        "Daily Check-in": "تقييم اليوم",
+        "Data & Backup": "البيانات والنسخ الاحتياطي",
+        "Data Exported!": "تم تصدير البيانات!",
+        "Data Merged Successfully!": "تم دمج البيانات بنجاح!",
+        "Day Tracker": "متابعة اليوم تلقائياً",
+        "Day Tracker Enabled": "تم تفعيل متابعة اليوم",
+        "Day {n}": "اليوم {n}",
+        "Delete": "حذف",
+        "Delete Record": "حذف السجل",
+        "Delete Schedule": "حذف الجدول",
+        "Delete all custom weeks?": "حذف كل الجداول المخصصة؟",
+        "Delete all exercises?": "حذف كل التمارين؟",
+        "Delete this week?": "حذف هذا الجدول؟",
+        "Deleted": "تم الحذف",
+        "Deload:": "خفّف:",
+        "Developed By": "تطوير",
+        "Done": "تم",
+        "Easy Day": "يوم خفيف",
+        "Easy day: targets adjusted": "يوم خفيف: تم تعديل الأهداف",
+        "Easy:": "خفيف:",
+        "Edit All": "تعديل الكل",
+        "Empty Day": "يوم فارغ",
+        "Energy": "النشاط",
+        "Enter Load KG first (0 = bodyweight)": "أدخل الوزن أولاً (0 = وزن الجسم)",
+        "Enter Sets or Reps": "أدخل المجموعات أو التكرارات",
+        "Enter reps first": "أدخل التكرارات أولاً",
+        "Enter reps for at least 1 set": "أدخل التكرارات لمجموعة واحدة على الأقل",
+        "Enter seconds first": "أدخل الثواني أولاً",
+        "Enter seconds for at least 1 set": "أدخل الثواني لمجموعة واحدة على الأقل",
+        "Exercise": "التمرين",
+        "Export Selected Data": "تصدير البيانات المختارة",
+        "Factory Reset": "إعادة ضبط المصنع",
+        "Fatigue Warning": "تنبيه إرهاق",
+        "Finish Workout": "إنهاء التمرين",
+        "Follow your targets as planned.": "اتبع أهدافك كما هي.",
+        "Fresh": "مرتاح",
+        "Full Body (3-Days)": "جسم كامل (3 أيام)",
+        "Full Body A": "جسم كامل A",
+        "Full Body B": "جسم كامل B",
+        "Full Week Applied!": "تم تطبيق الأسبوع كاملاً!",
+        "GO": "انطلق",
+        "GO!": "انطلق!",
+        "Get Ready": "استعد",
+        "Great": "ممتاز",
+        "High": "عالي",
+        "History": "السجل",
+        "In this day": "موجود في هذا اليوم",
+        "In your routines": "في جداولك",
+        "Invalid Backup file": "ملف النسخة الاحتياطية غير صالح",
+        "It has been over 7 days. Backup now?": "مر أكثر من 7 أيام. هل تريد أخذ نسخة احتياطية الآن؟",
+        "KG": "كجم",
+        "KG can be changed per set. RPE (optional) = how hard it was: 10 = no reps left, 9 = 1 left, 8 = 2 left.": "يمكنك تغيير الوزن لكل مجموعة. RPE (اختياري) = مدى الصعوبة: 10 = لا تكرارات متبقية، 9 = تكرار واحد، 8 = تكراران.",
+        "LEGS": "أرجل",
+        "LOG": "تسجيل",
+        "LOGGED": "مسجّل",
+        "Language": "اللغة",
+        "Last Log": "آخر تسجيل",
+        "Legs": "أرجل",
+        "Level Up:": "ارفع الوزن:",
+        "Lifting Progress": "تقدّم الأوزان",
+        "Link Progress": "ربط التقدّم",
+        "Load": "الوزن",
+        "Load Records": "سجل الأوزان",
+        "Log Mode": "وضع التسجيل",
+        "Log Sets": "سجّل المجموعات",
+        "Log your sets and reps to monitor your Weekly Volume. The app will tell you when you are under-training or over-training each muscle group.": "سجّل مجموعاتك وتكراراتك لمتابعة حجم تمرينك الأسبوعي. سيخبرك التطبيق إن كنت تمرّن أي عضلة أقل أو أكثر من اللازم.",
+        "Low": "منخفض",
+        "Low recovery: no weight increases today. Keep your weight, aim for the bottom of the range and stop 2 reps before failure.": "استشفاء منخفض: لا زيادة في الأوزان اليوم. حافظ على وزنك، واستهدف أقل عدد في النطاق، وتوقف قبل الفشل بتكرارين.",
+        "Lower Body": "الجزء السفلي",
+        "Main Routine": "الجدول الرئيسي",
+        "Manual Mode Active": "الوضع اليدوي",
+        "Match": "مطابق",
+        "Match old backup exercises to your active routine. Unlinked data will be skipped.": "اربط تمارين النسخة القديمة بتمارين جدولك الحالي. التمارين غير المربوطة لن تُستورد.",
+        "Max 5 schedules": "الحد الأقصى 5 جداول",
+        "Merge Selected Data": "دمج البيانات المختارة",
+        "Mode": "النوع",
+        "New Day": "يوم جديد",
+        "New Workout": "تمرين جديد",
+        "Next": "التالي",
+        "No Volume Detected": "لا يوجد حجم تمرين",
+        "No exercises found": "لا توجد تمارين",
+        "No exercises scheduled.": "لا توجد تمارين مجدولة.",
+        "No progress found": "لا يوجد تقدّم",
+        "No records": "لا توجد سجلات",
+        "No schedule found": "لا يوجد جدول",
+        "No settings found": "لا توجد إعدادات",
+        "Normal Day": "يوم عادي",
+        "Not in the list? Choose a muscle above, then add \"{name}\" as your own exercise.": "غير موجود؟ اختر العضلة من الأعلى ثم أضف \"{name}\" كتمرين خاص بك.",
+        "OF {n} SETS": "من {n} مجموعات",
+        "OK": "متوسط",
+        "Official Instagram": "حسابنا في إنستغرام",
+        "Old:": "القديم:",
+        "Overwrite Week?": "استبدال الأسبوع؟",
+        "Overwrites current schedule": "يستبدل الجدول الحالي",
+        "PPL Split (6-Days)": "دفع/سحب/أرجل (6 أيام)",
+        "PULL": "سحب",
+        "PUSH": "دفع",
+        "Poor": "سيئ",
+        "Pull": "سحب",
+        "Push": "دفع",
+        "Push Day": "يوم قوي",
+        "Push day: go get it!": "يوم قوي: انطلق!",
+        "REPS": "تكرار",
+        "Ready to Level Up": "جاهز لرفع الوزن",
+        "Remove this record?": "حذف هذا السجل؟",
+        "Removed {name}": "تم حذف {name}",
+        "Reps": "التكرارات",
+        "Reset Complete": "تمت إعادة الضبط",
+        "Reset Default": "إعادة الضبط",
+        "Rest": "راحة",
+        "Rest Timer": "مؤقت الراحة",
+        "Rest over": "انتهت الراحة",
+        "Rest timer: {v}s": "مؤقت الراحة: {v} ثانية",
+        "Restore Data": "استعادة البيانات",
+        "Restore Manager": "استعادة البيانات",
+        "Restored Routine": "جدول مستعاد",
+        "Restores Start Day & Rest Timer": "يستعيد بداية الأسبوع ومؤقت الراحة",
+        "Routine": "جدول",
+        "Routine in file is damaged: skipped": "الجدول في الملف تالف: تم تخطيه",
+        "SEC": "ثانية",
+        "SETS": "مجموعات",
+        "Save Sets": "حفظ المجموعات",
+        "Saves Start Day & Rest Timer": "يحفظ بداية الأسبوع ومؤقت الراحة",
+        "Saves current schedule": "يحفظ الجدول الحالي",
+        "Saves weights & history": "يحفظ الأوزان والسجل",
+        "Scans for weights & history": "يبحث عن الأوزان والسجل",
+        "Schedule Incomplete: Set up empty days.": "الجدول غير مكتمل: جهّز الأيام الفارغة.",
+        "Schedule {n}": "جدول {n}",
+        "Search exercises": "ابحث عن تمرين",
+        "Select": "اختيار",
+        "Select at least one option!": "اختر خياراً واحداً على الأقل!",
+        "Select exactly what you want to extract from this backup file.": "اختر ما تريد استعادته من ملف النسخة الاحتياطية.",
+        "Select exactly what you want to include in this backup file.": "اختر ما تريد حفظه في ملف النسخة الاحتياطية.",
+        "Set {n}": "المجموعة {n}",
+        "Sets": "المجموعات",
+        "Skip": "تخطي",
+        "Skip Tutorial": "تخطي الشرح",
+        "Sleep": "النوم",
+        "Soreness": "الإجهاد العضلي",
+        "Start Day": "بداية الأسبوع",
+        "Start Day: {d}": "بداية الأسبوع: {d}",
+        "Start Focus": "ابدأ التمرين",
+        "Start Training": "ابدأ التدريب",
+        "Storage full: data not saved. Backup & delete old records.": "الذاكرة ممتلئة: لم تُحفظ البيانات. خذ نسخة احتياطية واحذف السجلات القديمة.",
+        "Swap": "تبديل",
+        "Swap exercise": "تبديل التمرين",
+        "Swap {name}": "تبديل {name}",
+        "Swap...": "تبديل...",
+        "Swapped to {name}": "تم التبديل إلى {name}",
+        "Tap the edit button to add exercises, apply a template, or make it a rest day.": "اضغط زر التعديل لإضافة تمارين، أو تطبيق قالب، أو جعله يوم راحة.",
+        "Target": "الهدف",
+        "Target:": "الهدف:",
+        "Template": "قالب",
+        "This will replace your entire 7-day schedule.": "سيتم استبدال جدول الأسبوع كاملاً.",
+        "Track Workload": "تابع حجم تمرينك",
+        "Undo": "تراجع",
+        "Unnamed": "بدون اسم",
+        "Updated all exercises": "تم تحديث كل التمارين",
+        "Upper Body": "الجزء العلوي",
+        "Upper/Lower (4-Days)": "علوي/سفلي (4 أيام)",
+        "Very": "كثير",
+        "WEEK {n}": "الأسبوع {n}",
+        "Week 1": "الأسبوع 1",
+        "Week Active": "الأسبوع النشط",
+        "Week starts on {d}": "يبدأ الأسبوع يوم {d}",
+        "Welcome to Apex Lift": "مرحباً بك في Apex Lift",
+        "Well recovered. Go for your targets.": "استشفاء ممتاز. انطلق نحو أهدافك.",
+        "Workload Tracking": "حجم التمرين",
+        "Workout": "التمرين",
+        "Workout Completed!": "تم إكمال التمرين!",
+        "Workout Routine": "جدول التمارين",
+        "Workouts Schedule": "جداول التمارين",
+        "Yes, Do it": "نعم، نفّذ",
+        "Your premium personal coaching and tracking experience. Stop guessing and start growing with precision data.": "تجربة تدريب ومتابعة شخصية متكاملة. توقف عن التخمين وابدأ بالتطور ببيانات دقيقة.",
+        "{n} exercises added": "تمت إضافة {n} تمارين",
+        "{n} exercises found": "تم العثور على {n} تمرين",
+    };
+    const t = (en, vars) => {
+        let out = (isAR && AR[en]) || en;
+        if (vars) out = out.replace(/\{(\w+)\}/g, (m, k) => vars[k] !== undefined ? vars[k] : m);
+        return out;
+    };
+    const MUSCLE_AR = { 'Abductors':'مبعدات الورك','Abs':'البطن','Adductors':'مقربات الورك','Back':'الظهر','Biceps':'البايسبس','Calves':'السمانة','Chest':'الصدر','Forearms':'الساعد','Front Delts':'الكتف الأمامي','Glutes':'المؤخرة','Hamstrings':'خلفي الفخذ','Lats':'اللاتس','Lower Back':'أسفل الظهر','Lower Chest':'أسفل الصدر','Neck':'الرقبة','Quads':'أمامي الفخذ','Rear Delts':'الكتف الخلفي','Shoulders':'الأكتاف','Side Delts':'الكتف الجانبي','Traps':'الترابيس','Triceps':'الترايسبس','Upper Chest':'أعلى الصدر','Abs & Core':'البطن والجذع','Muscle':'العضلة' };
+    const tm = m => (isAR && MUSCLE_AR[(m || '').trim()]) || m || '';
+    const DAY_AR = { SUN:'الأحد', MON:'الاثنين', TUE:'الثلاثاء', WED:'الأربعاء', THU:'الخميس', FRI:'الجمعة', SAT:'السبت' };
+    const tDay = d => (isAR && DAY_AR[d]) || d;
+    // Dates are shown in the chosen language (always the normal calendar and 0-9 digits)
+    const fmtDate = (ts, withTime = true) => {
+        const d = new Date(ts);
+        if (isNaN(d)) return '';
+        const opt = { day: '2-digit', month: 'short', year: 'numeric', calendar: 'gregory', numberingSystem: 'latn' };
+        if (withTime) { opt.hour = 'numeric'; opt.minute = '2-digit'; }
+        return new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', opt).format(d);
+    };
+    const fmtDayMonth = d => new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { day: 'numeric', month: 'short', calendar: 'gregory', numberingSystem: 'latn' }).format(d);
+
     // 📦 1. MINIFIED DATA (Cleaned Dictionary & Standardized Presets)
     const muscleOptions=["Abductors","Abs","Adductors","Back","Biceps","Calves","Chest","Forearms","Front Delts","Glutes","Hamstrings","Lats","Lower Back","Lower Chest","Neck","Quads","Rear Delts","Shoulders","Side Delts","Traps","Triceps","Upper Chest"];
     
@@ -168,7 +420,7 @@
         try { localStorage.setItem(key, value); return true; }
         catch (e) {
             console.error(`Could not save "${key}"`, e);
-            if (window.appActions) window.appActions.showToast("Storage full: data not saved. Backup & delete old records.", "error");
+            if (window.appActions) window.appActions.showToast(t("Storage full: data not saved. Backup & delete old records."), "error");
             return false;
         }
     };
@@ -293,7 +545,7 @@
     if (!appData) {
         // Saved plan missing or unusable: keep a copy of the unusable one, then start from the default plan
         if (savedPlan !== null) { try { localStorage.setItem(StorageManager.PLAN_KEY + '_damaged', JSON.stringify(savedPlan)); } catch (e) {} }
-        appData = { weeks: [{ id: 'w_' + Date.now(), name: 'Week 1', schedule: JSON.parse(JSON.stringify(defaultWorkoutData)) }] };
+        appData = { weeks: [{ id: 'w_' + Date.now(), name: t('Week 1'), schedule: JSON.parse(JSON.stringify(defaultWorkoutData)) }] };
     }
     let currentWeekId = StorageManager.getActiveWeek() || appData.weeks[0].id;
     if (!appData.weeks.find(w => w.id === currentWeekId)) { currentWeekId = appData.weeks[0].id; StorageManager.setActiveWeek(currentWeekId); }
@@ -358,9 +610,38 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
     if (firstEmpty) { activeDay = firstEmpty.id; window.appState.editMode = true; }
     StorageManager.setLastDay(activeDay);
 
-    // Dropdown of exercises for a muscle (all exercises if the muscle isn't in the dictionary)
-    const exerciseListHTML = (idx, muscle) => (exerciseDictionary[Object.keys(exerciseDictionary).find(k => k.toLowerCase() === (muscle || '').toLowerCase().trim())] || exerciseOptions)
-        .map(e => `<button type="button" onclick="window.appActions.selectOption(${idx},'name',${jsArg(e)})" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(e)}</button>`).join('');
+    // 🔎 EXERCISE PICKER DATA
+    const CUSTOM_KEY = 'workoutCustomEx_rakan_final';
+    const sanitizeCustomEx = raw => Array.isArray(raw) ? raw.filter(isObj).map(x => ({ name: toStr(x.name).trim().slice(0, 60), muscle: muscleOptions.includes(x.muscle) ? x.muscle : 'Chest' })).filter(x => x.name) : [];
+    const getCustomEx = () => sanitizeCustomEx(readJSON(CUSTOM_KEY, []));
+    const setCustomEx = list => writeItem(CUSTOM_KEY, JSON.stringify(list));
+    // Every exercise under every muscle it belongs to (built-in + your own)
+    const catalogue = () => {
+        const out = [];
+        Object.keys(exerciseDictionary).forEach(m => exerciseDictionary[m].forEach(name => out.push({ name, muscle: m })));
+        getCustomEx().forEach(x => out.push({ ...x, custom: true }));
+        return out;
+    };
+    const TIMED_DEFAULT = ['Plank', 'Weighted Plank', 'Hollow Body Hold', 'Wall Sit', 'Copenhagen Plank'];
+    const newExercise = (name, muscle) => ({ muscle, name, sets: '3', reps: TIMED_DEFAULT.includes(name) ? '30 - 45s' : '10 - 12' });
+    const REPS_PRESETS = ['6 - 8', '8 - 10', '8 - 12', '10 - 12', '12 - 15', '15 - 20', '30 - 45s'];
+
+    // Bottom sheets slide up from the bottom; the page behind them is frozen so nothing jumps
+    const openSheet = (overlayId, boxId) => {
+        const o = document.getElementById(overlayId), b = document.getElementById(boxId);
+        const sc = document.querySelector('.scrollable-content'); if (sc) sc.style.overflow = 'hidden';
+        o.classList.remove('hidden'); o.classList.add('flex');
+        requestAnimationFrame(() => { o.classList.remove('opacity-0'); b.classList.remove('translate-y-full'); });
+    };
+    const closeSheet = (overlayId, boxId) => {
+        const o = document.getElementById(overlayId), b = document.getElementById(boxId);
+        if (document.activeElement) document.activeElement.blur();
+        o.classList.add('opacity-0'); b.classList.add('translate-y-full');
+        setTimeout(() => {
+            o.classList.add('hidden'); o.classList.remove('flex');
+            if (document.querySelectorAll('.sheet-overlay.flex').length === 0) { const sc = document.querySelector('.scrollable-content'); if (sc) sc.style.overflow = ''; }
+        }, 300);
+    };
 
     // Opens / closes a pop-up window (overlay + box) with the fade & zoom animation
     const openModal = (overlayId, boxId) => {
@@ -377,19 +658,19 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
 
     // 🎨 4. CORE UI RENDERING
     const renderSidePanel = () => {
-        document.getElementById('weeks-container').innerHTML = appData.weeks.map(w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold uppercase tracking-wider w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[9px] font-black tracking-widest uppercase shrink-0">Active</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[10px] font-bold tracking-widest uppercase tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">Select</button>`}${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`).join('');
-        document.getElementById('active-week-label').innerText = appData.weeks.find(w => w.id === currentWeekId).name;
+        document.getElementById('weeks-container').innerHTML = appData.weeks.map(w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold uppercase tracking-wider w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[9px] font-black tracking-widest uppercase shrink-0">${t('Active')}</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[10px] font-bold tracking-widest uppercase tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">${t('Select')}</button>`}${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`).join('');
+        document.getElementById('active-week-label').innerText = t((appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0]).name);
         if(window.lucide) window.lucide.createIcons();
     };
 
     const renderNav = (shouldScroll = true) => {
         const schedule = getActiveSchedule();
-        if (schedule.find(isDayIncomplete) && !window.appState.hasShownSetupToast) { window.appState.hasShownSetupToast = true; requestAnimationFrame(() => window.appActions.showToast("Schedule Incomplete: Set up empty days.", "error")); }
+        if (schedule.find(isDayIncomplete) && !window.appState.hasShownSetupToast) { window.appState.hasShownSetupToast = true; requestAnimationFrame(() => window.appActions.showToast(t("Schedule Incomplete: Set up empty days."), "error")); }
         const history = StorageManager.getHistory();
         document.getElementById('nav-container').innerHTML = schedule.map(d => {
             const comp = isDayCompleted(d, history);
             const checkHTML = comp && !d.isRest ? `<div class="absolute -top-1 -right-1 w-4 h-4 bg-[#22c55e] rounded-full flex items-center justify-center shadow-md border-[1.5px] border-black z-10"><i data-lucide="check" class="w-2.5 h-2.5 text-black"></i></div>` : '';
-            return `<button onclick="window.appActions.setActiveDay(${d.id})" class="snap-start tap-feedback nav-pill px-5 py-4 min-w-[100px] transition-all relative ${activeDay===d.id?'active-day shadow-lg':'bg-white/5'} ${activeDay!==d.id&&(getTodayId()===d.id&&!isDayIncomplete(d)?'gold-corners':(isDayIncomplete(d)?'border border-red-500/50 shadow-[0_0_10px_rgba(239,68,68,0.3)] animate-pulse':'border border-white/5'))}">${checkHTML}<div class="text-[8px] font-bold uppercase ${activeDay===d.id?'text-black/60':(isDayIncomplete(d)?'text-red-400':'text-[#d4af37]')} mb-1">${esc(d.day)}</div><div class="font-black text-[14px] uppercase tracking-tighter ${activeDay===d.id?'text-black':'text-white'}">DAY ${d.id}</div></button>`;
+            return `<button onclick="window.appActions.setActiveDay(${d.id})" class="snap-start tap-feedback nav-pill px-5 py-4 min-w-[100px] transition-all relative ${activeDay===d.id?'active-day shadow-lg':'bg-white/5'} ${activeDay!==d.id&&(getTodayId()===d.id&&!isDayIncomplete(d)?'gold-corners':(isDayIncomplete(d)?'border border-red-500/50 shadow-[0_0_10px_rgba(239,68,68,0.3)] animate-pulse':'border border-white/5'))}">${checkHTML}<div class="text-[8px] font-bold uppercase ${activeDay===d.id?'text-black/60':(isDayIncomplete(d)?'text-red-400':'text-[#d4af37]')} mb-1">${esc(tDay(d.day))}</div><div class="font-black text-[14px] uppercase tracking-tighter ${activeDay===d.id?'text-black':'text-white'}">${t('DAY {n}', { n: d.id })}</div></button>`;
         }).join('');
         renderSidePanel();
         
@@ -481,7 +762,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             const isDone = plan > 0 && comp >= plan;
             const clr = isDone ? 'bg-[#22c55e]' : (comp > 0 ? 'bg-[#d4af37]' : 'bg-slate-500');
 
-            const exTags = Object.keys(g.ex).length > 0 ? `<div class="flex flex-wrap gap-2 mt-4">` + Object.keys(g.ex).map(eName => `<span class="bg-black/40 rounded-lg px-2 py-1.5 text-[10px] font-bold text-slate-300 flex items-center gap-1.5">${esc(eName)} <span class="text-white">${g.ex[eName]}s</span></span>`).join('') + `</div>` : `<div class="text-[10px] text-slate-500 italic mt-3">No exercises scheduled.</div>`;
+            const exTags = Object.keys(g.ex).length > 0 ? `<div class="flex flex-wrap gap-2 mt-4">` + Object.keys(g.ex).map(eName => `<span class="bg-black/40 rounded-lg px-2 py-1.5 text-[10px] font-bold text-slate-300 flex items-center gap-1.5">${esc(eName)} <span class="text-white" dir="ltr">${g.ex[eName]}×</span></span>`).join('') + `</div>` : `<div class="text-[10px] text-slate-500 italic mt-3">${t('No exercises scheduled.')}</div>`;
 
             return `<div class="mb-2 bg-white/5 rounded-2xl overflow-hidden transition-all duration-300 border border-white/5">
                 <button onclick="document.getElementById('det-${key}').classList.toggle('hidden'); document.getElementById('arr-${key}').classList.toggle('rotate-180')" class="w-full text-left p-4 tap-feedback outline-none flex justify-between items-center group">
@@ -489,19 +770,19 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                         <div class="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center border border-white/5 shrink-0">
                             <i data-lucide="activity" class="w-4 h-4 ${isDone ? 'text-[#22c55e]' : (comp > 0 ? 'text-[#d4af37]' : 'text-slate-500')}"></i>
                         </div>
-                        <span class="text-[14px] font-black text-white tracking-wide">${g.l}</span>
+                        <span class="text-[14px] font-black text-white tracking-wide">${esc(tm(g.l))}</span>
                     </div>
                     <div class="flex items-center gap-3 shrink-0">
                         <div class="text-right">
-                            <div class="text-[12px] font-black ${comp > 0 ? 'text-white' : 'text-slate-500'} leading-none">${comp} <span class="text-[8px] text-slate-500">LOGGED</span></div>
-                            <div class="text-[9px] font-bold text-slate-500 mt-1 leading-none">OF ${plan} SETS</div>
+                            <div class="text-[12px] font-black ${comp > 0 ? 'text-white' : 'text-slate-500'} leading-none">${comp} <span class="text-[8px] text-slate-500">${t('LOGGED')}</span></div>
+                            <div class="text-[9px] font-bold text-slate-500 mt-1 leading-none">${t('OF {n} SETS', { n: plan })}</div>
                         </div>
                         <i id="arr-${key}" data-lucide="chevron-down" class="w-4 h-4 text-slate-500 transition-transform duration-300 group-hover:text-white"></i>
                     </div>
                 </button>
                 <div id="det-${key}" class="hidden px-4 pb-4">
                     <div class="flex justify-between items-end mb-2">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Completion</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${t('Completion')}</span>
                         <span class="text-[10px] font-black text-white">${Math.round(pct)}%</span>
                     </div>
                     <div class="w-full bg-black/40 h-2 rounded-full overflow-hidden border border-white/5">
@@ -514,32 +795,32 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
 
         const createActionItem = (item, type) => {
             let badge = '', actionTxt = '';
-            const u = item.unit === 's' ? 'SEC' : 'REPS', us = item.unit;
-            const wBadge = w => w > 0 ? `<span class="block text-[14px] leading-none mb-0.5">${w}</span><span class="text-[7px]">KG</span>` : `<span class="block text-[14px] leading-none mb-0.5">BW</span><span class="text-[7px]">&nbsp;</span>`;
+            const u = item.unit === 's' ? t('SEC') : t('REPS'), us = item.unit;
+            const wBadge = w => w > 0 ? `<span class="block text-[14px] leading-none mb-0.5">${w}</span><span class="text-[7px]">${t('KG')}</span>` : `<span class="block text-[14px] leading-none mb-0.5">${t('BW')}</span><span class="text-[7px]">&nbsp;</span>`;
             if (type === 'up') {
                 badge = `<div class="bg-[#22c55e]/10 text-[#22c55e] py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-[#22c55e]/20 text-center shadow-sm w-[55px]">${wBadge(item.tW)}</div>`;
-                actionTxt = `<span class="text-[#22c55e] shrink-0 whitespace-nowrap"><i data-lucide="arrow-up" class="w-3 h-3 inline -mt-0.5"></i> Target: ${fmtW(item.tW)} × ${item.tR}${us}</span>`;
+                actionTxt = `<span class="text-[#22c55e] shrink-0 whitespace-nowrap"><i data-lucide="arrow-up" class="w-3 h-3 inline -mt-0.5"></i> ${t('Target:')} <span dir="ltr">${fmtW(item.tW)} × ${item.tR}${us}</span></span>`;
             } else if (type === 'build') {
                 badge = `<div class="bg-[#3b82f6]/10 text-[#3b82f6] py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-[#3b82f6]/20 text-center shadow-sm w-[55px]"><span class="block text-[14px] leading-none mb-0.5">${item.tR}</span><span class="text-[7px]">${u}</span></div>`;
-                actionTxt = `<span class="text-[#3b82f6] shrink-0 whitespace-nowrap"><i data-lucide="refresh-cw" class="w-3 h-3 inline -mt-0.5"></i> Target: ${fmtW(item.tW)} × ${item.tR}${us}</span>`;
+                actionTxt = `<span class="text-[#3b82f6] shrink-0 whitespace-nowrap"><i data-lucide="refresh-cw" class="w-3 h-3 inline -mt-0.5"></i> ${t('Target:')} <span dir="ltr">${fmtW(item.tW)} × ${item.tR}${us}</span></span>`;
             } else if (type === 'down') {
                 badge = `<div class="bg-red-500/10 text-red-400 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-red-500/20 text-center shadow-sm w-[55px]">${wBadge(item.tW)}</div>`;
-                actionTxt = `<span class="text-red-400 shrink-0 whitespace-nowrap"><i data-lucide="arrow-down" class="w-3 h-3 inline -mt-0.5"></i> Target: ${fmtW(item.tW)} × ${item.tR}${us}</span>`;
+                actionTxt = `<span class="text-red-400 shrink-0 whitespace-nowrap"><i data-lucide="arrow-down" class="w-3 h-3 inline -mt-0.5"></i> ${t('Target:')} <span dir="ltr">${fmtW(item.tW)} × ${item.tR}${us}</span></span>`;
             }
 
             return `
             <div class="flex items-center justify-between p-3 bg-white/5 border border-white/5 rounded-xl mb-2 last:mb-0 gap-2">
                 <div class="flex-1 min-w-0">
-                    <div class="text-[14px] font-black text-white leading-tight mb-1 truncate w-full">${esc(item.name)}</div>
+                    <div class="ex-name text-[14px] font-black text-white leading-tight mb-1 truncate w-full">${esc(item.name)}</div>
                     <div class="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest truncate w-full">
-                        <span class="text-slate-500 truncate shrink">${esc(item.muscle)}</span>
+                        <span class="text-slate-500 truncate shrink">${esc(tm(item.muscle))}</span>
                         <span class="w-1 h-1 rounded-full bg-slate-700 shrink-0"></span>
                         ${actionTxt}
                     </div>
                 </div>
                 <div class="shrink-0 flex items-center gap-3">
                     <div class="text-right w-[60px]">
-                        <div class="text-[12px] font-black text-slate-300 truncate">${item.w > 0 ? `${item.w}<span class="text-[8px] text-slate-500">KG</span>` : 'BW'}</div>
+                        <div class="text-[12px] font-black text-slate-300 truncate">${item.w > 0 ? `${item.w}<span class="text-[8px] text-slate-500">${t('KG')}</span>` : t('BW')}</div>
                         <div class="text-[10px] font-bold text-slate-400 mt-0.5 truncate" title="${esc(item.sets.join(' / '))}">× ${esc(item.sets.join('/'))}${us}</div>
                     </div>
                     ${badge}
@@ -559,10 +840,10 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                     <span class="text-[13px] font-black uppercase tracking-widest text-white drop-shadow-md">${title}</span>
                 </div>
                 <div class="flex justify-between items-center px-1 mb-2 text-[8px] font-black text-slate-500 uppercase tracking-widest relative z-10">
-                    <span class="pl-1">Exercise</span>
+                    <span class="ps-1">${t('Exercise')}</span>
                     <div class="flex gap-3">
-                        <span class="w-[60px] text-right">Last Log</span>
-                        <span class="w-[55px] text-center">Target</span>
+                        <span class="w-[60px] text-end">${t('Last Log')}</span>
+                        <span class="w-[55px] text-center">${t('Target')}</span>
                     </div>
                 </div>
                 <div class="relative z-10">${arr.map(i => createActionItem(i, type)).join('')}</div>
@@ -570,19 +851,19 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         };
 
         const tabBtn = (id, label) => `<button onclick="window.appState.aTab='${id}';window.appActions.refreshUI()" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest border-b-2 transition-colors tap-feedback ${activeTab===id ? 'border-[#d4af37] text-[#d4af37]' : 'border-transparent text-slate-500 hover:text-white'}">${label}</button>`;
-        const tabsHTML = `<div class="flex gap-2 border-b border-white/5 mb-5 px-1 overflow-x-auto scrollbar-hide pb-1 shrink-0">${tabBtn('action', 'Action Plan')}${tabBtn('hyper', 'Workload Tracking')}</div>`;
+        const tabsHTML = `<div class="flex gap-2 border-b border-white/5 mb-5 px-1 overflow-x-auto scrollbar-hide pb-1 shrink-0">${tabBtn('action', t('Action Plan'))}${tabBtn('hyper', t('Workload Tracking'))}</div>`;
         let contentHTML = '';
 
         if (activeTab === 'action') {
-            const levelUpHTML = renderActionSection(actionLevelUp, 'Ready to Level Up', 'up', 'arrow-up-circle', '#22c55e');
-            const buildHTML = renderActionSection(actionBuild, 'Build Reps', 'build', 'refresh-cw', '#3b82f6');
-            const deloadHTML = renderActionSection(actionDeload, 'Fatigue Warning', 'down', 'alert-triangle', '#ef4444');
+            const levelUpHTML = renderActionSection(actionLevelUp, t('Ready to Level Up'), 'up', 'arrow-up-circle', '#22c55e');
+            const buildHTML = renderActionSection(actionBuild, t('Build Reps'), 'build', 'refresh-cw', '#3b82f6');
+            const deloadHTML = renderActionSection(actionDeload, t('Fatigue Warning'), 'down', 'alert-triangle', '#ef4444');
 
             contentHTML = (levelUpHTML || buildHTML || deloadHTML) ? `${levelUpHTML}${buildHTML}${deloadHTML}` : `
                 <div class="glass-card p-8 text-center border border-white/5">
                     <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="activity" class="w-6 h-6 text-[#d4af37]"></i></div>
-                    <div class="text-[14px] font-black text-white uppercase tracking-wider mb-2">Action Plan Empty</div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed font-medium">Complete a workout and log your sets. The app will analyze your performance and generate smart weight recommendations here.</p>
+                    <div class="text-[14px] font-black text-white uppercase tracking-wider mb-2">${t('Action Plan Empty')}</div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed font-medium">${t('Complete a workout and log your sets. The app will analyze your performance and generate smart weight recommendations here.')}</p>
                 </div>`;
         } 
         else if (activeTab === 'hyper') {
@@ -593,7 +874,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 <div class="glass-card p-4 sm:p-6 mb-4">
                     <div class="flex items-center mb-6 pb-4 border-b border-white/5 pl-1">
                         <i data-lucide="activity" class="w-4 h-4 text-[#d4af37] mr-2"></i>
-                        <span class="text-[14px] font-black uppercase tracking-[3px] text-white mt-0.5">Workload Tracking</span>
+                        <span class="text-[14px] font-black uppercase tracking-[3px] text-white mt-0.5">${t('Workload Tracking')}</span>
                     </div>
                     <div class="flex flex-col">
                         ${activeKeys.map(k => createAccordionBar(k, pG[k])).join('')}
@@ -602,8 +883,8 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 ${activeKeys.length === 0 ? `
                 <div class="glass-card p-8 text-center border border-white/5 mt-4">
                     <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="layers" class="w-6 h-6 text-[#d4af37]"></i></div>
-                    <div class="text-[14px] font-black text-white uppercase tracking-wider mb-2">No Volume Detected</div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed font-medium">Build a routine with exercises to see your weekly workload goals.</p>
+                    <div class="text-[14px] font-black text-white uppercase tracking-wider mb-2">${t('No Volume Detected')}</div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed font-medium">${t('Build a routine with exercises to see your weekly workload goals.')}</p>
                 </div>` : ''}`;
         }
 
@@ -615,9 +896,9 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         const r = getReadinessToday();
         if (r) {
             const L = {
-                high:   { c: '#22c55e', t: 'Push Day',   i: 'zap',      d: 'Well recovered. Go for your targets.' },
-                normal: { c: '#d4af37', t: 'Normal Day', i: 'activity', d: 'Follow your targets as planned.' },
-                low:    { c: '#ef4444', t: 'Easy Day',   i: 'moon',     d: 'Low recovery: no weight increases today. Keep your weight, aim for the bottom of the range and stop 2 reps before failure.' }
+                high:   { c: '#22c55e', t: t('Push Day'),   i: 'zap',      d: t('Well recovered. Go for your targets.') },
+                normal: { c: '#d4af37', t: t('Normal Day'), i: 'activity', d: t('Follow your targets as planned.') },
+                low:    { c: '#ef4444', t: t('Easy Day'),   i: 'moon',     d: t('Low recovery: no weight increases today. Keep your weight, aim for the bottom of the range and stop 2 reps before failure.') }
             }[r.level];
             return `<div class="glass-card p-4 mb-4 flex items-center gap-3 border" style="border-color:${L.c}55">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:${L.c}1a;color:${L.c}"><i data-lucide="${L.i}" class="w-5 h-5"></i></div>
@@ -625,21 +906,21 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                     <div class="text-[12px] font-black uppercase tracking-widest" style="color:${L.c}">${L.t} <span class="text-slate-500">• ${r.score}/6</span></div>
                     <div class="text-[10px] font-bold text-slate-400 leading-snug mt-0.5">${L.d}</div>
                 </div>
-                <button onclick="window.appActions.resetCheckIn()" class="text-slate-500 hover:text-white p-2 bg-white/5 rounded-lg tap-feedback shrink-0" aria-label="Change check-in"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                <button onclick="window.appActions.resetCheckIn()" class="text-slate-500 hover:text-white p-2 bg-white/5 rounded-lg tap-feedback shrink-0" aria-label="${esc(t('Change check-in'))}"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
             </div>`;
         }
         if (window.appState.ciSkipped === dateKey()) return '';
         const draft = window.appState.ciDraft || {};
         const row = (key, label, opts) => `<div class="flex items-center justify-between gap-2 mt-3">
-            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest w-[70px] shrink-0">${label}</span>
-            <div class="flex gap-1.5 flex-1">${opts.map((o, val) => `<button onclick="window.appActions.setCheckIn('${key}', ${val})" class="flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider tap-feedback border ${draft[key] === val ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-black/40 text-slate-300 border-white/10'}">${o}</button>`).join('')}</div>
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest w-[70px] shrink-0">${t(label)}</span>
+            <div class="flex gap-1.5 flex-1">${opts.map((o, val) => `<button onclick="window.appActions.setCheckIn('${key}', ${val})" class="flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider tap-feedback border ${draft[key] === val ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-black/40 text-slate-300 border-white/10'}">${t(o)}</button>`).join('')}</div>
         </div>`;
         return `<div class="glass-card p-4 mb-4 border border-[#d4af37]/30">
             <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4 text-[#d4af37]"></i><span class="text-[12px] font-black uppercase tracking-widest text-white">Daily Check-in</span></div>
-                <button onclick="window.appActions.skipCheckIn()" class="text-[9px] font-bold uppercase tracking-widest text-slate-500 hover:text-white tap-feedback">Skip</button>
+                <div class="flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4 text-[#d4af37]"></i><span class="text-[12px] font-black uppercase tracking-widest text-white">${t('Daily Check-in')}</span></div>
+                <button onclick="window.appActions.skipCheckIn()" class="text-[9px] font-bold uppercase tracking-widest text-slate-500 hover:text-white tap-feedback">${t('Skip')}</button>
             </div>
-            <p class="text-[10px] font-bold text-slate-500 mt-1">3 quick taps to adjust today's targets.</p>
+            <p class="text-[10px] font-bold text-slate-500 mt-1">${t("3 quick taps to adjust today's targets.")}</p>
             ${row('sleep', 'Sleep', ['Poor', 'OK', 'Great'])}
             ${row('soreness', 'Soreness', ['Very', 'A bit', 'Fresh'])}
             ${row('energy', 'Energy', ['Low', 'OK', 'High'])}
@@ -650,23 +931,23 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), isE = window.appState.editMode;
         const allHistory = StorageManager.getHistory();
         
-        let html = `<div class="px-2 mb-4 flex justify-between items-center gap-3 h-10">${isE&&!day.isRest?`<input type="text" value="${esc(day.title)}" onfocus="if(this.value==='New Day')this.value='';" onchange="window.appActions.updateDayTitle(this.value)" class="flex-1 bg-transparent border-b-2 border-[#d4af37]/50 text-2xl font-black uppercase text-[#d4af37] outline-none h-full pb-1 leading-none">`:`<h2 class="flex-1 font-black text-2xl uppercase text-white truncate h-full flex items-end pb-1 border-b-2 border-transparent leading-none">${esc(day.title)}</h2>`}<button onclick="window.appActions.toggleEditMode(event)" class="text-[#d4af37] tap-feedback bg-white/5 rounded-xl border border-white/10 shrink-0 h-10 w-10 flex items-center justify-center"><i data-lucide="${isE?'check':'edit-2'}" class="w-5 h-5"></i></button></div>`;if (isE) {
-            const opts = schedule.filter(d => d.id !== activeDay).map(d => `<option value="${d.id}">Day ${d.id}</option>`).join('');
+        let html = `<div class="px-2 mb-4 flex justify-between items-center gap-3 h-10">${isE&&!day.isRest?`<input type="text" value="${esc(day.title)}" onfocus="if(this.value==='New Day')this.value='';" onchange="window.appActions.updateDayTitle(this.value)" class="flex-1 bg-transparent border-b-2 border-[#d4af37]/50 text-2xl font-black uppercase text-[#d4af37] outline-none h-full pb-1 leading-none">`:`<h2 class="flex-1 font-black text-2xl uppercase text-white truncate h-full flex items-end pb-1 border-b-2 border-transparent leading-none">${esc(t(day.title))}</h2>`}<button onclick="window.appActions.toggleEditMode(event)" class="text-[#d4af37] tap-feedback bg-white/5 rounded-xl border border-white/10 shrink-0 h-10 w-10 flex items-center justify-center"><i data-lucide="${isE?'check':'edit-2'}" class="w-5 h-5"></i></button></div>`;if (isE) {
+            const opts = schedule.filter(d => d.id !== activeDay).map(d => `<option value="${d.id}">${t('Day {n}', { n: d.id })} • ${esc(tDay(d.day))}</option>`).join('');
             html += `
             <div class="px-2 mb-6 grid grid-cols-${day.isRest ? 3 : 4} gap-2">
                 <div class="relative tap-feedback">
-                    <select onchange="if(this.value)window.appActions.applyPreset(this.value);this.value='';" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">Custom Week...</option><option value="PPL">PPL Split (6-Days)</option><option value="UL">Upper/Lower (4-Days)</option><option value="FB">Full Body (3-Days)</option></select>
-                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="zap" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">Template</span></div>
+                    <select onchange="if(this.value)window.appActions.applyPreset(this.value);this.value='';" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">${t('Custom Week...')}</option><option value="PPL">${t('PPL Split (6-Days)')}</option><option value="UL">${t('Upper/Lower (4-Days)')}</option><option value="FB">${t('Full Body (3-Days)')}</option></select>
+                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="zap" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Template')}</span></div>
                 </div>
                 <div class="relative tap-feedback">
-                    <select onchange="window.appActions.updateDayType(this.value)" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="workout" ${!day.isRest ? 'selected' : ''}>Workout</option><option value="active" ${day.isRest && day.recoveryType === 'active' ? 'selected' : ''}>Active Rest</option><option value="complete" ${day.isRest && day.recoveryType === 'complete' ? 'selected' : ''}>Complete Rest</option></select>
-                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="settings-2" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">Mode</span></div>
+                    <select onchange="window.appActions.updateDayType(this.value)" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="workout" ${!day.isRest ? 'selected' : ''}>${t('Workout')}</option><option value="active" ${day.isRest && day.recoveryType === 'active' ? 'selected' : ''}>${t('Active Rest')}</option><option value="complete" ${day.isRest && day.recoveryType === 'complete' ? 'selected' : ''}>${t('Complete Rest')}</option></select>
+                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="settings-2" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Mode')}</span></div>
                 </div>
                 <div class="relative tap-feedback">
-                    <select onchange="if(this.value){window.appActions.swapDay(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">Swap...</option>${opts}</select>
-                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="arrow-left-right" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">Swap</span></div>
+                    <select onchange="if(this.value){window.appActions.swapDay(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">${t('Swap...')}</option>${opts}</select>
+                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="arrow-left-right" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Swap')}</span></div>
                 </div>
-                ${!day.isRest ? `<button onclick="window.appActions.clearDay()" class="w-full glass-card flex flex-col items-center justify-center h-14 rounded-xl text-red-400 border border-red-500/20 bg-red-500/10 z-10 relative tap-feedback"><i data-lucide="trash-2" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">Clear</span></button>` : ''}
+                ${!day.isRest ? `<button onclick="window.appActions.clearDay()" class="w-full glass-card flex flex-col items-center justify-center h-14 rounded-xl text-red-400 border border-red-500/20 bg-red-500/10 z-10 relative tap-feedback"><i data-lucide="trash-2" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Clear')}</span></button>` : ''}
             </div>`;
             
             // GLOBAL SETS & REPS EDITOR
@@ -674,11 +955,11 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 html += `
                 <div class="px-2 mb-4">
                     <div class="glass-card p-4 flex items-center justify-between gap-2 shadow-lg border border-[#d4af37]/30 bg-[#d4af37]/5">
-                        <div class="text-[10px] font-black uppercase text-[#d4af37] tracking-widest flex items-center"><i data-lucide="copy" class="w-3.5 h-3.5 mr-1"></i> Edit All</div>
+                        <div class="text-[10px] font-black uppercase text-[#d4af37] tracking-widest flex items-center"><i data-lucide="copy" class="w-3.5 h-3.5 me-1"></i> ${t('Edit All')}</div>
                         <div class="flex items-center gap-2">
-                            <input type="text" id="global-sets" placeholder="Sets" class="w-14 bg-black/40 text-white text-[14px] font-bold text-center rounded-lg py-2 border border-white/10 outline-none focus:border-[#d4af37]">
-                            <input type="text" id="global-reps" placeholder="Reps" class="w-14 bg-black/40 text-white text-[14px] font-bold text-center rounded-lg py-2 border border-white/10 outline-none focus:border-[#d4af37]">
-                            <button onclick="window.appActions.applyGlobalSetsReps()" class="bg-[#d4af37] text-black px-3 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest tap-feedback shadow-sm">Apply</button>
+                            <input type="text" id="global-sets" placeholder="${t('Sets')}" class="w-[72px] placeholder:text-[11px] bg-black/40 text-white text-[14px] font-bold text-center rounded-lg py-2 border border-white/10 outline-none focus:border-[#d4af37]">
+                            <input type="text" id="global-reps" placeholder="${t('Reps')}" class="w-[72px] placeholder:text-[11px] bg-black/40 text-white text-[14px] font-bold text-center rounded-lg py-2 border border-white/10 outline-none focus:border-[#d4af37]">
+                            <button onclick="window.appActions.applyGlobalSetsReps()" class="bg-[#d4af37] text-black px-3 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest tap-feedback shadow-sm">${t('Apply')}</button>
                         </div>
                     </div>
                 </div>`;
@@ -686,10 +967,10 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         }
         
         if (day.isRest) {
-            if (!isE) html += `<div class="glass-card p-12 text-center border-dashed border-[#d4af37]/20"><div class="text-[#d4af37] flex justify-center mb-4"><i data-lucide="${day.recoveryType==='active'?'footprints':'moon'}" class="w-12 h-12 ${day.recoveryType==='active'?'animate-walk':'animate-pulse-glow'}"></i></div><h3 class="font-black text-xl uppercase mb-4">${day.recoveryType==='active'?'Active Rest':'Complete Rest'}</h3></div>`;
+            if (!isE) html += `<div class="glass-card p-12 text-center border-dashed border-[#d4af37]/20"><div class="text-[#d4af37] flex justify-center mb-4"><i data-lucide="${day.recoveryType==='active'?'footprints':'moon'}" class="w-12 h-12 ${day.recoveryType==='active'?'animate-walk':'animate-pulse-glow'}"></i></div><h3 class="font-black text-xl uppercase mb-4">${day.recoveryType==='active'?t('Active Rest'):t('Complete Rest')}</h3></div>`;
         } else {
             if (!isE && day.exercises.length === 0) {
-                html += `<div class="glass-card p-10 text-center border-dashed border-white/10 mt-4"><div class="flex justify-center mb-4"><i data-lucide="clipboard-edit" class="w-10 h-10 text-slate-500 opacity-50"></i></div><h3 class="font-black text-lg uppercase text-slate-400 tracking-wider mb-2">Empty Day</h3><p class="text-[11px] font-bold text-slate-500 leading-relaxed">Tap the floating edit button to add exercises, apply a preset, or set as a Rest Day.</p></div>`;
+                html += `<div class="glass-card p-10 text-center border-dashed border-white/10 mt-4"><div class="flex justify-center mb-4"><i data-lucide="clipboard-edit" class="w-10 h-10 text-slate-500 opacity-50"></i></div><h3 class="font-black text-lg uppercase text-slate-400 tracking-wider mb-2">${t('Empty Day')}</h3><p class="text-[11px] font-bold text-slate-500 leading-relaxed">${t('Tap the edit button to add exercises, apply a template, or make it a rest day.')}</p></div>`;
             } else {
                 const isTodayDay = activeDay === getTodayId();
                 if (!isE && isTodayDay) html += checkInHTML();
@@ -697,36 +978,17 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 html += `<div id="sortable-list">${day.exercises.map((ex, i) => {
                     const k = getExKey(currentWeekId, activeDay, i, ex.name), v = loggedWeights[k]||'', hT = exerciseOptions.includes(ex.name);
                     if (isE) {
-                        const oList = exerciseListHTML(i, ex.muscle);
-                        const mList = muscleOptions.map(m=>`<button type="button" onclick="window.appActions.selectOption(${i},'muscle',${jsArg(m)})" class="w-full text-left p-3 text-[14px] font-bold active:bg-[#d4af37]/20 border-b border-white/5 last:border-0">${esc(m)}</button>`).join('');
-                        
-                        // ✨ COMPACT EDIT MODE CARD (MATCHES NORMAL HEIGHT, NO AUTO-SCROLL)
+                        // Compact row: tap it to edit sets/reps, ⇄ to swap, 🗑 to delete (with undo)
                         return `
-                        <div class="glass-card p-4 flex flex-col justify-center relative mb-4" style="z-index:${100-i};">
-                            <div class="flex items-center justify-between mb-3 border-b border-white/10 pb-3 gap-2 w-full">
-                                <div class="handle p-3 -ml-3 -my-2 text-slate-500 flex items-center justify-center cursor-grab active:cursor-grabbing hover:text-white touch-none"><i data-lucide="grip-vertical" class="w-6 h-6 pointer-events-none"></i></div>
-                                <div class="relative flex-1">
-                                    <input type="text" id="m-in-${i}" value="${esc(ex.muscle)}" onfocus="if(this.value==='Muscle')this.value='';else this.select(); window.appActions.showList('m-list-${i}');" onblur="setTimeout(()=>{window.appActions.hideList('m-list-${i}');},100)" oninput="window.appActions.silentUpdateEx(${i},'muscle',this.value);window.appActions.filterList('m-list-${i}',this.value)" class="bg-transparent text-[#d4af37] text-[12px] font-black uppercase tracking-widest outline-none w-full" placeholder="Muscle">
-                                    <div id="m-list-${i}" class="dropdown-list hidden absolute top-full left-0 w-full glass-card border border-white/10 rounded-xl mt-2 max-h-40 overflow-y-auto p-1">${mList}</div>
-                                </div>
-                                <button onclick="window.appActions.deleteEx(${i})" class="text-red-400 p-2 bg-red-500/10 rounded-xl border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="relative">
-                                    <input type="text" id="e-in-${i}" value="${esc(ex.name)}" onfocus="if(this.value==='New Exercise')this.value='';else this.select(); window.appActions.showList('e-list-${i}');" onblur="setTimeout(()=>{window.appActions.hideList('e-list-${i}');},100)" oninput="window.appActions.silentUpdateEx(${i},'name',this.value);window.appActions.filterList('e-list-${i}',this.value)" class="bg-black/40 text-[16px] font-bold px-4 py-2.5 rounded-xl outline-none w-full border border-white/5" placeholder="Exercise Name">
-                                    <div id="e-list-${i}" class="dropdown-list hidden absolute top-full left-0 w-full glass-card border border-white/10 rounded-xl mt-1 max-h-48 overflow-y-auto p-1">${oList}</div>
-                                </div>
-                                <div class="flex gap-2">
-                                    <div class="flex-1 relative">
-                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-500 uppercase tracking-widest pointer-events-none">Sets</span>
-                                        <input type="text" value="${esc(ex.sets)}" onfocus="this.select();" onchange="window.appActions.silentUpdateEx(${i},'sets',this.value)" class="bg-black/40 text-[15px] font-bold pl-12 pr-3 py-2.5 rounded-xl outline-none w-full border border-white/5 text-center">
-                                    </div>
-                                    <div class="flex-1 relative">
-                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-500 uppercase tracking-widest pointer-events-none">Reps</span>
-                                        <input type="text" value="${esc(ex.reps)}" onfocus="this.select();" onchange="window.appActions.silentUpdateEx(${i},'reps',this.value)" class="bg-black/40 text-[15px] font-bold pl-12 pr-3 py-2.5 rounded-xl outline-none w-full border border-white/5 text-center">
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="glass-card p-3 flex items-center gap-2 relative mb-3">
+                            <div class="handle p-2 -ms-1 text-slate-500 flex items-center justify-center cursor-grab active:cursor-grabbing hover:text-white touch-none"><i data-lucide="grip-vertical" class="w-5 h-5 pointer-events-none"></i></div>
+                            <button onclick="window.appActions.openExEdit(${i})" class="flex-1 min-w-0 text-start tap-feedback">
+                                <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest truncate">${esc(tm(ex.muscle))}</div>
+                                <div class="ex-name text-[15px] font-black text-white leading-tight line-clamp-2">${esc(ex.name)}</div>
+                            </button>
+                            <button onclick="window.appActions.openExEdit(${i})" class="shrink-0 bg-black/40 border border-white/10 rounded-lg px-2.5 py-1.5 text-[12px] font-black text-white tap-feedback" dir="ltr">${esc(ex.sets)} × ${esc(ex.reps)}</button>
+                            <button onclick="window.appActions.openPicker('replace', ${i})" class="shrink-0 p-2 text-slate-400 bg-white/5 rounded-lg border border-white/10 tap-feedback" aria-label="${esc(t('Swap exercise'))}"><i data-lucide="arrow-left-right" class="w-4 h-4"></i></button>
+                            <button onclick="window.appActions.deleteEx(${i})" class="shrink-0 p-2 text-red-400 bg-red-500/10 rounded-lg border border-red-500/20 tap-feedback" aria-label="${esc(t('Delete'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>`;
                     } else {
                         const hA = allHistory[k]||[];
@@ -742,22 +1004,22 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                         if(prog){
                             if(!v && !(loggedReps[k]||'')){ 
                                 if(easyDay && prog.type !== 'down') {
-                                    dH=`<div class="text-[9px] font-black text-slate-300 bg-white/5 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-sm flex items-center gap-1"><i data-lucide="moon" class="w-3 h-3"></i> Easy: ${fmtW(prog.w)} × ${prog.minR}${us}</div>`;
+                                    dH=`<div class="text-[9px] font-black text-slate-300 bg-white/5 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-sm flex items-center gap-1"><i data-lucide="moon" class="w-3 h-3"></i> ${t('Easy:')} <span dir="ltr">${fmtW(prog.w)} × ${prog.minR}${us}</span></div>`;
                                 } else if(prog.type === 'up') {
-                                    dH=`<div class="text-[9px] font-black text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md border border-[#22c55e]/20 uppercase tracking-widest shadow-sm shadow-[#22c55e]/10 flex items-center gap-1"><i data-lucide="arrow-up-circle" class="w-3 h-3"></i> Level Up: ${fmtW(prog.tW)} × ${prog.tR}${us}</div>`;
+                                    dH=`<div class="text-[9px] font-black text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md border border-[#22c55e]/20 uppercase tracking-widest shadow-sm shadow-[#22c55e]/10 flex items-center gap-1"><i data-lucide="arrow-up-circle" class="w-3 h-3"></i> ${t('Level Up:')} <span dir="ltr">${fmtW(prog.tW)} × ${prog.tR}${us}</span></div>`;
                                 } else if(prog.type === 'down') {
-                                    dH=`<div class="text-[9px] font-black text-red-400 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 uppercase tracking-widest shadow-sm flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Deload: ${fmtW(prog.tW)} × ${prog.tR}${us}</div>`;
+                                    dH=`<div class="text-[9px] font-black text-red-400 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 uppercase tracking-widest shadow-sm flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> ${t('Deload:')} <span dir="ltr">${fmtW(prog.tW)} × ${prog.tR}${us}</span></div>`;
                                 } else {
-                                    dH=`<div class="text-[9px] font-black text-[#d4af37] bg-[#d4af37]/10 px-2 py-1 rounded-md border border-[#d4af37]/20 uppercase tracking-widest shadow-sm shadow-[#d4af37]/10 flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Target: ${fmtW(prog.tW)} × ${prog.tR}${us}</div>`;
+                                    dH=`<div class="text-[9px] font-black text-[#d4af37] bg-[#d4af37]/10 px-2 py-1 rounded-md border border-[#d4af37]/20 uppercase tracking-widest shadow-sm shadow-[#d4af37]/10 flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3 h-3"></i> ${t('Target:')} <span dir="ltr">${fmtW(prog.tW)} × ${prog.tR}${us}</span></div>`;
                                 }
                             } else {
                                 const df=(parseFloat(v||0)-lK).toFixed(1);
-                                dH=df>0?`<div class="text-[9px] font-black text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md border border-[#22c55e]/20 uppercase tracking-widest shadow-sm">+${df} kg</div>`:df<0?`<div class="text-[9px] font-black text-red-500 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 uppercase tracking-widest shadow-sm">${df} kg</div>`:`<div class="text-[9px] font-black text-slate-400 bg-white/5 px-2 py-1 rounded-md border border-white/5 uppercase tracking-widest shadow-sm">Match</div>`;
+                                dH=df>0?`<div class="text-[9px] font-black text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md border border-[#22c55e]/20 uppercase tracking-widest shadow-sm">+${df} kg</div>`:df<0?`<div class="text-[9px] font-black text-red-500 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 uppercase tracking-widest shadow-sm">${df} kg</div>`:`<div class="text-[9px] font-black text-slate-400 bg-white/5 px-2 py-1 rounded-md border border-white/5 uppercase tracking-widest shadow-sm">${t('Match')}</div>`;
                             }
                         } else {
                             // No usable session yet: fall back to the last weight you entered
                             const lastW = hA.length ? parseFloat(hA[hA.length-1].w) : 0;
-                            if (lastW > 0 && !v) dH=`<div class="text-[9px] font-black text-slate-400 bg-black/40 px-2 py-1 rounded-md border border-white/5 uppercase tracking-widest shadow-sm">Target: ${lastW+weightStep(lastW)}kg</div>`;
+                            if (lastW > 0 && !v) dH=`<div class="text-[9px] font-black text-slate-400 bg-black/40 px-2 py-1 rounded-md border border-white/5 uppercase tracking-widest shadow-sm">${t('Target:')} <span dir="ltr">${lastW+weightStep(lastW)}kg</span></div>`;
                         }
                         
                         // ✨ FLAWLESS NORMAL MODE CARD
@@ -770,28 +1032,28 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                             <!-- TOP SECTION: HEADER WITH SEPARATOR -->
                             <div class="border-b border-white/10 pb-3 mb-3 w-full pr-10 relative">
                                 <div class="flex items-center justify-between mb-2 w-full">
-                                    <span class="text-[10px] font-black text-[#d4af37] uppercase tracking-[3px] opacity-80">${esc(ex.muscle)}</span>
+                                    <span class="text-[10px] font-black text-[#d4af37] uppercase tracking-[3px] opacity-80">${esc(tm(ex.muscle))}</span>
                                     <div id="delta-${esc(k)}">${dH}</div>
                                 </div>
-                                <h3 class="text-[18px] font-black tracking-tight leading-tight selectable-text text-white">${esc(ex.name)}</h3>
+                                <h3 class="ex-name text-[18px] font-black tracking-tight leading-tight selectable-text text-white">${esc(ex.name)}</h3>
                             </div>
                             
                             <!-- BOTTOM SECTION: UNIFIED CONTROL BAR -->
                             <div class="bg-black/30 rounded-2xl p-3 flex items-center justify-between border border-white/5 shadow-inner w-full mb-3">
                                 <div class="flex flex-col justify-between h-full py-1">
                                     <div>
-                                        <div class="text-[12px] font-black text-white uppercase tracking-wider">${esc(ex.sets)} <span class="text-[8px] text-slate-500">SETS</span></div>
-                                        <div class="text-[12px] font-black text-white uppercase tracking-wider mt-0.5">${esc(ex.reps)} <span class="text-[8px] text-slate-500">REPS</span></div>
+                                        <div class="text-[12px] font-black text-white uppercase tracking-wider">${esc(ex.sets)} <span class="text-[8px] text-slate-500">${t('SETS')}</span></div>
+                                        <div class="text-[12px] font-black text-white uppercase tracking-wider mt-0.5"><span dir="ltr">${esc(ex.reps)}</span> <span class="text-[8px] text-slate-500">${t('REPS')}</span></div>
                                     </div>
                                     
                                     <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="mt-3 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-[#d4af37] tap-feedback transition-colors bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/5 w-fit">
-                                        <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> History
+                                        <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> ${t('History')}
                                     </button>
                                 </div>
                                 
                                 <div class="flex flex-col gap-2 w-[110px] shrink-0">
                                     <div class="relative w-full">
-                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-slate-500 uppercase tracking-widest pointer-events-none">Load</span>
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-slate-500 uppercase tracking-widest pointer-events-none">${t('Load')}</span>
                                         <input type="number" inputmode="decimal" id="input-${esc(k)}" value="${esc(v)}" 
                                             onfocus="this.select(); document.getElementById('scroll-buffer').style.height='50vh'; setTimeout(()=>this.closest('.glass-card').scrollIntoView({behavior:'smooth',block:'center'}), 200);" 
                                             oninput="window.appActions.handleTyping(${jsArg(k)}, 'load', this.value)" 
@@ -803,16 +1065,16 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                             
                             <div class="flex gap-2 w-full mt-1">
                                 <button onclick="window.appActions.openActiveWorkout(${jsArg(k)}, ${jsArg(ex.name)}, ${parseInt(ex.sets) || 1}, ${jsArg(ex.reps)}, false)" class="flex-1 bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] py-3.5 rounded-xl text-[11px] font-black uppercase tracking-widest tap-feedback shadow-sm flex justify-center items-center gap-1.5 transition-all active:scale-[0.98]">
-                                    <i data-lucide="play-circle" class="w-4 h-4"></i> Start Focus
+                                    <i data-lucide="play-circle" class="w-4 h-4"></i> ${t('Start Focus')}
                                 </button>
                                 <button onclick="window.appActions.openActiveWorkout(${jsArg(k)}, ${jsArg(ex.name)}, ${parseInt(ex.sets) || 1}, ${jsArg(ex.reps)}, true)" class="flex-1 bg-white/5 border border-white/10 text-slate-300 py-3.5 rounded-xl text-[11px] font-black uppercase tracking-widest tap-feedback flex justify-center items-center gap-1.5 transition-all active:scale-[0.98]">
-                                    <i data-lucide="edit-3" class="w-4 h-4"></i> Log Sets
+                                    <i data-lucide="edit-3" class="w-4 h-4"></i> ${t('Log Sets')}
                                 </button>
                             </div>
                         </div>`;
                     }
                 }).join('')}</div>`;
-                if(isE) html += `<div class="px-2 mt-4 mb-10 flex gap-2"><button onclick="window.appActions.addEx()" class="flex-1 glass-card p-4 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[12px] tap-feedback border-dashed border-[#d4af37]/40 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> Add Exercise</button></div>`;
+                if(isE) html += `<div class="px-2 mt-4 mb-10 flex gap-2"><button onclick="window.appActions.openPicker('add')" class="flex-1 glass-card p-4 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[12px] tap-feedback border-dashed border-[#d4af37]/40 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button></div>`;
             }
         }
         
@@ -832,16 +1094,17 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
 
     // ⚙️ 5. GLOBAL ACTIONS
     window.appActions = {
-        showToast: (m, t='success') => {
-            const c = document.getElementById('toast-container'); c.innerHTML=''; const d=document.createElement('div'), iS=t==='success', cS=iS?'text-[#22c55e]':'text-red-400', bS=iS?'bg-[#22c55e]/10 border-[#22c55e]/20':'bg-red-500/10 border-red-500/20';
-            d.className=`glass-card p-4 flex items-center gap-3 border shadow-2xl transform translate-y-full opacity-0 transition-all duration-500 mt-2 ${bS} backdrop-blur-3xl`;
-            d.innerHTML=`<i data-lucide="${iS?'check-circle':'alert-circle'}" class="w-5 h-5 shrink-0 ${cS}"></i><span class="text-[12px] font-black uppercase tracking-widest">${esc(m)}</span>`;
+        showToast: (m, type='success', action=null) => {
+            const c = document.getElementById('toast-container'); c.innerHTML=''; const d=document.createElement('div'), iS=type==='success', cS=iS?'text-[#22c55e]':'text-red-400', bS=iS?'bg-[#22c55e]/10 border-[#22c55e]/20':'bg-red-500/10 border-red-500/20';
+            d.className=`glass-card p-4 flex items-center gap-3 border shadow-2xl transform translate-y-full opacity-0 transition-all duration-500 mt-2 ${bS} backdrop-blur-3xl pointer-events-auto`;
+            d.innerHTML=`<i data-lucide="${iS?'check-circle':'alert-circle'}" class="w-5 h-5 shrink-0 ${cS}"></i><span class="text-[12px] font-black uppercase tracking-widest flex-1">${esc(m)}</span>${action ? `<button class="shrink-0 px-3 py-1.5 rounded-lg bg-white/10 text-white text-[11px] font-black uppercase tracking-widest tap-feedback">${esc(action.label)}</button>` : ''}`;
+            if (action) d.querySelector('button').onclick = () => { action.fn(); d.remove(); };
             c.appendChild(d); if(window.lucide) window.lucide.createIcons({root:d}); void d.offsetWidth; d.classList.remove('translate-y-full','opacity-0');
-            setTimeout(()=>{if(c.contains(d)){d.classList.add('opacity-0','translate-y-full');setTimeout(()=>{if(c.contains(d))d.remove();},500);}},3500);
+            setTimeout(()=>{if(c.contains(d)){d.classList.add('opacity-0','translate-y-full');setTimeout(()=>{if(c.contains(d))d.remove();},500);}}, action ? 5000 : 3500);
         },
-        showConfirm: (t, m, ok, dng=false) => {
+        showConfirm: (title, m, ok, dng=false) => {
             const y = document.getElementById('confirm-yes-btn');
-            document.getElementById('confirm-title').innerText=t; document.getElementById('confirm-message').innerText=m;
+            document.getElementById('confirm-title').innerText=title; document.getElementById('confirm-message').innerText=m;
             y.className=`flex-1 glass-card py-3.5 text-[11px] font-black uppercase tracking-widest shadow-lg ${dng?'text-white bg-red-500/80 border-red-500/50 shadow-red-500/20':'text-black bg-[#d4af37] border-none shadow-[#d4af37]/20'}`;
             document.getElementById('confirm-icon').innerHTML=`<i data-lucide="${dng?'alert-octagon':'alert-triangle'}" class="w-6 h-6 ${dng?'text-red-500':'text-[#d4af37]'}"></i>`;
             if(window.lucide) window.lucide.createIcons({root: document.getElementById('confirm-icon')});
@@ -860,7 +1123,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 writeItem(READY_KEY, JSON.stringify(all));
                 window.appState.ciDraft = null;
                 const r = getReadinessToday();
-                window.appActions.showToast(r.level === 'low' ? 'Easy day: targets adjusted' : r.level === 'high' ? 'Push day: go get it!' : 'Check-in saved', 'success');
+                window.appActions.showToast(t(r.level === 'low' ? 'Easy day: targets adjusted' : r.level === 'high' ? 'Push day: go get it!' : 'Check-in saved'), 'success');
             }
             renderWorkout();
         },
@@ -872,51 +1135,19 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             window.appState.ciSkipped = null;
             renderWorkout();
         },
+        setLanguage: v => {
+            if (v !== 'ar' && v !== 'en') return;
+            writeItem(LANG_KEY, v);
+            location.reload();
+        },
         skipCheckIn: () => { window.appState.ciSkipped = dateKey(); renderWorkout(); },
         refreshUI: () => window.appState.currentView==='workout'?renderWorkout():renderAnalytics(),
-        showList: id => { 
-            document.querySelectorAll('.dropdown-list').forEach(e=>{if(e.id!==id){e.classList.add('hidden');const c=e.closest('.glass-card');if(c)c.style.zIndex='';}}); 
-            const l=document.getElementById(id);
-            if(l){
-                l.classList.remove('hidden');
-                const c=l.closest('.glass-card');
-                if(c)c.style.zIndex='999';
-                
-                // Expand the buffer to make room for the keyboard and list
-                const buffer = document.getElementById('scroll-buffer');
-                if (buffer) buffer.style.height = '65vh';
-                
-                // Force the card to scroll up into view
-                setTimeout(() => {
-                    if(c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 150);
-            } 
-        },
-        hideList: id => { 
-            const e=document.getElementById(id); 
-            if(e){
-                e.classList.add('hidden');
-                const c=e.closest('.glass-card');
-                if(c)c.style.zIndex='';
-            } 
-            
-            // Only shrink the buffer if no other lists are open, preventing screen jumping
-            setTimeout(() => {
-                const anyOpen = document.querySelector('.dropdown-list:not(.hidden)');
-                if (!anyOpen) {
-                    const buffer = document.getElementById('scroll-buffer');
-                    if (buffer) buffer.style.height = '0px';
-                }
-            }, 150);
-        },filterList: (id, val) => { const l=document.getElementById(id); if(!l)return; const rx=new RegExp('\\b'+val.trim().replace(/[-[\]{}()*+?.,\\^$|#\s]/g,'\\$&'),'i'); Array.from(l.children).forEach(i=>i.style.display=val.trim()===''||rx.test(i.innerText)?'block':'none'); },
-        silentUpdateEx: (idx, f, v) => { const d=getActiveSchedule().find(d=>d.id===activeDay); d.exercises[idx][f]=v; StorageManager.setPlan(appData); if(f==='muscle'){const l=document.getElementById(`e-list-${idx}`);if(l)l.innerHTML=exerciseListHTML(idx, v);} },
-        selectOption: (idx, f, v) => { const d=getActiveSchedule().find(d=>d.id===activeDay); d.exercises[idx][f]=v; const inEl=document.getElementById(`${f==='muscle'?'m':'e'}-in-${idx}`); if(inEl)inEl.value=v; window.appActions.hideList(`${f==='muscle'?'m':'e'}-list-${idx}`); if(f==='muscle'){d.exercises[idx].name=''; const n=document.getElementById(`e-in-${idx}`);if(n)n.value=''; const l=document.getElementById(`e-list-${idx}`);if(l)l.innerHTML=exerciseListHTML(idx, v);} StorageManager.setPlan(appData); },
-        openHistoryModal: (k, t) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=t; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); },
+        openHistoryModal: (k, title) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=title; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); },
         closeHistoryModal: () => { const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex');},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
-        refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-500 text-[12px] font-bold uppercase tracking-widest">No records</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); const ms=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`WEEK ${wN} • ${cWS.getDate()} ${ms[cWS.getMonth()]} - ${cWE.getDate()} ${ms[cWE.getMonth()]}`; if(gN!==cG){html+=`<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-[2px] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
-         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : 'BW'}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[10px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[10px] text-slate-400">KG</span>`:'BW'} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">${h.u==='s'?'SEC':'REPS'}</span></span>`:''}`}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(h.d)} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=html; if(window.lucide) window.lucide.createIcons({root:c}); },
-        deleteHistoryRecord: (k, i) => window.appActions.showConfirm("Delete Record", "Remove this record?", () => { let h=StorageManager.getHistory(); if(h[k]){h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast("Deleted","error");} }, true),
+        refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-500 text-[12px] font-bold uppercase tracking-widest">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('WEEK {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-[2px] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
+         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[10px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[10px] text-slate-400">${t('KG')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">${h.u==='s'?t('SEC'):t('REPS')}</span></span>`:''}`}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=html; if(window.lucide) window.lucide.createIcons({root:c}); },
+        deleteHistoryRecord: (k, i) => window.appActions.showConfirm(t("Delete Record"), t("Remove this record?"), () => { let h=StorageManager.getHistory(); if(h[k]){h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast(t("Deleted"),"error");} }, true),
         handleTyping: (k, type, v) => { 
             if (type === 'load') { loggedWeights[k] = v; StorageManager.set(loggedWeights); } 
             else { loggedReps[k] = v; StorageManager.setReps(loggedReps); }
@@ -925,13 +1156,13 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         openActiveWorkout: (k, name, sets, repsStr, isQuickLog = false) => {
             const w = loggedWeights[k];
             // Bodyweight exercises (push-ups, planks...) can be logged without a load; "0" also means bodyweight
-            if((w === undefined || String(w).trim() === '') && !isBodyweight(name)) return window.appActions.showToast("Enter Load KG first (0 = bodyweight)", "error");
+            if((w === undefined || String(w).trim() === '') && !isBodyweight(name)) return window.appActions.showToast(t("Enter Load KG first (0 = bodyweight)"), "error");
             const timed = isTimed(repsStr);
             
             window.appState.awKey = k;
             window.appState.awTimed = timed;
             document.getElementById('aw-title').innerText = name;
-            document.getElementById('aw-load').innerText = parseFloat(w) > 0 ? `${w} KG` : 'BODYWEIGHT';
+            document.getElementById('aw-load').innerText = parseFloat(w) > 0 ? `${w} ${t('KG')}` : t('BODYWEIGHT');
             
             const numSets = isNaN(sets) || sets < 1 ? 1 : sets;
             
@@ -941,16 +1172,16 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             
             const startW = parseFloat(w) > 0 ? w : '';
             const rpeOpts = `<option value="">—</option>${[6,7,8,9,10].map(x => `<option value="${x}">${x}</option>`).join('')}`;
-            let html = `<p class="text-[10px] font-bold text-slate-500 leading-relaxed px-1">KG can be changed per set. RPE (optional) = how hard it was: 10 = no reps left, 9 = 1 left, 8 = 2 left.</p>`;
+            let html = `<p class="text-[10px] font-bold text-slate-500 leading-relaxed px-1">${t('KG can be changed per set. RPE (optional) = how hard it was: 10 = no reps left, 9 = 1 left, 8 = 2 left.')}</p>`;
             for(let i=1; i<=remainingSets; i++) {
                 html += `
                 <div id="aw-row-${i}" class="bg-white/5 p-4 rounded-2xl border border-white/5 transition-colors">
                     <div class="flex items-center justify-between">
                         <div>
-                            <div class="text-[14px] font-black text-white uppercase tracking-wider">Set ${setsLoggedToday + i}</div>
-                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Target: ${esc(repsStr)}</div>
+                            <div class="text-[14px] font-black text-white uppercase tracking-wider">${t('Set {n}', { n: setsLoggedToday + i })}</div>
+                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">${t('Target:')} <span dir="ltr">${esc(repsStr)}</span></div>
                         </div>
-                        <div class="flex items-center bg-black/60 border border-white/10 rounded-xl overflow-hidden focus-within:border-[#d4af37]">
+                        <div dir="ltr" class="flex items-center bg-black/60 border border-white/10 rounded-xl overflow-hidden focus-within:border-[#d4af37]">
                             <button type="button" onclick="const i=this.nextElementSibling; i.value=Math.max(0,(parseInt(i.value)||0)-${timed ? 5 : 1})" class="w-12 h-12 text-slate-400 font-black text-2xl flex items-center justify-center bg-white/5 active:bg-white/10 border-r border-white/5">-</button>
                             <input type="number" id="aw-rep-${i}" inputmode="numeric" class="w-16 h-12 bg-transparent text-[#d4af37] font-black text-[18px] text-center outline-none" placeholder="${timed ? 'sec' : '0'}">
                             <button type="button" onclick="const i=this.previousElementSibling; i.value=(parseInt(i.value)||0)+${timed ? 5 : 1}" class="w-12 h-12 text-slate-400 font-black text-2xl flex items-center justify-center bg-white/5 active:bg-white/10 border-l border-white/5">+</button>
@@ -958,14 +1189,14 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                     </div>
                     <div class="flex items-center gap-2 mt-3">
                         <label class="flex items-center gap-1.5 bg-black/40 border border-white/10 rounded-lg px-2 h-9 flex-1">
-                            <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">KG</span>
-                            <input type="number" id="aw-w-${i}" inputmode="decimal" step="0.5" value="${esc(startW)}" placeholder="BW" class="w-full bg-transparent text-white font-black text-[14px] text-right outline-none">
+                            <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">${t('KG')}</span>
+                            <input type="number" id="aw-w-${i}" inputmode="decimal" step="0.5" value="${esc(startW)}" placeholder="${t('BW')}" class="w-full bg-transparent text-white font-black text-[14px] text-right outline-none">
                         </label>
                         <label class="flex items-center gap-1.5 bg-black/40 border border-white/10 rounded-lg px-2 h-9">
                             <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">RPE</span>
                             <select id="aw-rpe-${i}" class="bg-transparent text-white font-black text-[14px] outline-none appearance-none pr-1">${rpeOpts}</select>
                         </label>
-                        ${isQuickLog ? '' : `<button type="button" id="aw-done-${i}" onclick="window.appActions.completeSet(${i})" class="h-9 px-3 rounded-lg bg-[#22c55e]/10 border border-[#22c55e]/30 text-[#22c55e] text-[10px] font-black uppercase tracking-widest tap-feedback flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> Done</button>`}
+                        ${isQuickLog ? '' : `<button type="button" id="aw-done-${i}" onclick="window.appActions.completeSet(${i})" class="h-9 px-3 rounded-lg bg-[#22c55e]/10 border border-[#22c55e]/30 text-[#22c55e] text-[10px] font-black uppercase tracking-widest tap-feedback flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> ${t('Done')}</button>`}
                     </div>
                 </div>`;
             }
@@ -980,24 +1211,24 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             
             if (isQuickLog) {
                 document.getElementById('aw-pulse-dot').className = 'w-2 h-2 rounded-full bg-[#d4af37]';
-                document.getElementById('aw-status-text').innerText = 'Log Mode';
+                document.getElementById('aw-status-text').innerText = t('Log Mode');
                 document.getElementById('aw-status-text').className = 'text-[10px] font-black text-[#d4af37] uppercase tracking-widest';
-                document.getElementById('aw-timer').innerText = "LOG";
+                document.getElementById('aw-timer').innerText = t('LOG');
                 
                 document.getElementById('aw-countdown-container').classList.add('hidden');
                 document.getElementById('aw-sets-container').classList.remove('hidden');
                 btn.classList.remove('opacity-50', 'pointer-events-none');
-                btn.innerText = 'Save Sets';
+                btn.innerText = t('Save Sets');
             } else {
                 document.getElementById('aw-pulse-dot').className = 'w-2 h-2 rounded-full bg-slate-500';
-                document.getElementById('aw-status-text').innerText = 'Get Ready';
+                document.getElementById('aw-status-text').innerText = t('Get Ready');
                 document.getElementById('aw-status-text').className = 'text-[10px] font-black text-slate-400 uppercase tracking-widest';
                 document.getElementById('aw-timer').innerText = "00:00";
                 
                 document.getElementById('aw-countdown-container').classList.remove('hidden');
                 document.getElementById('aw-sets-container').classList.add('hidden');
                 btn.classList.add('opacity-50', 'pointer-events-none');
-                btn.innerText = 'Finish Workout';
+                btn.innerText = t('Finish Workout');
             }
             
             openModal('active-workout-overlay','active-workout-box');
@@ -1015,7 +1246,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 if (countdown > 0) {
                     cdText.innerText = countdown;
                 } else if (countdown === 0) {
-                    cdText.innerText = "GO";
+                    cdText.innerText = t('GO');
                     cdText.className = 'text-8xl font-black text-[#d4af37] scale-110 transition-transform';
                 } else {
                     clearInterval(window.appState.awCountdownInterval);
@@ -1024,7 +1255,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                     btn.classList.remove('opacity-50', 'pointer-events-none');
                     
                     document.getElementById('aw-pulse-dot').className = 'w-2 h-2 rounded-full bg-red-500 animate-pulse';
-                    document.getElementById('aw-status-text').innerText = 'Active Focus';
+                    document.getElementById('aw-status-text').innerText = t('Active Focus');
                     document.getElementById('aw-status-text').className = 'text-[10px] font-black text-red-400 uppercase tracking-widest';
 
                     // Based on the real start time, so it stays correct even if the phone locks
@@ -1041,7 +1272,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         // Marks a set as done (focus mode) and starts the rest timer
         completeSet: i => {
             const inp = document.getElementById(`aw-rep-${i}`);
-            if (!(parseInt(inp && inp.value) > 0)) return window.appActions.showToast(window.appState.awTimed ? "Enter seconds first" : "Enter reps first", "error");
+            if (!(parseInt(inp && inp.value) > 0)) return window.appActions.showToast(t(window.appState.awTimed ? "Enter seconds first" : "Enter reps first"), "error");
             const row = document.getElementById(`aw-row-${i}`), btn = document.getElementById(`aw-done-${i}`);
             if (row) { row.classList.remove('border-white/5'); row.classList.add('border-[#22c55e]/50', 'bg-[#22c55e]/5'); }
             if (btn) { btn.className = 'h-9 px-3 rounded-lg bg-[#22c55e] border border-[#22c55e] text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-1'; }
@@ -1055,12 +1286,12 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             window.appState.awRestEnd = Date.now() + secs * 1000;
             const bar = document.getElementById('aw-rest'), label = document.getElementById('aw-rest-label'), time = document.getElementById('aw-rest-time');
             bar.classList.remove('hidden'); bar.classList.add('flex');
-            label.innerText = 'Rest';
+            label.innerText = t('Rest');
             const tick = () => {
                 const left = Math.ceil((window.appState.awRestEnd - Date.now()) / 1000);
                 if (left > 0) { time.innerText = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`; return; }
                 clearInterval(window.appState.awRestTimer);
-                label.innerText = 'Rest over'; time.innerText = 'GO!';
+                label.innerText = t('Rest over'); time.innerText = t('GO!');
                 if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
                 window.appState.awRestTimer = setTimeout(() => window.appActions.restSkip(true), 4000);
             };
@@ -1074,7 +1305,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             const bar = document.getElementById('aw-rest');
             if (bar) { bar.classList.add('hidden'); bar.classList.remove('flex'); }
         },
-        updateRest: v => { StorageManager.setRestSeconds(v); window.appActions.showToast(`Rest timer: ${v}s`, 'success'); },
+        updateRest: v => { StorageManager.setRestSeconds(v); window.appActions.showToast(t('Rest timer: {v}s', { v }), 'success'); },
         closeActiveWorkout: () => {
             window.appActions.restSkip();
             clearInterval(window.appState.awTimer);
@@ -1097,14 +1328,14 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             const w = completedReps.length ? String(Math.max(...setWeights.map(Number))) : '0';
             
             if(completedReps.length === 0) {
-                return window.appActions.showToast(window.appState.awTimed ? "Enter seconds for at least 1 set" : "Enter reps for at least 1 set", "error");
+                return window.appActions.showToast(t(window.appState.awTimed ? "Enter seconds for at least 1 set" : "Enter reps for at least 1 set"), "error");
             }
             
             let h = StorageManager.getHistory(); if(!h[k]) h[k] = []; 
             const n = new Date();
             
             let timeLogged = document.getElementById('aw-timer').innerText;
-            if (timeLogged === "LOG") timeLogged = "";
+            if (timeLogged === t('LOG')) timeLogged = "";
             
             const entry = {
                 d: formatLogDate(n),   // text date (for display and older app versions)
@@ -1124,7 +1355,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             StorageManager.setHistory(h); 
             
             if(navigator.vibrate) navigator.vibrate([30,50,30]); 
-            window.appActions.showToast(`Workout Completed!`, "success"); 
+            window.appActions.showToast(t('Workout Completed!'), "success"); 
             window.appActions.closeActiveWorkout();
             
             const el = document.getElementById(`input-${k}`); if(el){ el.classList.add('save-glow'); setTimeout(() => el.classList.remove('save-glow'), 400); } 
@@ -1134,7 +1365,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         applyGlobalSetsReps: () => {
             const s = document.getElementById('global-sets').value;
             const r = document.getElementById('global-reps').value;
-            if (!s && !r) return window.appActions.showToast("Enter Sets or Reps", "error");
+            if (!s && !r) return window.appActions.showToast(t("Enter Sets or Reps"), "error");
             const d = getActiveSchedule().find(x => x.id === activeDay);
             d.exercises.forEach(ex => {
                 if(s) ex.sets = s;
@@ -1142,9 +1373,9 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             });
             StorageManager.setPlan(appData);
             renderWorkout();
-            window.appActions.showToast("Updated all exercises", "success");
+            window.appActions.showToast(t("Updated all exercises"), "success");
         },applyPreset: p => {
-            window.appActions.showConfirm("Overwrite Week?", "This will replace your entire 7-day schedule.", () => {
+            window.appActions.showConfirm(t("Overwrite Week?"), t("This will replace your entire 7-day schedule."), () => {
                 const s = getActiveSchedule();
                 const dEx = {
                     "Push": [{muscle:"Chest",name:"Machine Chest Press",sets:"3",reps:"8 - 12"},{muscle:"Upper Chest",name:"Incline Machine Press",sets:"3",reps:"8 - 12"},{muscle:"Shoulders",name:"Machine Shoulder Press",sets:"3",reps:"10 - 12"},{muscle:"Side Delts",name:"Cable Lateral Raise",sets:"3",reps:"12 - 15"},{muscle:"Triceps",name:"Tricep Pushdown",sets:"3",reps:"12 - 15"},{muscle:"Triceps",name:"Overhead Tricep Extension",sets:"3",reps:"12 - 15"}],
@@ -1161,15 +1392,15 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                     'FB': ['FBA','AR','FBB','AR','FBA','CR','CR']
                 };
                 s.forEach((day, i) => {
-                    const t = plans[p][i];
-                    if (t === 'CR') { day.title = 'Complete Rest'; day.isRest = true; day.recoveryType = 'complete'; day.exercises = []; day.savedTitle = ''; }
-                    else if (t === 'AR') { day.title = 'Active Rest'; day.isRest = true; day.recoveryType = 'active'; day.exercises = []; day.savedTitle = ''; }
-                    else { day.title = t==='Upper'?'Upper Body':t==='Lower'?'Lower Body':t==='FBA'?'Full Body A':t==='FBB'?'Full Body B':t; day.isRest = false; day.recoveryType = null; day.exercises = JSON.parse(JSON.stringify(dEx[t])); day.savedTitle = day.title; }
+                    const tp = plans[p][i];
+                    if (tp === 'CR') { day.title = 'Complete Rest'; day.isRest = true; day.recoveryType = 'complete'; day.exercises = []; day.savedTitle = ''; }
+                    else if (tp === 'AR') { day.title = 'Active Rest'; day.isRest = true; day.recoveryType = 'active'; day.exercises = []; day.savedTitle = ''; }
+                    else { day.title = tp==='Upper'?'Upper Body':tp==='Lower'?'Lower Body':tp==='FBA'?'Full Body A':tp==='FBB'?'Full Body B':tp; day.isRest = false; day.recoveryType = null; day.exercises = JSON.parse(JSON.stringify(dEx[tp])); day.savedTitle = day.title; }
                 });
                 StorageManager.setPlan(appData);
                 window.appState.editMode = false;
                 renderNav(); renderWorkout();
-                window.appActions.showToast("Full Week Applied!", "success");
+                window.appActions.showToast(t("Full Week Applied!"), "success");
             }, true);
         },
         toggleEditMode: (e) => { 
@@ -1195,30 +1426,178 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             window.scrollTo(0, windowPos);
             setTimeout(() => window.scrollTo(0, windowPos), 10);
         },
-        updateStartOfWeek: v => { const aD=DAY_NAMES, idx=aD.indexOf(v); if(idx===-1)return; StorageManager.setStartDay(v); appData.weeks.forEach(w=>w.schedule.forEach((d,i)=>d.day=aD[(idx+i)%7])); StorageManager.setPlan(appData); if(StorageManager.getAutoSync()){activeDay=getTodayId();StorageManager.setLastDay(activeDay);} const s=document.getElementById('setting-start-day'); if(s)s.value=v; renderNav(false); renderWorkout(); window.appActions.toggleMenu(); setTimeout(()=>window.appActions.showToast(`Week starts on ${v}`,"success"),300); },
+        updateStartOfWeek: v => { const aD=DAY_NAMES, idx=aD.indexOf(v); if(idx===-1)return; StorageManager.setStartDay(v); appData.weeks.forEach(w=>w.schedule.forEach((d,i)=>d.day=aD[(idx+i)%7])); StorageManager.setPlan(appData); if(StorageManager.getAutoSync()){activeDay=getTodayId();StorageManager.setLastDay(activeDay);} const s=document.getElementById('setting-start-day'); if(s)s.value=v; renderNav(false); renderWorkout(); window.appActions.toggleMenu(); setTimeout(()=>window.appActions.showToast(t('Week starts on {d}', { d: tDay(v) }),"success"),300); },
         swapDay: tId => { const s=getActiveSchedule(), d1=s.find(d=>d.id===activeDay), d2=s.find(d=>d.id===tId); if(!d1||!d2)return; const tT=d1.title, tE=JSON.stringify(d1.exercises), tIR=d1.isRest, tRT=d1.recoveryType, tST=d1.savedTitle; d1.title=d2.title; d1.exercises=JSON.parse(JSON.stringify(d2.exercises||[])); d1.isRest=d2.isRest; d1.recoveryType=d2.recoveryType; d1.savedTitle=d2.savedTitle; d2.title=tT; d2.exercises=JSON.parse(tE||'[]'); d2.isRest=tIR; d2.recoveryType=tRT; d2.savedTitle=tST; StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },
         updateDayTitle: v => { getActiveSchedule().find(d=>d.id===activeDay).title=v.trim()||'New Day'; StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },
-        updateDayType: v => { const d=getActiveSchedule().find(x=>x.id===activeDay); if(v==='workout'){d.isRest=false; d.recoveryType=null; d.title=d.savedTitle||'New Workout'; if(!d.exercises||!d.exercises.length)d.exercises=[{muscle:'Muscle',name:'New Exercise',sets:'3',reps:'10'}];}else{if(!d.isRest)d.savedTitle=d.title; d.isRest=true; d.recoveryType=v; d.title=v==='active'?'Active Rest':'Complete Rest';} window.appState.editMode=true; StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },        deleteEx: i => window.appActions.showConfirm("Delete Exercise", "Remove this exercise?", () => { getActiveSchedule().find(d=>d.id===activeDay).exercises.splice(i,1); StorageManager.setPlan(appData); renderWorkout(); }, true),addEx: () => { const d=getActiveSchedule().find(x=>x.id===activeDay); if(!d.title||d.title.trim().toLowerCase()==='new day'){window.appActions.showToast("Name workout first!","error"); return;} d.exercises.push({muscle:'Muscle',name:'New Exercise',sets:'3',reps:'10'}); StorageManager.setPlan(appData); renderWorkout(); setTimeout(()=>{const l=document.getElementById('sortable-list');if(l&&l.lastElementChild)l.lastElementChild.scrollIntoView({behavior:'smooth',block:'center'});},50); },
-        clearDay: () => window.appActions.showConfirm("Clear Day", "Delete all exercises?", () => { const d=getActiveSchedule().find(x=>x.id===activeDay); d.exercises=[]; d.title=""; StorageManager.setPlan(appData); renderWorkout(); }, true),
-        switchTab: t => { window.appState.currentView=t; window.appState.editMode=false; document.getElementById('tab-workout').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${t==='workout'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('tab-analytics').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${t==='analytics'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('nav-container').style.display=t==='workout'?'flex':'none'; t==='workout'?renderWorkout():renderAnalytics(); },
+        updateDayType: v => { const d=getActiveSchedule().find(x=>x.id===activeDay); if(v==='workout'){d.isRest=false; d.recoveryType=null; d.title=d.savedTitle||'New Workout'; if(!d.exercises)d.exercises=[];}else{if(!d.isRest)d.savedTitle=d.title; d.isRest=true; d.recoveryType=v; d.title=v==='active'?'Active Rest':'Complete Rest';} window.appState.editMode=true; StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },        // Delete straight away, with an Undo button for a few seconds
+        deleteEx: i => {
+            const d = getActiveSchedule().find(x => x.id === activeDay);
+            const removed = d.exercises.splice(i, 1)[0];
+            StorageManager.setPlan(appData); renderWorkout(); renderNav(false);
+            window.appActions.showToast(t('Removed {name}', { name: removed.name }), 'error', { label: t('Undo'), fn: () => {
+                d.exercises.splice(i, 0, removed); StorageManager.setPlan(appData); renderWorkout(); renderNav(false);
+            } });
+        },
+
+        // ---------- Exercise picker ----------
+        // mode 'add': choose several exercises and add them; mode 'replace': swap exercise number idx
+        openPicker: (mode, idx = null) => {
+            const d = getActiveSchedule().find(x => x.id === activeDay);
+            const cur = mode === 'replace' ? d.exercises[idx] : null;
+            window.appState.picker = { mode, idx, muscle: cur && muscleOptions.includes(cur.muscle) ? cur.muscle : 'All', q: '', sel: [] };
+            document.getElementById('picker-title').innerText = mode === 'replace' ? t('Swap {name}', { name: cur.name }) : t('Add exercises');
+            const search = document.getElementById('picker-search'); search.value = '';
+            window.appActions.renderPicker();
+            openSheet('picker-overlay', 'picker-box');
+        },
+        closePicker: () => closeSheet('picker-overlay', 'picker-box'),
+        pickerSearch: v => { window.appState.picker.q = v; window.appActions.renderPicker(false); },
+        pickerMuscle: m => { window.appState.picker.muscle = m; window.appActions.renderPicker(); document.getElementById('picker-list').scrollTop = 0; },
+        renderPicker: (withChips = true) => {
+            const P = window.appState.picker, d = getActiveSchedule().find(x => x.id === activeDay);
+            const inDay = new Set(d.exercises.map(e => e.name));
+            const isSel = (name, muscle) => P.sel.some(x => x.name === name && x.muscle === muscle);
+            if (withChips) {
+                document.getElementById('picker-chips').innerHTML = ['All', ...muscleOptions].map(m =>
+                    `<button onclick="window.appActions.pickerMuscle(${jsArg(m)})" class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-black tap-feedback border ${P.muscle === m ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${esc(m === 'All' ? t('All') : tm(m))}</button>`).join('');
+            }
+            const row = x => {
+                const sel = isSel(x.name, x.muscle), added = inDay.has(x.name);
+                return `<button onclick="window.appActions.pickerTap(${jsArg(x.name)}, ${jsArg(x.muscle)})" class="w-full flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 text-start tap-feedback ${sel ? 'bg-[#d4af37]/10' : ''}">
+                    <span class="min-w-0"><span class="ex-name block text-[14px] font-bold text-white truncate">${esc(x.name)}${x.custom ? ` <span class="text-[9px] text-[#d4af37]">★</span>` : ''}</span><span class="block text-[10px] font-bold text-slate-500">${esc(tm(x.muscle))}${added ? ` • ${esc(t('In this day'))}` : ''}</span></span>
+                    <span class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center border ${sel ? 'bg-[#d4af37] border-[#d4af37] text-black' : 'border-white/20 text-slate-400'}"><i data-lucide="${P.mode === 'replace' ? 'arrow-left-right' : (sel ? 'check' : 'plus')}" class="w-4 h-4"></i></span>
+                </button>`;
+            };
+            const header = txt => `<div class="px-4 pt-4 pb-1 text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(txt)}</div>`;
+            const q = P.q.trim().toLowerCase();
+            let items = catalogue();
+            if (P.muscle !== 'All') items = items.filter(x => x.muscle === P.muscle);
+            let html = '';
+            if (q) {
+                const seen = new Set();
+                const hits = items.filter(x => (x.name.toLowerCase().includes(q) || tm(x.muscle).toLowerCase().includes(q)) && !seen.has(x.name) && seen.add(x.name));
+                html = hits.map(row).join('');
+                if (!items.some(x => x.name.toLowerCase() === q)) {
+                    html += P.muscle === 'All'
+                        ? `<div class="px-4 py-4 text-[11px] font-bold text-slate-500">${esc(t('Not in the list? Choose a muscle above, then add "{name}" as your own exercise.', { name: P.q.trim() }))}</div>`
+                        : `<button onclick="window.appActions.addCustomEx()" class="w-full flex items-center gap-3 px-4 py-4 text-start text-[#d4af37] font-black text-[13px] tap-feedback"><i data-lucide="plus-circle" class="w-5 h-5"></i>${esc(t('Add "{name}" to {muscle}', { name: P.q.trim(), muscle: tm(P.muscle) }))}</button>`;
+                }
+            } else if (P.muscle === 'All') {
+                // Exercises already used in your routines first, then everything by muscle
+                const used = [], seen = new Set();
+                appData.weeks.forEach(w => w.schedule.forEach(day => (day.exercises || []).forEach(e => { if (!seen.has(e.name) && e.name && e.name !== 'New Exercise') { seen.add(e.name); used.push({ name: e.name, muscle: e.muscle }); } })));
+                if (used.length) html += header(t('In your routines')) + used.map(row).join('');
+                muscleOptions.forEach(m => { const list = items.filter(x => x.muscle === m); if (list.length) html += header(tm(m)) + list.map(row).join(''); });
+            } else {
+                html = items.map(row).join('');
+            }
+            const list = document.getElementById('picker-list');
+            list.innerHTML = html || `<div class="p-10 text-center text-[12px] font-bold text-slate-500">${esc(t('No exercises found'))}</div>`;
+            if (window.lucide) window.lucide.createIcons({ root: list });
+            const btn = document.getElementById('picker-add-btn');
+            btn.classList.toggle('hidden', P.mode !== 'add' || P.sel.length === 0);
+            btn.innerText = P.sel.length === 1 ? t('Add 1 exercise') : t('Add {n} exercises', { n: P.sel.length });
+        },
+        pickerTap: (name, muscle) => {
+            const P = window.appState.picker, d = getActiveSchedule().find(x => x.id === activeDay);
+            if (P.mode === 'replace') {
+                // keep sets & reps, change the exercise
+                Object.assign(d.exercises[P.idx], { name, muscle });
+                StorageManager.setPlan(appData);
+                window.appActions.closePicker(); renderWorkout();
+                window.appActions.showToast(t('Swapped to {name}', { name }), 'success');
+                return;
+            }
+            const i = P.sel.findIndex(x => x.name === name && x.muscle === muscle);
+            if (i >= 0) P.sel.splice(i, 1); else P.sel.push({ name, muscle });
+            const top = document.getElementById('picker-list').scrollTop;
+            window.appActions.renderPicker(false);
+            document.getElementById('picker-list').scrollTop = top;
+        },
+        pickerConfirm: () => {
+            const P = window.appState.picker, d = getActiveSchedule().find(x => x.id === activeDay);
+            if (!P.sel.length) return;
+            P.sel.forEach(x => d.exercises.push(newExercise(x.name, x.muscle)));
+            // Give an unnamed day a name from its muscles, e.g. "Chest & Triceps"
+            if (!d.title || !d.title.trim() || d.title === 'New Day' || d.title === t('New Day')) {
+                const ms = [...new Set(d.exercises.map(e => tm(e.muscle)))].slice(0, 2);
+                d.title = ms.join(isAR ? ' و ' : ' & ');
+                d.savedTitle = d.title;
+            }
+            StorageManager.setPlan(appData);
+            const n = P.sel.length;
+            window.appActions.closePicker(); renderWorkout(); renderNav(false);
+            window.appActions.showToast(n === 1 ? t('1 exercise added') : t('{n} exercises added', { n }), 'success');
+        },
+        addCustomEx: () => {
+            const P = window.appState.picker, name = P.q.trim().slice(0, 60);
+            if (!name || P.muscle === 'All') return;
+            const list = getCustomEx();
+            if (!list.some(x => x.name.toLowerCase() === name.toLowerCase())) { list.push({ name, muscle: P.muscle }); setCustomEx(list); }
+            P.q = ''; document.getElementById('picker-search').value = '';
+            window.appActions.pickerTap(name, P.muscle);
+            if (P.mode === 'add') window.appActions.renderPicker(false);
+        },
+
+        // ---------- Edit one exercise (sets / reps) ----------
+        openExEdit: i => {
+            window.appState.exEditIdx = i;
+            window.appActions.renderExEdit();
+            openSheet('exedit-overlay', 'exedit-box');
+        },
+        closeExEdit: () => { closeSheet('exedit-overlay', 'exedit-box'); renderWorkout(); },
+        renderExEdit: () => {
+            const i = window.appState.exEditIdx, ex = getActiveSchedule().find(x => x.id === activeDay).exercises[i];
+            if (!ex) return;
+            const sets = parseInt(ex.sets) || 0;
+            document.getElementById('exedit-content').innerHTML = `
+                <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(tm(ex.muscle))}</div>
+                <div class="ex-name text-xl font-black text-white mb-5">${esc(ex.name)}</div>
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">${esc(t('Sets'))}</div>
+                <div class="flex items-center gap-3 mb-5" dir="ltr">
+                    <button onclick="window.appActions.exEditSets(-1)" class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 text-2xl font-black text-white tap-feedback">−</button>
+                    <div class="flex-1 text-center text-3xl font-black text-white">${sets || esc(ex.sets)}</div>
+                    <button onclick="window.appActions.exEditSets(1)" class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 text-2xl font-black text-white tap-feedback">+</button>
+                </div>
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">${esc(t('Reps'))}</div>
+                <div class="grid grid-cols-4 gap-2 mb-3" dir="ltr">${REPS_PRESETS.map(r => `<button onclick="window.appActions.exEditReps(${jsArg(r)})" class="py-2.5 rounded-lg text-[12px] font-black tap-feedback border ${ex.reps === r ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-white border-white/10'}">${esc(r)}</button>`).join('')}</div>
+                <input type="text" value="${esc(ex.reps)}" onchange="window.appActions.exEditReps(this.value)" placeholder="${esc(t('Custom, e.g. 5 or 6 - 8'))}" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#d4af37] mb-6" dir="ltr">
+                <div class="flex gap-2">
+                    <button onclick="window.appActions.closeExEdit(); window.appActions.openPicker('replace', ${i})" class="flex-1 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[11px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><i data-lucide="arrow-left-right" class="w-4 h-4"></i>${esc(t('Swap exercise'))}</button>
+                    <button onclick="window.appActions.closeExEdit(); window.appActions.deleteEx(${i})" class="py-3.5 px-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 tap-feedback" aria-label="${esc(t('Delete'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>`;
+            if (window.lucide) window.lucide.createIcons({ root: document.getElementById('exedit-content') });
+        },
+        exEditSets: dlt => {
+            const ex = getActiveSchedule().find(x => x.id === activeDay).exercises[window.appState.exEditIdx];
+            ex.sets = String(Math.min(10, Math.max(1, (parseInt(ex.sets) || 3) + dlt)));
+            StorageManager.setPlan(appData); window.appActions.renderExEdit();
+        },
+        exEditReps: v => {
+            v = (v || '').trim(); if (!v) return;
+            getActiveSchedule().find(x => x.id === activeDay).exercises[window.appState.exEditIdx].reps = v.slice(0, 20);
+            StorageManager.setPlan(appData); window.appActions.renderExEdit();
+        },
+        clearDay: () => window.appActions.showConfirm(t("Clear Day"), t("Delete all exercises?"), () => { const d=getActiveSchedule().find(x=>x.id===activeDay); d.exercises=[]; d.title=""; StorageManager.setPlan(appData); renderWorkout(); }, true),
+        switchTab: tab => { window.appState.currentView=tab; window.appState.editMode=false; document.getElementById('tab-workout').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${tab==='workout'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('tab-analytics').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${tab==='analytics'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('nav-container').style.display=tab==='workout'?'flex':'none'; tab==='workout'?renderWorkout():renderAnalytics(); },
         toggleMenu: () => { window.appState.menuOpen=!window.appState.menuOpen; const o=document.getElementById('side-panel-overlay'), p=document.getElementById('side-panel'); if(window.appState.menuOpen){o.classList.remove('hidden'); setTimeout(()=>{o.classList.remove('opacity-0');p.classList.add('slide-panel-open');},10);}else{p.classList.remove('slide-panel-open'); o.classList.add('opacity-0'); setTimeout(()=>o.classList.add('hidden'),300);} },
-        addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast("Max 5 schedules","error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:`Schedule ${appData.weeks.length+1}`,schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
-        deleteWeek: id => { if(appData.weeks.length<=1)return; window.appActions.showConfirm("Delete Schedule","Delete this week?",()=>{appData.weeks=appData.weeks.filter(w=>w.id!==id); if(currentWeekId===id){currentWeekId=appData.weeks[0].id;StorageManager.setActiveWeek(currentWeekId);window.appActions.refreshUI();renderNav();} StorageManager.setPlan(appData); renderSidePanel(); },true); },
-        renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=v||'Unnamed'; StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=appData.weeks.find(x=>x.id===currentWeekId).name; },
+        addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast(t("Max 5 schedules"),"error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:t('Schedule {n}', { n: appData.weeks.length+1 }),schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
+        deleteWeek: id => { if(appData.weeks.length<=1)return; window.appActions.showConfirm(t("Delete Schedule"),t("Delete this week?"),()=>{appData.weeks=appData.weeks.filter(w=>w.id!==id); if(currentWeekId===id){currentWeekId=appData.weeks[0].id;StorageManager.setActiveWeek(currentWeekId);window.appActions.refreshUI();renderNav();} StorageManager.setPlan(appData); renderSidePanel(); },true); },
+        renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=v||t('Unnamed'); StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=appData.weeks.find(x=>x.id===currentWeekId).name; },
         switchWeek: id => { currentWeekId=id; StorageManager.setActiveWeek(id); window.appState.hasShownSetupToast=false; const s=getActiveSchedule(); activeDay=s.some(d=>d.title==='New Day')?s.find(d=>d.title==='New Day').id:(StorageManager.getAutoSync()?getTodayId():(StorageManager.getLastDay()||getTodayId())); window.appState.editMode=false; StorageManager.setLastDay(activeDay); renderSidePanel(); renderNav(); window.appActions.refreshUI(); window.appActions.toggleMenu(); },
         setActiveDay: id => { activeDay=id; StorageManager.setLastDay(id); window.appState.editMode=false; renderNav(); renderWorkout(); },
-        toggleAutoSync: v => { StorageManager.setAutoSync(v); if(v && window.appState.currentView==='workout'){activeDay=getTodayId(); StorageManager.setLastDay(activeDay); renderNav(); renderWorkout();} window.appActions.showToast(v ? "Day Tracker Enabled" : "Manual Mode Active", "success"); },
+        toggleAutoSync: v => { StorageManager.setAutoSync(v); if(v && window.appState.currentView==='workout'){activeDay=getTodayId(); StorageManager.setLastDay(activeDay); renderNav(); renderWorkout();} window.appActions.showToast(t(v ? "Day Tracker Enabled" : "Manual Mode Active"), "success"); },
         openBackupModal: () => { window.appActions.toggleMenu(); openModal('smart-backup-overlay','smart-backup-box'); },
         closeBackupModal: () => closeModal('smart-backup-overlay','smart-backup-box'),
         executeSmartBackup: () => {
             const doProg = document.getElementById('backup-opt-progress').checked;
             const doSched = document.getElementById('backup-opt-schedule').checked;
             const doSet = document.getElementById('backup-opt-settings').checked;
-            if (!doProg && !doSched && !doSet) return window.appActions.showToast("Select at least one option!", "error");
+            if (!doProg && !doSched && !doSet) return window.appActions.showToast(t("Select at least one option!"), "error");
             StorageManager.setBackupDate();
             let d = {};
             if (doProg) { d.w = StorageManager.get(); d.h = StorageManager.getHistory(); }
-            if (doSched) { d.p = StorageManager.getPlan(); d.aw = StorageManager.getActiveWeek(); }
+            if (doSched) { d.p = appData; d.aw = currentWeekId; d.cx = getCustomEx(); } // the routine on screen (even if never edited)
             if (doSet) { d.s = StorageManager.getStartDay(); d.rt = StorageManager.getRestSeconds(); }
             const a = document.createElement('a'); 
             a.href = URL.createObjectURL(new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' })); 
@@ -1231,7 +1610,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             a.download = fName; 
             a.click();
             window.appActions.closeBackupModal();
-            setTimeout(() => window.appActions.showToast("Data Exported!", "success"), 300);
+            setTimeout(() => window.appActions.showToast(t("Data Exported!"), "success"), 300);
         },
         importData: e => {
             window.appActions.toggleMenu(); const f=e.target.files[0]; if(!f)return;
@@ -1247,14 +1626,15 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                         p: raw.p !== undefined ? sanitizePlan(raw.p) : null,
                         aw: toStr(raw.aw) || null,
                         s: DAY_NAMES.includes(raw.s) ? raw.s : null,
-                        rt: [60,90,120,180].includes(raw.rt) ? raw.rt : null
+                        rt: [60,90,120,180].includes(raw.rt) ? raw.rt : null,
+                        cx: sanitizeCustomEx(raw.cx)
                     };
-                    if(raw.p !== undefined && !d.p) window.appActions.showToast("Routine in file is damaged: skipped","error");
+                    if(raw.p !== undefined && !d.p) window.appActions.showToast(t("Routine in file is damaged: skipped"),"error");
                     if(!d.w && !d.p && !d.s) throw new Error('Nothing usable in backup');
                     window.appState.pendingRestoreData = d;
-                    document.getElementById('restore-progress-desc').innerText = d.w && Object.keys(d.w).length ? `${Object.keys(d.w).length} exercises found` : 'No progress found';
-                    document.getElementById('restore-schedule-desc').innerText = d.p ? `Custom schedule found` : 'No schedule found';
-                    document.getElementById('restore-settings-desc').innerText = d.s ? `Start Day: ${d.s}` : 'No settings found';
+                    document.getElementById('restore-progress-desc').innerText = d.w && Object.keys(d.w).length ? t('{n} exercises found', { n: Object.keys(d.w).length }) : t('No progress found');
+                    document.getElementById('restore-schedule-desc').innerText = d.p ? t('Custom schedule found') : t('No schedule found');
+                    document.getElementById('restore-settings-desc').innerText = d.s ? t('Start Day: {d}', { d: tDay(d.s) }) : t('No settings found');
                     document.getElementById('restore-opt-progress').checked = !!(d.w && Object.keys(d.w).length);
                     document.getElementById('restore-opt-progress').disabled = !(d.w && Object.keys(d.w).length);
                     document.getElementById('restore-opt-schedule').checked = false; 
@@ -1262,7 +1642,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                     document.getElementById('restore-opt-settings').checked = false;
                     document.getElementById('restore-opt-settings').disabled = !d.s;
                     openModal('smart-restore-overlay','smart-restore-box');
-                } catch(err) { window.appActions.showToast("Invalid Backup file","error"); }
+                } catch(err) { window.appActions.showToast(t("Invalid Backup file"),"error"); }
             };
             r.readAsText(f); e.target.value='';
         },
@@ -1316,17 +1696,17 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 let oldGroup = getBroadGroup(oldMuscle);
                 let filteredTargets = targetExData;
                 if (oldGroup !== 'all') {
-                    let matches = targetExData.filter(t => getBroadGroup(t.muscle) === oldGroup);
+                    let matches = targetExData.filter(tx => getBroadGroup(tx.muscle) === oldGroup);
                     if (matches.length > 0) filteredTargets = matches;
                 }
                 let autoMatch = '';
                 let tKeyMatch = filteredTargets.find(tx => getExKey('','','',tx.name) === oldKey);
                 if(tKeyMatch) autoMatch = tKeyMatch.name;
-                let opts = `<option value="SKIP" ${!autoMatch ? 'selected' : ''}>-- Skip (Do Not Import) --</option>`;
+                let opts = `<option value="SKIP" ${!autoMatch ? 'selected' : ''}>${t('-- Skip (Do Not Import) --')}</option>`;
                 filteredTargets.forEach(tx => { opts += `<option value="${esc(tx.name)}" ${autoMatch === tx.name ? 'selected' : ''}>${esc(tx.name)}</option>`; });
-                html += `<div class="bg-black/40 p-3 rounded-xl border border-white/5 mb-3 last:mb-0"><div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 pb-1 border-b border-white/5 flex justify-between items-center"><span class="truncate pr-2">Old: ${esc(readable)}</span><span class="text-[8px] text-[#d4af37] bg-[#d4af37]/10 px-1.5 py-0.5 rounded shadow-sm shrink-0 border border-[#d4af37]/20">${esc(oldGroup.toUpperCase())}</span></div><select id="map_${esc(oldKey)}" class="w-full bg-black/60 p-2.5 rounded-lg text-[12px] font-bold text-white outline-none cursor-pointer border border-white/10 tap-feedback">${opts}</select></div>`;
+                html += `<div class="bg-black/40 p-3 rounded-xl border border-white/5 mb-3 last:mb-0"><div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 pb-1 border-b border-white/5 flex justify-between items-center"><span class="truncate pe-2">${t('Old:')} ${esc(readable)}</span><span class="text-[8px] text-[#d4af37] bg-[#d4af37]/10 px-1.5 py-0.5 rounded shadow-sm shrink-0 border border-[#d4af37]/20">${esc(t(oldGroup.toUpperCase()))}</span></div><select id="map_${esc(oldKey)}" class="w-full bg-black/60 p-2.5 rounded-lg text-[12px] font-bold text-white outline-none cursor-pointer border border-white/10 tap-feedback">${opts}</select></div>`;
             });
-            ml.innerHTML = html || `<div class="text-center text-[10px] font-bold text-slate-500 uppercase py-4">No exercises found</div>`;
+            ml.innerHTML = html || `<div class="text-center text-[10px] font-bold text-slate-500 uppercase py-4">${t('No exercises found')}</div>`;
             openModal('smart-mapping-overlay','smart-mapping-box');
         },
         closeMappingModal: () => {
@@ -1365,6 +1745,8 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 currentWeekId = (d.aw && iP.weeks.some(w => w.id === d.aw)) ? d.aw : iP.weeks[0].id;
                 StorageManager.setActiveWeek(currentWeekId);
                 StorageManager.setPlan(iP); appData = iP; count++;
+                // add the backup's own exercises to this phone's list
+                const cx = getCustomEx(); (d.cx || []).forEach(x => { if (!cx.some(y => y.name.toLowerCase() === x.name.toLowerCase())) cx.push(x); }); setCustomEx(cx);
             }
             if (doSet && d.s) { 
                 const aD=DAY_NAMES, idx=aD.indexOf(d.s);
@@ -1372,15 +1754,15 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 if(idx!==-1){ StorageManager.setStartDay(d.s); appData.weeks.forEach(w=>w.schedule.forEach((dDay,i)=>dDay.day=aD[(idx+i)%7])); document.getElementById('setting-start-day').value = d.s; }
                 count++; 
             }
-            if (count > 0) { StorageManager.setPlan(appData); activeDay = StorageManager.getAutoSync() ? getTodayId() : (StorageManager.getLastDay() || getTodayId()); renderNav(); window.appActions.refreshUI(); window.appActions.showToast("Data Merged Successfully!", "success"); }
+            if (count > 0) { StorageManager.setPlan(appData); activeDay = StorageManager.getAutoSync() ? getTodayId() : (StorageManager.getLastDay() || getTodayId()); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Data Merged Successfully!"), "success"); }
             if(!didProg) window.appActions.closeRestoreModal();
     },
-    restoreDefaults: () => { window.appActions.toggleMenu(); window.appActions.showConfirm("Factory Reset","Delete all custom weeks?",()=>{const aD=DAY_NAMES, sI=aD.indexOf('SAT'); const def=JSON.parse(JSON.stringify(defaultWorkoutData)); def.forEach((d,i)=>d.day=aD[(sI+i)%7]); appData={weeks:[{id:'w_default',name:'Main Routine',schedule:def}]}; currentWeekId='w_default'; StorageManager.setActiveWeek('w_default'); StorageManager.setPlan(appData); StorageManager.setStartDay('SAT'); document.getElementById('setting-start-day').value='SAT'; activeDay=getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast("Reset Complete");},true); },
+    restoreDefaults: () => { window.appActions.toggleMenu(); window.appActions.showConfirm(t("Factory Reset"),t("Delete all custom weeks?"),()=>{const aD=DAY_NAMES, sI=aD.indexOf('SAT'); const def=JSON.parse(JSON.stringify(defaultWorkoutData)); def.forEach((d,i)=>d.day=aD[(sI+i)%7]); appData={weeks:[{id:'w_default',name:t('Main Routine'),schedule:def}]}; currentWeekId='w_default'; StorageManager.setActiveWeek('w_default'); StorageManager.setPlan(appData); StorageManager.setStartDay('SAT'); document.getElementById('setting-start-day').value='SAT'; activeDay=getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Reset Complete"));},true); },
         renderOnboardingSlide: () => {
             const slides = [
-                { i: 'dumbbell', t: 'Welcome to Apex Lift', d: 'Your premium personal coaching and tracking experience. Stop guessing and start growing with precision data.' },
-                { i: 'activity', t: 'Track Workload', d: 'Log your sets and reps to monitor your Weekly Volume. The app will tell you when you are under-training or over-training each muscle group.' },
-                { i: 'zap', t: 'Actionable Insights', d: 'Complete workouts to unlock your Action Plan. Apex Lift will automatically calculate when you should add weight, push for more reps, or deload.' }
+                { i: 'dumbbell', t: t('Welcome to Apex Lift'), d: t('Your premium personal coaching and tracking experience. Stop guessing and start growing with precision data.') },
+                { i: 'activity', t: t('Track Workload'), d: t('Log your sets and reps to monitor your Weekly Volume. The app will tell you when you are under-training or over-training each muscle group.') },
+                { i: 'zap', t: t('Actionable Insights'), d: t('Complete workouts to unlock your Action Plan. Apex Lift will automatically calculate when you should add weight, push for more reps, or deload.') }
             ];
             const s = slides[window.appState.onboardSlide];
             const c = document.getElementById('onboarding-content');
@@ -1388,7 +1770,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             setTimeout(() => {
                 c.innerHTML = `<div class="w-16 h-16 bg-[#d4af37]/10 rounded-full flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(212,175,55,0.2)]"><i data-lucide="${s.i}" class="w-8 h-8 text-[#d4af37]"></i></div><h2 class="text-2xl font-black uppercase tracking-tight text-white mb-3 leading-none">${esc(s.t)}</h2><p class="text-[12px] font-bold text-slate-400 leading-relaxed">${esc(s.d)}</p>`;
                 document.getElementById('onboarding-dots').innerHTML = slides.map((_, idx) => `<div class="w-2 h-2 rounded-full transition-all duration-300 ${idx === window.appState.onboardSlide ? 'bg-[#d4af37] w-6' : 'bg-white/20'}"></div>`).join('');
-                document.getElementById('onboarding-btn').innerText = window.appState.onboardSlide === slides.length - 1 ? 'Start Training' : 'Next';
+                document.getElementById('onboarding-btn').innerText = window.appState.onboardSlide === slides.length - 1 ? t('Start Training') : t('Next');
                 if(window.lucide) window.lucide.createIcons({root: c});
                 c.style.opacity = '1';
             }, 150);
@@ -1411,6 +1793,16 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         }
     };
 
+    // Apply the language to the fixed parts of the page (index.html) and set right-to-left for Arabic
+    const applyStaticLanguage = () => {
+        document.documentElement.lang = LANG;
+        document.documentElement.dir = isAR ? 'rtl' : 'ltr';
+        document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+        document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+        document.querySelectorAll('#setting-start-day option').forEach(o => { o.textContent = tDay(o.value); });
+        const ls = document.getElementById('setting-lang'); if (ls) ls.value = LANG;
+    };
+    applyStaticLanguage();
     renderNav(); renderWorkout();
     document.getElementById('setting-start-day').value = StorageManager.getStartDay();
     const autoSyncEl = document.getElementById('setting-auto-sync');
@@ -1418,7 +1810,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
     const restEl = document.getElementById('setting-rest');
     if (restEl) restEl.value = String(StorageManager.getRestSeconds());
 
-    setTimeout(() => { const lB=StorageManager.getBackupDate(); if(!lB)StorageManager.setBackupDate(); else if(Date.now()-lB>604800000) window.appActions.showConfirm("Backup Reminder","It has been over 7 days. Backup now?",()=>window.appActions.openBackupModal()); }, 1500);
+    setTimeout(() => { const lB=StorageManager.getBackupDate(); if(!lB)StorageManager.setBackupDate(); else if(Date.now()-lB>604800000) window.appActions.showConfirm(t("Backup Reminder"),t("It has been over 7 days. Backup now?"),()=>window.appActions.openBackupModal()); }, 1500);
     setTimeout(() => window.appActions.initOnboarding(), 500);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && StorageManager.getAutoSync()) { const tT=getTodayId(), lD=getActiveSchedule().find(isDayIncomplete); if(lD){if(activeDay!==lD.id){activeDay=lD.id; StorageManager.setLastDay(activeDay); window.appState.editMode=true;renderNav();renderWorkout();}}else if(activeDay!==tT&&!window.appState.editMode&&window.appState.currentView==='workout'){activeDay=tT; StorageManager.setLastDay(activeDay); renderNav();renderWorkout();} } });
     // 📶 OFFLINE SUPPORT: save a copy of the app on the phone (see sw.js)

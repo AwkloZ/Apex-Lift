@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Cairo:wght@400;700;900&display=swap');
 
 html { background-color: #000000; overscroll-behavior: none; }
 
@@ -10,7 +10,7 @@ body {
     height: 100dvh; 
     background-color: #000000;
     background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000000 70%);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Cairo', sans-serif;
     -webkit-user-select: none;
 }
 
@@ -107,3 +107,16 @@ input[type="number"] {
 .tap-feedback:active { transform: scale(0.97); opacity: 0.8; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .slide-panel-open { transform: translateX(0) !important; }
+
+/* ===== Arabic (right-to-left) ===== */
+/* Arabic letters must stay connected: no extra letter spacing, and use the Arabic font first */
+[dir="rtl"] body { font-family: 'Cairo', 'Inter', sans-serif; }
+[dir="rtl"] * { letter-spacing: 0 !important; }
+[dir="rtl"] .italic { font-style: normal; }
+/* The side menu slides in from the left in Arabic */
+[dir="rtl"] #side-panel { right: auto; left: 0; transform: translateX(-100%); border-radius: 0 1.5rem 1.5rem 0; border-left: none; border-right: 1px solid rgba(255,255,255,0.1); }
+[dir="rtl"] #side-panel.slide-panel-open { transform: translateX(0) !important; }
+/* Number boxes with a small label on the left keep their layout */
+[dir="rtl"] input[type="number"] { direction: ltr; }
+/* Exercise names are English: in Arabic keep them left-to-right (cut at the end) but aligned right */
+[dir="rtl"] .ex-name { direction: ltr; text-align: right; }
