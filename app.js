@@ -278,6 +278,51 @@
         "OF {n} SETS": "من {n} مجموعات",
         "OK": "متوسط",
         "Official Instagram": "حسابنا في إنستغرام",
+        "A copy of everything is saved in your account once a day. Restore one to go back to how things were.": "تُحفظ نسخة من كل بياناتك في حسابك مرة يوميًا. استرجع أي نسخة للعودة إلى ما كانت عليه.",
+        "Account backups": "نسخ الحساب الاحتياطية",
+        "Add more exercises from the full library here.": "أضف تمارين أخرى من المكتبة الكاملة من هنا.",
+        "Automatic": "تلقائية",
+        "Back up now": "انسخ الآن",
+        "Backup restored": "تم استرجاع النسخة",
+        "Backup saved to your account": "تم حفظ النسخة في حسابك",
+        "Backups are blocked by the Firebase rules. Publish the new firestore.rules.": "النسخ الاحتياطية محظورة بقواعد Firebase. انشر ملف firestore.rules الجديد.",
+        "Before restore": "قبل الاسترجاع",
+        "Continue": "متابعة",
+        "Could not load backups. Check your connection.": "تعذر تحميل النسخ. تحقق من الاتصال.",
+        "Could not restore. Check your connection.": "تعذر الاسترجاع. تحقق من الاتصال.",
+        "Could not save the backup. Check your connection.": "تعذر حفظ النسخة. تحقق من الاتصال.",
+        "Did the set? Tap ✓. Change the KG or reps first if they were different.": "أنهيت المجموعة؟ اضغط ✓. وعدّل الوزن أو التكرارات أولًا إذا كانت مختلفة.",
+        "Got it": "فهمت",
+        "I agree to the {terms} and the {privacy}.": "أوافق على {terms} و{privacy}.",
+        "Loading…": "جارٍ التحميل…",
+        "Manual": "يدوية",
+        "Next": "التالي",
+        "No backups yet. Tap Back up now to make the first one.": "لا توجد نسخ بعد. اضغط «انسخ الآن» لإنشاء أول نسخة.",
+        "Please agree to the Terms and Privacy Policy first.": "يرجى الموافقة على الشروط وسياسة الخصوصية أولًا.",
+        "Privacy Policy": "سياسة الخصوصية",
+        "Rest timer: it starts by itself. Use −15 / +15 or Skip.": "مؤقت الراحة يبدأ تلقائيًا. استخدم −15 / +15 أو تخطي.",
+        "Restore": "استرجاع",
+        "Restore this backup?": "استرجاع هذه النسخة؟",
+        "Restoring…": "جارٍ الاسترجاع…",
+        "Tap a day to see or train another day of your plan.": "اضغط على يوم لعرض أو تمرين يوم آخر من خطتك.",
+        "Tap an exercise to change its sets and reps. Hold ⋮⋮ and drag to reorder.": "اضغط على التمرين لتغيير المجموعات والتكرارات. اضغط مطولًا على ⋮⋮ واسحب لإعادة الترتيب.",
+        "Tap here to start. Your weights from last time are already filled in.": "اضغط هنا للبدء. أوزانك من المرة السابقة مكتوبة مسبقًا.",
+        "Tap ⌄ to look at your plan. The workout keeps running at the bottom.": "اضغط ⌄ لمشاهدة خطتك، ويستمر التمرين في الأسفل.",
+        "Terms of Use": "شروط الاستخدام",
+        "Your account: sync, older backups and sign out are here.": "حسابك: المزامنة والنسخ السابقة وتسجيل الخروج هنا.",
+        "Your records, next targets and weekly volume per muscle are here.": "أرقامك القياسية وأهدافك القادمة وحجم التمرين الأسبوعي لكل عضلة هنا.",
+        "Your routines, settings and workouts go back to {date}, on all your phones. A copy of how things are now is saved first.": "ستعود برامجك وإعداداتك وتمارينك إلى {date} على جميع أجهزتك. تُحفظ نسخة من وضعك الحالي أولًا.",
+        "{n} workouts": "{n} تمارين",
+        "Your training, organised": "تمرينك، منظّم",
+        "Your weekly plan, every set you lift and your progress — all in one place.": "خطتك الأسبوعية وكل مجموعة ترفعها وتقدّمك — في مكان واحد.",
+        "Log a set in one tap": "سجّل المجموعة بضغطة",
+        "Your weights from last time are filled in. Tap ✓ after each set and the rest timer starts by itself.": "أوزانك من المرة السابقة مكتوبة مسبقًا. اضغط ✓ بعد كل مجموعة ويبدأ مؤقت الراحة تلقائيًا.",
+        "Watch yourself get stronger": "شاهد قوتك تزيد",
+        "The app tells you when to add weight, and shows your records and weekly volume per muscle.": "يخبرك التطبيق متى تزيد الوزن، ويعرض أرقامك القياسية وحجم التمرين الأسبوعي لكل عضلة.",
+        "Sign in to start": "سجّل الدخول للبدء",
+        "Your workouts are saved to your Google account and kept in sync on all your phones.": "تُحفظ تمارينك في حساب Google وتتزامن على جميع أجهزتك.",
+        "Please review and agree": "يرجى المراجعة والموافقة",
+        "To keep using Apex Lift, please agree to our Terms of Use and Privacy Policy.": "لمتابعة استخدام Apex Lift، يرجى الموافقة على شروط الاستخدام وسياسة الخصوصية.",
         "Push & Bi": "دفع وبايسبس",
         "Pull & TRI": "سحب وترايسبس",
         "Legs A": "أرجل أ",
@@ -618,6 +663,14 @@
     const DELETED_KEY = 'workoutDeleted_rakan_final';
     const getDeleted = () => { const v = readJSON(DELETED_KEY, {}); return isObj(v) ? v : {}; };
     const setDeleted = d => { try { localStorage.setItem(DELETED_KEY, JSON.stringify(d)); } catch (e) {} };
+    // When a backup is restored, each exercise's list gets a "reset" time: a newer reset replaces the list on every phone
+    const RESET_KEY = 'workoutHistReset_rakan_final';
+    const getResets = () => { const v = readJSON(RESET_KEY, {}); return isObj(v) ? v : {}; };
+    const setResets = d => { try { localStorage.setItem(RESET_KEY, JSON.stringify(d)); } catch (e) {} };
+    // Terms of Use & Privacy Policy: which version the user agreed to, and when
+    const TERMS_VERSION = '2026-10';
+    const AGREE_KEY = 'workoutAgreed_rakan_final';
+    const getAgree = () => { const v = readJSON(AGREE_KEY, null); return isObj(v) && v.v === TERMS_VERSION ? v : null; };
     const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
     const isToday = t => !isNaN(t) && startOfDay(t) === startOfDay(Date.now());
     const formatLogDate = n => { const hr = n.getHours(); return `${n.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})} • ${hr%12||12}:${n.getMinutes().toString().padStart(2,'0')} ${hr>=12?'PM':'AM'}`; };
@@ -1311,6 +1364,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }
 
         c.innerHTML = `<div class="fade-in pb-10">${tabsHTML}${contentHTML}</div>`;
+        if (typeof hint === 'function') hint('progress-tabs', '#workout-container .scrollbar-hide', t('Your records, next targets and weekly volume per muscle are here.'));
         if (window.lucide) window.lucide.createIcons();
     };
     // Daily check-in card (shown on today's workout day)
@@ -1443,6 +1497,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }
         document.getElementById('workout-container').innerHTML = `<div class="${enterClass()}">${html}</div>`;
         if (window.lucide) window.lucide.createIcons();
+        if (typeof todayHints === 'function' && !day.isRest && day.exercises.length && !S) todayHints();
     };
 
     // Editor shown inside the exercise's own card: sets, reps, swap, delete and Confirm
@@ -1547,6 +1602,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             }
         }
         if (window.lucide) window.lucide.createIcons();
+        if (typeof hint === 'function' && !day.isRest && day.exercises.length) {
+            hint('plan-edit', '#sortable-list > div', t('Tap an exercise to change its sets and reps. Hold ⋮⋮ and drag to reorder.'));
+            if (hintSeen('plan-edit')) hint('plan-add', '#workout-container button[onclick*="openPicker(\'add\')"]', t('Add more exercises from the full library here.'));
+        }
     };
 
     // ⚙️ 5. GLOBAL ACTIONS
@@ -1655,7 +1714,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             window.appActions.sessionTick();
             keepAwake(true);
             if (restore) window.appActions.showMini();
-            else { openSheet('active-workout-overlay', 'active-workout-box'); pushBack('session', () => window.appActions.minimizeSession()); }
+            else {
+                openSheet('active-workout-overlay', 'active-workout-box'); pushBack('session', () => window.appActions.minimizeSession());
+                hint('sess-check', '[id^=aw-done-]', t('Did the set? Tap ✓. Change the KG or reps first if they were different.'), 800);
+            }
             saveSessionDraft();
             renderWorkout();
         },
@@ -1774,6 +1836,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const next = [...document.querySelectorAll('#aw-sets-container .aw-row')].find(r => r.dataset.done !== '1');
             if (next) {
                 window.appActions.startRest(StorageManager.getRestSeconds());
+                hint('sess-rest', '#aw-rest', t('Rest timer: it starts by itself. Use −15 / +15 or Skip.'), 500);
+                if (hintSeen('sess-rest')) hint('sess-min', '#aw-min-btn', t('Tap ⌄ to look at your plan. The workout keeps running at the bottom.'), 500);
                 setTimeout(() => next.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
             }
             saveSessionDraft();
@@ -2103,6 +2167,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             document.getElementById('workout-container').classList.toggle('hidden', tab === 'profile');
             renderNav(); renderWorkout();
             const sc = document.querySelector('.scrollable-content'); if (sc) sc.scrollTop = 0;
+            if (tab === 'profile' && Cloud.user) hint('profile-account', '#account-card', t('Your account: sync, older backups and sign out are here.'));
         },
         addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast(t("Up to 5 routines"),"error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:t('Routine {n}', { n: appData.weeks.length+1 }),schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
         deleteWeek: id => { if(appData.weeks.length<=1)return; window.appActions.showConfirm(t("Delete routine"),t("Delete this routine? Your history is kept."),()=>{appData.weeks=appData.weeks.filter(w=>w.id!==id); if(currentWeekId===id){currentWeekId=appData.weeks[0].id;StorageManager.setActiveWeek(currentWeekId);window.appActions.refreshUI();renderNav();} StorageManager.setPlan(appData); renderSidePanel(); },true); },
@@ -2118,10 +2183,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const doSet = document.getElementById('backup-opt-settings').checked;
             if (!doProg && !doSched && !doSet) return window.appActions.showToast(t("Select at least one option!"), "error");
             StorageManager.setBackupDate(); updateBackupStatus();
-            let d = {};
-            if (doProg) { d.w = StorageManager.get(); d.h = StorageManager.getHistory(); }
-            if (doSched) { d.p = appData; d.aw = currentWeekId; d.cx = getCustomEx(); } // the routine on screen (even if never edited)
-            if (doSet) { d.s = StorageManager.getStartDay(); d.rt = StorageManager.getRestSeconds(); }
+            // readable format (v2): easy to share with a friend or give to an AI; old files still import
+            const d = buildExport({ prog: doProg, sched: doSched, sett: doSet });
             const a = document.createElement('a'); 
             a.href = URL.createObjectURL(new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' })); 
             const n = new Date();
@@ -2140,8 +2203,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const r=new FileReader();
             r.onload=ev=>{
                 try {
-                    const raw=JSON.parse(ev.target.result);
+                    let raw=JSON.parse(ev.target.result);
                     if(!isObj(raw)) throw new Error('Backup is not an object');
+                    if (raw.format === 2 || raw.app === 'Apex Lift') raw = fromExportV2(raw);
                     // Clean everything in the file before using it
                     const d = {
                         w: raw.w !== undefined ? sanitizeValueMap(raw.w) : undefined,
@@ -2264,6 +2328,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 currentWeekId = (d.aw && iP.weeks.some(w => w.id === d.aw)) ? d.aw : iP.weeks[0].id;
                 StorageManager.setActiveWeek(currentWeekId);
                 StorageManager.setPlan(iP); appData = iP; count++;
+                if (!(doSet && d.s)) setWeekStart(StorageManager.getStartDay()); // keep each day on its weekday on this phone
                 // add the backup's own exercises to this phone's list
                 const cx = getCustomEx(); (d.cx || []).forEach(x => { if (!cx.some(y => y.name.toLowerCase() === x.name.toLowerCase())) cx.push(x); }); setCustomEx(cx);
             }
@@ -2461,7 +2526,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // What the phone has (routines + settings), in a form Firestore accepts
     const collectMain = () => JSON.parse(JSON.stringify({
         plan: appData, activeWeek: currentWeekId, startDay: StorageManager.getStartDay(), rest: StorageManager.getRestSeconds(),
-        showRpe: StorageManager.getShowRpe(), weights: StorageManager.get(), custom: getCustomEx(), profile: getProfile()
+        showRpe: StorageManager.getShowRpe(), weights: StorageManager.get(), custom: getCustomEx(), profile: getProfile(), terms: getAgree()
     }));
     // Put cloud routines + settings onto this phone
     const applyMain = m => {
@@ -2479,6 +2544,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (isObj(m.weights)) { loggedWeights = sanitizeValueMap(m.weights); StorageManager.set(loggedWeights); }
             setCustomEx(sanitizeCustomEx(m.custom));
             if (isObj(m.profile)) writeItem(PROFILE_KEY, JSON.stringify(m.profile));
+            if (isObj(m.terms) && m.terms.v === TERMS_VERSION && !getAgree()) { try { localStorage.setItem(AGREE_KEY, JSON.stringify(m.terms)); } catch (e) {} }
             localStorage.setItem(LOCAL_UPDATED_KEY, String(m.updatedAt || Date.now()));
         } finally { Cloud.applying = false; }
         refreshAfterCloud();
@@ -2504,18 +2570,27 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         Cloud.user = user;
         writeItem(CLOUD_KEY, JSON.stringify({ uid: user.uid, name: user.displayName || '', email: user.email || '', photo: user.photoURL || '' }));
         setCloudStatus('syncing');
+        // signed in from the welcome screen: close it; the setup questions come after the account is loaded
+        const fromWelcome = welcomeOpen();
+        if (fromWelcome) hideWelcome();
         try {
             const uid = user.uid;
             const [snap, hs] = await Promise.all([Cloud.db.doc(`users/${uid}`).get(), Cloud.db.collection(`users/${uid}/history`).get()]);
             const cloudHist = {}, cloudDel = {};
-            hs.forEach(d => { const x = d.data(), k = decodeURIComponent(d.id); if (x && Array.isArray(x.logs)) cloudHist[k] = x.logs; if (x && Array.isArray(x.del)) cloudDel[k] = x.del.map(String); });
+            const cloudReset = {};
+            hs.forEach(d => { const x = d.data(), k = decodeURIComponent(d.id); if (x && Array.isArray(x.logs)) cloudHist[k] = x.logs; if (x && Array.isArray(x.del)) cloudDel[k] = x.del.map(String); if (x && Number(x.resetAt) > 0) cloudReset[k] = Number(x.resetAt); });
             const clean = sanitizeHistory(cloudHist);
             // a different account was used on this phone before: its workouts are already in that account, so start from this account's
             const switched = !!prevUid && prevUid !== uid;
             const local = switched ? {} : StorageManager.getHistory(), merged = { ...local }, del = switched ? {} : getDeleted();
             // workouts: keep everything from both sides (except records deleted on either side)
-            Object.keys(clean).forEach(k => { del[k] = unionDel(del[k], cloudDel[k]); merged[k] = mergeLogs(local[k], clean[k], del[k]); });
-            Cloud.applying = true; StorageManager.setHistory(merged); setDeleted(del); Cloud.applying = false;
+            const resets = switched ? {} : getResets();
+            Object.keys(clean).forEach(k => {
+                // a backup was restored on another phone after this one last synced: take the cloud's list as it is
+                if ((cloudReset[k] || 0) > (resets[k] || 0)) { resets[k] = cloudReset[k]; del[k] = cloudDel[k] || []; merged[k] = clean[k]; return; }
+                del[k] = unionDel(del[k], cloudDel[k]); merged[k] = mergeLogs(local[k], clean[k], del[k]);
+            });
+            Cloud.applying = true; StorageManager.setHistory(merged); setDeleted(del); setResets(resets); Cloud.applying = false;
             // routines + settings: the account wins on a new phone, otherwise the newest change wins
             if (snap.exists) {
                 const m = snap.data(), localU = Number(localStorage.getItem(LOCAL_UPDATED_KEY)) || 0;
@@ -2525,9 +2600,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             Object.keys(clean).forEach(k => { Cloud.sent['h:' + k] = JSON.stringify(clean[k]); });
             localStorage.setItem(CLOUD_LASTUID, uid);
             refreshAfterCloud();
+            // this account already has a plan: no need for the setup questions
+            if (snap.exists || hs.size > 0) StorageManager.setOnboard();
+            if (fromWelcome) window.appActions.initOnboarding();
             await cloudFlush();
             cloudSubscribe(uid);
-        } catch (e) { console.warn('Cloud sync failed', e); setCloudStatus('error', e, 'read'); }
+            maybeAutoBackup();
+        } catch (e) { console.warn('Cloud sync failed', e); setCloudStatus('error', e, 'read'); if (fromWelcome) window.appActions.initOnboarding(); }
     };
     // Upload whatever changed since the last upload
     const cloudFlush = async () => {
@@ -2540,8 +2619,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const main = collectMain(), mj = JSON.stringify(main);
             if (mj !== Cloud.sent.main) { ops.push(['set', `users/${uid}`, { ...main, updatedAt: Number(localStorage.getItem(LOCAL_UPDATED_KEY)) || Date.now() }]); Cloud.sent.main = mj; }
             const h = StorageManager.getHistory();
-            const del = getDeleted();
-            Object.keys(h).forEach(k => { const j = JSON.stringify(h[k]); if (j !== Cloud.sent['h:' + k]) { ops.push(['set', histPath(uid, k), { logs: h[k], del: del[k] || [], updatedAt: Date.now() }]); Cloud.sent['h:' + k] = j; } });
+            const del = getDeleted(), resets = getResets();
+            Object.keys(h).forEach(k => { const j = JSON.stringify(h[k]); if (j !== Cloud.sent['h:' + k]) { ops.push(['set', histPath(uid, k), { logs: h[k], del: del[k] || [], resetAt: resets[k] || 0, updatedAt: Date.now() }]); Cloud.sent['h:' + k] = j; } });
             if (ops.length) {
                 setCloudStatus(navigator.onLine === false ? 'offline' : 'syncing');
                 // weak gym signal: the change is already saved on the phone, it just hasn't reached the cloud yet
@@ -2565,13 +2644,19 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if ((m.updatedAt || 0) > localU) { applyMain(m); Cloud.sent.main = JSON.stringify(collectMain()); }
         }, e => console.warn(e)));
         Cloud.unsub.push(Cloud.db.collection(`users/${uid}/history`).onSnapshot(qs => {
-            const h = StorageManager.getHistory(), del = getDeleted(); let changed = false, delChanged = false, behind = false;
+            const h = StorageManager.getHistory(), del = getDeleted(), resets = getResets(); let changed = false, delChanged = false, behind = false;
             qs.docChanges().forEach(ch => {
                 if (ch.doc.metadata.hasPendingWrites) return; // our own upload coming back
                 const k = decodeURIComponent(ch.doc.id);
                 // removed in the cloud (account deleted elsewhere): the workouts on this phone stay
                 if (ch.type === 'removed') { delete Cloud.sent['h:' + k]; return; }
                 const data = ch.doc.data() || {}, logs = sanitizeHistory({ [k]: data.logs })[k] || [];
+                const rr = Number(data.resetAt) || 0;
+                if (rr > (resets[k] || 0)) { // restored from a backup on another phone: take it as it is
+                    resets[k] = rr; del[k] = Array.isArray(data.del) ? data.del.map(String) : []; delChanged = true;
+                    if (JSON.stringify(h[k] || null) !== JSON.stringify(logs)) { h[k] = logs; changed = true; }
+                    Cloud.sent['h:' + k] = JSON.stringify(logs); return;
+                }
                 if (Array.isArray(data.del)) { const d2 = unionDel(del[k], data.del.map(String)); if (d2.length !== (del[k] || []).length) { del[k] = d2; delChanged = true; } }
                 // both lists together, so a phone that was behind can never erase workouts from another phone
                 const mine = JSON.stringify(h[k] || null), next = mergeLogs(h[k], logs, del[k]);
@@ -2579,15 +2664,18 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 Cloud.sent['h:' + k] = JSON.stringify(logs);
                 if (JSON.stringify(next) !== JSON.stringify(logs)) behind = true; // the cloud is missing some of ours
             });
-            if (changed || delChanged) { Cloud.applying = true; if (changed) StorageManager.setHistory(h); setDeleted(del); Cloud.applying = false; }
+            if (changed || delChanged) { Cloud.applying = true; if (changed) StorageManager.setHistory(h); setDeleted(del); setResets(resets); Cloud.applying = false; }
             if (changed) refreshAfterCloud();
             if (behind) scheduleFlush();
         }, e => console.warn(e)));
     };
     const cloudSignedOut = () => {
         Cloud.unsub.forEach(u => u()); Cloud.unsub = []; Cloud.user = null; Cloud.sent = {};
+        const wasPending = (getCloudFlag() || {}).pending;
         try { localStorage.removeItem(CLOUD_KEY); } catch (e) {}
         setCloudStatus('off');
+        // an account is needed to use the app: back to the sign-in page (workouts stay on the phone)
+        if (gateOn() && !wasPending) showWelcome(true);
     };
     window.addEventListener('online', () => { if (Cloud.user) scheduleFlush(200); });
     window.addEventListener('offline', () => { if (Cloud.user) setCloudStatus('offline'); });
@@ -2618,10 +2706,12 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     <button onclick="window.appActions.cloudSyncNow()" class="py-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-white tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="refresh-cw" class="w-4 h-4"></i>${t('Sync now')}</button>
                     <button onclick="window.appActions.cloudSignOut()" class="py-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-slate-300 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="log-out" class="w-4 h-4"></i>${t('Sign out')}</button>
                 </div>
+                <button onclick="window.appActions.openBackups()" class="w-full mt-2 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-white tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="history" class="w-4 h-4"></i>${t('Account backups')}</button>
                 <div class="flex justify-between mt-3"><a href="privacy.html" target="_blank" rel="noopener" class="text-[11px] font-bold text-slate-500 underline">${t('Privacy policy')}</a><button onclick="window.appActions.cloudDelete()" class="text-[11px] font-bold text-red-400 underline tap-feedback">${t('Delete my account')}</button></div></div>`;
         }
         if (window.lucide) window.lucide.createIcons({ root: el });
         if (typeof updateBackupStatus === 'function') updateBackupStatus();
+        if (welcomeOpen()) updateWelcomeUI(); // "Signing in…" on the welcome page too
     };
     Object.assign(window.appActions, {
         cloudSignIn: async () => {
@@ -2657,6 +2747,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 Cloud.unsub.forEach(u => u()); Cloud.unsub = [];
                 const qs = await Cloud.db.collection(`users/${uid}/history`).get(), paths = [];
                 qs.forEach(d => paths.push(`users/${uid}/history/${d.id}`));
+                // every account backup (and its parts) goes too
+                const bs = await Cloud.db.collection(`users/${uid}/backups`).get();
+                bs.forEach(d => { const n = Number((d.data() || {}).parts) || 1; for (let i = 0; i < n; i++) paths.push(`users/${uid}/backups/${d.id}/parts/${i}`); paths.push(`users/${uid}/backups/${d.id}`); });
                 paths.push(`users/${uid}`);
                 for (let i = 0; i < paths.length; i += 400) { const b = Cloud.db.batch(); paths.slice(i, i + 400).forEach(x => b.delete(Cloud.db.doc(x))); await b.commit(); }
                 try { await Cloud.auth.currentUser.delete(); }
@@ -2669,6 +2762,299 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 cloudSignedOut();
                 window.appActions.showToast(t('Account deleted'), 'success');
             } catch (e) { console.warn(e); setCloudStatus('error', e); window.appActions.showToast(cloudErrorText(e), 'error'); }
+        }, true)
+    });
+
+
+
+    // 📦 BACKUP FILE v2: readable by people and AI models (names instead of internal keys, real dates, kg and reps)
+    const exerciseNames = () => {
+        const m = {}; const add = n => { if (n) m[getExKey('', '', '', n)] = n; };
+        catalogue().forEach(x => add(x.name));
+        appData.weeks.forEach(w => w.schedule.forEach(d => (d.exercises || []).forEach(e => add(e.name))));
+        return m;
+    };
+    const keyToName = (k, names) => names[k] || k.replace(/^global_/, '').split('_').filter(Boolean).map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(' ');
+    const dayKind = d => d.isRest ? (d.recoveryType === 'active' ? 'active rest' : 'rest') : 'workout';
+    const buildExport = ({ prog, sched, sett }) => {
+        const out = { app: 'Apex Lift', format: 2, exported: new Date().toISOString(),
+            about: 'Apex Lift workout file. "routines": weekly plans, days in order from the first day of the week; each exercise has sets and a reps range ("30 - 45s" = seconds). "history": every logged session per exercise, oldest first: date, weightKg (0 = bodyweight), reps per set, optional weightsKg per set, rpe per set (10 = no reps left) and unit "sec" for timed exercises. Import in Apex Lift: Profile → Restore data.' };
+        if (sett) out.settings = { weekStartsOn: StorageManager.getStartDay(), restSeconds: StorageManager.getRestSeconds() };
+        if (sched) {
+            out.routines = appData.weeks.map(w => ({ name: w.name, active: w.id === currentWeekId, days: w.schedule.map(d => ({ day: d.day, title: d.title, type: dayKind(d),
+                exercises: (d.exercises || []).map(e => ({ name: e.name, muscle: e.muscle, sets: parseInt(e.sets) || e.sets, reps: e.reps })) })) }));
+            const cx = getCustomEx(); if (cx.length) out.customExercises = cx;
+        }
+        if (prog) {
+            const names = exerciseNames(), h = StorageManager.getHistory(); out.history = {};
+            Object.keys(h).filter(k => !k.startsWith('temp_') && (h[k] || []).length).forEach(k => {
+                out.history[keyToName(k, names)] = h[k].map(l => {
+                    const tt = logTime(l), e = { date: isNaN(tt) ? l.d : new Date(tt).toISOString(), weightKg: parseFloat(l.w) || 0, reps: Array.isArray(l.s) ? l.s.map(Number) : [parseInt(l.s) || 0] };
+                    if (Array.isArray(l.ws)) e.weightsKg = l.ws.map(x => parseFloat(x) || 0);
+                    if (Array.isArray(l.rpe) && l.rpe.some(x => x != null)) e.rpe = l.rpe;
+                    if (l.u === 's') e.unit = 'sec';
+                    if (l.week) e.routine = l.week;
+                    if (typeof l.dayId === 'number') e.day = l.dayId;
+                    if (l.time) e.duration = l.time;
+                    return e;
+                });
+            });
+        }
+        return out;
+    };
+    // v2 file → the app's own backup shape (then cleaned by the normal import checks)
+    const fromExportV2 = raw => {
+        const d = {};
+        if (Array.isArray(raw.routines)) {
+            const stamp = Date.now();
+            const weeks = raw.routines.filter(isObj).slice(0, 5).map((r, i) => ({ id: `w_${stamp}_${i}`, name: toStr(r.name, 'Routine'), active: r.active === true,
+                schedule: (Array.isArray(r.days) ? r.days : []).slice(0, 7).map((x, j) => {
+                    x = isObj(x) ? x : {}; const type = toStr(x.type).toLowerCase(), rest = type === 'rest' || type === 'active rest';
+                    return { id: j + 1, day: toStr(x.day).toUpperCase(), title: toStr(x.title, rest ? (type === 'rest' ? 'Complete Rest' : 'Active Rest') : 'New Day'), isRest: rest, recoveryType: rest ? (type === 'active rest' ? 'active' : 'complete') : null,
+                        exercises: Array.isArray(x.exercises) ? x.exercises.filter(isObj).map(e => ({ name: toStr(e.name), muscle: toStr(e.muscle, 'Chest'), sets: latinDigits(e.sets == null ? '3' : e.sets), reps: latinDigits(e.reps == null ? '10' : e.reps) })) : [] };
+                }) }));
+            d.p = { weeks }; const a = weeks.find(w => w.active) || weeks[0]; if (a) d.aw = a.id;
+        }
+        if (Array.isArray(raw.customExercises)) d.cx = raw.customExercises;
+        if (isObj(raw.settings)) { d.s = toStr(raw.settings.weekStartsOn).toUpperCase(); d.rt = parseInt(raw.settings.restSeconds); }
+        if (isObj(raw.history)) {
+            d.h = {}; d.w = {};
+            Object.keys(raw.history).forEach(name => {
+                const list = raw.history[name]; if (!Array.isArray(list)) return;
+                const k = getExKey('', '', '', name);
+                d.h[k] = list.filter(isObj).map(e => {
+                    const ts = Date.parse(e.date), l = { d: isNaN(ts) ? toStr(e.date) : formatLogDate(new Date(ts)), w: String(parseFloat(e.weightKg) || 0), s: Array.isArray(e.reps) ? e.reps.map(x => parseInt(x)).filter(x => x > 0) : [] };
+                    if (!isNaN(ts)) l.ts = ts;
+                    if (Array.isArray(e.weightsKg)) l.ws = e.weightsKg.map(x => String(parseFloat(x) || 0));
+                    if (Array.isArray(e.rpe)) l.rpe = e.rpe;
+                    if (e.unit === 'sec') l.u = 's';
+                    if (e.routine) l.week = toStr(e.routine);
+                    if (typeof e.day === 'number') l.dayId = e.day;
+                    if (e.duration) l.time = toStr(e.duration);
+                    return l;
+                }).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+                const last = d.h[k][d.h[k].length - 1]; if (last) d.w[k] = last.w === '0' ? '' : last.w;
+            });
+        }
+        return d;
+    };
+
+    // 👋 WELCOME: intro pages you swipe through, then Google sign-in (required).
+    // Automated tests run without the sign-in page unless they ask for it (localStorage workoutTestGate = 1).
+    const INTRO_KEY = 'workoutIntroSeen_rakan_final';
+    const gateOn = () => { try { return !navigator.webdriver || localStorage.getItem('workoutTestGate') === '1'; } catch (e) { return true; } };
+    const isSignedIn = () => { const f = getCloudFlag(); return !!(f && f.uid); };
+    const welcomeOpen = () => document.getElementById('welcome-overlay').classList.contains('flex');
+    const W_SLIDES = [
+        { icon: 'dumbbell', title: 'Your training, organised', text: 'Your weekly plan, every set you lift and your progress — all in one place.', art: 'plan' },
+        { icon: 'check-circle-2', title: 'Log a set in one tap', text: 'Your weights from last time are filled in. Tap ✓ after each set and the rest timer starts by itself.', art: 'sets' },
+        { icon: 'trending-up', title: 'Watch yourself get stronger', text: 'The app tells you when to add weight, and shows your records and weekly volume per muscle.', art: 'chart' },
+        { icon: 'shield-check', title: 'Sign in to start', text: 'Your workouts are saved to your Google account and kept in sync on all your phones.', art: 'gate' }
+    ];
+    const welcomeArt = a => {
+        if (a === 'plan') return `<div class="w-full max-w-[290px] space-y-2.5">${[['Push', '6'], ['Pull', '6'], ['Legs', '5']].map(([n, c], i) => `<div class="flex items-center gap-3 rounded-2xl bg-white/[0.04] border border-white/10 px-4 py-3 float-${i}"><span class="w-9 h-9 rounded-full ${i === 0 ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300'} flex items-center justify-center text-[12px] font-black">${tDay(['SAT', 'SUN', 'MON'][i]).slice(0, 3)}</span><span class="flex-1 text-[15px] font-black text-white">${t(n)}</span><span class="text-[11px] font-bold text-slate-400">${t('{n} exercises', { n: c })}</span></div>`).join('')}</div>`;
+        if (a === 'sets') return `<div class="w-full max-w-[290px] rounded-2xl bg-white/[0.04] border border-white/10 p-3 space-y-2" dir="ltr">${[['60', '10', 1], ['60', '9', 1], ['60', '8', 0]].map(([w, r, d], i) => `<div class="grid grid-cols-[28px_1fr_1fr_44px] gap-2 items-center"><span class="w-7 h-7 rounded-full ${d ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center">${i + 1}</span><span class="h-10 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-[15px] font-black text-[#d4af37]">${w}</span><span class="h-10 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-[15px] font-black text-white">${r}</span><span class="h-10 rounded-lg flex items-center justify-center ${d ? 'bg-[#22c55e] text-black' : 'bg-white/5 border border-white/10 text-slate-400'} ${i === 1 ? 'pop-loop' : ''}"><i data-lucide="check" class="w-5 h-5"></i></span></div>`).join('')}<div class="mt-1 rounded-xl bg-[#22c55e]/10 border border-[#22c55e]/25 px-3 py-2 flex items-center gap-2 text-[#22c55e] text-[12px] font-black"><i data-lucide="timer" class="w-4 h-4"></i>${t('Rest')} <span class="text-white text-[16px]">1:30</span></div></div>`;
+        if (a === 'chart') return `<div class="w-full max-w-[290px] rounded-2xl bg-white/[0.04] border border-white/10 p-4"><div class="flex items-center justify-between mb-2"><span class="text-[13px] font-black text-white ex-name">Bench Press</span><span class="text-[11px] font-black text-[#22c55e]" dir="ltr">+12.5kg</span></div><svg viewBox="0 0 260 110" class="w-full h-auto" dir="ltr"><defs><linearGradient id="wg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d4af37" stop-opacity=".35"/><stop offset="1" stop-color="#d4af37" stop-opacity="0"/></linearGradient></defs><path d="M5 95 L45 85 L85 80 L125 62 L165 58 L205 40 L255 18 L255 110 L5 110 Z" fill="url(#wg)"/><path class="draw-line" d="M5 95 L45 85 L85 80 L125 62 L165 58 L205 40 L255 18" fill="none" stroke="#d4af37" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="255" cy="18" r="5" fill="#d4af37"/></svg><div class="mt-2 inline-flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-md border text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20"><i data-lucide="arrow-up-circle" class="w-3 h-3"></i>${t('Add weight:')} <span dir="ltr">62.5kg × 8</span></div></div>`;
+        return `<div class="relative w-28 h-28 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/30 flex items-center justify-center glow-ring"><i data-lucide="cloud" class="w-14 h-14 text-[#d4af37]"></i></div>`;
+    };
+    let welcomeIdx = 0;
+    const renderWelcome = () => {
+        const box = document.getElementById('welcome-slides');
+        const review = isSignedIn();
+        box.innerHTML = W_SLIDES.map(sl => review && sl.art === 'gate' ? { ...sl, title: 'Please review and agree', text: 'To keep using Apex Lift, please agree to our Terms of Use and Privacy Policy.' } : sl).map(sl => `<section class="w-full shrink-0 snap-center flex flex-col items-center justify-center px-7 text-center gap-7" dir="${isAR ? 'rtl' : 'ltr'}">
+            ${welcomeArt(sl.art)}
+            <div><h2 class="text-[28px] font-black text-white leading-tight mb-3">${t(sl.title)}</h2><p class="text-[15px] font-bold text-slate-400 leading-relaxed max-w-[320px] mx-auto">${t(sl.text)}</p></div>
+        </section>`).join('');
+        const lang = document.getElementById('welcome-lang');
+        lang.textContent = isAR ? 'English' : 'العربية';
+        lang.onclick = () => window.appActions.setLanguage(isAR ? 'en' : 'ar');
+        if (window.lucide) window.lucide.createIcons({ root: document.getElementById('welcome-overlay') });
+        updateWelcomeUI();
+    };
+    const updateWelcomeUI = () => {
+        const last = welcomeIdx === W_SLIDES.length - 1, loading = Cloud.status === 'loading';
+        document.getElementById('welcome-dots').innerHTML = W_SLIDES.map((_, i) => `<span class="h-2 rounded-full transition-all duration-300 ${i === welcomeIdx ? 'w-6 bg-[#d4af37]' : 'w-2 bg-white/20'}"></span>`).join('');
+        const agreed = !!getAgree();
+        document.getElementById('welcome-actions').innerHTML = last
+            ? `<label class="flex items-start gap-3 mb-4 cursor-pointer text-start" dir="${isAR ? 'rtl' : 'ltr'}"><input id="welcome-agree" type="checkbox" ${agreed ? 'checked' : ''} onchange="window.appActions.welcomeAgree(this.checked)" class="mt-0.5 w-5 h-5 shrink-0 accent-[#d4af37]"><span class="text-[12px] font-bold text-slate-400 leading-snug">${t('I agree to the {terms} and the {privacy}.', { terms: `<a href="terms.html" target="_blank" rel="noopener" class="text-[#d4af37] underline">${t('Terms of Use')}</a>`, privacy: `<a href="privacy.html" target="_blank" rel="noopener" class="text-[#d4af37] underline">${t('Privacy Policy')}</a>` })}</span></label>
+               ${isSignedIn()
+                ? `<button id="welcome-continue" onclick="window.appActions.welcomeContinue()" ${agreed ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback disabled:opacity-40 transition-opacity">${t('Continue')}</button>`
+                : `<button id="welcome-google" onclick="window.appActions.welcomeSignIn()" ${agreed && !loading ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-white text-[#1f1f1f] text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity">${GOOGLE_G}${loading ? t('Signing in…') : t('Continue with Google')}</button>`}`
+            : `<div class="flex gap-3"><button onclick="window.appActions.welcomeGo(${W_SLIDES.length - 1})" class="px-5 py-4 rounded-2xl text-[13px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${t('Skip')}</button><button onclick="window.appActions.welcomeGo(${welcomeIdx + 1})" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button></div>`;
+        if (window.lucide) window.lucide.createIcons({ root: document.getElementById('welcome-actions') });
+    };
+    const showWelcome = (toLast = false) => {
+        const o = document.getElementById('welcome-overlay');
+        if (!welcomeOpen()) { o.classList.remove('hidden'); o.classList.add('flex'); welcomeIdx = 0; renderWelcome(); }
+        if (toLast) window.appActions.welcomeGo(W_SLIDES.length - 1, true);
+    };
+    const hideWelcome = () => {
+        const o = document.getElementById('welcome-overlay'); if (!welcomeOpen()) return;
+        try { localStorage.setItem(INTRO_KEY, '1'); } catch (e) {}
+        o.classList.add('fade-out'); setTimeout(() => { o.classList.add('hidden'); o.classList.remove('flex', 'fade-out'); }, 350);
+    };
+    document.getElementById('welcome-slides').addEventListener('scroll', e => {
+        const el = e.currentTarget, i = Math.round(Math.abs(el.scrollLeft) / Math.max(1, el.clientWidth));
+        if (i !== welcomeIdx) { welcomeIdx = Math.max(0, Math.min(W_SLIDES.length - 1, i)); updateWelcomeUI(); }
+    }, { passive: true });
+
+    // 💾 ACCOUNT BACKUPS: dated copies of everything, kept in your account, so a mistake can be undone
+    const BK_KEEP = 10, BK_CHUNK = 400000, BK_AUTO_MS = 20 * 3600000;
+    const bkPath = uid => `users/${uid}/backups`;
+    const countWorkouts = h => { const days = new Set(); Object.values(h).forEach(list => (list || []).forEach(l => { const tt = logTime(l); if (!isNaN(tt)) days.add(dateKey(tt)); })); return days.size; };
+    const listBackups = async () => {
+        const qs = await Cloud.db.collection(bkPath(Cloud.user.uid)).get(), out = [];
+        qs.forEach(d => { const x = d.data() || {}; if (Number(x.createdAt) > 0) out.push({ id: d.id, ...x }); });
+        return out.sort((a, b) => b.createdAt - a.createdAt);
+    };
+    const deleteBackup = async b => {
+        const uid = Cloud.user.uid, batch = Cloud.db.batch();
+        for (let i = 0; i < (b.parts || 1); i++) batch.delete(Cloud.db.doc(`${bkPath(uid)}/${b.id}/parts/${i}`));
+        batch.delete(Cloud.db.doc(`${bkPath(uid)}/${b.id}`));
+        await batch.commit();
+    };
+    const cloudBackup = async kind => {
+        if (!Cloud.user) throw new Error('signed out');
+        const uid = Cloud.user.uid, h = StorageManager.getHistory();
+        const json = JSON.stringify({ v: 1, main: collectMain(), history: h, deleted: getDeleted() }), id = String(Date.now());
+        const parts = []; for (let i = 0; i < json.length; i += BK_CHUNK) parts.push(json.slice(i, i + BK_CHUNK));
+        const batch = Cloud.db.batch();
+        parts.forEach((d, i) => batch.set(Cloud.db.doc(`${bkPath(uid)}/${id}/parts/${i}`), { d }));
+        batch.set(Cloud.db.doc(`${bkPath(uid)}/${id}`), { createdAt: Date.now(), kind, parts: parts.length, workouts: countWorkouts(h), exercises: Object.keys(h).filter(k => (h[k] || []).length).length, routines: appData.weeks.length, size: json.length });
+        await batch.commit();
+        // keep the newest 10 automatic and 10 other copies
+        try {
+            const all = await listBackups(), auto = all.filter(b => b.kind === 'auto'), other = all.filter(b => b.kind !== 'auto');
+            for (const b of [...auto.slice(BK_KEEP), ...other.slice(BK_KEEP)]) await deleteBackup(b);
+        } catch (e) { console.warn('Backup clean-up failed', e); }
+        return id;
+    };
+    // once a day, after the first sync
+    const maybeAutoBackup = async () => {
+        try {
+            if (!Cloud.user) return;
+            const h = StorageManager.getHistory(); if (!Object.values(h).some(l => (l || []).length)) return;
+            const last = (await listBackups()).find(b => b.kind === 'auto');
+            if (!last || Date.now() - last.createdAt > BK_AUTO_MS) await cloudBackup('auto');
+        } catch (e) { console.warn('Auto backup failed', e); }
+    };
+    const loadBackup = async id => {
+        const uid = Cloud.user.uid, meta = (await Cloud.db.doc(`${bkPath(uid)}/${id}`).get()).data() || {};
+        let json = '';
+        for (let i = 0; i < (meta.parts || 1); i++) json += ((await Cloud.db.doc(`${bkPath(uid)}/${id}/parts/${i}`).get()).data() || {}).d || '';
+        return JSON.parse(json);
+    };
+    const restoreSnapshot = data => {
+        if (!isObj(data) || !isObj(data.main)) throw new Error('Backup is damaged');
+        applyMain({ ...data.main, updatedAt: Date.now() });
+        const cur = StorageManager.getHistory(), snap = sanitizeHistory(data.history), del = isObj(data.deleted) ? data.deleted : {}, resets = getResets(), now = Date.now();
+        // the copy wins everywhere: every exercise gets a new reset time, exercises added later are emptied
+        Object.keys(cur).forEach(k => { if (!(k in snap)) snap[k] = []; });
+        Object.keys(snap).forEach(k => { resets[k] = now; if (!Array.isArray(del[k])) del[k] = []; });
+        Cloud.applying = true; StorageManager.setHistory(snap); setDeleted(del); setResets(resets); Cloud.applying = false;
+        loggedWeights = StorageManager.get();
+        refreshAfterCloud();
+        Cloud.sent = {}; return cloudFlush();
+    };
+    const kindLabel = k => k === 'auto' ? t('Automatic') : k === 'before-restore' ? t('Before restore') : t('Manual');
+    const renderBackups = async () => {
+        const list = document.getElementById('backups-list');
+        list.innerHTML = `<div class="p-8 text-center text-[12px] font-bold text-slate-500">${t('Loading…')}</div>`;
+        try {
+            const all = await listBackups();
+            if (!all.length) { list.innerHTML = `<div class="p-8 text-center text-[13px] font-bold text-slate-500">${t('No backups yet. Tap Back up now to make the first one.')}</div>`; return; }
+            list.innerHTML = all.map(b => `<div class="flex items-center gap-3 px-5 py-3.5 border-b border-white/5">
+                <span class="w-10 h-10 rounded-full ${b.kind === 'auto' ? 'bg-white/5 text-slate-300' : 'bg-[#d4af37]/15 text-[#d4af37]'} flex items-center justify-center shrink-0"><i data-lucide="${b.kind === 'auto' ? 'clock' : b.kind === 'before-restore' ? 'rotate-ccw' : 'save'}" class="w-5 h-5"></i></span>
+                <div class="flex-1 min-w-0"><div class="text-[14px] font-black text-white">${esc(fmtDate(b.createdAt, true))}</div><div class="text-[11px] font-bold text-slate-400">${esc(kindLabel(b.kind))} · ${t('{n} workouts', { n: b.workouts || 0 })} · ${t('{n} exercises', { n: b.exercises || 0 })}</div></div>
+                <button onclick="window.appActions.restoreBackup(${jsArg(b.id)}, ${jsArg(fmtDate(b.createdAt, true))})" class="shrink-0 px-3.5 py-2 rounded-lg bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-white tap-feedback">${t('Restore')}</button>
+            </div>`).join('');
+            if (window.lucide) window.lucide.createIcons({ root: list });
+        } catch (e) {
+            console.warn(e);
+            list.innerHTML = `<div class="p-8 text-center text-[13px] font-bold text-red-400">${e && /permission/i.test(e.code || '') ? t('Backups are blocked by the Firebase rules. Publish the new firestore.rules.') : t('Could not load backups. Check your connection.')}</div>`;
+        }
+    };
+
+    // 💡 HINTS: one small tip per screen for new users, shown once, pointing at the thing it explains
+    const HINTS_KEY = 'workoutHints_rakan_final';
+    let hintBox = null;
+    const hintSeen = id => !!(readJSON(HINTS_KEY, {}) || {})[id];
+    const hintBlocked = () => welcomeOpen() || ['onboarding-overlay', 'custom-confirm-overlay', 'summary-overlay', 'picker-overlay'].some(id => { const o = document.getElementById(id); return o && o.classList.contains('flex'); });
+    const closeHint = () => {
+        if (!hintBox) return;
+        const { el, target, id } = hintBox; hintBox = null;
+        try { const m = readJSON(HINTS_KEY, {}) || {}; m[id] = 1; localStorage.setItem(HINTS_KEY, JSON.stringify(m)); } catch (e) {}
+        if (target) target.classList.remove('hint-ring');
+        el.classList.add('opacity-0'); setTimeout(() => el.remove(), 250);
+    };
+    const hint = (id, sel, text, delay = 650) => {
+        if (!gateOn() && !localStorage.getItem('workoutTestHints')) return; // automated tests: no hints unless asked
+        if (hintSeen(id) || hintBox) return;
+        setTimeout(() => {
+            if (hintSeen(id) || hintBox || hintBlocked()) return;
+            const target = typeof sel === 'string' ? document.querySelector(sel) : sel; if (!target) return;
+            const r = target.getBoundingClientRect(); if (!r.width || r.top < 0 || r.bottom > window.innerHeight) return;
+            // only when the thing is really on screen (not covered by a sheet or pop-up)
+            const top = document.elementFromPoint(r.left + r.width / 2, r.top + Math.min(r.height / 2, 20));
+            if (!top || !(target === top || target.contains(top))) return;
+            const el = document.createElement('div'), below = r.bottom + 150 < window.innerHeight;
+            el.className = 'fixed z-[9600] max-w-[300px] rounded-2xl bg-[#1a1a1a] border border-[#d4af37]/50 shadow-[0_15px_40px_rgba(0,0,0,0.7)] p-4 transition-opacity duration-200 hint-in';
+            el.setAttribute('dir', isAR ? 'rtl' : 'ltr');
+            el.innerHTML = `<div class="flex items-start gap-2.5"><i data-lucide="lightbulb" class="w-5 h-5 text-[#d4af37] shrink-0 mt-0.5"></i><p class="text-[13px] font-bold text-white leading-snug flex-1">${esc(text)}</p></div><div class="flex justify-end mt-2.5"><span class="px-3 py-1.5 rounded-lg bg-[#d4af37] text-black text-[11px] font-black uppercase tracking-widest">${t('Got it')}</span></div>`;
+            document.body.appendChild(el);
+            const w = el.offsetWidth, left = Math.max(12, Math.min(window.innerWidth - w - 12, r.left + r.width / 2 - w / 2));
+            el.style.left = left + 'px';
+            el.style.top = below ? (r.bottom + 12) + 'px' : Math.max(12, r.top - el.offsetHeight - 12) + 'px';
+            if (window.lucide) window.lucide.createIcons({ root: el });
+            target.classList.add('hint-ring');
+            hintBox = { el, target, id };
+            // any tap closes the tip (and still does what it was meant to)
+            setTimeout(() => document.addEventListener('pointerdown', closeHint, { once: true, capture: true }), 50);
+        }, delay);
+    };
+    const todayHints = () => {
+        hint('today-start', '#workout-container button[onclick*="startWorkout"]', t('Tap here to start. Your weights from last time are already filled in.'));
+        if (hintSeen('today-start')) hint('today-days', '#nav-container', t('Tap a day to see or train another day of your plan.'));
+    };
+
+    Object.assign(window.appActions, {
+        welcomeGo: (i, instant = false) => {
+            const box = document.getElementById('welcome-slides');
+            welcomeIdx = Math.max(0, Math.min(W_SLIDES.length - 1, i));
+            box.scrollTo({ left: welcomeIdx * box.clientWidth, behavior: instant ? 'auto' : 'smooth' });
+            updateWelcomeUI();
+        },
+        welcomeAgree: on => {
+            try { if (on) localStorage.setItem(AGREE_KEY, JSON.stringify({ v: TERMS_VERSION, at: Date.now() })); else localStorage.removeItem(AGREE_KEY); } catch (e) {}
+            updateWelcomeUI();
+        },
+        welcomeContinue: () => {
+            if (!getAgree()) return;
+            hideWelcome(); window.appActions.initOnboarding();
+            if (Cloud.user) { Cloud.sent.main = ''; scheduleFlush(300); } // save the agreement to the account
+        },
+        welcomeSignIn: () => {
+            if (!getAgree()) return window.appActions.showToast(t('Please agree to the Terms and Privacy Policy first.'), 'error');
+            if (navigator.onLine === false) return window.appActions.showToast(t('No internet connection. Try again when online.'), 'error');
+            window.appActions.cloudSignIn();
+        },
+        openBackups: () => { if (!Cloud.user) return; openSheet('backups-overlay', 'backups-box'); pushBack('backups', () => window.appActions.closeBackups()); renderBackups(); },
+        closeBackups: () => { popBack('backups'); closeSheet('backups-overlay', 'backups-box'); },
+        backupNow: async () => {
+            const b = document.getElementById('backups-now'); if (b.disabled) return;
+            b.disabled = true; b.classList.add('opacity-60');
+            try { await cloudBackup('manual'); window.appActions.showToast(t('Backup saved to your account'), 'success'); renderBackups(); }
+            catch (e) { console.warn(e); window.appActions.showToast(e && /permission/i.test(e.code || '') ? t('Backups are blocked by the Firebase rules. Publish the new firestore.rules.') : t('Could not save the backup. Check your connection.'), 'error'); }
+            finally { b.disabled = false; b.classList.remove('opacity-60'); }
+        },
+        restoreBackup: (id, label) => window.appActions.showConfirm(t('Restore this backup?'), t('Your routines, settings and workouts go back to {date}, on all your phones. A copy of how things are now is saved first.', { date: label }), async () => {
+            try {
+                window.appActions.showToast(t('Restoring…'), 'success');
+                await cloudBackup('before-restore');
+                await restoreSnapshot(await loadBackup(id));
+                window.appActions.closeBackups();
+                window.appActions.showToast(t('Backup restored'), 'success');
+            } catch (e) { console.warn(e); window.appActions.showToast(t('Could not restore. Check your connection.'), 'error'); }
         }, true)
     });
 
@@ -2720,7 +3106,11 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     updateBackupStatus();
     renderAccount();
     if (getCloudFlag()) loadFirebase().catch(() => setCloudStatus('offline'));
-    setTimeout(() => window.appActions.initOnboarding(), 500);
+    // First launch (or signed out): intro pages + sign-in. Signed in: straight to the app (setup questions if needed).
+    setTimeout(() => {
+        if (gateOn() && (!isSignedIn() || !getAgree())) showWelcome(localStorage.getItem(INTRO_KEY) === '1' || isSignedIn());
+        else window.appActions.initOnboarding();
+    }, 300);
     // Coming back to the app on a new day: jump to today (unless a workout is open)
     let lastToday = getTodayId();
     document.addEventListener('visibilitychange', () => {

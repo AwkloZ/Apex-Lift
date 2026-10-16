@@ -44,6 +44,33 @@
     </div>
 
     <!-- Program gallery (Plan → Programs) -->
+    <!-- First launch: intro pages you swipe through, then sign in with Google (required to use the app) -->
+    <div id="welcome-overlay" class="fixed inset-0 z-[9990] bg-[#050505] hidden flex-col">
+        <div class="flex items-center justify-between px-5 shrink-0" style="padding-top: calc(env(safe-area-inset-top) + 14px);">
+            <div dir="ltr" class="text-xl font-black italic tracking-tighter uppercase text-white">APEX <span class="text-[#d4af37]">LIFT</span></div>
+            <button id="welcome-lang" class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[12px] font-bold text-slate-200 tap-feedback"></button>
+        </div>
+        <div id="welcome-slides" dir="ltr" class="flex-1 min-h-0 flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide overscroll-contain"></div>
+        <div class="px-6 shrink-0" style="padding-bottom: max(20px, env(safe-area-inset-bottom));">
+            <div id="welcome-dots" dir="ltr" class="flex justify-center gap-2 mb-5"></div>
+            <div id="welcome-actions"></div>
+        </div>
+    </div>
+
+    <!-- Account backups: dated copies kept in your Google account -->
+    <div id="backups-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeBackups()">
+        <div id="backups-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[80dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="flex items-center justify-between px-5 pb-2 shrink-0">
+                <h3 class="text-lg font-black text-white" data-i18n="Account backups">Account backups</h3>
+                <button onclick="window.appActions.closeBackups()" class="p-2 bg-white/5 rounded-full text-slate-400 tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <p class="px-5 pb-3 text-[12px] font-bold text-slate-400 leading-snug shrink-0" data-i18n="A copy of everything is saved in your account once a day. Restore one to go back to how things were.">A copy of everything is saved in your account once a day. Restore one to go back to how things were.</p>
+            <div class="px-5 pb-3 shrink-0"><button id="backups-now" onclick="window.appActions.backupNow()" class="w-full py-3 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i><span data-i18n="Back up now">Back up now</span></button></div>
+            <div id="backups-list" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain border-t border-white/5 pb-6" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+        </div>
+    </div>
+
     <div id="programs-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closePrograms()">
         <div id="programs-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[90dvh] transform translate-y-full transition-transform duration-300">
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
@@ -103,7 +130,7 @@
     </div>
 
     <!-- Minimized session: stays at the bottom while you look at your schedule; tap to go back -->
-    <button id="aw-mini" onclick="window.appActions.expandSession()" style="bottom: calc(84px + env(safe-area-inset-bottom));" class="hidden fixed left-4 right-4 z-[250] max-w-xl mx-auto bg-[#161616]/95 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl px-4 py-3 items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] tap-feedback text-start">
+    <button id="aw-mini" onclick="window.appActions.expandSession()" style="bottom: calc(62px + max(4px, env(safe-area-inset-bottom) - 12px));" class="hidden fixed left-4 right-4 z-[250] max-w-xl mx-auto bg-[#161616]/95 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl px-4 py-3 items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] tap-feedback text-start">
         <span id="aw-mini-dot" class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shrink-0"></span>
         <span class="flex-1 min-w-0">
             <span id="aw-mini-name" class="ex-name block text-[14px] font-black text-white truncate"></span>
@@ -367,7 +394,7 @@
     </div>
 
     <!-- Bottom tab bar -->
-    <nav id="tab-bar" class="fixed bottom-0 inset-x-0 z-[150] bg-[#0b0b0b]/95 backdrop-blur-xl border-t border-white/10" style="padding-bottom: env(safe-area-inset-bottom);">
+    <nav id="tab-bar" class="fixed bottom-0 inset-x-0 z-[150] bg-[#0b0b0b]/95 backdrop-blur-xl border-t border-white/10">
         <div class="max-w-2xl mx-auto grid grid-cols-4">
             <button id="tabbtn-today" onclick="window.appActions.switchTab('today')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="dumbbell" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Today">Today</span></button>
             <button id="tabbtn-plan" onclick="window.appActions.switchTab('plan')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="calendar-range" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Plan">Plan</span></button>

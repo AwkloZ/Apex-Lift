@@ -170,3 +170,28 @@ input.day-title-input { font-size: 26px !important; }
 
 /* Arabic: the routine name at the top gets a little more size and line height so letters aren't cut */
 :root[lang="ar"] #active-week-label { font-size: 12px; }
+
+/* Bottom tab bar sized like iPhone's own apps: ~50pt of buttons, then a slim strip for the home bar */
+#tab-bar { padding-bottom: max(4px, calc(env(safe-area-inset-bottom) - 12px)); }
+#tab-bar .tab-btn { padding-top: 7px !important; padding-bottom: 3px !important; gap: 2px !important; }
+#tab-bar .tab-btn svg { width: 23px; height: 23px; }
+
+/* ===== Welcome pages ===== */
+@keyframes float-y { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.float-0 { animation: float-y 3.2s ease-in-out infinite; }
+.float-1 { animation: float-y 3.2s ease-in-out 0.4s infinite; }
+.float-2 { animation: float-y 3.2s ease-in-out 0.8s infinite; }
+@keyframes pop-loop { 0%, 70%, 100% { transform: scale(1); } 80% { transform: scale(1.18); } }
+.pop-loop { animation: pop-loop 2.4s ease-in-out infinite; }
+.draw-line { stroke-dasharray: 400; stroke-dashoffset: 400; animation: draw 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.35); } 50% { box-shadow: 0 0 0 18px rgba(212, 175, 55, 0); } }
+.glow-ring { animation: glow 2.4s ease-out infinite; }
+#welcome-overlay { animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+#welcome-overlay.fade-out { opacity: 0; transition: opacity 0.35s; }
+#welcome-slides > section { min-height: 0; }
+
+/* ===== Hints ===== */
+@keyframes ring { 0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); } 50% { box-shadow: 0 0 0 6px rgba(212, 175, 55, 0); } }
+.hint-ring { animation: ring 1.6s ease-out infinite; border-radius: 16px; }
+.hint-in { animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1); }

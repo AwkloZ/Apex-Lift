@@ -6,7 +6,7 @@
 // - Outside files (Tailwind design, Google font): use the saved copy, refresh it in the background.
 //
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
-const CACHE = 'apex-lift-v5';
+const CACHE = 'apex-lift-v6';
 const APP_FILES = [
     './',
     'index.html',
@@ -19,7 +19,8 @@ const APP_FILES = [
     'icons/icon-512.png',
     'icons/icon-maskable-512.png',
     'icons/apple-touch-icon.png',
-    'privacy.html'
+    'privacy.html',
+    'terms.html'
 ];
 const OUTSIDE_FILES = ['https://cdn.tailwindcss.com/3.4.17'];
 const NETWORK_TIMEOUT_MS = 3000;
