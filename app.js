@@ -17,6 +17,122 @@
     })();
     const isAR = LANG === 'ar';
     const AR = {
+        "Next workout": "التمرين القادم",
+        "1 to 3 years": "من سنة إلى 3 سنوات",
+        "Add as a new routine": "أضفه كجدول جديد",
+        "Barbells, machines and cables": "بار، أجهزة وكابلات",
+        "Best": "الأفضل",
+        "Best reps": "أكثر تكرارات",
+        "Best time": "أطول وقت",
+        "Best weight": "أثقل وزن",
+        "Build muscle": "بناء العضلات",
+        "Day type": "نوع اليوم",
+        "Delete routine": "حذف الجدول",
+        "Delete this routine? Your history is kept.": "حذف هذا الجدول؟ سجلك لن يُحذف.",
+        "Dumbbells only": "دمبلز فقط",
+        "Est. 1-rep max": "أقصى تكرار واحد (تقديري)",
+        "Exercise history": "سجل التمرين",
+        "Extra sets on the main lifts": "مجموعات إضافية للتمارين الأساسية",
+        "Fewer sets to start": "مجموعات أقل للبداية",
+        "Finish your first workout to see your progress here.": "أنهِ أول تمرين لترى تقدّمك هنا.",
+        "Full gym": "نادي كامل",
+        "Get bigger and more defined": "حجم أكبر وتفاصيل أوضح",
+        "Get stronger": "زيادة القوة",
+        "Heaviest weight per session": "أثقل وزن في كل تمرين",
+        "Home or a small gym": "البيت أو نادي صغير",
+        "How long have you been training?": "منذ متى وأنت تتمرن؟",
+        "How many days a week can you train?": "كم يوماً في الأسبوع تستطيع التمرين؟",
+        "I'll build my own": "سأبني جدولي بنفسي",
+        "Last 5 weeks": "آخر 5 أسابيع",
+        "Less than 1 year": "أقل من سنة",
+        "Lift heavier on the big lifts": "أوزان أثقل في التمارين الأساسية",
+        "Longest set per session": "أطول مجموعة في كل تمرين",
+        "Lose fat": "خسارة الدهون",
+        "More than 3 years": "أكثر من 3 سنوات",
+        "Most reps per session": "أكثر تكرارات في كل تمرين",
+        "My routine": "جدولي",
+        "My routines": "جداولي",
+        "New routine": "جدول جديد",
+        "No new records yet. Add weight when the app says so and they will come.": "لا توجد أرقام جديدة بعد. زِد الوزن عندما يقترح التطبيق ذلك وستأتي.",
+        "No workouts yet": "لا توجد تمارين بعد",
+        "Other programs": "برامج أخرى",
+        "Overview": "نظرة عامة",
+        "Pick what you can keep up every week.": "اختر ما تستطيع الالتزام به كل أسبوع.",
+        "Programs": "البرامج",
+        "Progress chart": "رسم التقدّم",
+        "Recommended for you": "مقترح لك",
+        "Records (last 30 days)": "الأرقام القياسية (آخر 30 يوم)",
+        "Replace current routine": "استبدل الجدول الحالي",
+        "Replace current routine?": "استبدال الجدول الحالي؟",
+        "Reset app": "إعادة ضبط التطبيق",
+        "Routine {n}": "جدول {n}",
+        "See all {n} programs": "شاهد كل البرامج ({n})",
+        "Sessions": "عدد التمارين",
+        "Set up my program again": "إعادة إعداد برنامجي",
+        "Standard sets": "مجموعات عادية",
+        "Start with this program": "ابدأ بهذا البرنامج",
+        "Stay strong while you lean out": "حافظ على قوتك وأنت تنشّف",
+        "Tap a day for details.": "اضغط على يوم لعرض التفاصيل.",
+        "Tap a program to see its week.": "اضغط على برنامج لترى أسبوعه.",
+        "Targets": "الأهداف",
+        "This month": "هذا الشهر",
+        "This sets how many sets you start with.": "يحدد عدد المجموعات التي تبدأ بها.",
+        "Up to 5 routines": "الحد الأقصى 5 جداول",
+        "Volume": "الحجم",
+        "We use this to suggest a program. You can change it anytime.": "نستخدم هذا لاقتراح برنامج. يمكنك تغييره متى شئت.",
+        "Week starts on": "بداية الأسبوع",
+        "Week streak": "أسابيع متتالية",
+        "What's your main goal?": "ما هدفك الأساسي؟",
+        "Where do you train?": "أين تتمرن؟",
+        "Which day does your week start?": "في أي يوم يبدأ أسبوعك؟",
+        "Workout history": "سجل التمارين",
+        "Workouts this week": "تمارين هذا الأسبوع",
+        "You have 5 routines (the most). The current one will be replaced; your history is kept.": "لديك 5 جداول (الحد الأقصى). سيتم استبدال الجدول الحالي، وسجلك لن يُحذف.",
+        "Your current routine and all your history are kept.": "جدولك الحالي وكل سجلك يبقيان كما هما.",
+        "Your program": "برنامجك",
+        "Your routines go back to the default. Your history is kept.": "ستعود جداولك إلى الوضع الافتراضي. سجلك لن يُحذف.",
+        "Your week in the app starts on this day.": "يبدأ أسبوعك في التطبيق من هذا اليوم.",
+        "kg lifted this week": "كجم مرفوعة هذا الأسبوع",
+        "{name} is ready": "{name} جاهز",
+        "{n} days": "{n} أيام",
+        "{n} sessions": "{n} تمارين",
+        "Push / Pull / Legs": "دفع / سحب / أرجل",
+        "Push / Pull / Legs (3 days)": "دفع / سحب / أرجل (3 أيام)",
+        "Upper / Lower": "علوي / سفلي",
+        "PHUL (Power + Hypertrophy)": "PHUL (قوة + تضخيم)",
+        "Upper / Lower + Push / Pull / Legs": "علوي / سفلي + دفع / سحب / أرجل",
+        "Bro Split": "تقسيم العضلات (Bro Split)",
+        "Arnold Split": "تقسيم أرنولد",
+        "Full Body": "جسم كامل",
+        "5×5 Strength": "قوة 5×5",
+        "Glutes & Legs Focus": "تركيز على المؤخرة والأرجل",
+        "Dumbbells Only": "دمبلز فقط",
+        "Each muscle twice a week. The classic for building muscle.": "كل عضلة مرتين في الأسبوع. الخيار الكلاسيكي لبناء العضلات.",
+        "The same split once a week, with a rest day between sessions.": "نفس التقسيم مرة في الأسبوع، مع يوم راحة بين التمارين.",
+        "Upper and lower body twice a week. Balanced and easy to fit in.": "الجزء العلوي والسفلي مرتين في الأسبوع. متوازن وسهل الالتزام.",
+        "Two heavy days for strength and two volume days for size.": "يومان ثقيلان للقوة ويومان بحجم أعلى للتضخيم.",
+        "Five days: upper and lower, then push, pull and legs.": "خمسة أيام: علوي وسفلي، ثم دفع وسحب وأرجل.",
+        "One muscle group per day: chest, back, shoulders, arms and legs.": "عضلة واحدة كل يوم: صدر، ظهر، أكتاف، ذراعين، أرجل.",
+        "Chest & back, shoulders & arms, legs. Twice a week, high volume.": "صدر وظهر، أكتاف وذراعين، أرجل. مرتين في الأسبوع وبحجم عالٍ.",
+        "The whole body every session. Great with a busy schedule.": "الجسم كامل في كل تمرين. مناسب لمن وقته ضيق.",
+        "Few big lifts, heavy weights, 5 sets of 5. Built for strength.": "تمارين أساسية قليلة وأوزان ثقيلة، 5 مجموعات × 5. مصمم للقوة.",
+        "Extra work for glutes and legs, plus one upper body day.": "تمرين إضافي للمؤخرة والأرجل، مع يوم للجزء العلوي.",
+        "Only dumbbells needed. Good for home or a small gym.": "تحتاج دمبلز فقط. مناسب للبيت أو نادي صغير.",
+        "Arms": "الذراعين",
+        "Back": "الظهر",
+        "Chest": "الصدر",
+        "Chest & Back": "صدر وظهر",
+        "Glutes": "المؤخرة",
+        "Glutes & Hamstrings": "المؤخرة وخلفي الفخذ",
+        "Lower Hypertrophy": "سفلي تضخيم",
+        "Lower Power": "سفلي قوة",
+        "Quads & Glutes": "أمامي الفخذ والمؤخرة",
+        "Shoulders": "الأكتاف",
+        "Shoulders & Arms": "أكتاف وذراعين",
+        "Strength A": "قوة A",
+        "Strength B": "قوة B",
+        "Upper Hypertrophy": "علوي تضخيم",
+        "Upper Power": "علوي قوة",
         "Add exercises to this day in the Plan tab.": "أضف تمارين لهذا اليوم من تبويب الخطة.",
         "Add reps": "زِد التكرارات",
         "Add weight": "زِد الوزن",
@@ -34,7 +150,6 @@
         "Last:": "آخر مرة:",
         "Log more sets": "سجّل مجموعات إضافية",
         "New records": "أرقام قياسية جديدة",
-        "Next targets": "الأهداف القادمة",
         "No exercises yet": "لا توجد تمارين بعد",
         "Plan": "الخطة",
         "Plan this day": "خطّط هذا اليوم",
@@ -47,7 +162,6 @@
         "Start workout": "ابدأ التمرين",
         "Time": "الوقت",
         "Today": "اليوم",
-        "Weekly volume": "الحجم الأسبوعي",
         "Workout complete!": "أحسنت! انتهى التمرين",
         "kg lifted": "كجم مرفوعة",
         "sets": "مجموعات",
@@ -79,13 +193,11 @@
         "A bit": "قليلاً",
         "ALL": "الكل",
         "Action Plan Empty": "لا توجد خطة بعد",
-        "Actionable Insights": "توصيات ذكية",
         "Active": "نشط",
         "Active Rest": "راحة نشطة",
         "Add \"{name}\" to {muscle}": "أضف \"{name}\" إلى {muscle}",
         "Add 1 exercise": "أضف تمريناً واحداً",
         "Add Exercise": "إضافة تمرين",
-        "Add New": "إضافة جدول",
         "Add exercises": "إضافة تمارين",
         "Add {n} exercises": "أضف {n} تمارين",
         "All": "الكل",
@@ -103,13 +215,10 @@
         "Clear Day": "مسح اليوم",
         "Complete Rest": "راحة تامة",
         "Complete a workout and log your sets. The app will analyze your performance and generate smart weight recommendations here.": "أكمل تمريناً وسجّل مجموعاتك، وسيحلل التطبيق أداءك ويعطيك توصيات ذكية للأوزان هنا.",
-        "Complete workouts to unlock your Action Plan. Apex Lift will automatically calculate when you should add weight, push for more reps, or deload.": "أكمل تمارينك لتظهر خطة التقدّم. سيحسب Apex Lift تلقائياً متى تزيد الوزن، ومتى تزيد التكرارات، ومتى تخفف الحمل.",
         "Completion": "نسبة الإنجاز",
         "Confirm & Merge": "تأكيد ودمج",
         "Confirm Action": "تأكيد",
         "Contact Us": "تواصل معنا",
-        "Continue": "متابعة",
-        "Custom Week...": "قالب جاهز...",
         "Custom schedule found": "تم العثور على جدول",
         "Custom, e.g. 5 or 6 - 8": "مخصص، مثل 5 أو 6 - 8",
         "Daily Check-in": "تقييم اليوم",
@@ -119,10 +228,7 @@
         "Day {n}": "اليوم {n}",
         "Delete": "حذف",
         "Delete Record": "حذف السجل",
-        "Delete Schedule": "حذف الجدول",
-        "Delete all custom weeks?": "حذف كل الجداول المخصصة؟",
         "Delete all exercises?": "حذف كل التمارين؟",
-        "Delete this week?": "حذف هذا الجدول؟",
         "Deleted": "تم الحذف",
         "Developed By": "تطوير",
         "Done": "تم",
@@ -136,13 +242,10 @@
         "Enter seconds first": "أدخل الثواني أولاً",
         "Exercise": "التمرين",
         "Export Selected Data": "تصدير البيانات المختارة",
-        "Factory Reset": "إعادة ضبط المصنع",
         "Follow your targets as planned.": "اتبع أهدافك كما هي.",
         "Fresh": "مرتاح",
-        "Full Body (3-Days)": "جسم كامل (3 أيام)",
         "Full Body A": "جسم كامل A",
         "Full Body B": "جسم كامل B",
-        "Full Week Applied!": "تم تطبيق الأسبوع كاملاً!",
         "GO!": "انطلق!",
         "Great": "ممتاز",
         "High": "عالي",
@@ -155,21 +258,15 @@
         "Language": "اللغة",
         "Last Log": "آخر تسجيل",
         "Legs": "أرجل",
-        "Lifting Progress": "تقدّم الأوزان",
         "Link Progress": "ربط التقدّم",
-        "Load Records": "سجل الأوزان",
-        "Log your sets and reps to monitor your Weekly Volume. The app will tell you when you are under-training or over-training each muscle group.": "سجّل مجموعاتك وتكراراتك لمتابعة حجم تمرينك الأسبوعي. سيخبرك التطبيق إن كنت تمرّن أي عضلة أقل أو أكثر من اللازم.",
         "Low": "منخفض",
         "Low recovery: no weight increases today. Keep your weight, aim for the bottom of the range and stop 2 reps before failure.": "استشفاء منخفض: لا زيادة في الأوزان اليوم. حافظ على وزنك، واستهدف أقل عدد في النطاق، وتوقف قبل الفشل بتكرارين.",
         "Lower Body": "الجزء السفلي",
         "Main Routine": "الجدول الرئيسي",
         "Match old backup exercises to your active routine. Unlinked data will be skipped.": "اربط تمارين النسخة القديمة بتمارين جدولك الحالي. التمارين غير المربوطة لن تُستورد.",
-        "Max 5 schedules": "الحد الأقصى 5 جداول",
         "Merge Selected Data": "دمج البيانات المختارة",
-        "Mode": "النوع",
         "New Day": "يوم جديد",
         "New Workout": "تمرين جديد",
-        "Next": "التالي",
         "No Volume Detected": "لا يوجد حجم تمرين",
         "No exercises found": "لا توجد تمارين",
         "No exercises scheduled.": "لا توجد تمارين مجدولة.",
@@ -183,9 +280,7 @@
         "OK": "متوسط",
         "Official Instagram": "حسابنا في إنستغرام",
         "Old:": "القديم:",
-        "Overwrite Week?": "استبدال الأسبوع؟",
         "Overwrites current schedule": "يستبدل الجدول الحالي",
-        "PPL Split (6-Days)": "دفع/سحب/أرجل (6 أيام)",
         "PULL": "سحب",
         "PUSH": "دفع",
         "Poor": "سيئ",
@@ -198,7 +293,6 @@
         "Removed {name}": "تم حذف {name}",
         "Reps": "التكرارات",
         "Reset Complete": "تمت إعادة الضبط",
-        "Reset Default": "إعادة الضبط",
         "Rest": "راحة",
         "Rest Timer": "مؤقت الراحة",
         "Rest over": "انتهت الراحة",
@@ -214,7 +308,6 @@
         "Saves current schedule": "يحفظ الجدول الحالي",
         "Saves weights & history": "يحفظ الأوزان والسجل",
         "Scans for weights & history": "يبحث عن الأوزان والسجل",
-        "Schedule {n}": "جدول {n}",
         "Search exercises": "ابحث عن تمرين",
         "Select": "اختيار",
         "Select at least one option!": "اختر خياراً واحداً على الأقل!",
@@ -222,12 +315,9 @@
         "Select exactly what you want to include in this backup file.": "اختر ما تريد حفظه في ملف النسخة الاحتياطية.",
         "Sets": "المجموعات",
         "Skip": "تخطي",
-        "Skip Tutorial": "تخطي الشرح",
         "Sleep": "النوم",
         "Soreness": "الإجهاد العضلي",
-        "Start Day": "بداية الأسبوع",
         "Start Day: {d}": "بداية الأسبوع: {d}",
-        "Start Training": "ابدأ التدريب",
         "Storage full: data not saved. Backup & delete old records.": "الذاكرة ممتلئة: لم تُحفظ البيانات. خذ نسخة احتياطية واحذف السجلات القديمة.",
         "Swap": "تبديل",
         "Swap exercise": "تبديل التمرين",
@@ -236,27 +326,20 @@
         "Swapped to {name}": "تم التبديل إلى {name}",
         "Target": "الهدف",
         "Target:": "الهدف:",
-        "Template": "قالب",
-        "This will replace your entire 7-day schedule.": "سيتم استبدال جدول الأسبوع كاملاً.",
-        "Track Workload": "تابع حجم تمرينك",
         "Undo": "تراجع",
         "Unnamed": "بدون اسم",
         "Updated all exercises": "تم تحديث كل التمارين",
         "Upper Body": "الجزء العلوي",
-        "Upper/Lower (4-Days)": "علوي/سفلي (4 أيام)",
         "Very": "كثير",
         "WEEK {n}": "الأسبوع {n}",
         "Week 1": "الأسبوع 1",
         "Week Active": "الأسبوع النشط",
         "Week starts on {d}": "يبدأ الأسبوع يوم {d}",
-        "Welcome to Apex Lift": "مرحباً بك في Apex Lift",
         "Well recovered. Go for your targets.": "استشفاء ممتاز. انطلق نحو أهدافك.",
         "Workload Tracking": "حجم التمرين",
         "Workout": "التمرين",
         "Workout Routine": "جدول التمارين",
-        "Workouts Schedule": "جداول التمارين",
         "Yes, Do it": "نعم، نفّذ",
-        "Your premium personal coaching and tracking experience. Stop guessing and start growing with precision data.": "تجربة تدريب ومتابعة شخصية متكاملة. توقف عن التخمين وابدأ بالتطور ببيانات دقيقة.",
         "{n} exercises added": "تمت إضافة {n} تمارين",
         "{n} exercises found": "تم العثور على {n} تمرين",
     };
@@ -356,6 +439,11 @@
         ]},
         {id:7,day:"FRI",title:"Complete Rest",isRest:true,recoveryType:"complete",exercises:[]}
     ];
+
+    // 📋 PROGRAMS: workout days [title, [[exercise, muscle, sets, reps], ...]] and weekly programs.
+    // week = 7 slots from the first day of your week ('R' = rest, 'A' = active rest).
+    const WORKOUTS = {"push": ["Push", [["Bench Press", "Chest", "4", "6 - 8"], ["Incline Dumbbell Press", "Upper Chest", "3", "8 - 10"], ["Overhead Press", "Shoulders", "3", "6 - 8"], ["Cable Lateral Raise", "Side Delts", "3", "12 - 15"], ["Tricep Rope Pushdown", "Triceps", "3", "10 - 12"], ["Overhead Tricep Extension", "Triceps", "3", "10 - 12"]]], "pull": ["Pull", [["Pull-up", "Lats", "3", "6 - 10"], ["Barbell Row", "Back", "3", "6 - 8"], ["Lat Pulldown", "Lats", "3", "10 - 12"], ["Facepull", "Rear Delts", "3", "12 - 15"], ["Barbell Curl", "Biceps", "3", "8 - 10"], ["Hammer Curl", "Biceps", "3", "10 - 12"]]], "legs": ["Legs", [["Squat", "Quads", "4", "6 - 8"], ["Romanian Deadlift", "Hamstrings", "3", "8 - 10"], ["Leg Press", "Quads", "3", "10 - 12"], ["Lying Leg Curl", "Hamstrings", "3", "10 - 12"], ["Standing Calf Raise", "Calves", "4", "10 - 15"], ["Hanging Leg Raise", "Abs", "3", "10 - 15"]]], "upper": ["Upper Body", [["Bench Press", "Chest", "4", "6 - 8"], ["Barbell Row", "Back", "4", "6 - 8"], ["Overhead Press", "Shoulders", "3", "8 - 10"], ["Lat Pulldown", "Lats", "3", "10 - 12"], ["Dumbbell Lateral Raise", "Side Delts", "3", "12 - 15"], ["EZ Bar Curl", "Biceps", "2", "10 - 12"], ["Tricep Pushdown", "Triceps", "2", "10 - 12"]]], "lower": ["Lower Body", [["Squat", "Quads", "4", "6 - 8"], ["Romanian Deadlift", "Hamstrings", "3", "8 - 10"], ["Leg Press", "Quads", "3", "10 - 12"], ["Seated Leg Curl", "Hamstrings", "3", "10 - 12"], ["Standing Calf Raise", "Calves", "4", "10 - 15"], ["Cable Crunch", "Abs", "3", "12 - 15"]]], "upow": ["Upper Power", [["Bench Press", "Chest", "4", "3 - 5"], ["Barbell Row", "Back", "4", "3 - 5"], ["Overhead Press", "Shoulders", "3", "5 - 8"], ["Weighted Pull-up", "Lats", "3", "5 - 8"], ["Barbell Curl", "Biceps", "3", "6 - 8"], ["Skull Crusher", "Triceps", "3", "6 - 8"]]], "lpow": ["Lower Power", [["Squat", "Quads", "4", "3 - 5"], ["Deadlift", "Back", "3", "3 - 5"], ["Leg Press", "Quads", "3", "8 - 10"], ["Lying Leg Curl", "Hamstrings", "3", "6 - 8"], ["Standing Calf Raise", "Calves", "4", "6 - 10"]]], "uhyp": ["Upper Hypertrophy", [["Incline Dumbbell Press", "Upper Chest", "4", "8 - 12"], ["Seated Cable Row", "Back", "4", "8 - 12"], ["Dumbbell Shoulder Press", "Shoulders", "3", "10 - 12"], ["Cable Crossover", "Chest", "3", "12 - 15"], ["Lat Pulldown", "Lats", "3", "10 - 12"], ["Incline Dumbbell Curl", "Biceps", "3", "10 - 12"], ["Tricep Rope Pushdown", "Triceps", "3", "10 - 12"]]], "lhyp": ["Lower Hypertrophy", [["Front Squat", "Quads", "3", "8 - 10"], ["Romanian Deadlift", "Hamstrings", "3", "8 - 10"], ["Bulgarian Split Squat", "Quads", "3", "10 - 12"], ["Leg Extension", "Quads", "3", "12 - 15"], ["Seated Leg Curl", "Hamstrings", "3", "12 - 15"], ["Seated Calf Raise", "Calves", "4", "12 - 15"]]], "chest": ["Chest", [["Bench Press", "Chest", "4", "6 - 8"], ["Incline Dumbbell Press", "Upper Chest", "3", "8 - 10"], ["Machine Chest Press", "Chest", "3", "10 - 12"], ["Cable Crossover", "Chest", "3", "12 - 15"], ["Chest Dip", "Lower Chest", "3", "8 - 12"]]], "back": ["Back", [["Deadlift", "Back", "3", "5"], ["Pull-up", "Lats", "3", "6 - 10"], ["Barbell Row", "Back", "3", "8 - 10"], ["Seated Cable Row", "Back", "3", "10 - 12"], ["Straight Arm Pulldown", "Lats", "3", "12 - 15"]]], "shoulders": ["Shoulders", [["Overhead Press", "Shoulders", "4", "6 - 8"], ["Dumbbell Lateral Raise", "Side Delts", "4", "12 - 15"], ["Rear Delt Fly", "Rear Delts", "3", "12 - 15"], ["Cable Lateral Raise", "Side Delts", "3", "12 - 15"], ["Dumbbell Shrug", "Traps", "3", "10 - 12"]]], "arms": ["Arms", [["Barbell Curl", "Biceps", "4", "8 - 10"], ["Close-Grip Bench Press", "Triceps", "4", "6 - 8"], ["Hammer Curl", "Biceps", "3", "10 - 12"], ["Overhead Tricep Extension", "Triceps", "3", "10 - 12"], ["Preacher Curl", "Biceps", "3", "10 - 12"], ["Tricep Pushdown", "Triceps", "3", "12 - 15"]]], "chback": ["Chest & Back", [["Bench Press", "Chest", "4", "6 - 8"], ["Pull-up", "Lats", "4", "6 - 10"], ["Incline Dumbbell Press", "Upper Chest", "3", "8 - 10"], ["Barbell Row", "Back", "3", "8 - 10"], ["Dumbbell Fly", "Chest", "3", "10 - 12"], ["Dumbbell Pullover", "Lats", "3", "10 - 12"]]], "sharms": ["Shoulders & Arms", [["Seated Barbell Press", "Front Delts", "4", "6 - 8"], ["Dumbbell Lateral Raise", "Side Delts", "3", "12 - 15"], ["Barbell Curl", "Biceps", "3", "8 - 10"], ["Close-Grip Bench Press", "Triceps", "3", "8 - 10"], ["Incline Dumbbell Curl", "Biceps", "3", "10 - 12"], ["Skull Crusher", "Triceps", "3", "10 - 12"]]], "fba": ["Full Body A", [["Squat", "Quads", "3", "6 - 8"], ["Bench Press", "Chest", "3", "6 - 8"], ["Barbell Row", "Back", "3", "8 - 10"], ["Dumbbell Lateral Raise", "Side Delts", "2", "12 - 15"], ["Hammer Curl", "Biceps", "2", "10 - 12"], ["Plank", "Abs", "3", "30 - 45s"]]], "fbb": ["Full Body B", [["Romanian Deadlift", "Hamstrings", "3", "8 - 10"], ["Overhead Press", "Shoulders", "3", "6 - 8"], ["Lat Pulldown", "Lats", "3", "10 - 12"], ["Leg Press", "Quads", "3", "10 - 12"], ["Tricep Pushdown", "Triceps", "2", "10 - 12"], ["Hanging Leg Raise", "Abs", "3", "10 - 15"]]], "s5a": ["Strength A", [["Squat", "Quads", "5", "5"], ["Bench Press", "Chest", "5", "5"], ["Barbell Row", "Back", "5", "5"]]], "s5b": ["Strength B", [["Squat", "Quads", "5", "5"], ["Overhead Press", "Shoulders", "5", "5"], ["Deadlift", "Back", "1", "5"]]], "gl_a": ["Glutes & Hamstrings", [["Hip Thrust", "Glutes", "4", "8 - 10"], ["Romanian Deadlift", "Hamstrings", "3", "8 - 10"], ["Bulgarian Split Squat", "Glutes", "3", "10 - 12"], ["Seated Leg Curl", "Hamstrings", "3", "12 - 15"], ["Machine Hip Abduction", "Abductors", "3", "15 - 20"]]], "gl_up": ["Upper Body", [["Lat Pulldown", "Lats", "3", "10 - 12"], ["Dumbbell Shoulder Press", "Shoulders", "3", "10 - 12"], ["Seated Cable Row", "Back", "3", "10 - 12"], ["Incline Dumbbell Press", "Upper Chest", "3", "10 - 12"], ["Dumbbell Lateral Raise", "Side Delts", "3", "12 - 15"], ["Tricep Rope Pushdown", "Triceps", "2", "12 - 15"]]], "gl_b": ["Quads & Glutes", [["Squat", "Quads", "4", "8 - 10"], ["Leg Press", "Quads", "3", "10 - 12"], ["Walking Lunge", "Glutes", "3", "10 - 12"], ["Leg Extension", "Quads", "3", "12 - 15"], ["Standing Calf Raise", "Calves", "3", "12 - 15"]]], "gl_c": ["Glutes", [["Hip Thrust", "Glutes", "3", "12 - 15"], ["Cable Glute Kickback", "Glutes", "3", "12 - 15"], ["Step-up", "Glutes", "3", "10 - 12"], ["Cable Pull-Through", "Glutes", "3", "12 - 15"], ["Machine Hip Abduction", "Abductors", "3", "15 - 20"], ["Plank", "Abs", "3", "30 - 45s"]]], "db_a": ["Upper Body", [["Dumbbell Bench Press", "Chest", "4", "8 - 10"], ["Dumbbell Row", "Back", "4", "8 - 10"], ["Dumbbell Shoulder Press", "Shoulders", "3", "10 - 12"], ["Dumbbell Lateral Raise", "Side Delts", "3", "12 - 15"], ["Dumbbell Curl", "Biceps", "3", "10 - 12"], ["Dumbbell Tricep Extension", "Triceps", "3", "10 - 12"]]], "db_b": ["Lower Body", [["Goblet Squat", "Quads", "4", "10 - 12"], ["Dumbbell Romanian Deadlift", "Hamstrings", "3", "10 - 12"], ["Bulgarian Split Squat", "Quads", "3", "10 - 12"], ["Dumbbell Calf Raise", "Calves", "4", "12 - 15"], ["Plank", "Abs", "3", "30 - 45s"]]], "db_c": ["Full Body", [["Incline Dumbbell Press", "Upper Chest", "3", "8 - 10"], ["Dumbbell Pullover", "Lats", "3", "10 - 12"], ["Walking Lunge", "Glutes", "3", "10 - 12"], ["Hammer Curl", "Biceps", "3", "10 - 12"], ["Push-up", "Chest", "3", "10 - 15"], ["Russian Twist", "Abs", "3", "12 - 15"]]]};
+    const PROGRAMS = [{"id": "ppl6", "name": "Push / Pull / Legs", "days": 6, "goals": ["muscle", "fat"], "eq": "gym", "desc": "Each muscle twice a week. The classic for building muscle.", "week": ["push", "pull", "legs", "push", "pull", "legs", "R"]}, {"id": "ppl3", "name": "Push / Pull / Legs (3 days)", "days": 3, "goals": ["muscle"], "eq": "gym", "desc": "The same split once a week, with a rest day between sessions.", "week": ["push", "R", "pull", "R", "legs", "R", "R"]}, {"id": "ul4", "name": "Upper / Lower", "days": 4, "goals": ["muscle", "fat", "strength"], "eq": "gym", "desc": "Upper and lower body twice a week. Balanced and easy to fit in.", "week": ["upper", "lower", "R", "upper", "lower", "A", "R"]}, {"id": "phul", "name": "PHUL (Power + Hypertrophy)", "days": 4, "goals": ["strength", "muscle"], "eq": "gym", "desc": "Two heavy days for strength and two volume days for size.", "week": ["upow", "lpow", "R", "uhyp", "lhyp", "A", "R"]}, {"id": "hybrid5", "name": "Upper / Lower + Push / Pull / Legs", "days": 5, "goals": ["muscle", "fat"], "eq": "gym", "desc": "Five days: upper and lower, then push, pull and legs.", "week": ["upper", "lower", "R", "push", "pull", "legs", "R"]}, {"id": "bro5", "name": "Bro Split", "days": 5, "goals": ["muscle"], "eq": "gym", "desc": "One muscle group per day: chest, back, shoulders, arms and legs.", "week": ["chest", "back", "shoulders", "arms", "legs", "R", "R"]}, {"id": "arnold6", "name": "Arnold Split", "days": 6, "goals": ["muscle"], "eq": "gym", "desc": "Chest & back, shoulders & arms, legs. Twice a week, high volume.", "week": ["chback", "sharms", "legs", "chback", "sharms", "legs", "R"]}, {"id": "fb3", "name": "Full Body", "days": 3, "goals": ["fat", "muscle"], "eq": "gym", "desc": "The whole body every session. Great with a busy schedule.", "week": ["fba", "R", "fbb", "R", "fba", "A", "R"]}, {"id": "s5x5", "name": "5×5 Strength", "days": 3, "goals": ["strength"], "eq": "gym", "desc": "Few big lifts, heavy weights, 5 sets of 5. Built for strength.", "week": ["s5a", "R", "s5b", "R", "s5a", "R", "R"]}, {"id": "glutes4", "name": "Glutes & Legs Focus", "days": 4, "goals": ["muscle", "fat"], "eq": "gym", "desc": "Extra work for glutes and legs, plus one upper body day.", "week": ["gl_a", "gl_up", "R", "gl_b", "gl_c", "R", "R"]}, {"id": "db3", "name": "Dumbbells Only", "days": 3, "goals": ["muscle", "fat", "strength"], "eq": "db", "desc": "Only dumbbells needed. Good for home or a small gym.", "week": ["db_a", "R", "db_b", "R", "db_c", "A", "R"]}];
 
     // 🛡️ DATA VALIDATION (used for saved data and imported backup files)
     const DAY_NAMES = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
@@ -575,7 +663,7 @@
     let currentWeekId = StorageManager.getActiveWeek() || appData.weeks[0].id;
     if (!appData.weeks.find(w => w.id === currentWeekId)) { currentWeekId = appData.weeks[0].id; StorageManager.setActiveWeek(currentWeekId); }
     
-window.appState = { currentView: 'today', sortableInstance: null, mappingConfig: null, onboardSlide: 0, awTimer: null };    let loggedWeights = StorageManager.get();    let loggedReps = StorageManager.getReps();
+window.appState = { currentView: 'today', sortableInstance: null, mappingConfig: null, awTimer: null };    let loggedWeights = StorageManager.get();    let loggedReps = StorageManager.getReps();
 
     const getActiveSchedule = () => (appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0]).schedule;
     const getTodayId = () => ((new Date().getDay() - DAY_NAMES.indexOf(StorageManager.getStartDay()) + 7) % 7) + 1;
@@ -641,6 +729,43 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
 
     // The app always opens on today
     let activeDay = getTodayId();
+
+    // Build a 7-day schedule from a program, starting on the user's first day of the week.
+    // exp: 'new' = one set less on accessories, 'adv' = one set more on the first two lifts of each day
+    const PROFILE_KEY = 'workoutProfile_rakan_final';
+    const getProfile = () => { const v = readJSON(PROFILE_KEY, {}); return isObj(v) ? v : {}; };
+    const programSchedule = (prog, exp) => {
+        const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
+        return prog.week.map((slot, i) => {
+            const base = { id: i + 1, day: DAY_NAMES[(start + i) % 7], savedTitle: '' };
+            if (slot === 'R') return { ...base, title: 'Complete Rest', isRest: true, recoveryType: 'complete', exercises: [] };
+            if (slot === 'A') return { ...base, title: 'Active Rest', isRest: true, recoveryType: 'active', exercises: [] };
+            const [title, list] = WORKOUTS[slot];
+            return { ...base, title, savedTitle: title, isRest: false, recoveryType: null, exercises: list.map(([name, muscle, sets, reps], j) => {
+                let n = parseInt(sets);
+                if (exp === 'new' && j >= 2) n = Math.max(2, n - 1);
+                if (exp === 'adv' && j < 2) n = Math.min(5, n + 1);
+                return { muscle, name, sets: String(n), reps };
+            }) };
+        });
+    };
+    // Which program fits the answers best
+    const recommendProgram = a => {
+        if (a.eq === 'db') return 'db3';
+        const d = parseInt(a.days) || 4;
+        if (a.goal === 'strength') return d <= 3 ? 's5x5' : 'phul';
+        if (a.goal === 'fat') return d <= 3 ? 'fb3' : d === 4 ? 'ul4' : d === 5 ? 'hybrid5' : 'ppl6';
+        if (d <= 3) return a.exp === 'new' ? 'fb3' : 'ppl3';
+        return d === 4 ? 'ul4' : d === 5 ? 'hybrid5' : 'ppl6';
+    };
+    // Short week preview: "Sat Push · Sun Pull · ..."
+    const programPreviewHTML = prog => {
+        const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
+        return `<div class="grid grid-cols-7 gap-1 mt-3">${prog.week.map((slot, i) => {
+            const rest = slot === 'R' || slot === 'A';
+            return `<div class="rounded-lg py-1.5 px-0.5 text-center ${rest ? 'bg-white/5 text-slate-500' : 'bg-[#d4af37]/15 text-[#d4af37]'}"><div class="text-[9px] font-black">${esc(dayShort(DAY_NAMES[(start + i) % 7]))}</div><div class="text-[9px] font-bold leading-tight mt-0.5 line-clamp-2">${rest ? '—' : esc(t(WORKOUTS[slot][0]))}</div></div>`;
+        }).join('')}</div>`;
+    };
 
     // 🔎 EXERCISE PICKER DATA
     const CUSTOM_KEY = 'workoutCustomEx_rakan_final';
@@ -780,11 +905,158 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         renderSidePanel();
     };
 
+    // 📈 PROGRESS HELPERS
+    // Name of an exercise from its storage key (routines, built-in list, your own exercises)
+    const exerciseNameMap = () => {
+        const m = {};
+        catalogue().forEach(x => { m[getExKey('', '', '', x.name)] = { name: x.name, muscle: x.muscle }; });
+        appData.weeks.forEach(w => w.schedule.forEach(d => (d.exercises || []).forEach(e => { m[getExKey('', '', '', e.name)] = { name: e.name, muscle: e.muscle }; })));
+        return m;
+    };
+    const nameOfKey = (k, map) => (map[k] && map[k].name) || k.replace(/^global_/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    // Every training day: sets, kg lifted and exercises (from all history)
+    const workoutDays = history => {
+        const map = {};
+        Object.keys(history).forEach(k => (history[k] || []).forEach(l => {
+            const t0 = logTime(l); if (isNaN(t0)) return;
+            const d = startOfDay(t0), m = map[d] = map[d] || { sets: 0, volume: 0, ex: new Set() };
+            const det = logSetDetails(l);
+            m.sets += det.length; m.ex.add(k);
+            if (l.u !== 's') m.volume += det.reduce((a, x) => a + x.w * x.r, 0);
+        }));
+        return map;
+    };
+    // One point per training day for an exercise: heaviest weight (or best reps/seconds for bodyweight)
+    const exerciseSessions = hA => {
+        const byDay = {};
+        (hA || []).forEach(l => { const t0 = logTime(l); if (isNaN(t0)) return; const d = startOfDay(t0); (byDay[d] = byDay[d] || []).push(...logSetDetails(l)); });
+        return Object.keys(byDay).map(Number).sort((a, b) => a - b).map(d => {
+            const sets = byDay[d], topW = Math.max(0, ...sets.map(x => x.w));
+            return { t: d, w: topW, r: Math.max(0, ...sets.map(x => x.r)), sets };
+        }).filter(x => x.sets.length);
+    };
+    // Personal records: a session heavier than every session before it
+    const recordsOf = hA => {
+        let best = 0; const out = [];
+        exerciseSessions(hA).forEach(s => { if (best > 0 && s.w > best) out.push({ t: s.t, w: s.w, plus: Math.round((s.w - best) * 10) / 10 }); best = Math.max(best, s.w); });
+        return out;
+    };
+    const niceStep = raw => { const p = Math.pow(10, Math.floor(Math.log10(raw || 1))); const n = (raw || 1) / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p; };
+    // Single-series line chart (inline SVG): 2px gold line, soft area, dots with a surface ring,
+    // hairline grid, value at the end; tap/hover shows a crosshair and the value.
+    const lineChartHTML = (pts, unit) => {
+        const W = 320, H = 150, pl = 34, pr = 40, pt = 12, pb = 22;
+        const vs = pts.map(p => p.v);
+        let lo = Math.min(...vs), hi = Math.max(...vs);
+        const step = niceStep(((hi - lo) || Math.max(1, hi * 0.1)) / 3);
+        lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step; if (hi === lo) hi = lo + step;
+        const x = i => pl + (pts.length === 1 ? (W - pl - pr) / 2 : i * (W - pl - pr) / (pts.length - 1));
+        const y = v => pt + (H - pt - pb) * (1 - (v - lo) / (hi - lo));
+        let grid = '';
+        for (let v = lo; v <= hi + 1e-9; v += step) grid += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="#262626" stroke-width="1"/><text x="${pl - 6}" y="${y(v) + 3}" text-anchor="end" font-size="9" fill="#64748b" font-weight="700">${Math.round(v * 10) / 10}</text>`;
+        const line = pts.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.v).toFixed(1)}`).join(' ');
+        const area = `${line} L${x(pts.length - 1).toFixed(1)},${H - pb} L${x(0).toFixed(1)},${H - pb} Z`;
+        const dots = pts.map((p, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(p.v).toFixed(1)}" r="4" fill="#d4af37" stroke="#111111" stroke-width="2"/>`).join('');
+        const last = pts[pts.length - 1];
+        const data = esc(JSON.stringify(pts.map((p, i) => ({ x: x(i), y: y(p.v), v: p.v, d: fmtDayMonth(new Date(p.t)) }))));
+        return `<div class="chart-wrap relative select-none" data-pts="${data}" data-unit="${esc(unit)}" dir="ltr">
+            <svg viewBox="0 0 ${W} ${H}" class="w-full h-auto block touch-none" role="img" aria-label="${esc(t('Progress chart'))}">
+                ${grid}
+                <path d="${area}" fill="#d4af37" fill-opacity="0.1"/>
+                <path d="${line}" fill="none" stroke="#d4af37" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+                ${dots}
+                <text x="${x(pts.length - 1) + 7}" y="${y(last.v) + 3}" font-size="10" fill="#e2e8f0" font-weight="900">${last.v}${esc(unit)}</text>
+                <text x="${pl}" y="${H - 6}" font-size="9" fill="#64748b" font-weight="700">${esc(fmtDayMonth(new Date(pts[0].t)))}</text>
+                <text x="${W - pr}" y="${H - 6}" text-anchor="end" font-size="9" fill="#64748b" font-weight="700">${esc(fmtDayMonth(new Date(last.t)))}</text>
+                <line class="chart-cross" x1="0" x2="0" y1="${pt}" y2="${H - pb}" stroke="#94a3b8" stroke-width="1" visibility="hidden"/>
+                <circle class="chart-hot" r="6" fill="#d4af37" stroke="#111111" stroke-width="2" visibility="hidden"/>
+            </svg>
+            <div class="chart-tip hidden absolute -top-2 px-2 py-1 rounded-lg bg-black border border-white/15 text-[11px] font-black text-white whitespace-nowrap pointer-events-none"></div>
+        </div>`;
+    };
+    // Crosshair + tooltip for the charts inside an element
+    const bindCharts = root => root.querySelectorAll('.chart-wrap').forEach(wrap => {
+        const pts = JSON.parse(wrap.dataset.pts), unit = wrap.dataset.unit, svg = wrap.querySelector('svg');
+        const cross = svg.querySelector('.chart-cross'), hot = svg.querySelector('.chart-hot'), tip = wrap.querySelector('.chart-tip');
+        const show = e => {
+            const r = svg.getBoundingClientRect(), vx = (e.clientX - r.left) / r.width * 320;
+            const p = pts.reduce((a, b) => Math.abs(b.x - vx) < Math.abs(a.x - vx) ? b : a);
+            cross.setAttribute('x1', p.x); cross.setAttribute('x2', p.x); cross.setAttribute('visibility', 'visible');
+            hot.setAttribute('cx', p.x); hot.setAttribute('cy', p.y); hot.setAttribute('visibility', 'visible');
+            tip.textContent = `${p.d} · ${p.v}${unit}`; tip.classList.remove('hidden');
+            tip.style.left = `${Math.min(Math.max(p.x / 320 * r.width - tip.offsetWidth / 2, 0), r.width - tip.offsetWidth)}px`;
+        };
+        svg.addEventListener('pointermove', show); svg.addEventListener('pointerdown', show);
+        svg.addEventListener('pointerleave', () => { cross.setAttribute('visibility', 'hidden'); hot.setAttribute('visibility', 'hidden'); tip.classList.add('hidden'); });
+    });
+    // Stats + chart shown at the top of an exercise's history
+    const exerciseStatsHTML = hA => {
+        const ses = exerciseSessions(hA); if (!ses.length) return '';
+        const weighted = ses.some(s => s.w > 0), timed = (hA || []).some(l => l.u === 's');
+        const all = ses.flatMap(s => s.sets);
+        const best = weighted ? Math.max(...all.map(x => x.w)) : Math.max(...all.map(x => x.r));
+        const e1rm = weighted && !timed ? Math.max(0, ...all.filter(x => x.w > 0 && x.r <= 12).map(x => x.w * (1 + x.r / 30))) : 0;
+        const tile = (v, l) => `<div class="bg-white/5 rounded-xl py-2.5 text-center"><div class="text-[17px] font-black text-white" dir="ltr">${v}</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">${l}</div></div>`;
+        const unit = weighted ? 'kg' : timed ? 's' : '';
+        const pts = ses.slice(-12).map(s => ({ t: s.t, v: weighted ? s.w : s.r }));
+        return `<div class="grid grid-cols-3 gap-2 mb-3">${tile(`${best}${unit}`, weighted ? t('Best weight') : timed ? t('Best time') : t('Best reps'))}${tile(e1rm ? `${Math.round(e1rm)}kg` : '—', t('Est. 1-rep max'))}${tile(ses.length, t('Sessions'))}</div>`
+            + (pts.length >= 2 ? `<div class="bg-white/5 rounded-2xl p-3 mb-4"><div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">${weighted ? t('Heaviest weight per session') : timed ? t('Longest set per session') : t('Most reps per session')}</div>${lineChartHTML(pts, unit)}</div>` : '');
+    };
+
+    // Overview: this week, month, streak, kg; calendar of the last 5 weeks; recent records
+    const progressOverviewHTML = history => {
+        const days = workoutDays(history), dayKeys = Object.keys(days).map(Number);
+        if (!dayKeys.length) return `<div class="glass-card p-8 text-center"><div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="calendar-check" class="w-6 h-6 text-[#d4af37]"></i></div><div class="text-[15px] font-black text-white mb-2">${t('No workouts yet')}</div><p class="text-[12px] text-slate-400 font-bold">${t('Finish your first workout to see your progress here.')}</p></div>`;
+        const wk = getWeekStart().getTime(), now = new Date(), monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+        const inWeek = dayKeys.filter(d => d >= wk), inMonth = dayKeys.filter(d => d >= monthStart);
+        const volWeek = inWeek.reduce((a, d) => a + days[d].volume, 0);
+        // streak: weeks in a row with at least one workout (this week counts once you've trained)
+        let streak = 0, ws = wk; if (!inWeek.length) ws -= 7 * 86400000;
+        while (dayKeys.some(d => d >= ws && d < ws + 7 * 86400000)) { streak++; ws -= 7 * 86400000; }
+        const tile = (v, l, icon) => `<div class="glass-card p-4"><div class="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1"><i data-lucide="${icon}" class="w-3.5 h-3.5 text-[#d4af37]"></i>${l}</div><div class="text-[26px] font-black text-white leading-none" dir="ltr">${v}</div></div>`;
+        let html = `<div class="grid grid-cols-2 gap-2.5 mb-4">${tile(inWeek.length, t('Workouts this week'), 'calendar-check')}${tile(inMonth.length, t('This month'), 'calendar')}${tile(streak, t('Week streak'), 'flame')}${tile(`${volWeek >= 10000 ? (volWeek / 1000).toFixed(1) + 'K' : Math.round(volWeek).toLocaleString('en-US')}`, t('kg lifted this week'), 'weight')}</div>`;
+        // calendar: 5 weeks, gold = trained (darker = more sets)
+        const start = wk - 4 * 7 * 86400000, today = startOfDay(Date.now());
+        const startIdx = DAY_NAMES.indexOf(StorageManager.getStartDay());
+        let cells = '';
+        for (let i = 0; i < 35; i++) {
+            const d = startOfDay(start + i * 86400000 + 3600000), info = days[d], future = d > today;
+            const lvl = info ? (info.sets >= 20 ? 1 : info.sets >= 10 ? 0.7 : 0.4) : 0;
+            const label = `${fmtDate(d, false)} · ${info ? t('{n} sets', { n: info.sets }) : t('Rest')}`;
+            cells += `<button onclick="document.getElementById('cal-info').textContent=${esc(JSON.stringify(label))}" class="aspect-square rounded-md tap-feedback ${d === today ? 'ring-2 ring-white/70' : ''} ${future ? 'opacity-30' : ''}" style="background:${info ? `rgba(212,175,55,${lvl})` : 'rgba(255,255,255,0.06)'}" aria-label="${esc(label)}" title="${esc(label)}"></button>`;
+        }
+        html += `<div class="glass-card p-4 mb-4"><div class="text-[11px] font-black text-white uppercase tracking-widest mb-3">${t('Last 5 weeks')}</div>
+            <div class="grid grid-cols-7 gap-1.5 mb-1.5">${DAY_NAMES.map((_, i) => `<div class="text-center text-[9px] font-black text-slate-500 truncate">${esc(dayShort(DAY_NAMES[(startIdx + i) % 7]))}</div>`).join('')}</div>
+            <div class="grid grid-cols-7 gap-1.5" dir="ltr">${cells}</div>
+            <div id="cal-info" class="text-[11px] font-bold text-slate-400 mt-3 min-h-[16px]">${t('Tap a day for details.')}</div></div>`;
+        // recent records
+        const map = exerciseNameMap(), recs = [];
+        Object.keys(history).forEach(k => recordsOf(history[k]).forEach(r => recs.push({ ...r, k })));
+        recs.sort((a, b) => b.t - a.t);
+        const recent = recs.filter(r => r.t >= today - 30 * 86400000).slice(0, 6);
+        html += `<div class="glass-card p-4 mb-4"><div class="text-[11px] font-black text-white uppercase tracking-widest mb-2">🏆 ${t('Records (last 30 days)')}</div>${recent.length ? recent.map(r => `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(nameOfKey(r.k, map))})" class="w-full flex items-center justify-between gap-2 py-2.5 border-b border-white/5 last:border-0 text-start tap-feedback"><span class="min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(nameOfKey(r.k, map))}</span><span class="block text-[10px] font-bold text-slate-500">${esc(fmtDate(r.t, false))}</span></span><span class="text-[14px] font-black text-[#22c55e] shrink-0" dir="ltr">${r.w}kg <span class="text-[10px]">(+${r.plus})</span></span></button>`).join('') : `<p class="text-[12px] font-bold text-slate-500">${t('No new records yet. Add weight when the app says so and they will come.')}</p>`}</div>`;
+        return html;
+    };
+    // Every exercise you have logged, most recent first
+    const progressExercisesHTML = history => {
+        const map = exerciseNameMap();
+        const rows = Object.keys(history).map(k => {
+            const ses = exerciseSessions(history[k]); if (!ses.length) return null;
+            const last = ses[ses.length - 1], weighted = ses.some(s => s.w > 0);
+            return { k, name: nameOfKey(k, map), muscle: (map[k] || {}).muscle || '', last: last.t, n: ses.length, best: weighted ? `${Math.max(...ses.map(s => s.w))}kg` : `${Math.max(...ses.map(s => s.r))}` };
+        }).filter(Boolean).sort((a, b) => b.last - a.last);
+        if (!rows.length) return progressOverviewHTML(history);
+        return rows.map(r => `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(r.name)})" class="w-full glass-card p-4 mb-2.5 flex items-center gap-3 text-start tap-feedback">
+            <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight">${esc(r.name)}</span><span class="block text-[11px] font-bold text-slate-400 mt-0.5">${esc(tm(r.muscle))}${r.muscle ? ' · ' : ''}${t('{n} sessions', { n: r.n })} · ${esc(fmtDate(r.last, false))}</span></span>
+            <span class="text-end shrink-0"><span class="block text-[9px] font-black text-slate-500 uppercase tracking-wider">${t('Best')}</span><span class="block text-[15px] font-black text-white" dir="ltr">${esc(r.best)}</span></span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-600 shrink-0"></i></button>`).join('');
+    };
+
     const renderAnalytics = () => {
         const history = StorageManager.getHistory();
         const c = document.getElementById('workout-container');
         
-        const activeTab = window.appState.aTab || 'action';
+        const activeTab = window.appState.aTab || 'overview';
         
         const pG = {
             'CHEST': { l: 'Chest', s: 0, c: 0, ex: {} }, 'BACK': { l: 'Back', s: 0, c: 0, ex: {} },
@@ -951,11 +1223,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             </div>`;
         };
 
-        const tabBtn = (id, label) => `<button onclick="window.appState.aTab='${id}';window.appActions.refreshUI()" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest border-b-2 transition-colors tap-feedback ${activeTab===id ? 'border-[#d4af37] text-[#d4af37]' : 'border-transparent text-slate-500 hover:text-white'}">${label}</button>`;
-        const tabsHTML = `<div class="flex gap-2 border-b border-white/5 mb-5 px-1 overflow-x-auto scrollbar-hide pb-1 shrink-0">${tabBtn('action', t('Next targets'))}${tabBtn('hyper', t('Weekly volume'))}</div>`;
+        const tabBtn = (id, label) => `<button onclick="window.appState.aTab='${id}';window.appActions.refreshUI()" class="flex-1 shrink-0 px-1 py-3 text-[11px] font-black uppercase tracking-widest border-b-2 transition-colors tap-feedback ${activeTab===id ? 'border-[#d4af37] text-[#d4af37]' : 'border-transparent text-slate-500 hover:text-white'}">${label}</button>`;
+        const tabsHTML = `<div class="flex gap-2 border-b border-white/5 mb-5 px-1 overflow-x-auto scrollbar-hide pb-1 shrink-0">${tabBtn('overview', t('Overview'))}${tabBtn('exercises', t('Exercises'))}${tabBtn('action', t('Targets'))}${tabBtn('hyper', t('Volume'))}</div>`;
         let contentHTML = '';
 
-        if (activeTab === 'action') {
+        if (activeTab === 'overview') contentHTML = progressOverviewHTML(history);
+        else if (activeTab === 'exercises') contentHTML = progressExercisesHTML(history);
+        else if (activeTab === 'action') {
             const levelUpHTML = renderActionSection(actionLevelUp, t('Add weight'), 'up', 'arrow-up-circle', '#22c55e');
             const buildHTML = renderActionSection(actionBuild, t('Add reps'), 'build', 'refresh-cw', '#3b82f6');
             const deloadHTML = renderActionSection(actionDeload, t('Go lighter'), 'down', 'alert-triangle', '#ef4444');
@@ -1054,6 +1328,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         let html = `<div class="px-1 mb-2 text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}</div>`;
         if (day.isRest) {
             html += `<div class="glass-card p-10 text-center border-dashed border-[#d4af37]/20"><div class="text-[#d4af37] flex justify-center mb-4"><i data-lucide="${day.recoveryType==='active'?'footprints':'moon'}" class="w-12 h-12 ${day.recoveryType==='active'?'animate-walk':'animate-pulse-glow'}"></i></div><h3 class="font-black text-xl mb-1">${day.recoveryType==='active'?t('Active Rest'):t('Complete Rest')}</h3><p class="text-[12px] font-bold text-slate-400">${t('Recover well. See you next session.')}</p></div>`;
+            // Point to the next training day so a rest day is never a dead end
+            const nextDay = [1, 2, 3, 4, 5, 6].map(o => schedule.find(d => d.id === ((activeDay - 1 + o) % 7) + 1)).find(d => d && !d.isRest && d.exercises.length);
+            if (nextDay) html += `<button onclick="window.appActions.setActiveDay(${nextDay.id})" class="w-full glass-card p-4 mt-3 flex items-center gap-3 text-start tap-feedback"><span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-clock" class="w-5 h-5"></i></span><span class="flex-1 min-w-0"><span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">${t('Next workout')}</span><span class="block text-[15px] font-black text-white truncate">${esc(dayLong(nextDay.day))} · ${esc(t(nextDay.title))}</span></span><i data-lucide="chevron-right" class="w-5 h-5 text-slate-500 shrink-0"></i></button>`;
         } else if (!day.exercises.length) {
             html += `<div class="glass-card p-8 text-center border-dashed border-white/10"><div class="flex justify-center mb-4"><i data-lucide="clipboard-edit" class="w-10 h-10 text-slate-500"></i></div><h3 class="font-black text-lg text-white mb-2">${t('No exercises yet')}</h3><p class="text-[12px] font-bold text-slate-400 mb-5">${t('Add exercises to this day in the Plan tab.')}</p><button onclick="window.appActions.switchTab('plan')" class="px-6 py-3 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback">${t('Plan this day')}</button></div>`;
         } else {
@@ -1136,13 +1413,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const opts = schedule.filter(d => d.id !== activeDay).map(d => `<option value="${d.id}">${t('Day {n}', { n: d.id })} • ${esc(tDay(d.day))}</option>`).join('');
             html += `
             <div class="px-2 mb-6 grid ${day.isRest ? 'grid-cols-4' : 'grid-cols-5'} gap-2">
-                <div class="relative tap-feedback">
-                    <select onchange="if(this.value)window.appActions.applyPreset(this.value);this.value='';" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">${t('Custom Week...')}</option><option value="PPL">${t('PPL Split (6-Days)')}</option><option value="UL">${t('Upper/Lower (4-Days)')}</option><option value="FB">${t('Full Body (3-Days)')}</option></select>
-                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="zap" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Template')}</span></div>
-                </div>
+                <button onclick="window.appActions.openPrograms()" class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-[#d4af37]/40 bg-[#d4af37]/10 text-[#d4af37] tap-feedback"><i data-lucide="layout-list" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Programs')}</span></button>
                 <div class="relative tap-feedback">
                     <select onchange="window.appActions.updateDayType(this.value)" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="workout" ${!day.isRest ? 'selected' : ''}>${t('Workout')}</option><option value="active" ${day.isRest && day.recoveryType === 'active' ? 'selected' : ''}>${t('Active Rest')}</option><option value="complete" ${day.isRest && day.recoveryType === 'complete' ? 'selected' : ''}>${t('Complete Rest')}</option></select>
-                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="settings-2" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Mode')}</span></div>
+                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="settings-2" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Day type')}</span></div>
                 </div>
                 <div class="relative tap-feedback">
                     <select onchange="if(this.value){window.appActions.swapDay(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">${t('Swap...')}</option>${opts}</select>
@@ -1270,7 +1544,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         closeHistoryModal: () => { popBack('history'); const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex');},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
         refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-500 text-[12px] font-bold uppercase tracking-widest">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('WEEK {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-[2px] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
-         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[10px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[10px] text-slate-400">${t('KG')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">${h.u==='s'?t('SEC'):t('REPS')}</span></span>`:''}`}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=html; if(window.lucide) window.lucide.createIcons({root:c}); },
+         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[10px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[10px] text-slate-400">${t('KG')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">${h.u==='s'?t('SEC'):t('REPS')}</span></span>`:''}`}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=exerciseStatsHTML(hA)+html; bindCharts(c); if(window.lucide) window.lucide.createIcons({root:c}); },
         deleteHistoryRecord: (k, i) => window.appActions.showConfirm(t("Delete Record"), t("Remove this record?"), () => { let h=StorageManager.getHistory(); if(h[k]){h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast(t("Deleted"),"error");} }, true),
         handleTyping: (k, type, v) => { 
             if (type === 'load') { loggedWeights[k] = v; StorageManager.set(loggedWeights); } 
@@ -1570,33 +1844,6 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             StorageManager.setPlan(appData);
             renderWorkout();
             window.appActions.showToast(t("Updated all exercises"), "success");
-        },applyPreset: p => {
-            window.appActions.showConfirm(t("Overwrite Week?"), t("This will replace your entire 7-day schedule."), () => {
-                const s = getActiveSchedule();
-                const dEx = {
-                    "Push": [{muscle:"Chest",name:"Machine Chest Press",sets:"3",reps:"8 - 12"},{muscle:"Upper Chest",name:"Incline Machine Press",sets:"3",reps:"8 - 12"},{muscle:"Shoulders",name:"Machine Shoulder Press",sets:"3",reps:"10 - 12"},{muscle:"Side Delts",name:"Cable Lateral Raise",sets:"3",reps:"12 - 15"},{muscle:"Triceps",name:"Tricep Pushdown",sets:"3",reps:"12 - 15"},{muscle:"Triceps",name:"Overhead Tricep Extension",sets:"3",reps:"12 - 15"}],
-                    "Pull": [{muscle:"Lats",name:"Lat Pulldown",sets:"3",reps:"8 - 12"},{muscle:"Back",name:"Chest-Supported Row",sets:"3",reps:"8 - 12"},{muscle:"Back",name:"Seated Cable Row",sets:"3",reps:"10 - 12"},{muscle:"Rear Delts",name:"Machine Reverse Fly",sets:"3",reps:"12 - 15"},{muscle:"Biceps",name:"Machine Bicep Curl",sets:"3",reps:"10 - 12"},{muscle:"Biceps",name:"Hammer Curl",sets:"3",reps:"12 - 15"}],
-                    "Legs": [{muscle:"Quads",name:"Leg Press",sets:"3",reps:"8 - 12"},{muscle:"Quads",name:"Leg Extension",sets:"3",reps:"12 - 15"},{muscle:"Hamstrings",name:"Seated Leg Curl",sets:"3",reps:"10 - 12"},{muscle:"Calves",name:"Machine Calf Press",sets:"4",reps:"15 - 20"}],
-                    "Upper": [{muscle:"Chest",name:"Machine Chest Press",sets:"3",reps:"8 - 10"},{muscle:"Upper Chest",name:"Incline Machine Press",sets:"2",reps:"10 - 12"},{muscle:"Shoulders",name:"Machine Shoulder Press",sets:"3",reps:"8 - 10"},{muscle:"Lats",name:"Lat Pulldown",sets:"3",reps:"8 - 10"},{muscle:"Back",name:"Seated Cable Row",sets:"2",reps:"10 - 12"},{muscle:"Biceps",name:"Machine Bicep Curl",sets:"2",reps:"10 - 12"},{muscle:"Triceps",name:"Tricep Pushdown",sets:"2",reps:"10 - 12"}],
-                    "Lower": [{muscle:"Quads",name:"Squat",sets:"3",reps:"8 - 10"},{muscle:"Quads",name:"Leg Press",sets:"2",reps:"10 - 12"},{muscle:"Quads",name:"Leg Extension",sets:"2",reps:"10 - 12"},{muscle:"Hamstrings",name:"Seated Leg Curl",sets:"2",reps:"10 - 12"},{muscle:"Calves",name:"Standing Calf Raise",sets:"3",reps:"12 - 15"},{muscle:"Abs",name:"Plank",sets:"3",reps:"30 - 45s"}],
-                    "FBA": [{muscle:"Quads",name:"Squat",sets:"3",reps:"6 - 8"},{muscle:"Chest",name:"Bench Press",sets:"3",reps:"6 - 8"},{muscle:"Lats",name:"Lat Pulldown",sets:"3",reps:"8 - 10"},{muscle:"Shoulders",name:"Machine Shoulder Press",sets:"2",reps:"8 - 10"},{muscle:"Biceps",name:"Machine Bicep Curl",sets:"2",reps:"10 - 12"},{muscle:"Triceps",name:"Tricep Pushdown",sets:"2",reps:"10 - 12"},{muscle:"Abs",name:"Plank",sets:"3",reps:"30 - 45s"}],
-                    "FBB": [{muscle:"Hamstrings",name:"Seated Leg Curl",sets:"3",reps:"6 - 8"},{muscle:"Upper Chest",name:"Incline Machine Press",sets:"3",reps:"8 - 10"},{muscle:"Back",name:"Seated Cable Row",sets:"3",reps:"8 - 10"},{muscle:"Side Delts",name:"Cable Lateral Raise",sets:"2",reps:"12 - 15"},{muscle:"Quads",name:"Leg Press",sets:"2",reps:"10 - 12"},{muscle:"Calves",name:"Machine Calf Press",sets:"3",reps:"12 - 15"},{muscle:"Abs",name:"Plank",sets:"3",reps:"30 - 45s"}]
-                };
-                const plans = {
-                    'PPL': ['Push','Pull','Legs','CR','Push','Pull','Legs'],
-                    'UL': ['Upper','Lower','AR','Upper','Lower','CR','CR'],
-                    'FB': ['FBA','AR','FBB','AR','FBA','CR','CR']
-                };
-                s.forEach((day, i) => {
-                    const tp = plans[p][i];
-                    if (tp === 'CR') { day.title = 'Complete Rest'; day.isRest = true; day.recoveryType = 'complete'; day.exercises = []; day.savedTitle = ''; }
-                    else if (tp === 'AR') { day.title = 'Active Rest'; day.isRest = true; day.recoveryType = 'active'; day.exercises = []; day.savedTitle = ''; }
-                    else { day.title = tp==='Upper'?'Upper Body':tp==='Lower'?'Lower Body':tp==='FBA'?'Full Body A':tp==='FBB'?'Full Body B':tp; day.isRest = false; day.recoveryType = null; day.exercises = JSON.parse(JSON.stringify(dEx[tp])); day.savedTitle = day.title; }
-                });
-                StorageManager.setPlan(appData);
-                renderNav(); renderWorkout();
-                window.appActions.showToast(t("Full Week Applied!"), "success");
-            }, true);
         },
         updateStartOfWeek: v => { const aD=DAY_NAMES, idx=aD.indexOf(v); if(idx===-1)return; StorageManager.setStartDay(v); appData.weeks.forEach(w=>w.schedule.forEach((d,i)=>d.day=aD[(idx+i)%7])); StorageManager.setPlan(appData); activeDay=getTodayId(); const s=document.getElementById('setting-start-day'); if(s)s.value=v; renderNav(false); renderWorkout(); setTimeout(()=>window.appActions.showToast(t('Week starts on {d}', { d: tDay(v) }),"success"),300); },
         swapDay: tId => { const s=getActiveSchedule(), d1=s.find(d=>d.id===activeDay), d2=s.find(d=>d.id===tId); if(!d1||!d2)return; const tT=d1.title, tE=JSON.stringify(d1.exercises), tIR=d1.isRest, tRT=d1.recoveryType, tST=d1.savedTitle; d1.title=d2.title; d1.exercises=JSON.parse(JSON.stringify(d2.exercises||[])); d1.isRest=d2.isRest; d1.recoveryType=d2.recoveryType; d1.savedTitle=d2.savedTitle; d2.title=tT; d2.exercises=JSON.parse(tE||'[]'); d2.isRest=tIR; d2.recoveryType=tRT; d2.savedTitle=tST; StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },
@@ -1738,8 +1985,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             renderNav(); renderWorkout();
             const sc = document.querySelector('.scrollable-content'); if (sc) sc.scrollTop = 0;
         },
-        addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast(t("Max 5 schedules"),"error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:t('Schedule {n}', { n: appData.weeks.length+1 }),schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
-        deleteWeek: id => { if(appData.weeks.length<=1)return; window.appActions.showConfirm(t("Delete Schedule"),t("Delete this week?"),()=>{appData.weeks=appData.weeks.filter(w=>w.id!==id); if(currentWeekId===id){currentWeekId=appData.weeks[0].id;StorageManager.setActiveWeek(currentWeekId);window.appActions.refreshUI();renderNav();} StorageManager.setPlan(appData); renderSidePanel(); },true); },
+        addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast(t("Up to 5 routines"),"error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:t('Routine {n}', { n: appData.weeks.length+1 }),schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
+        deleteWeek: id => { if(appData.weeks.length<=1)return; window.appActions.showConfirm(t("Delete routine"),t("Delete this routine? Your history is kept."),()=>{appData.weeks=appData.weeks.filter(w=>w.id!==id); if(currentWeekId===id){currentWeekId=appData.weeks[0].id;StorageManager.setActiveWeek(currentWeekId);window.appActions.refreshUI();renderNav();} StorageManager.setPlan(appData); renderSidePanel(); },true); },
         renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=v||t('Unnamed'); StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=appData.weeks.find(x=>x.id===currentWeekId).name; },
         switchWeek: id => { currentWeekId=id; StorageManager.setActiveWeek(id); activeDay=getTodayId(); window.appState.inlineEdit=null; renderNav(); renderWorkout(); },
         setActiveDay: id => { window.appState.inlineEdit=null; activeDay=id; renderNav(); renderWorkout(); },
@@ -1914,39 +2161,129 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (count > 0) { StorageManager.setPlan(appData); activeDay = getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Data Merged Successfully!"), "success"); }
             if(!didProg) window.appActions.closeRestoreModal();
     },
-    restoreDefaults: () => { window.appActions.showConfirm(t("Factory Reset"),t("Delete all custom weeks?"),()=>{const aD=DAY_NAMES, sI=aD.indexOf('SAT'); const def=JSON.parse(JSON.stringify(defaultWorkoutData)); def.forEach((d,i)=>d.day=aD[(sI+i)%7]); appData={weeks:[{id:'w_default',name:t('Main Routine'),schedule:def}]}; currentWeekId='w_default'; StorageManager.setActiveWeek('w_default'); StorageManager.setPlan(appData); StorageManager.setStartDay('SAT'); document.getElementById('setting-start-day').value='SAT'; activeDay=getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Reset Complete"));},true); },
-        renderOnboardingSlide: () => {
-            const slides = [
-                { i: 'dumbbell', t: t('Welcome to Apex Lift'), d: t('Your premium personal coaching and tracking experience. Stop guessing and start growing with precision data.') },
-                { i: 'activity', t: t('Track Workload'), d: t('Log your sets and reps to monitor your Weekly Volume. The app will tell you when you are under-training or over-training each muscle group.') },
-                { i: 'zap', t: t('Actionable Insights'), d: t('Complete workouts to unlock your Action Plan. Apex Lift will automatically calculate when you should add weight, push for more reps, or deload.') }
-            ];
-            const s = slides[window.appState.onboardSlide];
-            const c = document.getElementById('onboarding-content');
-            c.style.opacity = '0';
-            setTimeout(() => {
-                c.innerHTML = `<div class="w-16 h-16 bg-[#d4af37]/10 rounded-full flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(212,175,55,0.2)]"><i data-lucide="${s.i}" class="w-8 h-8 text-[#d4af37]"></i></div><h2 class="text-2xl font-black uppercase tracking-tight text-white mb-3 leading-none">${esc(s.t)}</h2><p class="text-[12px] font-bold text-slate-400 leading-relaxed">${esc(s.d)}</p>`;
-                document.getElementById('onboarding-dots').innerHTML = slides.map((_, idx) => `<div class="w-2 h-2 rounded-full transition-all duration-300 ${idx === window.appState.onboardSlide ? 'bg-[#d4af37] w-6' : 'bg-white/20'}"></div>`).join('');
-                document.getElementById('onboarding-btn').innerText = window.appState.onboardSlide === slides.length - 1 ? t('Start Training') : t('Next');
-                if(window.lucide) window.lucide.createIcons({root: c});
-                c.style.opacity = '1';
-            }, 150);
+    restoreDefaults: () => { window.appActions.showConfirm(t("Reset app"),t("Your routines go back to the default. Your history is kept."),()=>{const aD=DAY_NAMES, sI=aD.indexOf('SAT'); const def=JSON.parse(JSON.stringify(defaultWorkoutData)); def.forEach((d,i)=>d.day=aD[(sI+i)%7]); appData={weeks:[{id:'w_default',name:t('Main Routine'),schedule:def}]}; currentWeekId='w_default'; StorageManager.setActiveWeek('w_default'); StorageManager.setPlan(appData); StorageManager.setStartDay('SAT'); document.getElementById('setting-start-day').value='SAT'; activeDay=getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Reset Complete"));},true); },
+        // ---------- First-launch setup (also from Profile → Set up again) ----------
+        initOnboarding: () => { if (!StorageManager.getOnboard()) window.appActions.startWizard(true); },
+        startWizard: (firstRun = false) => {
+            let hasLang = false; try { hasLang = localStorage.getItem(LANG_KEY) !== null; } catch (e) {}
+            const pr = getProfile();
+            window.appState.wiz = { firstRun, steps: [...(hasLang ? [] : ['lang']), 'goal', 'days', 'exp', 'eq', 'start', 'result'], step: 0,
+                goal: pr.goal || null, days: pr.days || null, exp: pr.exp || null, eq: pr.eq || null, showAll: false };
+            window.appActions.renderWizard();
+            openModal('onboarding-overlay', 'onboarding-box');
         },
-        nextOnboardingSlide: () => {
-            if (window.appState.onboardSlide >= 2) { window.appActions.closeOnboarding(); return; }
-            window.appState.onboardSlide++;
-            window.appActions.renderOnboardingSlide();
-        },
-        closeOnboarding: () => {
-            StorageManager.setOnboard();
-            closeModal('onboarding-overlay','onboarding-box', 500);
-        },
-        initOnboarding: () => {
-            if (!StorageManager.getOnboard()) {
-                window.appState.onboardSlide = 0;
-                window.appActions.renderOnboardingSlide();
-                openModal('onboarding-overlay','onboarding-box');
+        renderWizard: () => {
+            const W = window.appState.wiz, key = W.steps[W.step];
+            const opt = (val, title, sub, icon, cur) => `<button onclick="window.appActions.wizChoose(${jsArg(key)}, ${jsArg(val)})" class="w-full flex items-center gap-4 p-4 mb-3 rounded-2xl border text-start tap-feedback ${cur === val ? 'bg-[#d4af37]/15 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
+                ${icon ? `<span class="w-11 h-11 shrink-0 rounded-xl bg-black/40 flex items-center justify-center text-[#d4af37]"><i data-lucide="${icon}" class="w-5 h-5"></i></span>` : ''}
+                <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${title}</span>${sub ? `<span class="block text-[12px] font-bold text-slate-400 mt-0.5">${sub}</span>` : ''}</span>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600 shrink-0"></i></button>`;
+            const head = (title, sub) => `<h2 class="text-[26px] font-black text-white leading-tight mb-2">${title}</h2><p class="text-[13px] font-bold text-slate-400 mb-6">${sub}</p>`;
+            let body = '';
+            if (key === 'lang') body = `<div class="text-center mb-8 mt-6"><div class="text-4xl font-black italic tracking-tighter text-white" dir="ltr">APEX <span class="text-[#d4af37]">LIFT</span></div></div>` + head('Choose your language · اختر لغتك', '') + opt('en', 'English', '', 'languages', LANG) + opt('ar', 'العربية', '', 'languages', LANG);
+            if (key === 'goal') body = head(t("What's your main goal?"), t('We use this to suggest a program. You can change it anytime.'))
+                + opt('muscle', t('Build muscle'), t('Get bigger and more defined'), 'dumbbell', W.goal) + opt('strength', t('Get stronger'), t('Lift heavier on the big lifts'), 'trophy', W.goal) + opt('fat', t('Lose fat'), t('Stay strong while you lean out'), 'flame', W.goal);
+            if (key === 'days') body = head(t('How many days a week can you train?'), t('Pick what you can keep up every week.'))
+                + ['3', '4', '5', '6'].map(d => opt(d, t('{n} days', { n: d }), '', 'calendar-days', W.days)).join('');
+            if (key === 'exp') body = head(t('How long have you been training?'), t('This sets how many sets you start with.'))
+                + opt('new', t('Less than 1 year'), t('Fewer sets to start'), 'sprout', W.exp) + opt('mid', t('1 to 3 years'), t('Standard sets'), 'trending-up', W.exp) + opt('adv', t('More than 3 years'), t('Extra sets on the main lifts'), 'flame', W.exp);
+            if (key === 'eq') body = head(t('Where do you train?'), '')
+                + opt('gym', t('Full gym'), t('Barbells, machines and cables'), 'building-2', W.eq) + opt('db', t('Dumbbells only'), t('Home or a small gym'), 'dumbbell', W.eq);
+            if (key === 'start') body = head(t('Which day does your week start?'), t('Your week in the app starts on this day.'))
+                + ['SAT', 'SUN', 'MON'].map(d => opt(d, esc(dayLong(d)), '', 'calendar', StorageManager.getStartDay())).join('');
+            if (key === 'result') {
+                const rec = PROGRAMS.find(p => p.id === recommendProgram(W)), pick = PROGRAMS.find(p => p.id === (W.pick || rec.id));
+                const card = (p, isRec) => `<button onclick="window.appActions.wizPick(${jsArg(p.id)})" class="w-full text-start p-4 mb-3 rounded-2xl border tap-feedback ${pick.id === p.id ? 'bg-[#d4af37]/10 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
+                    <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[11px] font-black text-slate-400 shrink-0">${t('{n} days', { n: p.days })}</span></span>
+                    ${isRec ? `<span class="inline-block mt-1 text-[10px] font-black uppercase tracking-widest text-[#22c55e]">★ ${t('Recommended for you')}</span>` : ''}
+                    <span class="block text-[12px] font-bold text-slate-400 mt-1">${esc(t(p.desc))}</span>${pick.id === p.id ? programPreviewHTML(p) : ''}</button>`;
+                const others = PROGRAMS.filter(p => p.id !== rec.id).sort((a, b) => (b.days === parseInt(W.days)) - (a.days === parseInt(W.days)));
+                body = head(t('Your program'), t('Tap a program to see its week.')) + card(rec, true)
+                    + (W.showAll ? `<div class="text-[11px] font-black text-slate-500 uppercase tracking-widest mt-5 mb-2">${t('Other programs')}</div>` + others.map(p => card(p, false)).join('')
+                        : `<button onclick="window.appState.wiz.showAll=true;window.appActions.renderWizard()" class="w-full py-3 mb-3 rounded-xl bg-white/5 border border-white/10 text-[12px] font-black uppercase tracking-widest text-slate-300 tap-feedback">${t('See all {n} programs', { n: PROGRAMS.length })}</button>`)
+                    + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#050505]"><button onclick="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback">${t('Start with this program')}</button>
+                       <button onclick="window.appActions.wizFinish('own')" class="w-full py-3 mt-1 text-[12px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${t("I'll build my own")}</button></div>`;
             }
+            const dots = W.steps.map((_, i) => `<span class="h-1.5 rounded-full transition-all ${i === W.step ? 'w-6 bg-[#d4af37]' : i < W.step ? 'w-3 bg-[#d4af37]/50' : 'w-3 bg-white/15'}"></span>`).join('');
+            document.getElementById('onboarding-box').innerHTML = `
+                <div class="flex items-center justify-between py-4 shrink-0">
+                    <button onclick="window.appActions.wizBack()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.step === 0 ? 'invisible' : ''}" aria-label="Back"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                    <div class="flex gap-1.5" dir="ltr">${dots}</div>
+                    <button onclick="window.appActions.wizFinish('skip')" class="text-[11px] font-black uppercase tracking-widest text-slate-500 tap-feedback ${key === 'lang' || key === 'result' ? 'invisible' : ''}">${t('Skip')}</button>
+                </div>
+                <div class="flex-1 fade-in">${body}</div>`;
+            if (window.lucide) window.lucide.createIcons({ root: document.getElementById('onboarding-box') });
+            document.getElementById('onboarding-box').scrollTop = 0;
+        },
+        wizChoose: (key, val) => {
+            const W = window.appState.wiz;
+            if (key === 'lang') {
+                writeItem(LANG_KEY, val);
+                if (val !== LANG) return location.reload(); // the setup continues in the chosen language
+            } else if (key === 'start') {
+                const idx = DAY_NAMES.indexOf(val);
+                StorageManager.setStartDay(val);
+                appData.weeks.forEach(w => w.schedule.forEach((d, i) => d.day = DAY_NAMES[(idx + i) % 7]));
+                StorageManager.setPlan(appData);
+                const sel = document.getElementById('setting-start-day'); if (sel) sel.value = val;
+                activeDay = getTodayId();
+            } else W[key] = val;
+            W.pick = null;
+            W.step = Math.min(W.step + 1, W.steps.length - 1);
+            window.appActions.renderWizard();
+        },
+        wizBack: () => { const W = window.appState.wiz; if (W.step > 0) { W.step--; window.appActions.renderWizard(); } },
+        wizPick: id => { window.appState.wiz.pick = id; window.appActions.renderWizard(); },
+        // program = use the chosen program, own = start with empty days, skip = keep things as they are
+        wizFinish: mode => {
+            const W = window.appState.wiz;
+            writeItem(PROFILE_KEY, JSON.stringify({ goal: W.goal, days: W.days, exp: W.exp, eq: W.eq }));
+            StorageManager.setOnboard();
+            closeModal('onboarding-overlay', 'onboarding-box', 300);
+            if (mode === 'program') {
+                const id = W.pick || recommendProgram(W);
+                window.appActions.applyProgram(id, { exp: W.exp, replace: W.firstRun });
+            } else if (mode === 'own') {
+                const empty = DAY_NAMES.map((_, i) => ({ id: i + 1, day: DAY_NAMES[(DAY_NAMES.indexOf(StorageManager.getStartDay()) + i) % 7], title: 'New Day', isRest: false, recoveryType: null, savedTitle: '', exercises: [] }));
+                if (W.firstRun || appData.weeks.length >= 5) { const w = appData.weeks.find(x => x.id === currentWeekId); w.schedule = empty; w.name = t('My routine'); }
+                else { const id = 'w_' + Date.now(); appData.weeks.push({ id, name: t('My routine'), schedule: empty }); currentWeekId = id; StorageManager.setActiveWeek(id); }
+                StorageManager.setPlan(appData);
+                window.appActions.switchTab('plan');
+            }
+        },
+        // Put a program into the app: as a new routine (keeps your current one) or replacing the current one
+        applyProgram: (id, { exp = (getProfile().exp || 'mid'), replace = false } = {}) => {
+            const prog = PROGRAMS.find(p => p.id === id); if (!prog) return;
+            const schedule = programSchedule(prog, exp);
+            if (replace || appData.weeks.length >= 5) { const w = appData.weeks.find(x => x.id === currentWeekId); w.schedule = schedule; w.name = t(prog.name); }
+            else { const wid = 'w_' + Date.now(); appData.weeks.push({ id: wid, name: t(prog.name), schedule }); currentWeekId = wid; StorageManager.setActiveWeek(wid); }
+            StorageManager.setPlan(appData);
+            activeDay = getTodayId();
+            window.appActions.switchTab('today');
+            window.appActions.showToast(t('{name} is ready', { name: t(prog.name) }), 'success');
+        },
+        // ---------- Program gallery (Plan → Programs) ----------
+        openPrograms: () => {
+            window.appState.progPick = null;
+            window.appActions.renderPrograms();
+            openSheet('programs-overlay', 'programs-box');
+            pushBack('programs', () => window.appActions.closePrograms());
+        },
+        closePrograms: () => { popBack('programs'); closeSheet('programs-overlay', 'programs-box'); },
+        renderPrograms: () => {
+            const pick = window.appState.progPick, full = appData.weeks.length >= 5;
+            document.getElementById('programs-list').innerHTML = PROGRAMS.map(p => `<div class="mx-4 mb-3 p-4 rounded-2xl border ${pick === p.id ? 'bg-[#d4af37]/10 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
+                <button onclick="window.appState.progPick=${jsArg(p.id)};window.appActions.renderPrograms()" class="w-full text-start tap-feedback">
+                    <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[11px] font-black text-slate-400 shrink-0">${t('{n} days', { n: p.days })}${p.eq === 'db' ? ' · ' + t('Dumbbells only') : ''}</span></span>
+                    <span class="block text-[12px] font-bold text-slate-400 mt-1">${esc(t(p.desc))}</span>
+                </button>
+                ${pick === p.id ? programPreviewHTML(p) + `<button onclick="window.appActions.useProgram(${jsArg(p.id)})" class="w-full mt-3 py-3 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback">${full ? t('Replace current routine') : t('Add as a new routine')}</button>` : ''}
+            </div>`).join('') + `<p class="mx-6 mb-6 text-[11px] font-bold text-slate-500">${t('Your current routine and all your history are kept.')}</p>`;
+        },
+        useProgram: id => {
+            const go = () => { window.appActions.closePrograms(); window.appActions.applyProgram(id, { replace: appData.weeks.length >= 5 }); };
+            if (appData.weeks.length >= 5) window.appActions.showConfirm(t('Replace current routine?'), t('You have 5 routines (the most). The current one will be replaced; your history is kept.'), go, true);
+            else go();
         }
     };
 
@@ -1964,6 +2301,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     window.appActions.switchTab('today');
     enableSwipeDown(document.getElementById('picker-box'), () => window.appActions.closePicker());
     enableSwipeDown(document.getElementById('history-modal-box'), () => window.appActions.closeHistoryModal());
+    enableSwipeDown(document.getElementById('programs-box'), () => window.appActions.closePrograms());
     enableSwipeDown(document.getElementById('active-workout-box'), () => window.appActions.minimizeSession());
     // An unfinished Log/Focus session (e.g. the phone closed the app during rest) comes back minimized
     (() => {

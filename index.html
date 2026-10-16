@@ -38,12 +38,20 @@
 
     <div id="toast-container" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center justify-end gap-3 w-full max-w-sm px-4 pointer-events-none pb-4"></div>
 
-<div id="onboarding-overlay" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[99999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-500 px-6">
-        <div id="onboarding-box" class="glass-card p-8 w-full max-w-sm transform scale-95 transition-transform duration-500 border border-white/10 shadow-[0_20px_50px_rgba(212,175,55,0.15)] flex flex-col items-center text-center relative overflow-hidden">
-            <div id="onboarding-content" class="w-full transition-opacity duration-300 min-h-[160px]"></div>
-            <div id="onboarding-dots" class="flex gap-2 mt-6 mb-8"></div>
-            <button id="onboarding-btn" onclick="window.appActions.nextOnboardingSlide()" class="w-full glass-card py-4 text-[13px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_20px_rgba(212,175,55,0.4)]"><span data-i18n="Continue">Continue</span></button>
-            <button onclick="window.appActions.closeOnboarding()" class="mt-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest tap-feedback hover:text-white transition-colors"><span data-i18n="Skip Tutorial">Skip Tutorial</span></button>
+<!-- First-launch setup (full screen) -->
+    <div id="onboarding-overlay" class="fixed inset-0 bg-[#050505] z-[99999] hidden flex-col opacity-0 transition-opacity duration-300">
+        <div id="onboarding-box" class="w-full max-w-md mx-auto h-full flex flex-col px-6 pb-6 overflow-y-auto" style="padding-top: env(safe-area-inset-top);"></div>
+    </div>
+
+    <!-- Program gallery (Plan → Programs) -->
+    <div id="programs-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closePrograms()">
+        <div id="programs-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[90dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="flex items-center justify-between px-5 pb-3 shrink-0">
+                <h3 class="text-lg font-black text-white" data-i18n="Programs">Programs</h3>
+                <button onclick="window.appActions.closePrograms()" class="p-2 bg-white/5 rounded-full text-slate-400 tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="programs-list" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain pt-1"></div>
         </div>
     </div>
 
@@ -108,7 +116,7 @@
         <div id="history-modal-box" class="glass-card w-full max-w-md h-[75vh] md:h-auto md:max-h-[80vh] rounded-t-3xl md:rounded-3xl flex flex-col transform translate-y-full md:translate-y-0 md:scale-95 transition-transform duration-300 border border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
             <div class="flex items-center justify-between p-6 border-b border-white/10 bg-black/40 rounded-t-3xl">
                 <div>
-                    <h3 class="text-xl font-black text-white uppercase tracking-tighter"><span data-i18n="Load Records">Load Records</span></h3>
+                    <h3 class="text-xl font-black text-white uppercase tracking-tighter"><span data-i18n="Exercise history">Exercise history</span></h3>
                     <p id="history-modal-title" class="ex-name text-[10px] font-bold text-[#d4af37] uppercase tracking-widest mt-1">Exercise Name</p>
                 </div>
                 <div class="flex items-center gap-2">
@@ -136,7 +144,7 @@
             <div class="space-y-3 mb-6">
                 <label class="flex items-center justify-between p-3.5 bg-black/40 rounded-xl border border-white/5 cursor-pointer tap-feedback">
                     <div class="flex flex-col">
-                        <span class="text-[12px] font-black text-white uppercase tracking-wider"><span data-i18n="Lifting Progress">Lifting Progress</span></span>
+                        <span class="text-[12px] font-black text-white uppercase tracking-wider"><span data-i18n="Workout history">Workout history</span></span>
                         <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><span data-i18n="Saves weights & history">Saves weights & history</span></span>
                     </div>
                     <input type="checkbox" id="backup-opt-progress" class="w-5 h-5 accent-[#d4af37] bg-white/10 border-none rounded" checked>
@@ -177,7 +185,7 @@
             <div class="space-y-3 mb-6">
                 <label class="flex items-center justify-between p-3.5 bg-black/40 rounded-xl border border-white/5 cursor-pointer tap-feedback">
                     <div class="flex flex-col">
-                        <span class="text-[12px] font-black text-white uppercase tracking-wider"><span data-i18n="Lifting Progress">Lifting Progress</span></span>
+                        <span class="text-[12px] font-black text-white uppercase tracking-wider"><span data-i18n="Workout history">Workout history</span></span>
                         <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5" id="restore-progress-desc"><span data-i18n="Scans for weights & history">Scans for weights & history</span></span>
                     </div>
                     <input type="checkbox" id="restore-opt-progress" class="w-5 h-5 accent-[#d4af37] bg-white/10 border-none rounded" checked>
@@ -256,11 +264,11 @@
             <!-- Plan tab: your routines (weeks) -->
             <section id="plan-routines" class="hidden mb-5">
         <div class="mb-2">
-            <span class="text-[10px] font-black text-[#d4af37] uppercase tracking-[3px] opacity-80 mb-3 block"><span data-i18n="Workouts Schedule">Workouts Schedule</span></span>
+            <span class="text-[10px] font-black text-[#d4af37] uppercase tracking-[3px] opacity-80 mb-3 block"><span data-i18n="My routines">My routines</span></span>
             <div id="weeks-container" class="space-y-3 mb-4"></div>
            <button onclick="window.appActions.addWeek()" class="w-full glass-card py-3 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[11px] tap-feedback border-dashed border-[#d4af37]/40 bg-[#d4af37]/5 rounded-xl">
                 <i data-lucide="plus" class="w-4 h-4 shrink-0"></i>
-                <span class="pl-1"><span data-i18n="Add New">Add New</span></span>
+                <span class="pl-1"><span data-i18n="New routine">New routine</span></span>
                 <div class="w-2 h-4 shrink-0"></div>
             </button>
         </div>
@@ -285,7 +293,7 @@
         </label>
 
         <label class="flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-white/5 active:bg-white/10 w-full text-left text-[11px] font-bold uppercase tracking-wider text-white transition-colors cursor-pointer border border-white/5">
-            <div class="flex items-start gap-3"><i data-lucide="calendar" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Start Day">Start Day</span></div>
+            <div class="flex items-start gap-3"><i data-lucide="calendar" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Week starts on">Week starts on</span></div>
 
             <select id="setting-start-day" onchange="window.appActions.updateStartOfWeek(this.value)" class="bg-transparent text-[#d4af37] outline-none font-black text-[12px] text-right appearance-none cursor-pointer">
                 <option value="SUN" class="bg-[#1a1a1a]">SUN</option>
@@ -316,6 +324,10 @@
             </select>
         </label>
 
+        <button onclick="window.appActions.startWizard(false)" class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl bg-white/5 active:bg-white/10 w-full text-left text-[11px] font-bold uppercase tracking-wider text-white transition-colors border border-white/5 tap-feedback">
+            <i data-lucide="wand-2" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Set up my program again">Set up my program again</span>
+        </button>
+
         <div class="h-px w-full bg-white/10 mt-6 mb-4"></div>
         
         <span class="text-[10px] font-black text-slate-500 uppercase tracking-[3px] opacity-80 mb-3 block" data-i18n="Data & Backup">Data & Backup</span>
@@ -344,7 +356,7 @@
         <div class="h-px w-full bg-white/10 my-6"></div>
 
         <button class="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 active:bg-red-500/20 w-full text-left text-[11px] font-bold uppercase tracking-wider text-red-400 transition-colors border border-red-500/20" onclick="window.appActions.restoreDefaults()">
-            <i data-lucide="refresh-ccw" class="w-4 h-4"></i> <span data-i18n="Reset Default">Reset Default</span>
+            <i data-lucide="refresh-ccw" class="w-4 h-4"></i> <span data-i18n="Reset app">Reset app</span>
         </button>
 
         <span class="text-[10px] font-black text-slate-500 uppercase tracking-[3px] opacity-80 mt-10 mb-2 block text-center"><span data-i18n="Developed By">Developed By</span> <span class="text-[#d4af37]">Rakan Alharbi</span></span>
