@@ -1723,8 +1723,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 <div class="aw-row grid items-center gap-1.5 px-2 py-1 rounded-xl transition-colors ${r.done ? 'bg-[#22c55e]/10' : ''}" data-i="${i}" data-e="${e}" data-done="${r.done ? 1 : 0}" id="aw-row-${i}" dir="ltr" style="grid-template-columns:${S.cols}">
                     <span class="w-7 h-7 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center" id="aw-num-${i}">${n}</span>
                     <button type="button" onclick="window.appActions.copyPrev(${i})" data-w="${prev ? prev.w : ''}" data-r="${prev ? prev.r : ''}" class="text-start text-[12px] font-bold text-slate-500 truncate tap-feedback">${prev ? `${prev.w > 0 ? prev.w : t('BW')} × ${prev.r}${ex.timed ? 's' : ''}${prev.rpe ? ` @${prev.rpe}` : ''}` : '—'}</button>
-                    <input id="aw-w-${i}" type="number" inputmode="decimal" step="0.5" value="${esc(r.w)}" placeholder="${isBodyweight(ex.name) ? t('BW') : t('KG')}" oninput="window.appActions.sessionChanged()" class="${inCls} text-[#d4af37]">
-                    <input id="aw-rep-${i}" type="number" inputmode="numeric" value="${esc(r.r)}" placeholder="${ph}" oninput="window.appActions.sessionChanged()" class="${inCls}">
+                    <input id="aw-w-${i}" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.w)}" placeholder="${isBodyweight(ex.name) ? t('BW') : t('KG')}" oninput="window.appActions.numInput(this, true)" class="${inCls} text-[#d4af37]">
+                    <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" placeholder="${ph}" oninput="window.appActions.numInput(this, false)" class="${inCls}">
                     ${showRpe ? `<select id="aw-rpe-${i}" onchange="window.appActions.sessionChanged()" class="${inCls} appearance-none text-[14px]"><option value="">–</option>${[6,7,8,9,10].map(x => `<option value="${x}" ${String(r.rpe) === String(x) ? 'selected' : ''}>${x}</option>`).join('')}</select>` : ''}
                     <button type="button" id="aw-done-${i}" onclick="window.appActions.completeSet(${i})" class="h-11 rounded-lg flex items-center justify-center tap-feedback border ${r.done ? 'bg-[#22c55e] border-[#22c55e] text-black' : 'bg-white/5 border-white/10 text-slate-400'}" aria-label="${esc(t('Done'))}"><i data-lucide="check" class="w-5 h-5"></i></button>
                 </div>`);
@@ -1742,6 +1742,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             saveSessionDraft();
         },
         sessionChanged: () => saveSessionDraft(),
+        // KG / reps boxes: Arabic digits (٤٫٥) become 4.5, anything that isn't a number is dropped
+        numInput: (el, decimal) => {
+            let v = latinDigits(el.value).replace(/[٫,]/g, '.');
+            v = decimal ? v.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1').slice(0, 6) : v.replace(/[^0-9]/g, '').slice(0, 3);
+            if (v !== el.value) el.value = v;
+            saveSessionDraft();
+        },
         // ✓ a set: fills reps from the target if empty, marks it done, starts the rest timer and scrolls to the next set
         completeSet: i => {
             const row = document.getElementById(`aw-row-${i}`), inp = document.getElementById(`aw-rep-${i}`);
@@ -2664,22 +2671,6 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             } catch (e) { console.warn(e); setCloudStatus('error', e); window.appActions.showToast(cloudErrorText(e), 'error'); }
         }, true)
     });
-
-    // 📱 iPhone home-screen app: some iOS versions give the app a screen that is shorter than the phone,
-    // leaving a black strip at the bottom. Measure the missing part and stretch the app down to the real edge (style.css uses --ios-gap).
-    const fixIosGap = () => {
-        let gap = 0;
-        const standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
-        if (standalone && /iPhone|iPod/.test(navigator.userAgent)) {
-            const fullH = window.innerWidth < window.innerHeight ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
-            gap = Math.round(fullH - window.innerHeight);
-            if (gap < 0 || gap > 100) gap = 0; // a bigger difference is the keyboard, not the bug
-        }
-        document.documentElement.style.setProperty('--ios-gap', gap + 'px');
-    };
-    fixIosGap();
-    window.addEventListener('resize', fixIosGap);
-    window.addEventListener('orientationchange', () => setTimeout(fixIosGap, 300));
 
     // Apply the language to the fixed parts of the page (index.html) and set right-to-left for Arabic
     const applyStaticLanguage = () => {

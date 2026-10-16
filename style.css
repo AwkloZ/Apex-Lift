@@ -106,17 +106,10 @@ input[type="number"] {
 /* A minimized Log/Focus session bar sits at the bottom: keep room for it */
 /* Room for the bottom tab bar (and the minimized workout bar above it) */
 .scrollable-content { padding-bottom: calc(110px + env(safe-area-inset-bottom)) !important; }
-#toast-container { bottom: calc(80px + env(safe-area-inset-bottom) - var(--ios-gap)) !important; }
+#toast-container { bottom: calc(80px + env(safe-area-inset-bottom)) !important; }
 body.has-mini .scrollable-content { padding-bottom: calc(180px + env(safe-area-inset-bottom)) !important; }
-body.has-mini #toast-container { bottom: calc(150px + env(safe-area-inset-bottom) - var(--ios-gap)) !important; }
+body.has-mini #toast-container { bottom: calc(150px + env(safe-area-inset-bottom)) !important; }
 
-/* iPhone home-screen fix: --ios-gap is the strip iOS leaves empty at the bottom (0 everywhere else, set in app.js) */
-:root { --ios-gap: 0px; }
-body { height: calc(100dvh + var(--ios-gap)); }
-#tab-bar, .fixed.inset-0 { bottom: calc(0px - var(--ios-gap)) !important; }
-#aw-mini { bottom: calc(84px + env(safe-area-inset-bottom) - var(--ios-gap)) !important; }
-#active-workout-box { height: calc(94dvh + var(--ios-gap)) !important; }
-#picker-box { height: calc(85dvh + var(--ios-gap)) !important; }
 /* Number inputs in the sets table: no spin arrows */
 #aw-sets-container input::-webkit-outer-spin-button, #aw-sets-container input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 #aw-sets-container input[type=number] { -moz-appearance: textfield; }
@@ -174,3 +167,6 @@ body { height: calc(100dvh + var(--ios-gap)); }
 
 /* Plan: the day name is edited in place at its full size (bigger than 16px, so iPhone won't zoom) */
 input.day-title-input { font-size: 26px !important; }
+
+/* Arabic: the routine name at the top gets a little more size and line height so letters aren't cut */
+:root[lang="ar"] #active-week-label { font-size: 12px; }
