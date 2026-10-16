@@ -108,15 +108,18 @@ input[type="number"] {
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .slide-panel-open { transform: translateX(0) !important; }
 
-/* ===== Arabic (right-to-left) ===== */
-/* Arabic letters must stay connected: no extra letter spacing, and use the Arabic font first */
-[dir="rtl"] body { font-family: 'Cairo', 'Inter', sans-serif; }
-[dir="rtl"] * { letter-spacing: 0 !important; }
-[dir="rtl"] .italic { font-style: normal; }
-/* The side menu slides in from the left in Arabic */
-[dir="rtl"] #side-panel { right: auto; left: 0; transform: translateX(-100%); border-radius: 0 1.5rem 1.5rem 0; border-left: none; border-right: 1px solid rgba(255,255,255,0.1); }
-[dir="rtl"] #side-panel.slide-panel-open { transform: translateX(0) !important; }
-/* Number boxes with a small label on the left keep their layout */
-[dir="rtl"] input[type="number"] { direction: ltr; }
-/* Exercise names are English: in Arabic keep them left-to-right (cut at the end) but aligned right */
-[dir="rtl"] .ex-name { direction: ltr; text-align: right; }
+/* ===== Arabic =====
+   The layout stays the same as English (side menu on the right, nothing mirrored).
+   Arabic text gets an Arabic font, no letter spacing (letters must stay connected), and each line
+   picks its own reading direction so punctuation and numbers land in the right place. */
+:root[lang="ar"] body { font-family: 'Cairo', 'Inter', sans-serif; }
+:root[lang="ar"] body :is(div, p, span, h1, h2, h3, button, label, a) { unicode-bidi: plaintext; }
+:root[lang="ar"] * { letter-spacing: 0 !important; }
+:root[lang="ar"] .italic { font-style: normal; }
+
+/* A minimized Log/Focus session bar sits at the bottom: keep room for it */
+body.has-mini .scrollable-content { padding-bottom: 7rem; }
+body.has-mini #toast-container { bottom: 6rem; }
+/* Number inputs in the sets table: no spin arrows */
+#aw-sets-container input::-webkit-outer-spin-button, #aw-sets-container input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+#aw-sets-container input[type=number] { -moz-appearance: textfield; }

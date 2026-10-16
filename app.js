@@ -17,6 +17,21 @@
     })();
     const isAR = LANG === 'ar';
     const AR = {
+        "Focus": "تركيز",
+        "Previous": "السابق",
+        "Best": "الأفضل",
+        "Up next": "التالي",
+        "Save": "حفظ",
+        "Save & next": "حفظ والتالي",
+        "Add set": "إضافة مجموعة",
+        "Remove set": "حذف مجموعة",
+        "Tap a previous set to copy it. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.": "اضغط على المجموعة السابقة لنسخها. RPE (اختياري): 10 = لا تكرارات متبقية، 9 = تكرار واحد، 8 = تكراران.",
+        "Discard current session?": "تجاهل الجلسة الحالية؟",
+        "Unsaved sets for {name} will be lost.": "ستضيع المجموعات غير المحفوظة لتمرين {name}.",
+        "Discard this session?": "تجاهل هذه الجلسة؟",
+        "Your unsaved sets will be lost.": "ستضيع مجموعاتك غير المحفوظة.",
+        "Enter KG for every set (0 = bodyweight)": "أدخل الوزن لكل مجموعة (0 = وزن الجسم)",
+        "{n} sets done": "{n} مجموعات منجزة",
         "Confirm": "تأكيد",
         "Edit": "تعديل",
         "New best": "رقم قياسي",
@@ -28,12 +43,9 @@
         "Workout completed": "تم إنهاء التمرين",
         "{done} of {planned} sets": "{done} من {planned} مجموعات",
         "Day progress": "تقدّم اليوم",
-        "Completed • tap to undo": "مكتمل • اضغط للتراجع",
-        "Finish workout": "إنهاء التمرين",
         "Done editing": "إنهاء التعديل",
         "Copy to...": "نسخ إلى...",
         "Copy": "نسخ",
-        "Workout completed! 💪": "أحسنت! تم إنهاء التمرين 💪",
         "Copied to {day}": "تم النسخ إلى {day}",
         "Replace {day}?": "استبدال {day}؟",
         "Its current exercises will be replaced.": "سيتم استبدال تمارينه الحالية.",
@@ -48,7 +60,6 @@
         "Action Plan Empty": "لا توجد خطة بعد",
         "Actionable Insights": "توصيات ذكية",
         "Active": "نشط",
-        "Active Focus": "تركيز",
         "Active Rest": "راحة نشطة",
         "Add \"{name}\" to {muscle}": "أضف \"{name}\" إلى {muscle}",
         "Add 1 exercise": "أضف تمريناً واحداً",
@@ -107,7 +118,6 @@
         "Edit All": "تعديل الكل",
         "Empty Day": "يوم فارغ",
         "Energy": "النشاط",
-        "Enter Load KG first (0 = bodyweight)": "أدخل الوزن أولاً (0 = وزن الجسم)",
         "Enter Sets or Reps": "أدخل المجموعات أو التكرارات",
         "Enter reps first": "أدخل التكرارات أولاً",
         "Enter reps for at least 1 set": "أدخل التكرارات لمجموعة واحدة على الأقل",
@@ -117,16 +127,13 @@
         "Export Selected Data": "تصدير البيانات المختارة",
         "Factory Reset": "إعادة ضبط المصنع",
         "Fatigue Warning": "تنبيه إرهاق",
-        "Finish Workout": "إنهاء التمرين",
         "Follow your targets as planned.": "اتبع أهدافك كما هي.",
         "Fresh": "مرتاح",
         "Full Body (3-Days)": "جسم كامل (3 أيام)",
         "Full Body A": "جسم كامل A",
         "Full Body B": "جسم كامل B",
         "Full Week Applied!": "تم تطبيق الأسبوع كاملاً!",
-        "GO": "انطلق",
         "GO!": "انطلق!",
-        "Get Ready": "استعد",
         "Great": "ممتاز",
         "High": "عالي",
         "History": "السجل",
@@ -134,9 +141,7 @@
         "In your routines": "في جداولك",
         "Invalid Backup file": "ملف النسخة الاحتياطية غير صالح",
         "KG": "كجم",
-        "KG can be changed per set. RPE (optional) = how hard it was: 10 = no reps left, 9 = 1 left, 8 = 2 left.": "يمكنك تغيير الوزن لكل مجموعة. RPE (اختياري) = مدى الصعوبة: 10 = لا تكرارات متبقية، 9 = تكرار واحد، 8 = تكراران.",
         "LEGS": "أرجل",
-        "LOG": "تسجيل",
         "LOGGED": "مسجّل",
         "Language": "اللغة",
         "Last Log": "آخر تسجيل",
@@ -146,7 +151,6 @@
         "Link Progress": "ربط التقدّم",
         "Load": "الوزن",
         "Load Records": "سجل الأوزان",
-        "Log Mode": "وضع التسجيل",
         "Log Sets": "سجّل المجموعات",
         "Log your sets and reps to monitor your Weekly Volume. The app will tell you when you are under-training or over-training each muscle group.": "سجّل مجموعاتك وتكراراتك لمتابعة حجم تمرينك الأسبوعي. سيخبرك التطبيق إن كنت تمرّن أي عضلة أقل أو أكثر من اللازم.",
         "Low": "منخفض",
@@ -203,7 +207,6 @@
         "Routine in file is damaged: skipped": "الجدول في الملف تالف: تم تخطيه",
         "SEC": "ثانية",
         "SETS": "مجموعات",
-        "Save Sets": "حفظ المجموعات",
         "Saves Start Day & Rest Timer": "يحفظ بداية الأسبوع ومؤقت الراحة",
         "Saves current schedule": "يحفظ الجدول الحالي",
         "Saves weights & history": "يحفظ الأوزان والسجل",
@@ -215,7 +218,6 @@
         "Select at least one option!": "اختر خياراً واحداً على الأقل!",
         "Select exactly what you want to extract from this backup file.": "اختر ما تريد استعادته من ملف النسخة الاحتياطية.",
         "Select exactly what you want to include in this backup file.": "اختر ما تريد حفظه في ملف النسخة الاحتياطية.",
-        "Set {n}": "المجموعة {n}",
         "Sets": "المجموعات",
         "Skip": "تخطي",
         "Skip Tutorial": "تخطي الشرح",
@@ -282,28 +284,28 @@
     const muscleOptions=["Abductors","Abs","Adductors","Back","Biceps","Calves","Chest","Forearms","Front Delts","Glutes","Hamstrings","Lats","Lower Back","Lower Chest","Neck","Quads","Rear Delts","Shoulders","Side Delts","Traps","Triceps","Upper Chest"];
     
     const exerciseDictionary={
-        "Abs":["Ab Wheel Rollout","Bicycle Crunch","Cable Crunch","Cable Woodchopper","Crunch","Dead Bug","Decline Crunch","Dragon Flag","Hanging Knee Raise","Hanging Leg Raise","Hollow Body Hold","Leg Raise","Machine Crunch","Plank","Reverse Crunch","Russian Twist","Sit-up","Toe Touch","V-up","Weighted Plank"],
-        "Abductors":["Cable Hip Abduction","Clamshell","Fire Hydrant","Machine Hip Abduction","Seated Hip Abduction","Standing Leg Raise"],
-        "Adductors":["Cable Hip Adduction","Copenhagen Plank","Machine Hip Adduction","Seated Hip Adduction"],
-        "Back":["Barbell Row","Cable Low Row","Chest-Supported Row","Deadlift","Dumbbell Row","High Row Machine","Incline Dumbbell Row","Inverted Row","Iso-Lateral Row","Lat Pulldown","Low Row Machine","Machine Row","Meadows Row","Pendlay Row","Pull-up","Rack Pull","Renegade Row","Seal Row","Seated Cable Row","Single-Arm Cable Row","Single-Arm Machine Row","Smith Machine Row","T-Bar Row","V-Bar Pulldown"],
-        "Biceps":["Barbell Curl","Bayesian Curl","Cable Curl","Cable Hammer Curl","Cable Rope Curl","Concentration Curl","Drag Curl","Dumbbell Curl","EZ Bar Curl","Hammer Curl","High Cable Curl","Incline Dumbbell Curl","Machine Bicep Curl","Machine Preacher Curl","Preacher Curl","Reverse Curl","Spider Curl","Zottman Curl"],
-        "Calves":["Calf Press on Leg Press","Donkey Calf Raise","Machine Calf Press","Seated Calf Raise","Single Leg Calf Raise","Smith Machine Calf Raise","Standing Calf Raise","Tibialis Raise"],
-        "Chest":["Bench Press","Cable Chest Press","Cable Crossover","Deficit Push-up","Dumbbell Bench Press","Dumbbell Fly","Dumbbell Pullover","Floor Press","Hex Press","Iso-Lateral Chest Press","Landmine Press","Machine Chest Press","Machine Fly","Pec Deck Fly","Push-up","Smith Machine Bench Press","Spoto Press"],
-        "Forearms":["Behind the Back Wrist Curl","Farmers Walk","Plate Pinch","Reverse Barbell Curl","Reverse Dumbbell Curl","Wrist Curl","Wrist Extension","Wrist Roller"],
-        "Front Delts":["Arnold Press","Barbell Front Raise","Cable Front Raise","Dumbbell Front Raise","Dumbbell Shoulder Press","Military Press","Overhead Press","Plate Front Raise","Seated Barbell Press","Smith Machine Shoulder Press"],
-        "Glutes":["Barbell Glute Bridge","Cable Glute Kickback","Cable Pull-Through","Deficit Reverse Lunge","Frog Pump","Glute Bridge","Glute Drive Machine","Glute Kickback","Hip Thrust","Kettlebell Swing","Lunge","Reverse Lunge","Single Leg Hip Thrust","Smith Machine Hip Thrust","Step-up","Walking Lunge"],
-        "Hamstrings":["Deficit Romanian Deadlift","Glute-Ham Raise","Good Morning","Hamstring Curl","Lying Leg Curl","Nordic Hamstring Curl","Romanian Deadlift","Seated Leg Curl","Single Leg Romanian Deadlift","Stiff-Legged Deadlift","Sumo Deadlift"],
-        "Lats":["Assisted Pull-up","Chin-up","Close-Grip Lat Pulldown","Dumbbell Pullover","Lat Pulldown","Machine Pullover","Neutral Grip Pulldown","Pull-up","Reverse Grip Lat Pulldown","Single-Arm Cable Pulldown","Straight Arm Pulldown","Wide-Grip Lat Pulldown"],
-        "Lower Back":["Back Extension","Bird Dog","Deadlift","Deficit Deadlift","Good Morning","Rack Pull","Romanian Deadlift","Sumo Deadlift","Superman"],
-        "Lower Chest":["Cable Crossover","Chest Dip","Decline Bench Press","Decline Dumbbell Fly","Decline Dumbbell Press","Decline Push-up","Decline Smith Machine Press","High-to-Low Cable Fly"],
-        "Neck":["Neck Curl","Neck Extension","Neck Lateral Flexion","Shrug"],
-        "Quads":["Belt Squat","Box Squat","Bulgarian Split Squat","Cyclist Squat","Front Squat","Goblet Squat","Hack Squat","Hack Squat Machine","Leg Extension","Leg Press","Paused Squat","Pendulum Squat","Pistol Squat","Sissy Squat","Smith Machine Squat","Split Squat","Squat","Step-up","V-Squat","Wall Sit","Zercher Squat"],
-        "Rear Delts":["Cable Rear Delt Fly","Dumbbell Rear Delt Row","Facepull","Lying Rear Delt Fly","Machine Reverse Fly","Rear Delt Fly","Reverse Pec Deck","Rope Facepull"],
-        "Shoulders":["Arnold Press","Bradford Press","Cable Lateral Raise","Dumbbell Shoulder Press","Lateral Raise","Machine Shoulder Press","Military Press","Overhead Press","Push Press","Seated Dumbbell Press","Smith Machine Shoulder Press","Upright Row","Z Press"],
-        "Side Delts":["Cable Lateral Raise","Cable Y-Raise","Dumbbell Lateral Raise","Egyptian Lateral Raise","Lean-Away Lateral Raise","Machine Lateral Raise","Upright Row"],
-        "Traps":["Barbell Shrug","Cable Shrug","Dumbbell Shrug","Farmers Walk","Hex Bar Shrug","Shrug","Smith Machine Shrug","Snatch Grip Shrug","Upright Row"],
-        "Triceps":["Assisted Dip","Cable Tricep Kickback","Close-Grip Bench Press","Close-Grip Push-up","Cross-Body Cable Extension","Diamond Push-up","Dumbbell Tricep Extension","JM Press","Katana Extension","Machine Tricep Extension","Overhead Tricep Extension","Single-Arm Tricep Extension","Skull Crusher","Tate Press","Tricep Dip","Tricep Extension","Tricep Pushdown","Tricep Rope Pushdown","V-Bar Tricep Pushdown"],
-        "Upper Chest":["Incline Bench Press","Incline Cable Fly","Incline Dumbbell Fly","Incline Dumbbell Press","Incline Machine Press","Incline Push-up","Incline Smith Machine Press","Low-to-High Cable Fly"]
+        "Abs":["Ab Wheel Rollout", "Bicycle Crunch", "Cable Crunch", "Cable Side Bend", "Cable Woodchopper", "Captain's Chair Leg Raise", "Crunch", "Dead Bug", "Decline Crunch", "Decline Sit-up", "Dragon Flag", "Dumbbell Side Bend", "Flutter Kick", "Hanging Knee Raise", "Hanging Leg Raise", "Hanging Windshield Wiper", "Hollow Body Hold", "L-Sit", "Landmine Rotation", "Leg Raise", "Machine Crunch", "Mountain Climber", "Oblique Crunch", "Pallof Press", "Plank", "Reverse Crunch", "Russian Twist", "Side Plank", "Sit-up", "Stomach Vacuum", "Toe Touch", "V-up", "Weighted Plank"],
+        "Abductors":["Banded Lateral Walk", "Cable Hip Abduction", "Clamshell", "Fire Hydrant", "Machine Hip Abduction", "Seated Hip Abduction", "Side-Lying Leg Raise", "Standing Leg Raise"],
+        "Adductors":["Cable Hip Adduction", "Copenhagen Plank", "Cossack Squat", "Machine Hip Adduction", "Seated Hip Adduction", "Side Lunge"],
+        "Back":["Barbell Row", "Cable Low Row", "Chest-Supported Row", "Chest-Supported T-Bar Row", "Deadlift", "Dumbbell Row", "Helms Row", "High Row Machine", "Incline Dumbbell Row", "Inverted Row", "Iso-Lateral Row", "Kroc Row", "Landmine Row", "Lat Pulldown", "Low Row Machine", "Machine Row", "Meadows Row", "Pendlay Row", "Pull-up", "Rack Pull", "Renegade Row", "Seal Row", "Seated Cable Row", "Single-Arm Cable Row", "Single-Arm Machine Row", "Smith Machine Row", "Snatch-Grip Deadlift", "T-Bar Row", "Trap Bar Deadlift", "Underhand Barbell Row", "V-Bar Pulldown", "Wide-Grip Seated Cable Row", "Yates Row"],
+        "Biceps":["21s", "Alternating Dumbbell Curl", "Barbell Curl", "Bayesian Curl", "Cable Curl", "Cable Hammer Curl", "Cable Rope Curl", "Concentration Curl", "Cross-Body Hammer Curl", "Drag Curl", "Dumbbell Curl", "Dumbbell Preacher Curl", "EZ Bar Curl", "Hammer Curl", "High Cable Curl", "Incline Dumbbell Curl", "Incline Hammer Curl", "Machine Bicep Curl", "Machine Preacher Curl", "Overhead Cable Curl", "Preacher Curl", "Reverse Curl", "Seated Dumbbell Curl", "Single-Arm Cable Curl", "Spider Curl", "Waiter Curl", "Zottman Curl"],
+        "Calves":["Calf Press on Leg Press", "Donkey Calf Raise", "Dumbbell Calf Raise", "Hack Squat Calf Raise", "Machine Calf Press", "Seated Calf Raise", "Single Leg Calf Raise", "Smith Machine Calf Raise", "Standing Calf Raise", "Tibialis Raise"],
+        "Chest":["Archer Push-up", "Bench Press", "Cable Chest Press", "Cable Crossover", "Cable Fly", "Deficit Push-up", "Dumbbell Bench Press", "Dumbbell Floor Press", "Dumbbell Fly", "Dumbbell Pullover", "Dumbbell Squeeze Press", "Floor Press", "Guillotine Press", "Hex Press", "Iso-Lateral Chest Press", "Landmine Press", "Larsen Press", "Machine Chest Press", "Machine Fly", "Paused Bench Press", "Pec Deck Fly", "Push-up", "Seated Cable Fly", "Single-Arm Cable Fly", "Smith Machine Bench Press", "Spoto Press", "Svend Press", "Weighted Push-up", "Wide-Grip Bench Press"],
+        "Forearms":["Behind the Back Wrist Curl", "Cable Wrist Curl", "Dead Hang", "Dumbbell Wrist Curl", "Farmers Walk", "Hand Gripper", "Plate Pinch", "Reverse Barbell Curl", "Reverse Dumbbell Curl", "Wrist Curl", "Wrist Extension", "Wrist Roller"],
+        "Front Delts":["Arnold Press", "Barbell Front Raise", "Cable Front Raise", "Dumbbell Front Raise", "Dumbbell Shoulder Press", "Landmine Press", "Military Press", "Overhead Press", "Plate Front Raise", "Seated Barbell Press", "Smith Machine Shoulder Press"],
+        "Glutes":["B-Stance Hip Thrust", "Banded Glute Bridge", "Barbell Glute Bridge", "Bulgarian Split Squat", "Cable Glute Kickback", "Cable Pull-Through", "Curtsy Lunge", "Deficit Reverse Lunge", "Donkey Kick", "Frog Pump", "Glute Bridge", "Glute Drive Machine", "Glute Kickback", "Hip Thrust", "Hip Thrust Machine", "Kas Glute Bridge", "Kettlebell Swing", "Lunge", "Machine Glute Kickback", "Reverse Hyperextension", "Reverse Lunge", "Single Leg Glute Bridge", "Single Leg Hip Thrust", "Smith Machine Hip Thrust", "Step-up", "Walking Lunge"],
+        "Hamstrings":["Deficit Romanian Deadlift", "Dumbbell Romanian Deadlift", "Glute-Ham Raise", "Good Morning", "Hamstring Curl", "Kettlebell Swing", "Lying Leg Curl", "Nordic Hamstring Curl", "Romanian Deadlift", "Seated Leg Curl", "Single Leg Romanian Deadlift", "Sliding Leg Curl", "Stability Ball Leg Curl", "Standing Leg Curl", "Stiff-Legged Deadlift", "Sumo Deadlift"],
+        "Lats":["Assisted Chin-up", "Assisted Pull-up", "Cable Pullover", "Chin-up", "Close-Grip Lat Pulldown", "Dumbbell Pullover", "Iso-Lateral Pulldown", "Lat Pulldown", "Machine Pullover", "Neutral Grip Pull-up", "Neutral Grip Pulldown", "Pull-up", "Reverse Grip Lat Pulldown", "Single-Arm Cable Pulldown", "Straight Arm Pulldown", "Weighted Pull-up", "Wide-Grip Lat Pulldown", "Wide-Grip Pull-up"],
+        "Lower Back":["Back Extension", "Bird Dog", "Deadlift", "Deficit Deadlift", "Good Morning", "Hyperextension", "Jefferson Curl", "Rack Pull", "Reverse Hyperextension", "Romanian Deadlift", "Sumo Deadlift", "Superman"],
+        "Lower Chest":["Cable Crossover", "Chest Dip", "Decline Bench Press", "Decline Dumbbell Fly", "Decline Dumbbell Press", "Decline Machine Press", "Decline Push-up", "Decline Smith Machine Press", "High-to-Low Cable Fly", "Weighted Dip"],
+        "Neck":["Neck Curl", "Neck Extension", "Neck Lateral Flexion", "Shrug"],
+        "Quads":["Belt Squat", "Box Jump", "Box Squat", "Bulgarian Split Squat", "Cyclist Squat", "Front Squat", "Goblet Squat", "Hack Squat", "Hack Squat Machine", "Heel-Elevated Squat", "Leg Extension", "Leg Press", "Lunge", "Paused Squat", "Pendulum Squat", "Pistol Squat", "Reverse Nordic", "Safety Bar Squat", "Single Leg Extension", "Single Leg Press", "Sissy Squat", "Smith Machine Squat", "Spanish Squat", "Split Squat", "Squat", "Step-up", "Sumo Squat", "Trap Bar Deadlift", "V-Squat", "Walking Lunge", "Wall Sit", "Zercher Squat"],
+        "Rear Delts":["Band Pull-Apart", "Cable Rear Delt Fly", "Dumbbell Rear Delt Row", "Facepull", "Lying Rear Delt Fly", "Machine Reverse Fly", "Rear Delt Fly", "Reverse Pec Deck", "Rope Facepull", "Single-Arm Cable Rear Delt Fly"],
+        "Shoulders":["Arnold Press", "Behind-the-Neck Press", "Bradford Press", "Cable Lateral Raise", "Cuban Press", "Dumbbell Shoulder Press", "Landmine Press", "Lateral Raise", "Machine Shoulder Press", "Military Press", "Overhead Press", "Push Press", "Seated Dumbbell Press", "Single-Arm Dumbbell Press", "Smith Machine Shoulder Press", "Upright Row", "Z Press"],
+        "Side Delts":["Cable Lateral Raise", "Cable Upright Row", "Cable Y-Raise", "Dumbbell Lateral Raise", "Egyptian Lateral Raise", "Lean-Away Lateral Raise", "Lu Raise", "Machine Lateral Raise", "Seated Dumbbell Lateral Raise", "Single-Arm Cable Lateral Raise", "Upright Row"],
+        "Traps":["Barbell Shrug", "Behind-the-Back Barbell Shrug", "Cable Shrug", "Dumbbell Shrug", "Farmers Walk", "Hex Bar Shrug", "Kelso Shrug", "Machine Shrug", "Shrug", "Smith Machine Shrug", "Snatch Grip Shrug", "Upright Row"],
+        "Triceps":["Assisted Dip", "Bench Dip", "Cable Overhead Tricep Extension", "Cable Tricep Kickback", "Close-Grip Bench Press", "Close-Grip Push-up", "Cross-Body Cable Extension", "Diamond Push-up", "Dumbbell Kickback", "Dumbbell Skull Crusher", "Dumbbell Tricep Extension", "French Press", "JM Press", "Katana Extension", "Machine Dip", "Machine Tricep Extension", "Overhead Tricep Extension", "Reverse-Grip Pushdown", "Single-Arm Cable Pushdown", "Single-Arm Tricep Extension", "Skull Crusher", "Tate Press", "Tricep Dip", "Tricep Extension", "Tricep Pushdown", "Tricep Rope Pushdown", "V-Bar Tricep Pushdown"],
+        "Upper Chest":["Incline Bench Press", "Incline Cable Fly", "Incline Dumbbell Fly", "Incline Dumbbell Press", "Incline Machine Press", "Incline Push-up", "Incline Smith Machine Press", "Landmine Press", "Low-Incline Dumbbell Press", "Low-to-High Cable Fly", "Reverse-Grip Bench Press"]
     };    
     // Automatically removes any duplicates caused by overlapping categories
     const exerciseOptions=[...new Set(Object.values(exerciseDictionary).flat())].sort();
@@ -497,7 +499,8 @@
     const isTimed = repsStr => /\d\s*(s|sec|secs|seconds)\s*$/i.test((repsStr || '').trim());
     const unitOf = repsStr => isTimed(repsStr) ? 's' : '';
     // Exercises that can be logged without a load (0 / empty = bodyweight)
-    const BODYWEIGHT = ['Bicycle Crunch','Bird Dog','Chest Dip','Chin-up','Clamshell','Close-Grip Push-up','Copenhagen Plank','Crunch','Dead Bug','Decline Crunch','Decline Push-up','Deficit Push-up','Diamond Push-up','Dragon Flag','Fire Hydrant','Glute Bridge','Glute-Ham Raise','Hanging Knee Raise','Hanging Leg Raise','Hollow Body Hold','Incline Push-up','Inverted Row','Leg Raise','Nordic Hamstring Curl','Pistol Squat','Plank','Pull-up','Push-up','Reverse Crunch','Russian Twist','Sissy Squat','Sit-up','Superman','Toe Touch','Tricep Dip','V-up','Wall Sit','Back Extension','Frog Pump','Standing Leg Raise','Neck Curl','Neck Extension','Neck Lateral Flexion'];
+    const BODYWEIGHT = ['Bicycle Crunch','Bird Dog','Chest Dip','Chin-up','Clamshell','Close-Grip Push-up','Copenhagen Plank','Crunch','Dead Bug','Decline Crunch','Decline Push-up','Deficit Push-up','Diamond Push-up','Dragon Flag','Fire Hydrant','Glute Bridge','Glute-Ham Raise','Hanging Knee Raise','Hanging Leg Raise','Hollow Body Hold','Incline Push-up','Inverted Row','Leg Raise','Nordic Hamstring Curl','Pistol Squat','Plank','Pull-up','Push-up','Reverse Crunch','Russian Twist','Sissy Squat','Sit-up','Superman','Toe Touch','Tricep Dip','V-up','Wall Sit','Back Extension','Frog Pump','Standing Leg Raise','Neck Curl','Neck Extension','Neck Lateral Flexion',
+        'Archer Push-up','Bench Dip','Box Jump','Captain\'s Chair Leg Raise','Cossack Squat','Dead Hang','Decline Sit-up','Donkey Kick','Flutter Kick','Hanging Windshield Wiper','Hyperextension','L-Sit','Mountain Climber','Oblique Crunch','Reverse Nordic','Side Lunge','Side Plank','Side-Lying Leg Raise','Single Leg Glute Bridge','Sliding Leg Curl','Stability Ball Leg Curl','Stomach Vacuum','Wide-Grip Pull-up','Neutral Grip Pull-up','Assisted Chin-up'];
     const isBodyweight = name => BODYWEIGHT.includes((name || '').trim());
     const fmtW = w => (parseFloat(w) > 0 ? `${parseFloat(w)}kg` : 'BW');
 
@@ -605,12 +608,6 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         }, 0);
     };
 
-    // Days you marked as finished with the "Finish workout" button (one flag per routine, day and week)
-    const DONE_KEY = 'workoutDoneDays_rakan_final';
-    const doneKey = dayId => `${currentWeekId}|${dayId}|${getWeekStart().getTime()}`;
-    const getDoneAll = () => { const v = readJSON(DONE_KEY, {}); return isObj(v) ? v : {}; };
-    const isDayFlaggedDone = dayId => !!getDoneAll()[doneKey(dayId)];
-
     // Sets done this week vs planned sets for one day (each exercise counts up to its planned sets)
     const dayProgress = (d, history = StorageManager.getHistory()) => {
         let done = 0, planned = 0;
@@ -625,7 +622,6 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
     const isDayCompleted = (d, history = StorageManager.getHistory()) => {
         if (d.isRest) return true;
         if (!d.exercises || d.exercises.length === 0) return false;
-        if (isDayFlaggedDone(d.id)) return true;
         const pr = dayProgress(d, history);
         return pr.planned > 0 && pr.done >= pr.planned;
     };
@@ -657,7 +653,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         getCustomEx().forEach(x => out.push({ ...x, custom: true }));
         return out;
     };
-    const TIMED_DEFAULT = ['Plank', 'Weighted Plank', 'Hollow Body Hold', 'Wall Sit', 'Copenhagen Plank'];
+    const TIMED_DEFAULT = ['Plank', 'Weighted Plank', 'Hollow Body Hold', 'Wall Sit', 'Copenhagen Plank', 'Side Plank', 'L-Sit', 'Dead Hang', 'Stomach Vacuum', 'Mountain Climber'];
     const newExercise = (name, muscle) => ({ muscle, name, sets: '3', reps: TIMED_DEFAULT.includes(name) ? '30 - 45s' : '10 - 12' });
     const REPS_PRESETS = ['6 - 8', '8 - 10', '8 - 12', '10 - 12', '12 - 15', '15 - 20', '30 - 45s'];
 
@@ -677,6 +673,77 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             if (document.querySelectorAll('.sheet-overlay.flex').length === 0) { const sc = document.querySelector('.scrollable-content'); if (sc) sc.style.overflow = ''; }
         }, 300);
     };
+
+    // 📱 PHONE BACK BUTTON: closes the top window instead of leaving the app.
+    // One extra history entry ("guard") is added while windows are open. The app never calls history.back()
+    // itself, so it can never accidentally leave the page.
+    const backStack = []; let backGuard = false;
+    const pushBack = (id, fn) => {
+        backStack.push({ id, fn });
+        if (!backGuard) { try { history.pushState({ apexGuard: 1 }, ''); backGuard = true; } catch (e) {} }
+    };
+    const popBack = id => { const i = backStack.map(x => x.id).lastIndexOf(id); if (i >= 0) backStack.splice(i, 1); };
+    window.addEventListener('popstate', () => {
+        backGuard = false;
+        const top = backStack.pop();
+        if (top) { top.fn(); if (backStack.length) { try { history.pushState({ apexGuard: 1 }, ''); backGuard = true; } catch (e) {} } }
+    });
+
+    // 👇 SWIPE DOWN to close a bottom sheet (from its top, or when its list is scrolled to the top)
+    const enableSwipeDown = (box, onClose) => {
+        if (!box) return;
+        let y0 = null, dy = 0, t0 = 0, scroller = null;
+        box.addEventListener('touchstart', e => {
+            if (e.target.closest('input, select, textarea')) { y0 = null; return; }
+            scroller = e.target.closest('.sheet-scroll, #picker-list, #history-modal-content');
+            if (scroller && scroller.scrollTop > 0) { y0 = null; return; }
+            y0 = e.touches[0].clientY; dy = 0; t0 = Date.now();
+        }, { passive: true });
+        box.addEventListener('touchmove', e => {
+            if (y0 === null) return;
+            dy = e.touches[0].clientY - y0;
+            if (dy <= 0 || (scroller && scroller.scrollTop > 0)) { box.style.transition = ''; box.style.transform = ''; if (dy < -10) y0 = null; return; }
+            box.style.transition = 'none'; box.style.transform = `translateY(${dy}px)`;
+        }, { passive: true });
+        box.addEventListener('touchend', () => {
+            if (y0 === null) return;
+            box.style.transition = '';
+            if (dy > 140 || (dy > 60 && Date.now() - t0 < 250)) {
+                box.style.transform = 'translateY(100%)';
+                onClose();
+                setTimeout(() => { box.style.transform = ''; }, 350);
+            } else box.style.transform = '';
+            y0 = null; dy = 0;
+        });
+    };
+
+    // 🔒 Keep the screen on during a Focus session (where supported)
+    let wakeLock = null;
+    const keepAwake = async on => {
+        try {
+            if (on && 'wakeLock' in navigator && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
+            else if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
+        } catch (e) { wakeLock = null; }
+    };
+    document.addEventListener('visibilitychange', () => { const S = window.appState.sess; if (document.visibilityState === 'visible' && S && !S.quick) keepAwake(true); });
+
+    // 🏋️ LOG / FOCUS SESSION helpers. An unsaved session is kept in storage so it survives the app being closed.
+    const SESSION_KEY = 'workoutSession_rakan_final';
+    const fmtClock = sec => `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+    // All sets of the last session before today (for the "Previous" column)
+    const lastSessionSets = hA => {
+        const logs = (hA || []).filter(l => !isNaN(logTime(l)) && !isToday(logTime(l)));
+        if (!logs.length) return [];
+        const day = startOfDay(logTime(logs[logs.length - 1]));
+        return logs.filter(l => startOfDay(logTime(l)) === day).flatMap(logSetDetails);
+    };
+    const sessionRows = () => [...document.querySelectorAll('#aw-sets-container .aw-row')].map(r => {
+        const i = r.dataset.i, val = id => ((document.getElementById(id) || {}).value || '').trim();
+        return { i, w: val(`aw-w-${i}`), r: val(`aw-rep-${i}`), rpe: val(`aw-rpe-${i}`), done: r.dataset.done === '1' };
+    });
+    const sessionHasData = () => !!window.appState.sess && sessionRows().some(x => x.r !== '' || x.done);
+    const saveSessionDraft = () => { const S = window.appState.sess; if (S) writeItem(SESSION_KEY, JSON.stringify({ ...S, rows: sessionRows() })); };
+    const clearSessionDraft = () => { try { localStorage.removeItem(SESSION_KEY); } catch (e) {} };
 
     // Opens / closes a pop-up window (overlay + box) with the fade & zoom animation
     const openModal = (overlayId, boxId) => {
@@ -1056,7 +1123,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 html += `<div class="glass-card p-10 text-center border-dashed border-white/10 mt-4"><div class="flex justify-center mb-4"><i data-lucide="clipboard-edit" class="w-10 h-10 text-slate-500 opacity-50"></i></div><h3 class="font-black text-lg uppercase text-slate-400 tracking-wider mb-2">${t('Empty Day')}</h3><p class="text-[11px] font-bold text-slate-500 leading-relaxed">${t('Tap the edit button to add exercises, apply a template, or make it a rest day.')}</p></div>`;
             } else {
                 const isTodayDay = activeDay === getTodayId();
-                const flagged = isDayFlaggedDone(activeDay), pr = dayProgress(day, allHistory), finished = flagged || (pr.planned > 0 && pr.done >= pr.planned);
+                const pr = dayProgress(day, allHistory), finished = pr.planned > 0 && pr.done >= pr.planned; // all sets logged = day complete
                 if (!isE) {
                     // Completed banner + progress bar for the day
                     if (finished) html += `<div class="glass-card p-4 mb-4 border border-[#22c55e]/50 bg-[#22c55e]/10 flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-[#22c55e] text-black flex items-center justify-center shrink-0"><i data-lucide="check" class="w-6 h-6"></i></div><div><div class="text-[13px] font-black text-[#22c55e] uppercase tracking-widest">${t('Workout completed')}</div><div class="text-[10px] font-bold text-slate-400">${t('{done} of {planned} sets', { done: pr.done, planned: pr.planned })}</div></div></div>`;
@@ -1170,8 +1237,6 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                     }
                 }).join('')}</div>`;
                 if(isE) html += `<div class="px-2 mt-4 flex gap-2"><button onclick="window.appActions.openPicker('add')" class="flex-1 glass-card p-4 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[12px] tap-feedback border-dashed border-[#d4af37]/40 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button></div>`;
-                // Finish workout: flags the day as completed (tap again to undo)
-                else if (day.exercises.length) html += `<div class="px-1 mt-2 mb-6"><button onclick="window.appActions.toggleDayDone()" class="w-full py-4 rounded-2xl text-[13px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 ${flagged ? 'bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/40' : 'bg-[#22c55e] text-black shadow-[0_0_20px_rgba(34,197,94,0.35)]'}"><i data-lucide="${flagged ? 'rotate-ccw' : 'flag'}" class="w-5 h-5"></i>${flagged ? t('Completed • tap to undo') : t('Finish workout')}</button></div>`;
             }
         }
         
@@ -1209,8 +1274,9 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             if(window.lucide) window.lucide.createIcons({root: document.getElementById('confirm-icon')});
             const nY = y.cloneNode(true); y.parentNode.replaceChild(nY,y); nY.onclick=()=>{window.appActions.closeConfirm();setTimeout(ok,200);};
             openModal('custom-confirm-overlay','custom-confirm-box');
+            pushBack('confirm', () => window.appActions.closeConfirm());
         },
-        closeConfirm: () => closeModal('custom-confirm-overlay','custom-confirm-box'),
+        closeConfirm: () => { popBack('confirm'); closeModal('custom-confirm-overlay','custom-confirm-box'); },
         setCheckIn: (key, val) => {
             const draft = window.appState.ciDraft = { ...(window.appState.ciDraft || {}), [key]: val };
             if ([draft.sleep, draft.soreness, draft.energy].every(x => x === 0 || x === 1 || x === 2)) {
@@ -1239,21 +1305,6 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             writeItem(LANG_KEY, v);
             location.reload();
         },
-        // Finish workout / undo: flags this day as completed for this week
-        toggleDayDone: () => {
-            const all = getDoneAll(), k = doneKey(activeDay);
-            if (all[k]) delete all[k];
-            else {
-                all[k] = Date.now();
-                if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
-                window.appActions.showToast(t('Workout completed! 💪'), 'success');
-            }
-            // keep only the last 60 days of flags
-            const cutoff = Date.now() - 60 * 86400000;
-            Object.keys(all).forEach(x => { if (all[x] < cutoff) delete all[x]; });
-            writeItem(DONE_KEY, JSON.stringify(all));
-            renderNav(false); renderWorkout();
-        },
         // Copy this day (title, type and exercises) onto another day
         copyDay: targetId => {
             const s = getActiveSchedule(), from = s.find(d => d.id === activeDay), to = s.find(d => d.id === targetId);
@@ -1268,8 +1319,8 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         },
         skipCheckIn: () => { window.appState.ciSkipped = dateKey(); renderWorkout(); },
         refreshUI: () => window.appState.currentView==='workout'?renderWorkout():renderAnalytics(),
-        openHistoryModal: (k, title) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=title; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); },
-        closeHistoryModal: () => { const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex');},300); },
+        openHistoryModal: (k, title) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=title; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); pushBack('history', () => window.appActions.closeHistoryModal()); },
+        closeHistoryModal: () => { popBack('history'); const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex');},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
         refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-500 text-[12px] font-bold uppercase tracking-widest">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('WEEK {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-[2px] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
          html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[10px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[10px] text-slate-400">${t('KG')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">${h.u==='s'?t('SEC'):t('REPS')}</span></span>`:''}`}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=html; if(window.lucide) window.lucide.createIcons({root:c}); },
@@ -1279,214 +1330,253 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             else { loggedReps[k] = v; StorageManager.setReps(loggedReps); }
         },
         restoreIfEmpty: (k, v) => { if(v.trim()===''){const h=StorageManager.getHistory()[k]||[]; if(h.length){loggedWeights[k]=h[h.length-1].w; StorageManager.set(loggedWeights); renderWorkout();}} },
-        openActiveWorkout: (k, name, sets, repsStr, isQuickLog = false) => {
-            const w = loggedWeights[k];
-            // Bodyweight exercises (push-ups, planks...) can be logged without a load; "0" also means bodyweight
-            if((w === undefined || String(w).trim() === '') && !isBodyweight(name)) return window.appActions.showToast(t("Enter Load KG first (0 = bodyweight)"), "error");
-            const timed = isTimed(repsStr);
-            
-            window.appState.awKey = k;
-            window.appState.awTimed = timed;
-            document.getElementById('aw-title').innerText = name;
-            document.getElementById('aw-load').innerText = parseFloat(w) > 0 ? `${w} ${t('KG')}` : t('BODYWEIGHT');
-            
-            const numSets = isNaN(sets) || sets < 1 ? 1 : sets;
-            
-            // Sets already logged this week for this day of the routine
-            const setsLoggedToday = setsThisWeekForDay(StorageManager.getHistory()[k], activeDay);
-            const remainingSets = (numSets - setsLoggedToday) > 0 ? (numSets - setsLoggedToday) : 1;
-            
-            const startW = parseFloat(w) > 0 ? w : '';
-            const rpeOpts = `<option value="">—</option>${[6,7,8,9,10].map(x => `<option value="${x}">${x}</option>`).join('')}`;
-            let html = `<p class="text-[10px] font-bold text-slate-500 leading-relaxed px-1">${t('KG can be changed per set. RPE (optional) = how hard it was: 10 = no reps left, 9 = 1 left, 8 = 2 left.')}</p>`;
-            for(let i=1; i<=remainingSets; i++) {
-                html += `
-                <div id="aw-row-${i}" class="bg-white/5 p-4 rounded-2xl border border-white/5 transition-colors">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <div class="text-[14px] font-black text-white uppercase tracking-wider">${t('Set {n}', { n: setsLoggedToday + i })}</div>
-                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">${t('Target:')} <span dir="ltr">${esc(repsStr)}</span></div>
-                        </div>
-                        <div dir="ltr" class="flex items-center bg-black/60 border border-white/10 rounded-xl overflow-hidden focus-within:border-[#d4af37]">
-                            <button type="button" onclick="const i=this.nextElementSibling; i.value=Math.max(0,(parseInt(i.value)||0)-${timed ? 5 : 1})" class="w-12 h-12 text-slate-400 font-black text-2xl flex items-center justify-center bg-white/5 active:bg-white/10 border-r border-white/5">-</button>
-                            <input type="number" id="aw-rep-${i}" inputmode="numeric" class="w-16 h-12 bg-transparent text-[#d4af37] font-black text-[18px] text-center outline-none" placeholder="${timed ? 'sec' : '0'}">
-                            <button type="button" onclick="const i=this.previousElementSibling; i.value=(parseInt(i.value)||0)+${timed ? 5 : 1}" class="w-12 h-12 text-slate-400 font-black text-2xl flex items-center justify-center bg-white/5 active:bg-white/10 border-l border-white/5">+</button>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 mt-3">
-                        <label class="flex items-center gap-1.5 bg-black/40 border border-white/10 rounded-lg px-2 h-9 flex-1">
-                            <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">${t('KG')}</span>
-                            <input type="number" id="aw-w-${i}" inputmode="decimal" step="0.5" value="${esc(startW)}" placeholder="${t('BW')}" class="w-full bg-transparent text-white font-black text-[14px] text-right outline-none">
-                        </label>
-                        <label class="flex items-center gap-1.5 bg-black/40 border border-white/10 rounded-lg px-2 h-9">
-                            <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">RPE</span>
-                            <select id="aw-rpe-${i}" class="bg-transparent text-white font-black text-[14px] outline-none appearance-none pr-1">${rpeOpts}</select>
-                        </label>
-                        ${isQuickLog ? '' : `<button type="button" id="aw-done-${i}" onclick="window.appActions.completeSet(${i})" class="h-9 px-3 rounded-lg bg-[#22c55e]/10 border border-[#22c55e]/30 text-[#22c55e] text-[10px] font-black uppercase tracking-widest tap-feedback flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> ${t('Done')}</button>`}
-                    </div>
-                </div>`;
+        // ---------- Log Sets / Focus session ----------
+        // quick = Log Sets (no timer). restore = a saved unfinished session to bring back.
+        openActiveWorkout: (k, name, sets, repsStr, isQuickLog = false, restore = null) => {
+            const S0 = window.appState.sess;
+            if (S0 && !restore) {
+                if (S0.k === k) return window.appActions.expandSession();
+                if (sessionHasData()) return window.appActions.showConfirm(t('Discard current session?'), t('Unsaved sets for {name} will be lost.', { name: S0.name }), () => { window.appActions.discardSession(); window.appActions.openActiveWorkout(k, name, sets, repsStr, isQuickLog); }, true);
+                window.appActions.discardSession();
             }
-            document.getElementById('aw-sets-container').innerHTML = html;
-            if (window.lucide) window.lucide.createIcons({ root: document.getElementById('aw-sets-container') });
-            window.appActions.restSkip(true);
-            
+            const day = getActiveSchedule().find(x => x.id === (restore ? restore.dayId : activeDay)) || getActiveSchedule().find(x => x.id === activeDay);
+            const idx = restore ? restore.idx : day.exercises.findIndex((e, i) => getExKey(currentWeekId, day.id, i, e.name) === k);
+            const ex = day.exercises[idx] || {};
+            const hA = StorageManager.getHistory()[k] || [];
+            // Starting weight: what you typed on the card, otherwise your last session
+            let load = restore ? restore.load : (loggedWeights[k] !== undefined && String(loggedWeights[k]).trim() !== '' ? String(loggedWeights[k]) : '');
+            if (!restore && load === '') { const last = getLastSession(hA); if (last && last.w > 0) load = String(last.w); }
+            const nSets = Math.max(1, parseInt(sets) || 1);
+            const S = window.appState.sess = restore ? { ...restore } : {
+                k, name, idx, dayId: day.id, muscle: ex.muscle || '', sets: nSets, repsStr, quick: !!isQuickLog, timed: isTimed(repsStr),
+                load, startedAt: Date.now(), offset: setsThisWeekForDay(hA, day.id)
+            };
+            delete S.rows;
+            window.appState.awKey = k; window.appState.awTimed = S.timed;
+            window.appActions.renderSession(restore ? restore.rows : null);
             clearInterval(window.appState.awTimer);
-            if(window.appState.awCountdownInterval) clearInterval(window.appState.awCountdownInterval);
-            
-            const btn = document.getElementById('aw-finish-btn');
-            
-            if (isQuickLog) {
-                document.getElementById('aw-pulse-dot').className = 'w-2 h-2 rounded-full bg-[#d4af37]';
-                document.getElementById('aw-status-text').innerText = t('Log Mode');
-                document.getElementById('aw-status-text').className = 'text-[10px] font-black text-[#d4af37] uppercase tracking-widest';
-                document.getElementById('aw-timer').innerText = t('LOG');
-                
-                document.getElementById('aw-countdown-container').classList.add('hidden');
-                document.getElementById('aw-sets-container').classList.remove('hidden');
-                btn.classList.remove('opacity-50', 'pointer-events-none');
-                btn.innerText = t('Save Sets');
-            } else {
-                document.getElementById('aw-pulse-dot').className = 'w-2 h-2 rounded-full bg-slate-500';
-                document.getElementById('aw-status-text').innerText = t('Get Ready');
-                document.getElementById('aw-status-text').className = 'text-[10px] font-black text-slate-400 uppercase tracking-widest';
-                document.getElementById('aw-timer').innerText = "00:00";
-                
-                document.getElementById('aw-countdown-container').classList.remove('hidden');
-                document.getElementById('aw-sets-container').classList.add('hidden');
-                btn.classList.add('opacity-50', 'pointer-events-none');
-                btn.innerText = t('Finish Workout');
-            }
-            
-            openModal('active-workout-overlay','active-workout-box');
-
-            if (isQuickLog) return;
-
-            // Handle Countdown
-            let countdown = 3;
-            const cdText = document.getElementById('aw-countdown-text');
-            cdText.innerText = countdown;
-            cdText.className = 'text-8xl font-black text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] animate-pulse';
-
-            window.appState.awCountdownInterval = setInterval(() => {
-                countdown--;
-                if (countdown > 0) {
-                    cdText.innerText = countdown;
-                } else if (countdown === 0) {
-                    cdText.innerText = t('GO');
-                    cdText.className = 'text-8xl font-black text-[#d4af37] scale-110 transition-transform';
-                } else {
-                    clearInterval(window.appState.awCountdownInterval);
-                    document.getElementById('aw-countdown-container').classList.add('hidden');
-                    document.getElementById('aw-sets-container').classList.remove('hidden');
-                    btn.classList.remove('opacity-50', 'pointer-events-none');
-                    
-                    document.getElementById('aw-pulse-dot').className = 'w-2 h-2 rounded-full bg-red-500 animate-pulse';
-                    document.getElementById('aw-status-text').innerText = t('Active Focus');
-                    document.getElementById('aw-status-text').className = 'text-[10px] font-black text-red-400 uppercase tracking-widest';
-
-                    // Based on the real start time, so it stays correct even if the phone locks
-                    window.appState.awStart = Date.now();
-                    window.appState.awTimer = setInterval(() => {
-                        window.appState.awSeconds = Math.floor((Date.now() - window.appState.awStart) / 1000);
-                        const m = String(Math.floor(window.appState.awSeconds / 60)).padStart(2, '0');
-                        const s = String(window.appState.awSeconds % 60).padStart(2, '0');
-                        document.getElementById('aw-timer').innerText = `${m}:${s}`;
-                    }, 1000);
-                }
-            }, 1000);
+            window.appState.awTimer = setInterval(window.appActions.sessionTick, 250);
+            window.appActions.sessionTick();
+            keepAwake(!S.quick);
+            if (restore) window.appActions.showMini();
+            else { openSheet('active-workout-overlay', 'active-workout-box'); pushBack('session', () => window.appActions.minimizeSession()); }
+            saveSessionDraft();
         },
-        // Marks a set as done (focus mode) and starts the rest timer
+        renderSession: (rows = null) => {
+            const S = window.appState.sess; if (!S) return;
+            const hA = StorageManager.getHistory()[S.k] || [];
+            const prevSets = lastSessionSets(hA);
+            const prog = getProgression(getLastSession(hA, true), S.repsStr);
+            const { minR } = parseRange(S.repsStr);
+            const best = Math.max(0, ...hA.filter(l => !isToday(logTime(l))).flatMap(logSetDetails).map(x => x.w));
+            const us = S.timed ? 's' : '';
+            document.getElementById('aw-title').innerText = S.name;
+            document.getElementById('aw-status-text').innerText = S.quick ? t('Log Sets') : t('Focus');
+            document.getElementById('aw-pulse-dot').className = `w-2 h-2 rounded-full shrink-0 ${S.quick ? 'bg-[#d4af37]' : 'bg-red-500 animate-pulse'}`;
+            document.getElementById('aw-timer').classList.toggle('hidden', S.quick);
+            const chip = (html, cls = 'text-slate-300 bg-white/5 border-white/10') => `<span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-1.5 rounded-lg border ${cls}">${html}</span>`;
+            let info = chip(`${esc(tm(S.muscle))}`, 'text-[#d4af37] bg-[#d4af37]/10 border-[#d4af37]/20')
+                + chip(`${t('Target:')} <span dir="ltr">${S.sets} × ${esc(S.repsStr)}</span>`)
+                + chip(`<span id="aw-load">${parseFloat(S.load) > 0 ? `${esc(S.load)} ${t('KG')}` : t('BODYWEIGHT')}</span>`);
+            if (prog) {
+                const lbl = prog.type === 'up' ? t('Level Up:') : prog.type === 'down' ? t('Deload:') : t('Target:');
+                const cls = prog.type === 'up' ? 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20' : prog.type === 'down' ? 'text-red-400 bg-red-500/10 border-red-500/20' : 'text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/20';
+                info += chip(`${lbl} <span dir="ltr">${fmtW(prog.tW)} × ${prog.tR}${us}</span>`, cls);
+            }
+            if (best > 0) info += chip(`${t('Best')} <span dir="ltr">${best}kg</span>`);
+            document.getElementById('aw-info').innerHTML = info;
+            // Table: # | Previous | KG | Reps | RPE | ✓ (✓ and rest timer only in Focus)
+            const cols = S.quick ? '28px minmax(0,1fr) 68px 60px 50px' : '28px minmax(0,1fr) 64px 56px 48px 40px';
+            window.appState.awCols = cols;
+            const head = document.getElementById('aw-table-head');
+            head.style.gridTemplateColumns = cols; head.setAttribute('dir', 'ltr');
+            head.innerHTML = `<span class="text-center">#</span><span>${t('Previous')}</span><span class="text-center">${t('KG')}</span><span class="text-center">${S.timed ? t('SEC') : t('REPS')}</span><span class="text-center">RPE</span>${S.quick ? '' : '<span class="text-center">✓</span>'}`;
+            const startRows = rows && rows.length ? rows : Array.from({ length: Math.max(1, S.sets - S.offset) }, () => ({ w: parseFloat(S.load) > 0 ? S.load : '', r: '', rpe: '', done: false }));
+            S.rowSeq = 0;
+            document.getElementById('aw-sets-container').innerHTML = '';
+            startRows.forEach(r => window.appActions.addSetRow(r, prevSets, minR, true));
+            // Next exercise in the day
+            const day = getActiveSchedule().find(x => x.id === S.dayId);
+            const nx = day && day.exercises[S.idx + 1];
+            document.getElementById('aw-next').innerHTML = nx ? `<div class="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10"><i data-lucide="skip-forward" class="w-4 h-4 text-slate-400 shrink-0"></i><div class="min-w-0"><div class="text-[9px] font-black text-slate-500 uppercase tracking-widest">${t('Up next')}</div><div class="ex-name text-[14px] font-black text-white truncate">${esc(nx.name)}</div><div class="text-[10px] font-bold text-slate-400" dir="ltr">${esc(nx.sets)} × ${esc(nx.reps)}</div></div></div>` : '';
+            const nb = document.getElementById('aw-next-btn');
+            nb.classList.toggle('hidden', !nx); nb.classList.toggle('flex', !!nx);
+            document.getElementById('aw-finish-btn').innerText = t('Save');
+            document.getElementById('aw-mini-name').innerText = S.name;
+            if (window.lucide) window.lucide.createIcons({ root: document.getElementById('active-workout-box') });
+        },
+        // Adds one set row (prevSets/minR are passed when building the table)
+        addSetRow: (r = null, prevSets = null, minR = null, building = false) => {
+            const S = window.appState.sess; if (!S) return;
+            const box = document.getElementById('aw-sets-container');
+            if (prevSets === null) { prevSets = lastSessionSets(StorageManager.getHistory()[S.k] || []); minR = parseRange(S.repsStr).minR; }
+            const rowsNow = box.querySelectorAll('.aw-row');
+            if (!r) { const lastW = rowsNow.length ? (document.getElementById(`aw-w-${rowsNow[rowsNow.length - 1].dataset.i}`) || {}).value : S.load; r = { w: lastW || '', r: '', rpe: '', done: false }; }
+            const i = ++S.rowSeq, n = S.offset + rowsNow.length + 1, prev = prevSets[n - 1];
+            const ph = prev ? prev.r : minR;
+            const inCls = 'w-full h-10 rounded-lg bg-black/50 border border-white/10 text-center text-[15px] font-black text-white outline-none focus:border-[#d4af37]';
+            box.insertAdjacentHTML('beforeend', `
+                <div class="aw-row grid items-center gap-1.5 px-2 py-1.5 rounded-xl transition-colors ${r.done ? 'bg-[#22c55e]/10' : ''}" data-i="${i}" data-done="${r.done ? 1 : 0}" id="aw-row-${i}" dir="ltr" style="grid-template-columns:${window.appState.awCols}">
+                    <span class="w-7 h-7 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center" id="aw-num-${i}">${n}</span>
+                    <button type="button" onclick="window.appActions.copyPrev(${i})" data-w="${prev ? prev.w : ''}" data-r="${prev ? prev.r : ''}" class="text-start text-[12px] font-bold text-slate-500 truncate tap-feedback">${prev ? `${prev.w > 0 ? prev.w : t('BW')} × ${prev.r}${S.timed ? 's' : ''}${prev.rpe ? ` @${prev.rpe}` : ''}` : '—'}</button>
+                    <input id="aw-w-${i}" type="number" inputmode="decimal" step="0.5" value="${esc(r.w)}" placeholder="${t('BW')}" oninput="window.appActions.sessionChanged()" class="${inCls} text-[#d4af37]">
+                    <input id="aw-rep-${i}" type="number" inputmode="numeric" value="${esc(r.r)}" placeholder="${ph}" oninput="window.appActions.sessionChanged()" class="${inCls}">
+                    <select id="aw-rpe-${i}" onchange="window.appActions.sessionChanged()" class="${inCls} appearance-none text-[13px]"><option value="">–</option>${[6,7,8,9,10].map(x => `<option value="${x}" ${String(r.rpe) === String(x) ? 'selected' : ''}>${x}</option>`).join('')}</select>
+                    ${S.quick ? '' : `<button type="button" id="aw-done-${i}" onclick="window.appActions.completeSet(${i})" class="h-10 rounded-lg flex items-center justify-center tap-feedback border ${r.done ? 'bg-[#22c55e] border-[#22c55e] text-black' : 'bg-white/5 border-white/10 text-slate-400'}" aria-label="${esc(t('Done'))}"><i data-lucide="check" class="w-5 h-5"></i></button>`}
+                </div>`);
+            if (!building) { if (window.lucide) window.lucide.createIcons({ root: box }); saveSessionDraft(); }
+        },
+        removeSetRow: () => {
+            const rows = document.querySelectorAll('#aw-sets-container .aw-row');
+            if (rows.length > 1) { rows[rows.length - 1].remove(); saveSessionDraft(); }
+        },
+        copyPrev: i => {
+            const b = document.querySelector(`#aw-row-${i} button[data-w]`); if (!b || !b.dataset.r) return;
+            document.getElementById(`aw-w-${i}`).value = parseFloat(b.dataset.w) > 0 ? b.dataset.w : '';
+            document.getElementById(`aw-rep-${i}`).value = b.dataset.r;
+            saveSessionDraft();
+        },
+        sessionChanged: () => saveSessionDraft(),
+        // ✓ a set (Focus): fills reps from the hint if empty, marks it done and starts the rest timer
         completeSet: i => {
-            const inp = document.getElementById(`aw-rep-${i}`);
-            if (!(parseInt(inp && inp.value) > 0)) return window.appActions.showToast(t(window.appState.awTimed ? "Enter seconds first" : "Enter reps first"), "error");
-            const row = document.getElementById(`aw-row-${i}`), btn = document.getElementById(`aw-done-${i}`);
-            if (row) { row.classList.remove('border-white/5'); row.classList.add('border-[#22c55e]/50', 'bg-[#22c55e]/5'); }
-            if (btn) { btn.className = 'h-9 px-3 rounded-lg bg-[#22c55e] border border-[#22c55e] text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-1'; }
+            const row = document.getElementById(`aw-row-${i}`), inp = document.getElementById(`aw-rep-${i}`);
+            if (!row || !inp) return;
+            const setDone = on => {
+                row.dataset.done = on ? '1' : '0';
+                row.classList.toggle('bg-[#22c55e]/10', on);
+                const b = document.getElementById(`aw-done-${i}`), num = document.getElementById(`aw-num-${i}`);
+                if (b) b.className = `h-10 rounded-lg flex items-center justify-center tap-feedback border ${on ? 'bg-[#22c55e] border-[#22c55e] text-black' : 'bg-white/5 border-white/10 text-slate-400'}`;
+                if (num) num.className = `w-7 h-7 rounded-full ${on ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center`;
+            };
+            if (row.dataset.done === '1') { setDone(false); saveSessionDraft(); return; }
+            if (!(parseInt(inp.value) > 0)) {
+                if (parseInt(inp.placeholder) > 0) inp.value = inp.placeholder;
+                else return window.appActions.showToast(t(window.appState.awTimed ? "Enter seconds first" : "Enter reps first"), "error");
+            }
+            setDone(true);
             if (navigator.vibrate) navigator.vibrate(30);
-            // no rest needed after the last set
-            const next = document.getElementById(`aw-rep-${i + 1}`);
-            if (next) window.appActions.startRest(StorageManager.getRestSeconds());
+            // rest only if another set is still to do
+            const later = [...document.querySelectorAll('#aw-sets-container .aw-row')].filter(r => Number(r.dataset.i) > i && r.dataset.done !== '1');
+            if (later.length) window.appActions.startRest(StorageManager.getRestSeconds());
+            saveSessionDraft();
         },
         startRest: secs => {
-            clearInterval(window.appState.awRestTimer);
-            window.appState.awRestEnd = Date.now() + secs * 1000;
-            const bar = document.getElementById('aw-rest'), label = document.getElementById('aw-rest-label'), time = document.getElementById('aw-rest-time');
+            const S = window.appState.sess; if (!S) return;
+            window.appState.awRestEnd = Date.now() + secs * 1000; S.restOver = false;
+            const bar = document.getElementById('aw-rest');
             bar.classList.remove('hidden'); bar.classList.add('flex');
-            label.innerText = t('Rest');
-            const tick = () => {
-                const left = Math.ceil((window.appState.awRestEnd - Date.now()) / 1000);
-                if (left > 0) { time.innerText = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`; return; }
-                clearInterval(window.appState.awRestTimer);
-                label.innerText = t('Rest over'); time.innerText = t('GO!');
-                if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-                window.appState.awRestTimer = setTimeout(() => window.appActions.restSkip(true), 4000);
-            };
-            tick();
-            window.appState.awRestTimer = setInterval(tick, 250);
+            document.getElementById('aw-rest-label').innerText = t('Rest');
+            window.appActions.sessionTick();
         },
-        restAdd: secs => { if (window.appState.awRestEnd) window.appState.awRestEnd += secs * 1000; },
+        restAdd: secs => { if (window.appState.awRestEnd) { window.appState.awRestEnd = Math.max(Date.now() + 1000, window.appState.awRestEnd + secs * 1000); window.appActions.sessionTick(); } },
         restSkip: () => {
-            clearInterval(window.appState.awRestTimer); clearTimeout(window.appState.awRestTimer);
             window.appState.awRestEnd = null;
             const bar = document.getElementById('aw-rest');
             if (bar) { bar.classList.add('hidden'); bar.classList.remove('flex'); }
+            window.appActions.sessionTick();
         },
         updateRest: v => { StorageManager.setRestSeconds(v); window.appActions.showToast(t('Rest timer: {v}s', { v }), 'success'); },
-        closeActiveWorkout: () => {
-            window.appActions.restSkip();
-            clearInterval(window.appState.awTimer);
-            clearInterval(window.appState.awCountdownInterval);
-            closeModal('active-workout-overlay','active-workout-box');
-        },
-        finishActiveWorkout: () => {
-            const k = window.appState.awKey;
-            // Collect each filled set: reps, its weight (empty = bodyweight) and optional RPE
-            let completedReps = [], setWeights = [], setRpe = [];
-            document.querySelectorAll('[id^="aw-rep-"]').forEach(inp => {
-                const i = inp.id.slice('aw-rep-'.length), val = parseInt(inp.value);
-                if(isNaN(val) || val <= 0) return;
-                const wv = parseFloat((document.getElementById(`aw-w-${i}`) || {}).value);
-                const rv = parseFloat((document.getElementById(`aw-rpe-${i}`) || {}).value);
-                completedReps.push(val);
-                setWeights.push(wv > 0 ? String(wv) : '0');
-                setRpe.push(rv >= 1 && rv <= 10 ? rv : null);
-            });
-            const w = completedReps.length ? String(Math.max(...setWeights.map(Number))) : '0';
-            
-            if(completedReps.length === 0) {
-                return window.appActions.showToast(t(window.appState.awTimed ? "Enter seconds for at least 1 set" : "Enter reps for at least 1 set"), "error");
+        // Runs 4× a second while a session is open: session clock, rest countdown and the minimized bar
+        sessionTick: () => {
+            const S = window.appState.sess; if (!S) return;
+            const clock = fmtClock(Math.floor((Date.now() - S.startedAt) / 1000));
+            if (!S.quick) document.getElementById('aw-timer').innerText = clock;
+            let rest = null;
+            if (window.appState.awRestEnd) {
+                const left = Math.ceil((window.appState.awRestEnd - Date.now()) / 1000);
+                if (left > 0) { rest = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`; document.getElementById('aw-rest-time').innerText = rest; }
+                else if (!S.restOver) {
+                    S.restOver = true;
+                    document.getElementById('aw-rest-label').innerText = t('Rest over'); document.getElementById('aw-rest-time').innerText = t('GO!');
+                    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                    setTimeout(() => { if (window.appState.sess === S && S.restOver) window.appActions.restSkip(); }, 4000);
+                }
             }
-            
-            let h = StorageManager.getHistory(); if(!h[k]) h[k] = []; 
+            const done = document.querySelectorAll('#aw-sets-container .aw-row[data-done="1"]').length;
+            document.getElementById('aw-mini-time').innerText = rest || (S.quick ? '' : clock);
+            document.getElementById('aw-mini-sub').innerText = rest ? t('Rest') : `${S.quick ? t('Log Sets') : t('Focus')} • ${t('{n} sets done', { n: done })}`;
+            document.getElementById('aw-mini-dot').className = `w-2.5 h-2.5 rounded-full shrink-0 ${rest ? 'bg-[#22c55e] animate-pulse' : S.quick ? 'bg-[#d4af37]' : 'bg-red-500 animate-pulse'}`;
+        },
+        // Minimize: hide the page but keep everything (and the timer) running; a bar stays at the bottom
+        minimizeSession: () => {
+            if (!window.appState.sess) return;
+            popBack('session');
+            closeSheet('active-workout-overlay', 'active-workout-box');
+            window.appActions.showMini();
+            saveSessionDraft();
+        },
+        showMini: () => {
+            const m = document.getElementById('aw-mini');
+            m.classList.remove('hidden'); m.classList.add('flex');
+            document.body.classList.add('has-mini');
+            if (window.lucide) window.lucide.createIcons({ root: m });
+            window.appActions.sessionTick();
+        },
+        expandSession: () => {
+            if (!window.appState.sess) return;
+            const m = document.getElementById('aw-mini');
+            m.classList.add('hidden'); m.classList.remove('flex');
+            document.body.classList.remove('has-mini');
+            openSheet('active-workout-overlay', 'active-workout-box');
+            pushBack('session', () => window.appActions.minimizeSession());
+        },
+        // Throw the session away (nothing saved)
+        discardSession: () => {
+            clearInterval(window.appState.awTimer);
+            window.appState.awRestEnd = null;
+            const wasOpen = document.getElementById('active-workout-overlay').classList.contains('flex');
+            window.appState.sess = null;
+            popBack('session');
+            if (wasOpen) closeSheet('active-workout-overlay', 'active-workout-box');
+            const m = document.getElementById('aw-mini'); m.classList.add('hidden'); m.classList.remove('flex');
+            document.body.classList.remove('has-mini');
+            const bar = document.getElementById('aw-rest'); bar.classList.add('hidden'); bar.classList.remove('flex');
+            keepAwake(false);
+            clearSessionDraft();
+        },
+        closeActiveWorkout: () => {
+            if (sessionHasData()) window.appActions.showConfirm(t('Discard this session?'), t('Your unsaved sets will be lost.'), () => window.appActions.discardSession(), true);
+            else window.appActions.discardSession();
+        },
+        // Save the filled sets; next = open the next exercise of the day right after
+        finishActiveWorkout: (next = false) => {
+            const S = window.appState.sess; if (!S) return;
+            const filled = sessionRows().filter(x => parseInt(x.r) > 0);
+            if (!filled.length) return window.appActions.showToast(t(S.timed ? "Enter seconds for at least 1 set" : "Enter reps for at least 1 set"), "error");
+            if (!isBodyweight(S.name) && filled.some(x => !(parseFloat(x.w) > 0))) return window.appActions.showToast(t('Enter KG for every set (0 = bodyweight)'), 'error');
+            const completedReps = filled.map(x => parseInt(x.r));
+            const setWeights = filled.map(x => parseFloat(x.w) > 0 ? String(parseFloat(x.w)) : '0');
+            const setRpe = filled.map(x => { const v = parseFloat(x.rpe); return v >= 1 && v <= 10 ? v : null; });
+            const w = String(Math.max(...setWeights.map(Number)));
+            const h = StorageManager.getHistory(); if (!h[S.k]) h[S.k] = [];
             const n = new Date();
-            
-            let timeLogged = document.getElementById('aw-timer').innerText;
-            if (timeLogged === t('LOG')) timeLogged = "";
-            
             const entry = {
                 d: formatLogDate(n),   // text date (for display and older app versions)
                 ts: n.getTime(),       // exact time (used for all date calculations)
-                w: w, 
-                s: completedReps, 
-                time: timeLogged,
-                week: (appData.weeks.find(x=>x.id===currentWeekId)||{}).name||'Routine',
+                w, s: completedReps,
+                time: S.quick ? '' : fmtClock(Math.floor((Date.now() - S.startedAt) / 1000)),
+                week: (appData.weeks.find(x => x.id === currentWeekId) || {}).name || 'Routine',
                 weekId: currentWeekId, // which routine this was logged in
-                dayId: activeDay       // which day of the routine this was logged for
+                dayId: S.dayId         // which day of the routine this was logged for
             };
-            if (window.appState.awTimed) entry.u = 's';
+            if (S.timed) entry.u = 's';
             if (setWeights.some(x => x !== w)) entry.ws = setWeights; // only stored when weights differ per set
             if (setRpe.some(x => x !== null)) entry.rpe = setRpe;
-            h[k].push(entry); 
-            if(h[k].length>150) h[k] = h[k].slice(-150); 
-            StorageManager.setHistory(h); 
-            
-            if(navigator.vibrate) navigator.vibrate([30,50,30]); 
-            window.appActions.showToast(t('Workout Completed!'), "success"); 
-            window.appActions.closeActiveWorkout();
-            
-            const el = document.getElementById(`input-${k}`); if(el){ el.classList.add('save-glow'); setTimeout(() => el.classList.remove('save-glow'), 400); } 
-            
+            h[S.k].push(entry);
+            if (h[S.k].length > 150) h[S.k] = h[S.k].slice(-150);
+            StorageManager.setHistory(h);
+            // the card's load box follows what you lifted
+            loggedWeights[S.k] = w === '0' ? '' : w; StorageManager.set(loggedWeights);
+            if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
+            window.appActions.showToast(t('Workout Completed!'), 'success');
+            const day = getActiveSchedule().find(x => x.id === S.dayId), nx = next && day && day.exercises[S.idx + 1];
+            const keep = { quick: S.quick, startedAt: S.startedAt };
+            window.appActions.discardSession();
             renderNav(false); renderWorkout();
+            if (nx) setTimeout(() => {
+                window.appActions.openActiveWorkout(getExKey(currentWeekId, day.id, S.idx + 1, nx.name), nx.name, parseInt(nx.sets) || 1, nx.reps, keep.quick);
+                if (window.appState.sess) window.appState.sess.startedAt = keep.startedAt; // one clock for the whole workout
+            }, 350);
         },
         applyGlobalSetsReps: () => {
             const s = document.getElementById('global-sets').value;
@@ -1577,8 +1667,9 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             const search = document.getElementById('picker-search'); search.value = '';
             window.appActions.renderPicker();
             openSheet('picker-overlay', 'picker-box');
+            pushBack('picker', () => window.appActions.closePicker());
         },
-        closePicker: () => closeSheet('picker-overlay', 'picker-box'),
+        closePicker: () => { popBack('picker'); closeSheet('picker-overlay', 'picker-box'); },
         pickerSearch: v => { window.appState.picker.q = v; window.appActions.renderPicker(false); },
         pickerMuscle: m => { window.appState.picker.muscle = m; window.appActions.renderPicker(); document.getElementById('picker-list').scrollTop = 0; },
         renderPicker: (withChips = true) => {
@@ -1682,7 +1773,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         },
         clearDay: () => window.appActions.showConfirm(t("Clear Day"), t("Delete all exercises?"), () => { const d=getActiveSchedule().find(x=>x.id===activeDay); d.exercises=[]; d.title=""; StorageManager.setPlan(appData); renderWorkout(); }, true),
         switchTab: tab => { window.appState.inlineEdit=null; window.appState.currentView=tab; window.appState.editMode=false; document.getElementById('tab-workout').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${tab==='workout'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('tab-analytics').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${tab==='analytics'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('nav-container').style.display=tab==='workout'?'flex':'none'; tab==='workout'?renderWorkout():renderAnalytics(); },
-        toggleMenu: () => { window.appState.menuOpen=!window.appState.menuOpen; const o=document.getElementById('side-panel-overlay'), p=document.getElementById('side-panel'); if(window.appState.menuOpen){o.classList.remove('hidden'); setTimeout(()=>{o.classList.remove('opacity-0');p.classList.add('slide-panel-open');},10);}else{p.classList.remove('slide-panel-open'); o.classList.add('opacity-0'); setTimeout(()=>o.classList.add('hidden'),300);} },
+        toggleMenu: () => { window.appState.menuOpen=!window.appState.menuOpen; if (window.appState.menuOpen) pushBack('menu', () => { if (window.appState.menuOpen) window.appActions.toggleMenu(); }); else popBack('menu'); const o=document.getElementById('side-panel-overlay'), p=document.getElementById('side-panel'); if(window.appState.menuOpen){o.classList.remove('hidden'); setTimeout(()=>{o.classList.remove('opacity-0');p.classList.add('slide-panel-open');},10);}else{p.classList.remove('slide-panel-open'); o.classList.add('opacity-0'); setTimeout(()=>o.classList.add('hidden'),300);} },
         addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast(t("Max 5 schedules"),"error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:t('Schedule {n}', { n: appData.weeks.length+1 }),schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
         deleteWeek: id => { if(appData.weeks.length<=1)return; window.appActions.showConfirm(t("Delete Schedule"),t("Delete this week?"),()=>{appData.weeks=appData.weeks.filter(w=>w.id!==id); if(currentWeekId===id){currentWeekId=appData.weeks[0].id;StorageManager.setActiveWeek(currentWeekId);window.appActions.refreshUI();renderNav();} StorageManager.setPlan(appData); renderSidePanel(); },true); },
         renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=v||t('Unnamed'); StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=appData.weeks.find(x=>x.id===currentWeekId).name; },
@@ -1898,7 +1989,8 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
     // Apply the language to the fixed parts of the page (index.html) and set right-to-left for Arabic
     const applyStaticLanguage = () => {
         document.documentElement.lang = LANG;
-        document.documentElement.dir = isAR ? 'rtl' : 'ltr';
+        // Arabic uses the same layout as English (nothing is mirrored); only the text and font change
+        document.documentElement.dir = 'ltr';
         document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
         document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
         document.querySelectorAll('#setting-start-day option').forEach(o => { o.textContent = tDay(o.value); });
@@ -1906,6 +1998,19 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
     };
     applyStaticLanguage();
     renderNav(); renderWorkout();
+    enableSwipeDown(document.getElementById('picker-box'), () => window.appActions.closePicker());
+    enableSwipeDown(document.getElementById('history-modal-box'), () => window.appActions.closeHistoryModal());
+    enableSwipeDown(document.getElementById('active-workout-box'), () => window.appActions.minimizeSession());
+    // An unfinished Log/Focus session (e.g. the phone closed the app during rest) comes back minimized
+    (() => {
+        const dr = readJSON(SESSION_KEY, null);
+        const ok = isObj(dr) && typeof dr.k === 'string' && typeof dr.name === 'string' && typeof dr.repsStr === 'string' && Array.isArray(dr.rows)
+            && typeof dr.startedAt === 'number' && Date.now() - dr.startedAt < 12 * 3600000 && getActiveSchedule().some(d => d.id === dr.dayId);
+        if (!ok) { clearSessionDraft(); return; }
+        dr.rows = dr.rows.filter(isObj).slice(0, 20).map(r => ({ w: toStr(r.w), r: toStr(r.r), rpe: toStr(r.rpe), done: r.done === true }));
+        dr.offset = parseInt(dr.offset) || 0; dr.sets = parseInt(dr.sets) || 1; dr.idx = parseInt(dr.idx) || 0; dr.quick = dr.quick === true; dr.timed = isTimed(dr.repsStr); dr.load = toStr(dr.load);
+        window.appActions.openActiveWorkout(dr.k, dr.name, dr.sets, dr.repsStr, dr.quick, dr);
+    })();
     document.getElementById('setting-start-day').value = StorageManager.getStartDay();
     const autoSyncEl = document.getElementById('setting-auto-sync');
     if (autoSyncEl) autoSyncEl.checked = StorageManager.getAutoSync();

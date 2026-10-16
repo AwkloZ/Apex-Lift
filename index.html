@@ -47,45 +47,63 @@
         </div>
     </div>
 
-    <div id="active-workout-overlay" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[300] hidden flex-col items-center justify-center px-4 opacity-0 transition-all duration-300">
-        <div id="active-workout-box" class="glass-card w-full max-w-md bg-[#111] rounded-3xl flex flex-col transform scale-95 transition-transform duration-300 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] max-h-[85vh]">    <div class="flex items-center justify-between p-5 border-b border-white/10 bg-black/40 rounded-t-3xl shrink-0">
-                <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <div id="aw-pulse-dot" class="w-2 h-2 rounded-full bg-slate-500"></div>
-                        <span id="aw-status-text" class="text-[10px] font-black text-slate-400 uppercase tracking-widest"><span data-i18n="Get Ready">Get Ready</span></span>
+    <!-- Log Sets / Focus session (slides up; swipe down or ⌄ to minimize, the timer keeps running) -->
+    <div id="active-workout-overlay" class="sheet-overlay fixed inset-0 bg-black/80 backdrop-blur-sm z-[300] hidden flex-col justify-end opacity-0 transition-opacity duration-300">
+        <div id="active-workout-box" class="w-full max-w-2xl mx-auto bg-[#0f0f0f] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[94dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="flex items-center gap-3 px-4 pb-3 shrink-0">
+                <button id="aw-min-btn" onclick="window.appActions.minimizeSession()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 border border-white/10 text-slate-300 flex items-center justify-center tap-feedback" aria-label="Minimize"><i data-lucide="chevron-down" class="w-5 h-5"></i></button>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span id="aw-pulse-dot" class="w-2 h-2 rounded-full bg-[#d4af37] shrink-0"></span>
+                        <span id="aw-status-text" class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest truncate">Log</span>
                     </div>
-                    <h3 id="aw-title" class="ex-name text-xl font-black text-white uppercase tracking-tighter leading-none">Exercise</h3>
-                    <div id="aw-load" class="text-[12px] font-bold text-[#d4af37] mt-1">100 KG</div>
+                    <h3 id="aw-title" class="ex-name text-[19px] font-black text-white leading-tight truncate">Exercise</h3>
                 </div>
-                <div class="text-right flex flex-col items-end">
-                    <div id="aw-timer" class="text-3xl font-black text-white tracking-tighter tabular-nums leading-none">00:00</div>
-                    <button onclick="window.appActions.closeActiveWorkout()" class="mt-3 text-[10px] font-black uppercase tracking-widest text-red-400 bg-red-500/10 px-3 py-1.5 rounded-lg border border-red-500/20 tap-feedback"><span data-i18n="Cancel">Cancel</span></button>
-                </div>
+                <div id="aw-timer" class="text-2xl font-black text-white tabular-nums shrink-0">00:00</div>
+                <button onclick="window.appActions.closeActiveWorkout()" class="w-10 h-10 shrink-0 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center tap-feedback" aria-label="Cancel"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            
-            <div id="aw-rest" class="hidden items-center justify-between px-5 py-3 bg-[#22c55e]/10 border-b border-[#22c55e]/20 shrink-0">
+            <div id="aw-info" class="px-4 pb-3 flex flex-wrap gap-2 shrink-0"></div>
+            <div id="aw-rest" class="hidden items-center justify-between mx-4 mb-3 px-4 py-3 rounded-2xl bg-[#22c55e]/10 border border-[#22c55e]/25 shrink-0">
                 <div class="flex items-center gap-2">
-                    <i data-lucide="timer" class="w-4 h-4 text-[#22c55e]"></i>
-                    <span id="aw-rest-label" class="text-[10px] font-black uppercase tracking-widest text-[#22c55e]"><span data-i18n="Rest">Rest</span></span>
-                    <span id="aw-rest-time" class="text-xl font-black text-white tabular-nums leading-none">1:30</span>
+                    <i data-lucide="timer" class="w-5 h-5 text-[#22c55e]"></i>
+                    <span id="aw-rest-label" class="text-[11px] font-black uppercase tracking-widest text-[#22c55e]"><span data-i18n="Rest">Rest</span></span>
+                    <span id="aw-rest-time" class="text-2xl font-black text-white tabular-nums leading-none">1:30</span>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="window.appActions.restAdd(30)" class="text-[10px] font-black uppercase tracking-widest text-white bg-white/10 px-3 py-1.5 rounded-lg tap-feedback">+30s</button>
-                    <button onclick="window.appActions.restSkip()" class="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-white/5 px-3 py-1.5 rounded-lg tap-feedback"><span data-i18n="Skip">Skip</span></button>
+                    <button onclick="window.appActions.restAdd(-15)" class="text-[11px] font-black text-white bg-white/10 px-2.5 py-1.5 rounded-lg tap-feedback">−15</button>
+                    <button onclick="window.appActions.restAdd(15)" class="text-[11px] font-black text-white bg-white/10 px-2.5 py-1.5 rounded-lg tap-feedback">+15</button>
+                    <button onclick="window.appActions.restSkip()" class="text-[11px] font-black uppercase text-slate-300 bg-white/5 px-2.5 py-1.5 rounded-lg tap-feedback"><span data-i18n="Skip">Skip</span></button>
                 </div>
             </div>
-
-            <div id="aw-countdown-container" class="flex-1 flex items-center justify-center py-20">
-                <div id="aw-countdown-text" class="text-8xl font-black text-white animate-pulse">3</div>
+            <div id="aw-scroll" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-3 pb-4">
+                <div id="aw-table-head" class="grid items-center gap-1.5 px-2 pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest"></div>
+                <div id="aw-sets-container" class="space-y-1.5"></div>
+                <div class="flex gap-2 mt-3 px-1">
+                    <button onclick="window.appActions.addSetRow()" class="flex-1 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-slate-300 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i><span data-i18n="Add set">Add set</span></button>
+                    <button onclick="window.appActions.removeSetRow()" class="py-2.5 px-4 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-slate-400 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="minus" class="w-4 h-4"></i><span data-i18n="Remove set">Remove set</span></button>
+                </div>
+                <p class="text-[10px] font-bold text-slate-500 leading-relaxed px-2 mt-3"><span data-i18n="Tap a previous set to copy it. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.">Tap a previous set to copy it. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.</span></p>
+                <div id="aw-next" class="mt-4"></div>
             </div>
-            
-            <div id="aw-sets-container" class="flex-1 overflow-y-auto p-5 space-y-3 hidden"></div>
-            
-            <div class="p-5 border-t border-white/10 bg-black/40 shrink-0">
-                <button id="aw-finish-btn" onclick="window.appActions.finishActiveWorkout()" class="w-full glass-card py-4 text-[13px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_20px_rgba(212,175,55,0.4)] opacity-50 pointer-events-none transition-opacity"><span data-i18n="Finish Workout">Finish Workout</span></button>
+            <div class="p-4 shrink-0 border-t border-white/5 flex gap-2" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
+                <button id="aw-finish-btn" onclick="window.appActions.finishActiveWorkout()" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback shadow-[0_0_20px_rgba(212,175,55,0.35)]">Save</button>
+                <button id="aw-next-btn" onclick="window.appActions.finishActiveWorkout(true)" class="hidden flex-1 py-4 rounded-2xl bg-white/10 text-white text-[13px] font-black uppercase tracking-widest tap-feedback items-center justify-center gap-2"><span data-i18n="Save & next">Save & next</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
             </div>
         </div>
     </div>
+
+    <!-- Minimized session: stays at the bottom while you look at your schedule; tap to go back -->
+    <button id="aw-mini" onclick="window.appActions.expandSession()" class="hidden fixed bottom-4 left-4 right-4 z-[250] max-w-xl mx-auto bg-[#161616]/95 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl px-4 py-3 items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] tap-feedback text-start">
+        <span id="aw-mini-dot" class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shrink-0"></span>
+        <span class="flex-1 min-w-0">
+            <span id="aw-mini-name" class="ex-name block text-[14px] font-black text-white truncate"></span>
+            <span id="aw-mini-sub" class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate"></span>
+        </span>
+        <span id="aw-mini-time" class="text-xl font-black text-white tabular-nums shrink-0">00:00</span>
+        <i data-lucide="chevron-up" class="w-5 h-5 text-[#d4af37] shrink-0"></i>
+    </button>
+
         <div id="history-modal-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] hidden flex-col items-center justify-end md:justify-center opacity-0 transition-all duration-300">
         <div id="history-modal-box" class="glass-card w-full max-w-md h-[75vh] md:h-auto md:max-h-[80vh] rounded-t-3xl md:rounded-3xl flex flex-col transform translate-y-full md:translate-y-0 md:scale-95 transition-transform duration-300 border border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
             <div class="flex items-center justify-between p-6 border-b border-white/10 bg-black/40 rounded-t-3xl">
