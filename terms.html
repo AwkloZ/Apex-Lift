@@ -3,160 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#000000">
-    <title>Apex Lift · Terms of Use</title>
+    <meta name="theme-color" content="#050505">
+    <meta name="description" content="Apex Lift Terms of Use">
+    <title>Terms of Use · Apex Lift</title>
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Cairo:wght@400;600;700;800;900&display=swap">
     <style>
-        :root { color-scheme: dark; }
-        body { margin: 0; background: #000; color: #e2e8f0; font: 15px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Tahoma, sans-serif; }
-        main { max-width: 680px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 24px) 16px 64px; }
-        h1 { color: #fff; font-size: 26px; margin: 0 0 4px; letter-spacing: -0.02em; }
-        h2 { color: #d4af37; font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; margin: 30px 0 6px; }
-        [lang="ar"] h2 { letter-spacing: 0; text-transform: none; font-size: 16px; }
-        p, li { color: #cbd5e1; }
-        ul { padding-inline-start: 20px; margin: 6px 0; }
-        li { margin: 4px 0; }
-        a { color: #d4af37; }
-        b { color: #fff; }
-        .muted { color: #64748b; font-size: 13px; }
-        .box { background: #111; border: 1px solid #222; border-radius: 14px; padding: 14px 16px; margin: 16px 0; }
-        .switch { display: flex; gap: 8px; margin-bottom: 24px; }
-        .switch button { background: #111; color: #fff; border: 1px solid #333; border-radius: 10px; padding: 8px 14px; font-weight: 700; font-size: 14px; cursor: pointer; }
-        .switch button.on { background: #d4af37; color: #000; border-color: #d4af37; }
-        [lang="ar"] { font-family: Tahoma, "Segoe UI", sans-serif; }
-        .hide { display: none; }
-        .links { margin-top: 36px; display: flex; gap: 18px; font-weight: 700; flex-wrap: wrap; }
-    </style>
+:root { color-scheme: dark; --gold: #d4af37; --bg: #050505; --card: #111113; --line: rgba(255,255,255,0.08); --text: #e5e7eb; --muted: #94a3b8; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); background-image: radial-gradient(circle at 50% -10%, #1c1a12 0%, #050505 55%); background-attachment: fixed; color: var(--text); font: 15px/1.7 'Inter', 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+[lang="ar"] body, [lang="ar"] .doc { font-family: 'Cairo', 'Inter', Tahoma, sans-serif; }
+a { color: var(--gold); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.bar { position: sticky; top: 0; z-index: 10; background: rgba(5,5,5,0.78); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
+.bar-in { max-width: 760px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.logo { display: flex; align-items: center; gap: 8px; color: #fff; font-weight: 900; font-style: italic; letter-spacing: -0.04em; font-size: 20px; text-transform: uppercase; }
+.logo span { color: var(--gold); }
+.logo .ic { width: 18px; height: 18px; color: var(--muted); font-style: normal; }
+.seg { display: inline-flex; background: #151517; border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+.seg button { border: 0; background: transparent; color: var(--muted); font: 700 13px/1 inherit; font-family: inherit; padding: 8px 13px; border-radius: 999px; cursor: pointer; }
+.seg button.on { background: var(--gold); color: #000; }
+main { max-width: 760px; margin: 0 auto; padding: 22px 16px 48px; }
+.hero { border: 1px solid var(--line); background: linear-gradient(160deg, rgba(212,175,55,0.12), rgba(17,17,19,0.9) 55%); border-radius: 24px; padding: 26px 22px; }
+.eyebrow { color: var(--gold); font-size: 11px; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; }
+[lang="ar"] .eyebrow { letter-spacing: 0; font-size: 13px; }
+h1 { margin: 8px 0 6px; font-size: 32px; line-height: 1.15; font-weight: 900; letter-spacing: -0.02em; color: #fff; }
+.lead { margin: 0 0 16px; color: var(--muted); font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 12px; font-weight: 700; color: #cbd5e1; background: rgba(255,255,255,0.05); border: 1px solid var(--line); padding: 5px 11px; border-radius: 999px; }
+.docs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 18px; background: rgba(0,0,0,0.35); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
+.docs a { text-align: center; padding: 10px; border-radius: 10px; font-weight: 800; font-size: 14px; color: var(--muted); }
+.docs a.on { background: #fff; color: #000; }
+.docs a:hover { text-decoration: none; }
+h3.k { margin: 34px 4px 12px; font-size: 12px; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+[lang="ar"] h3.k { letter-spacing: 0; font-size: 14px; }
+.glance { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tile { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
+.tile .ic { width: 22px; height: 22px; color: var(--gold); }
+.tile b { display: block; color: #fff; font-size: 14.5px; margin: 10px 0 2px; line-height: 1.35; }
+.tile p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.toc { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.toc a { display: flex; align-items: center; gap: 10px; color: #e5e7eb; font-weight: 600; font-size: 14px; padding: 9px 10px; border-radius: 10px; line-height: 1.3; }
+.toc a:hover { background: rgba(255,255,255,0.05); text-decoration: none; }
+.toc a i { font-style: normal; color: var(--gold); font-weight: 900; font-size: 12px; min-width: 18px; }
+.sec { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 22px 20px 18px; margin-top: 12px; }
+.sec-h { display: flex; align-items: center; gap: 12px; margin: 0 0 10px; }
+.num { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.35); color: var(--gold); font-weight: 900; font-size: 14px; }
+.sec h2 { margin: 0; font-size: 18px; line-height: 1.3; font-weight: 800; color: #fff; }
+.sec p { margin: 8px 0; color: #cbd5e1; }
+.sec b { color: #fff; font-weight: 700; }
+.sec ul { list-style: none; padding: 0; margin: 10px 0; }
+.sec li { position: relative; padding-inline-start: 22px; margin: 9px 0; color: #cbd5e1; }
+.sec li::before { content: ''; position: absolute; inset-inline-start: 4px; top: 0.72em; width: 7px; height: 7px; border-radius: 2px; background: var(--gold); transform: rotate(45deg); }
+.contact { margin-top: 28px; text-align: center; border: 1px solid rgba(212,175,55,0.3); background: linear-gradient(180deg, rgba(212,175,55,0.1), rgba(17,17,19,0.9)); border-radius: 22px; padding: 26px 20px; }
+.contact b { display: block; color: #fff; font-size: 17px; }
+.contact p { margin: 4px 0 16px; color: var(--muted); font-size: 14px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: #000; font-weight: 900; padding: 13px 20px; border-radius: 14px; font-size: 14px; }
+.btn:hover { text-decoration: none; filter: brightness(1.05); }
+.btn .ic { width: 18px; height: 18px; }
+footer { max-width: 760px; margin: 0 auto; padding: 8px 16px calc(40px + env(safe-area-inset-bottom)); text-align: center; color: #64748b; font-size: 13px; }
+footer nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 10px; font-weight: 700; }
+.top { position: fixed; inset-inline-end: 16px; bottom: calc(18px + env(safe-area-inset-bottom)); width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: rgba(20,20,22,0.9); color: #fff; display: grid; place-items: center; opacity: 0; pointer-events: none; transition: opacity .2s; cursor: pointer; }
+.top.show { opacity: 1; pointer-events: auto; }
+.top .ic { width: 20px; height: 20px; }
+.hide { display: none; }
+[dir="rtl"] .flip, [dir="rtl"] .logo .ic { transform: scaleX(-1); }
+@media (max-width: 520px) { h1 { font-size: 28px; } .toc { grid-template-columns: 1fr; } }
+@media (max-width: 360px) { .glance { grid-template-columns: 1fr; } }
+@media print { .bar, .top, .contact, footer nav { display: none; } body { background: #fff; color: #000; } .sec, .tile, .toc, .hero { border-color: #ccc; background: #fff; } .sec p, .sec li, .tile p { color: #222; } h1, .sec h2, .sec b, .tile b { color: #000; } }
+</style>
 </head>
 <body>
-<main>
-    <div class="switch"><button id="b-en" onclick="show('en')">English</button><button id="b-ar" onclick="show('ar')">العربية</button></div>
+  <header class="bar"><div class="bar-in">
+    <a class="logo" href="./" dir="ltr"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>APEX <span>LIFT</span></a>
+    <div class="seg" dir="ltr"><button id="b-en" onclick="show('en')">EN</button><button id="b-ar" onclick="show('ar')">عربي</button></div>
+  </div></header>
 
-    <section id="en" lang="en" dir="ltr">
+  <div class="doc" id="en" lang="en" dir="ltr">
+    <main>
+      <div class="hero">
+        <div class="eyebrow">Apex Lift · Legal</div>
         <h1>Terms of Use</h1>
-        <p class="muted">Apex Lift · Effective October 2026 · Version 2026-10</p>
-        <div class="box">Please read these terms before creating an account. By ticking "I agree" and signing in, you accept these Terms of Use and our <a href="privacy.html">Privacy Policy</a>.</div>
-
-        <h2>1. The service</h2>
-        <p>Apex Lift helps you plan workouts, log your training and follow your progress. Features may change, improve or be removed over time. The app is currently offered free of charge.</p>
-
-        <h2>2. Health and safety — please read</h2>
-        <ul>
+        <p class="lead">The rules for using Apex Lift. Please read them before creating an account.</p>
+        <div class="chips"><span class="chip">Effective October 2026</span><span class="chip">Version 2026-10</span></div>
+        <nav class="docs"><a href="privacy.html#en" class="">Privacy Policy</a><a href="terms.html#en" class="on">Terms of Use</a></nav>
+      </div>
+      <h3 class="k">At a glance</h3>
+      <div class="glance"><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/><path d="M3.2 12h3.3l2-3 3 6 2-3h7.3"/></svg><b>Not medical advice</b><p>Check with a doctor before starting a new program.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><b>Age 13+</b><p>Under 18? Use it with a parent’s permission.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 15 2 2 4-4"/></svg><b>Your data is yours</b><p>Routines and workouts you enter belong to you.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.9.7-1.9 1-3 1s-2.1-.3-3-1Z"/><path d="m2 16 3-8 3 8c-.9.7-1.9 1-3 1s-2.1-.3-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg><b>Saudi law</b><p>These terms follow the laws of Saudi Arabia.</p></div></div>
+      <h3 class="k">Contents</h3>
+      <nav class="toc"><a href="#en-s1"><i>1</i>The service</a><a href="#en-s2"><i>2</i>Health and safety — please read</a><a href="#en-s3"><i>3</i>Your account</a><a href="#en-s4"><i>4</i>Your content</a><a href="#en-s5"><i>5</i>Acceptable use</a><a href="#en-s6"><i>6</i>Backups and availability</a><a href="#en-s7"><i>7</i>Intellectual property</a><a href="#en-s8"><i>8</i>No warranty</a><a href="#en-s9"><i>9</i>Limitation of liability</a><a href="#en-s10"><i>10</i>Ending your use</a><a href="#en-s11"><i>11</i>Changes to these terms</a><a href="#en-s12"><i>12</i>Governing law</a><a href="#en-s13"><i>13</i>Contact</a></nav>
+      <section class="sec" id="en-s1"><div class="sec-h"><span class="num">1</span><h2>The service</h2></div><p>Apex Lift helps you plan workouts, log your training and follow your progress. Features may change, improve or be removed over time. The app is currently offered free of charge.</p></section><section class="sec" id="en-s2"><div class="sec-h"><span class="num">2</span><h2>Health and safety — please read</h2></div><ul>
             <li>Apex Lift is <b>not medical advice</b> and does not replace a doctor, physiotherapist or qualified coach.</li>
             <li>Programs, weight suggestions, targets and tips are general information calculated from what you enter. They may not suit your body, health or experience.</li>
             <li>Check with a doctor before starting or changing an exercise program, especially if you have a medical condition, an injury, are pregnant, or have not trained for a long time.</li>
             <li>Always warm up, use correct technique, use a spotter or safety equipment for heavy lifts, and stop immediately if you feel pain, dizziness or shortness of breath.</li>
             <li>You train at your own risk and are responsible for choosing loads that are safe for you.</li>
-        </ul>
-
-        <h2>3. Your account</h2>
-        <ul>
+        </ul></section><section class="sec" id="en-s3"><div class="sec-h"><span class="num">3</span><h2>Your account</h2></div><ul>
             <li>You need a Google account to use Apex Lift. You must be at least 13 years old; if you are under 18 you need permission from a parent or guardian.</li>
             <li>You are responsible for the security of your Google account and for activity under your account.</li>
             <li>Give accurate information and use the app only for your own training records (or with permission for someone you coach).</li>
-        </ul>
+        </ul></section><section class="sec" id="en-s4"><div class="sec-h"><span class="num">4</span><h2>Your content</h2></div><p>The routines and workout data you enter belong to you. You give us only the permission needed to store, back up and sync them so the app can work. When you share an exported file with others, you are responsible for that sharing.</p></section><section class="sec" id="en-s5"><div class="sec-h"><span class="num">5</span><h2>Acceptable use</h2></div><p>Do not misuse the service: no attempts to access other people's data, break or overload the system, reverse-engineer security measures, upload harmful code, or use the app for anything unlawful.</p></section><section class="sec" id="en-s6"><div class="sec-h"><span class="num">6</span><h2>Backups and availability</h2></div><p>We take care to keep your data safe and offer automatic backups, but we cannot guarantee the service will always be available or free of errors, or that data can never be lost. Keep your own copy of important data using <b>Profile → Backup data</b>.</p></section><section class="sec" id="en-s7"><div class="sec-h"><span class="num">7</span><h2>Intellectual property</h2></div><p>The Apex Lift name, logo, design and software are owned by Apex Lift. You may not copy, sell or redistribute the app or its parts without permission. Third-party components are used under their own licenses.</p></section><section class="sec" id="en-s8"><div class="sec-h"><span class="num">8</span><h2>No warranty</h2></div><p>The app is provided "as is" and "as available", without warranties of any kind, to the fullest extent permitted by law.</p></section><section class="sec" id="en-s9"><div class="sec-h"><span class="num">9</span><h2>Limitation of liability</h2></div><p>To the fullest extent permitted by law, Apex Lift is not liable for any injury, health problem, loss of data or other damage arising from your use of the app or from following its programs or suggestions. Nothing in these terms limits liability that cannot be limited by law.</p></section><section class="sec" id="en-s10"><div class="sec-h"><span class="num">10</span><h2>Ending your use</h2></div><p>You can stop using the app and delete your account at any time from <b>Profile → Delete my account</b>. We may suspend or close accounts that break these terms or misuse the service.</p></section><section class="sec" id="en-s11"><div class="sec-h"><span class="num">11</span><h2>Changes to these terms</h2></div><p>We may update these terms. If the changes are meaningful, the app will ask you to agree to the new version before you continue.</p></section><section class="sec" id="en-s12"><div class="sec-h"><span class="num">12</span><h2>Governing law</h2></div><p>These terms are governed by the laws of the Kingdom of Saudi Arabia.</p></section><section class="sec" id="en-s13"><div class="sec-h"><span class="num">13</span><h2>Contact</h2></div><p>Questions about these terms: message us on Instagram <a href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer">@rakanfitapp</a>.</p></section>
+      <div class="contact"><b>Questions about your data or these terms?</b><p>We usually reply within a few days.</p><a class="btn" href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>Message us on Instagram</a></div>
+    </main>
+    <footer><nav><a href="./">Back to the app</a><a href="privacy.html#en">Privacy Policy</a></nav>© 2026 Apex Lift. All rights reserved.</footer>
+  </div>
 
-        <h2>4. Your content</h2>
-        <p>The routines and workout data you enter belong to you. You give us only the permission needed to store, back up and sync them so the app can work. When you share an exported file with others, you are responsible for that sharing.</p>
-
-        <h2>5. Acceptable use</h2>
-        <p>Do not misuse the service: no attempts to access other people's data, break or overload the system, reverse-engineer security measures, upload harmful code, or use the app for anything unlawful.</p>
-
-        <h2>6. Backups and availability</h2>
-        <p>We take care to keep your data safe and offer automatic backups, but we cannot guarantee the service will always be available or free of errors, or that data can never be lost. Keep your own copy of important data using <b>Profile → Backup data</b>.</p>
-
-        <h2>7. Intellectual property</h2>
-        <p>The Apex Lift name, logo, design and software are owned by Apex Lift. You may not copy, sell or redistribute the app or its parts without permission. Third-party components are used under their own licenses.</p>
-
-        <h2>8. No warranty</h2>
-        <p>The app is provided "as is" and "as available", without warranties of any kind, to the fullest extent permitted by law.</p>
-
-        <h2>9. Limitation of liability</h2>
-        <p>To the fullest extent permitted by law, Apex Lift is not liable for any injury, health problem, loss of data or other damage arising from your use of the app or from following its programs or suggestions. Nothing in these terms limits liability that cannot be limited by law.</p>
-
-        <h2>10. Ending your use</h2>
-        <p>You can stop using the app and delete your account at any time from <b>Profile → Delete my account</b>. We may suspend or close accounts that break these terms or misuse the service.</p>
-
-        <h2>11. Changes to these terms</h2>
-        <p>We may update these terms. If the changes are meaningful, the app will ask you to agree to the new version before you continue.</p>
-
-        <h2>12. Governing law</h2>
-        <p>These terms are governed by the laws of the Kingdom of Saudi Arabia.</p>
-
-        <h2>13. Contact</h2>
-        <p>Questions about these terms: message us on Instagram <a href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer">@rakanfitapp</a>.</p>
-    </section>
-
-    <section id="ar" lang="ar" dir="rtl" class="hide">
+  <div class="doc hide" id="ar" lang="ar" dir="rtl">
+    <main>
+      <div class="hero">
+        <div class="eyebrow">Apex Lift · قانوني</div>
         <h1>شروط الاستخدام</h1>
-        <p class="muted">Apex Lift · سارية من أكتوبر 2026 · الإصدار 2026-10</p>
-        <div class="box">يرجى قراءة هذه الشروط قبل إنشاء حساب. بتحديد "أوافق" وتسجيل الدخول فإنك تقبل شروط الاستخدام هذه و<a href="privacy.html#ar">سياسة الخصوصية</a>.</div>
-
-        <h2>1. الخدمة</h2>
-        <p>يساعدك Apex Lift على تخطيط تمارينك وتسجيلها ومتابعة تقدّمك. قد تتغير الميزات أو تتحسن أو تُزال مع الوقت. التطبيق متاح حاليًا مجانًا.</p>
-
-        <h2>2. الصحة والسلامة — يرجى القراءة</h2>
-        <ul>
+        <p class="lead">قواعد استخدام Apex Lift. يرجى قراءتها قبل إنشاء حساب.</p>
+        <div class="chips"><span class="chip">سارية من أكتوبر 2026</span><span class="chip">الإصدار 2026-10</span></div>
+        <nav class="docs"><a href="privacy.html#ar" class="">سياسة الخصوصية</a><a href="terms.html#ar" class="on">شروط الاستخدام</a></nav>
+      </div>
+      <h3 class="k">باختصار</h3>
+      <div class="glance"><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/><path d="M3.2 12h3.3l2-3 3 6 2-3h7.3"/></svg><b>ليس استشارة طبية</b><p>استشر طبيبًا قبل بدء برنامج جديد.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><b>العمر 13+</b><p>أقل من 18؟ استخدمه بإذن ولي الأمر.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 15 2 2 4-4"/></svg><b>بياناتك ملك لك</b><p>البرامج والتمارين التي تُدخلها ملك لك.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.9.7-1.9 1-3 1s-2.1-.3-3-1Z"/><path d="m2 16 3-8 3 8c-.9.7-1.9 1-3 1s-2.1-.3-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg><b>النظام السعودي</b><p>تخضع هذه الشروط لأنظمة المملكة.</p></div></div>
+      <h3 class="k">المحتويات</h3>
+      <nav class="toc"><a href="#ar-s1"><i>1</i>الخدمة</a><a href="#ar-s2"><i>2</i>الصحة والسلامة — يرجى القراءة</a><a href="#ar-s3"><i>3</i>حسابك</a><a href="#ar-s4"><i>4</i>محتواك</a><a href="#ar-s5"><i>5</i>الاستخدام المقبول</a><a href="#ar-s6"><i>6</i>النسخ الاحتياطية والتوفر</a><a href="#ar-s7"><i>7</i>الملكية الفكرية</a><a href="#ar-s8"><i>8</i>إخلاء الضمان</a><a href="#ar-s9"><i>9</i>حدود المسؤولية</a><a href="#ar-s10"><i>10</i>إنهاء الاستخدام</a><a href="#ar-s11"><i>11</i>التغييرات على الشروط</a><a href="#ar-s12"><i>12</i>النظام المعمول به</a><a href="#ar-s13"><i>13</i>التواصل</a></nav>
+      <section class="sec" id="ar-s1"><div class="sec-h"><span class="num">1</span><h2>الخدمة</h2></div><p>يساعدك Apex Lift على تخطيط تمارينك وتسجيلها ومتابعة تقدّمك. قد تتغير الميزات أو تتحسن أو تُزال مع الوقت. التطبيق متاح حاليًا مجانًا.</p></section><section class="sec" id="ar-s2"><div class="sec-h"><span class="num">2</span><h2>الصحة والسلامة — يرجى القراءة</h2></div><ul>
             <li>Apex Lift <b>ليس استشارة طبية</b> ولا يُغني عن الطبيب أو أخصائي العلاج الطبيعي أو المدرب المؤهل.</li>
             <li>البرامج واقتراحات الأوزان والأهداف والنصائح معلومات عامة محسوبة مما تُدخله، وقد لا تناسب جسمك أو صحتك أو خبرتك.</li>
             <li>استشر طبيبًا قبل بدء برنامج تمارين أو تغييره، خاصة إذا كانت لديك حالة صحية أو إصابة أو كنتِ حاملًا أو انقطعت عن التمرين لفترة طويلة.</li>
             <li>قم دائمًا بالإحماء واستخدم الأداء الصحيح واستعن بمساعد أو معدات أمان في الأوزان الثقيلة، وتوقف فورًا إذا شعرت بألم أو دوخة أو ضيق في التنفس.</li>
             <li>أنت تتمرن على مسؤوليتك، وأنت المسؤول عن اختيار أوزان آمنة لك.</li>
-        </ul>
-
-        <h2>3. حسابك</h2>
-        <ul>
+        </ul></section><section class="sec" id="ar-s3"><div class="sec-h"><span class="num">3</span><h2>حسابك</h2></div><ul>
             <li>تحتاج حساب Google لاستخدام Apex Lift. يجب ألا يقل عمرك عن 13 عامًا، وإذا كان عمرك أقل من 18 عامًا فتحتاج إذن أحد والديك أو وليّ أمرك.</li>
             <li>أنت مسؤول عن أمان حساب Google الخاص بك وعن أي نشاط يتم من خلاله.</li>
             <li>قدّم معلومات صحيحة واستخدم التطبيق لسجلات تمرينك فقط (أو بإذن لمن تدرّبه).</li>
-        </ul>
-
-        <h2>4. محتواك</h2>
-        <p>البرامج وبيانات التمرين التي تُدخلها ملك لك. تمنحنا فقط الإذن اللازم لحفظها ونسخها احتياطيًا ومزامنتها ليعمل التطبيق. عند مشاركة ملف مُصدَّر مع الآخرين فأنت المسؤول عن تلك المشاركة.</p>
-
-        <h2>5. الاستخدام المقبول</h2>
-        <p>لا تُسئ استخدام الخدمة: لا تحاول الوصول إلى بيانات الآخرين أو تعطيل النظام أو إثقاله أو تجاوز إجراءات الأمان أو رفع شيفرات ضارة أو استخدام التطبيق لأي غرض غير نظامي.</p>
-
-        <h2>6. النسخ الاحتياطية والتوفر</h2>
-        <p>نحرص على حماية بياناتك ونوفر نسخًا احتياطية تلقائية، لكن لا يمكننا ضمان توفر الخدمة دائمًا أو خلوها من الأخطاء أو عدم فقدان البيانات أبدًا. احتفظ بنسختك الخاصة من البيانات المهمة عبر <b>حسابي ← نسخ احتياطي</b>.</p>
-
-        <h2>7. الملكية الفكرية</h2>
-        <p>اسم Apex Lift وشعاره وتصميمه وبرمجياته مملوكة لـ Apex Lift. لا يجوز نسخ التطبيق أو أجزائه أو بيعها أو إعادة توزيعها دون إذن. تُستخدم المكونات الخارجية وفق تراخيصها.</p>
-
-        <h2>8. إخلاء الضمان</h2>
-        <p>يُقدَّم التطبيق "كما هو" و"حسب التوفر" دون أي ضمانات، إلى أقصى حد يسمح به النظام.</p>
-
-        <h2>9. حدود المسؤولية</h2>
-        <p>إلى أقصى حد يسمح به النظام، لا يتحمل Apex Lift المسؤولية عن أي إصابة أو مشكلة صحية أو فقدان بيانات أو أي ضرر آخر ينتج عن استخدامك للتطبيق أو اتباع برامجه أو اقتراحاته. لا شيء في هذه الشروط يحدّ من مسؤولية لا يجوز تحديدها نظامًا.</p>
-
-        <h2>10. إنهاء الاستخدام</h2>
-        <p>يمكنك التوقف عن استخدام التطبيق وحذف حسابك في أي وقت من <b>حسابي ← حذف حسابي</b>. ويجوز لنا إيقاف أو إغلاق الحسابات التي تخالف هذه الشروط أو تسيء استخدام الخدمة.</p>
-
-        <h2>11. التغييرات على الشروط</h2>
-        <p>قد نحدّث هذه الشروط، وإذا كانت التغييرات مهمة فسيطلب منك التطبيق الموافقة على الإصدار الجديد قبل المتابعة.</p>
-
-        <h2>12. النظام المعمول به</h2>
-        <p>تخضع هذه الشروط لأنظمة المملكة العربية السعودية.</p>
-
-        <h2>13. التواصل</h2>
-        <p>للأسئلة حول هذه الشروط: راسلنا على إنستغرام <a href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer">@rakanfitapp</a>.</p>
-    </section>
-
-    <div class="links"><a href="./">← Apex Lift</a><a href="privacy.html">Privacy Policy · سياسة الخصوصية</a><a href="terms.html">Terms of Use · شروط الاستخدام</a></div>
-</main>
+        </ul></section><section class="sec" id="ar-s4"><div class="sec-h"><span class="num">4</span><h2>محتواك</h2></div><p>البرامج وبيانات التمرين التي تُدخلها ملك لك. تمنحنا فقط الإذن اللازم لحفظها ونسخها احتياطيًا ومزامنتها ليعمل التطبيق. عند مشاركة ملف مُصدَّر مع الآخرين فأنت المسؤول عن تلك المشاركة.</p></section><section class="sec" id="ar-s5"><div class="sec-h"><span class="num">5</span><h2>الاستخدام المقبول</h2></div><p>لا تُسئ استخدام الخدمة: لا تحاول الوصول إلى بيانات الآخرين أو تعطيل النظام أو إثقاله أو تجاوز إجراءات الأمان أو رفع شيفرات ضارة أو استخدام التطبيق لأي غرض غير نظامي.</p></section><section class="sec" id="ar-s6"><div class="sec-h"><span class="num">6</span><h2>النسخ الاحتياطية والتوفر</h2></div><p>نحرص على حماية بياناتك ونوفر نسخًا احتياطية تلقائية، لكن لا يمكننا ضمان توفر الخدمة دائمًا أو خلوها من الأخطاء أو عدم فقدان البيانات أبدًا. احتفظ بنسختك الخاصة من البيانات المهمة عبر <b>حسابي ← نسخ احتياطي</b>.</p></section><section class="sec" id="ar-s7"><div class="sec-h"><span class="num">7</span><h2>الملكية الفكرية</h2></div><p>اسم Apex Lift وشعاره وتصميمه وبرمجياته مملوكة لـ Apex Lift. لا يجوز نسخ التطبيق أو أجزائه أو بيعها أو إعادة توزيعها دون إذن. تُستخدم المكونات الخارجية وفق تراخيصها.</p></section><section class="sec" id="ar-s8"><div class="sec-h"><span class="num">8</span><h2>إخلاء الضمان</h2></div><p>يُقدَّم التطبيق "كما هو" و"حسب التوفر" دون أي ضمانات، إلى أقصى حد يسمح به النظام.</p></section><section class="sec" id="ar-s9"><div class="sec-h"><span class="num">9</span><h2>حدود المسؤولية</h2></div><p>إلى أقصى حد يسمح به النظام، لا يتحمل Apex Lift المسؤولية عن أي إصابة أو مشكلة صحية أو فقدان بيانات أو أي ضرر آخر ينتج عن استخدامك للتطبيق أو اتباع برامجه أو اقتراحاته. لا شيء في هذه الشروط يحدّ من مسؤولية لا يجوز تحديدها نظامًا.</p></section><section class="sec" id="ar-s10"><div class="sec-h"><span class="num">10</span><h2>إنهاء الاستخدام</h2></div><p>يمكنك التوقف عن استخدام التطبيق وحذف حسابك في أي وقت من <b>حسابي ← حذف حسابي</b>. ويجوز لنا إيقاف أو إغلاق الحسابات التي تخالف هذه الشروط أو تسيء استخدام الخدمة.</p></section><section class="sec" id="ar-s11"><div class="sec-h"><span class="num">11</span><h2>التغييرات على الشروط</h2></div><p>قد نحدّث هذه الشروط، وإذا كانت التغييرات مهمة فسيطلب منك التطبيق الموافقة على الإصدار الجديد قبل المتابعة.</p></section><section class="sec" id="ar-s12"><div class="sec-h"><span class="num">12</span><h2>النظام المعمول به</h2></div><p>تخضع هذه الشروط لأنظمة المملكة العربية السعودية.</p></section><section class="sec" id="ar-s13"><div class="sec-h"><span class="num">13</span><h2>التواصل</h2></div><p>للأسئلة حول هذه الشروط: راسلنا على إنستغرام <a href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer">@rakanfitapp</a>.</p></section>
+      <div class="contact"><b>لديك سؤال عن بياناتك أو هذه الشروط؟</b><p>نرد عادةً خلال أيام قليلة.</p><a class="btn" href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>راسلنا على إنستغرام</a></div>
+    </main>
+    <footer><nav><a href="./">العودة إلى التطبيق</a><a href="privacy.html#ar">سياسة الخصوصية</a></nav>© 2026 Apex Lift. جميع الحقوق محفوظة.</footer>
+  </div>
+  <button class="top" id="top" onclick="scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></button>
 <script>
     function show(l) {
         ['en', 'ar'].forEach(function (x) {
             document.getElementById(x).classList.toggle('hide', x !== l);
             document.getElementById('b-' + x).classList.toggle('on', x === l);
         });
-        document.documentElement.lang = l;
+        document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+        try { history.replaceState(null, '', '#' + l); } catch (e) {}
     }
     var saved = 'en';
     try { saved = localStorage.getItem('workoutLang_rakan_final') === 'ar' ? 'ar' : 'en'; } catch (e) {}
-    if (location.hash === '#ar') saved = 'ar';
-    if (location.hash === '#en') saved = 'en';
+    var h = location.hash.slice(1);
+    if (h === 'ar' || h === 'en') saved = h; else if (/^(ar|en)-s\d+$/.test(h)) saved = h.slice(0, 2);
     show(saved);
+    if (/^(ar|en)-s\d+$/.test(h)) setTimeout(function () { var e = document.getElementById(h); if (e) e.scrollIntoView(); }, 50);
+    var top = document.getElementById('top');
+    addEventListener('scroll', function () { top.classList.toggle('show', scrollY > 700); }, { passive: true });
 </script>
 </body>
 </html>

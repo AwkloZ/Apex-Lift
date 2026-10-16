@@ -3,178 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#000000">
-    <title>Apex Lift · Privacy Policy</title>
+    <meta name="theme-color" content="#050505">
+    <meta name="description" content="Apex Lift Privacy Policy">
+    <title>Privacy Policy · Apex Lift</title>
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Cairo:wght@400;600;700;800;900&display=swap">
     <style>
-        :root { color-scheme: dark; }
-        body { margin: 0; background: #000; color: #e2e8f0; font: 15px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Tahoma, sans-serif; }
-        main { max-width: 680px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 24px) 16px 64px; }
-        h1 { color: #fff; font-size: 26px; margin: 0 0 4px; letter-spacing: -0.02em; }
-        h2 { color: #d4af37; font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; margin: 30px 0 6px; }
-        [lang="ar"] h2 { letter-spacing: 0; text-transform: none; font-size: 16px; }
-        p, li { color: #cbd5e1; }
-        ul { padding-inline-start: 20px; margin: 6px 0; }
-        li { margin: 4px 0; }
-        a { color: #d4af37; }
-        b { color: #fff; }
-        .muted { color: #64748b; font-size: 13px; }
-        .box { background: #111; border: 1px solid #222; border-radius: 14px; padding: 14px 16px; margin: 16px 0; }
-        .switch { display: flex; gap: 8px; margin-bottom: 24px; }
-        .switch button { background: #111; color: #fff; border: 1px solid #333; border-radius: 10px; padding: 8px 14px; font-weight: 700; font-size: 14px; cursor: pointer; }
-        .switch button.on { background: #d4af37; color: #000; border-color: #d4af37; }
-        [lang="ar"] { font-family: Tahoma, "Segoe UI", sans-serif; }
-        .hide { display: none; }
-        .links { margin-top: 36px; display: flex; gap: 18px; font-weight: 700; flex-wrap: wrap; }
-    </style>
+:root { color-scheme: dark; --gold: #d4af37; --bg: #050505; --card: #111113; --line: rgba(255,255,255,0.08); --text: #e5e7eb; --muted: #94a3b8; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); background-image: radial-gradient(circle at 50% -10%, #1c1a12 0%, #050505 55%); background-attachment: fixed; color: var(--text); font: 15px/1.7 'Inter', 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+[lang="ar"] body, [lang="ar"] .doc { font-family: 'Cairo', 'Inter', Tahoma, sans-serif; }
+a { color: var(--gold); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.bar { position: sticky; top: 0; z-index: 10; background: rgba(5,5,5,0.78); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
+.bar-in { max-width: 760px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.logo { display: flex; align-items: center; gap: 8px; color: #fff; font-weight: 900; font-style: italic; letter-spacing: -0.04em; font-size: 20px; text-transform: uppercase; }
+.logo span { color: var(--gold); }
+.logo .ic { width: 18px; height: 18px; color: var(--muted); font-style: normal; }
+.seg { display: inline-flex; background: #151517; border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+.seg button { border: 0; background: transparent; color: var(--muted); font: 700 13px/1 inherit; font-family: inherit; padding: 8px 13px; border-radius: 999px; cursor: pointer; }
+.seg button.on { background: var(--gold); color: #000; }
+main { max-width: 760px; margin: 0 auto; padding: 22px 16px 48px; }
+.hero { border: 1px solid var(--line); background: linear-gradient(160deg, rgba(212,175,55,0.12), rgba(17,17,19,0.9) 55%); border-radius: 24px; padding: 26px 22px; }
+.eyebrow { color: var(--gold); font-size: 11px; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; }
+[lang="ar"] .eyebrow { letter-spacing: 0; font-size: 13px; }
+h1 { margin: 8px 0 6px; font-size: 32px; line-height: 1.15; font-weight: 900; letter-spacing: -0.02em; color: #fff; }
+.lead { margin: 0 0 16px; color: var(--muted); font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 12px; font-weight: 700; color: #cbd5e1; background: rgba(255,255,255,0.05); border: 1px solid var(--line); padding: 5px 11px; border-radius: 999px; }
+.docs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 18px; background: rgba(0,0,0,0.35); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
+.docs a { text-align: center; padding: 10px; border-radius: 10px; font-weight: 800; font-size: 14px; color: var(--muted); }
+.docs a.on { background: #fff; color: #000; }
+.docs a:hover { text-decoration: none; }
+h3.k { margin: 34px 4px 12px; font-size: 12px; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+[lang="ar"] h3.k { letter-spacing: 0; font-size: 14px; }
+.glance { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tile { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
+.tile .ic { width: 22px; height: 22px; color: var(--gold); }
+.tile b { display: block; color: #fff; font-size: 14.5px; margin: 10px 0 2px; line-height: 1.35; }
+.tile p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.toc { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.toc a { display: flex; align-items: center; gap: 10px; color: #e5e7eb; font-weight: 600; font-size: 14px; padding: 9px 10px; border-radius: 10px; line-height: 1.3; }
+.toc a:hover { background: rgba(255,255,255,0.05); text-decoration: none; }
+.toc a i { font-style: normal; color: var(--gold); font-weight: 900; font-size: 12px; min-width: 18px; }
+.sec { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 22px 20px 18px; margin-top: 12px; }
+.sec-h { display: flex; align-items: center; gap: 12px; margin: 0 0 10px; }
+.num { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.35); color: var(--gold); font-weight: 900; font-size: 14px; }
+.sec h2 { margin: 0; font-size: 18px; line-height: 1.3; font-weight: 800; color: #fff; }
+.sec p { margin: 8px 0; color: #cbd5e1; }
+.sec b { color: #fff; font-weight: 700; }
+.sec ul { list-style: none; padding: 0; margin: 10px 0; }
+.sec li { position: relative; padding-inline-start: 22px; margin: 9px 0; color: #cbd5e1; }
+.sec li::before { content: ''; position: absolute; inset-inline-start: 4px; top: 0.72em; width: 7px; height: 7px; border-radius: 2px; background: var(--gold); transform: rotate(45deg); }
+.contact { margin-top: 28px; text-align: center; border: 1px solid rgba(212,175,55,0.3); background: linear-gradient(180deg, rgba(212,175,55,0.1), rgba(17,17,19,0.9)); border-radius: 22px; padding: 26px 20px; }
+.contact b { display: block; color: #fff; font-size: 17px; }
+.contact p { margin: 4px 0 16px; color: var(--muted); font-size: 14px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: #000; font-weight: 900; padding: 13px 20px; border-radius: 14px; font-size: 14px; }
+.btn:hover { text-decoration: none; filter: brightness(1.05); }
+.btn .ic { width: 18px; height: 18px; }
+footer { max-width: 760px; margin: 0 auto; padding: 8px 16px calc(40px + env(safe-area-inset-bottom)); text-align: center; color: #64748b; font-size: 13px; }
+footer nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 10px; font-weight: 700; }
+.top { position: fixed; inset-inline-end: 16px; bottom: calc(18px + env(safe-area-inset-bottom)); width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: rgba(20,20,22,0.9); color: #fff; display: grid; place-items: center; opacity: 0; pointer-events: none; transition: opacity .2s; cursor: pointer; }
+.top.show { opacity: 1; pointer-events: auto; }
+.top .ic { width: 20px; height: 20px; }
+.hide { display: none; }
+[dir="rtl"] .flip, [dir="rtl"] .logo .ic { transform: scaleX(-1); }
+@media (max-width: 520px) { h1 { font-size: 28px; } .toc { grid-template-columns: 1fr; } }
+@media (max-width: 360px) { .glance { grid-template-columns: 1fr; } }
+@media print { .bar, .top, .contact, footer nav { display: none; } body { background: #fff; color: #000; } .sec, .tile, .toc, .hero { border-color: #ccc; background: #fff; } .sec p, .sec li, .tile p { color: #222; } h1, .sec h2, .sec b, .tile b { color: #000; } }
+</style>
 </head>
 <body>
-<main>
-    <div class="switch"><button id="b-en" onclick="show('en')">English</button><button id="b-ar" onclick="show('ar')">العربية</button></div>
+  <header class="bar"><div class="bar-in">
+    <a class="logo" href="./" dir="ltr"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>APEX <span>LIFT</span></a>
+    <div class="seg" dir="ltr"><button id="b-en" onclick="show('en')">EN</button><button id="b-ar" onclick="show('ar')">عربي</button></div>
+  </div></header>
 
-    <section id="en" lang="en" dir="ltr">
+  <div class="doc" id="en" lang="en" dir="ltr">
+    <main>
+      <div class="hero">
+        <div class="eyebrow">Apex Lift · Legal</div>
         <h1>Privacy Policy</h1>
-        <p class="muted">Apex Lift · Effective October 2026 · Version 2026-10</p>
-        <div class="box">In short: you sign in with Google so your workouts are backed up and synced. We keep only what the app needs, we never sell it, we show no ads and use no trackers, and you can delete everything yourself at any time.</div>
-
-        <h2>1. Who we are</h2>
-        <p>Apex Lift ("the app", "we", "us") is a workout tracking web app. This policy explains what information the app collects, why, where it is kept and the choices you have. By creating an account you confirm that you have read this policy.</p>
-
-        <h2>2. Information we collect</h2>
-        <ul>
+        <p class="lead">How Apex Lift collects, uses and protects your information.</p>
+        <div class="chips"><span class="chip">Effective October 2026</span><span class="chip">Version 2026-10</span></div>
+        <nav class="docs"><a href="privacy.html#en" class="on">Privacy Policy</a><a href="terms.html#en" class="">Terms of Use</a></nav>
+      </div>
+      <h3 class="k">At a glance</h3>
+      <div class="glance"><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 22 12a10.9 10.9 0 0 1-2.2 3.3M6.6 6.6A10.8 10.8 0 0 0 2 12s3.6 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg><b>No ads, no trackers</b><p>We never show ads or use analytics.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><b>Never sold</b><p>Your data is not sold, rented or shared for marketing.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><b>Only you can see it</b><p>Encrypted and locked to your own Google account.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg><b>You are in control</b><p>Download or delete everything yourself, anytime.</p></div></div>
+      <h3 class="k">Contents</h3>
+      <nav class="toc"><a href="#en-s1"><i>1</i>Who we are</a><a href="#en-s2"><i>2</i>Information we collect</a><a href="#en-s3"><i>3</i>Why we use it</a><a href="#en-s4"><i>4</i>Health information</a><a href="#en-s5"><i>5</i>Where your data is stored</a><a href="#en-s6"><i>6</i>How long we keep it</a><a href="#en-s7"><i>7</i>Your rights and choices</a><a href="#en-s8"><i>8</i>Sharing files</a><a href="#en-s9"><i>9</i>Children</a><a href="#en-s10"><i>10</i>Security</a><a href="#en-s11"><i>11</i>Changes to this policy</a><a href="#en-s12"><i>12</i>Contact</a></nav>
+      <section class="sec" id="en-s1"><div class="sec-h"><span class="num">1</span><h2>Who we are</h2></div><p>Apex Lift ("the app", "we", "us") is a workout tracking web app. This policy explains what information the app collects, why, where it is kept and the choices you have. By creating an account you confirm that you have read this policy.</p></section><section class="sec" id="en-s2"><div class="sec-h"><span class="num">2</span><h2>Information we collect</h2></div><ul>
             <li><b>Account information</b> (from Google Sign-In): your name, email address, profile photo link and a unique account ID. We never see or store your Google password.</li>
             <li><b>Training data you enter</b>: routines, exercises, sets, weights, reps, rest times, optional effort ratings (RPE), custom exercises, your daily check-in answers (sleep, soreness, energy) and your setup answers (goal, days per week, experience, equipment).</li>
             <li><b>App settings</b>: first day of the week, rest timer, language and display options.</li>
             <li><b>Backups</b>: dated copies of the data above that the app saves in your account (automatically about once a day, and whenever you tap "Back up now").</li>
             <li><b>Agreement record</b>: the version of these documents you accepted and when.</li>
         </ul>
-        <p>We do <b>not</b> collect your location, contacts, photos, microphone or camera, payment details or advertising identifiers, and we do not use analytics or tracking tools.</p>
-
-        <h2>3. Why we use it</h2>
-        <ul>
+        <p>We do <b>not</b> collect your location, contacts, photos, microphone or camera, payment details or advertising identifiers, and we do not use analytics or tracking tools.</p></section><section class="sec" id="en-s3"><div class="sec-h"><span class="num">3</span><h2>Why we use it</h2></div><ul>
             <li>To provide the app: show your plan, record your workouts, suggest your next weights and show your progress.</li>
             <li>To back up your data and keep it in sync between your devices.</li>
             <li>To let you restore an earlier version of your data.</li>
             <li>To keep the service secure and working.</li>
         </ul>
-        <p>We do not sell, rent or share your data for advertising, and we do not use it to build marketing profiles.</p>
-
-        <h2>4. Health information</h2>
-        <p>Training data and check-in answers can describe your fitness and how you feel. This information is used only to run the app for you. It is never shared with employers, insurers or any other third party.</p>
-
-        <h2>5. Where your data is stored</h2>
-        <p>Your data is stored on your device and in Google Firebase (Firebase Authentication and Cloud Firestore), a service operated by Google that acts as our data processor. Google may store this data on servers outside your country. Access is protected by security rules so that only your own signed-in account can read or change your data, and all connections are encrypted (HTTPS).</p>
-
-        <h2>6. How long we keep it</h2>
-        <ul>
+        <p>We do not sell, rent or share your data for advertising, and we do not use it to build marketing profiles.</p></section><section class="sec" id="en-s4"><div class="sec-h"><span class="num">4</span><h2>Health information</h2></div><p>Training data and check-in answers can describe your fitness and how you feel. This information is used only to run the app for you. It is never shared with employers, insurers or any other third party.</p></section><section class="sec" id="en-s5"><div class="sec-h"><span class="num">5</span><h2>Where your data is stored</h2></div><p>Your data is stored on your device and in Google Firebase (Firebase Authentication and Cloud Firestore), a service operated by Google that acts as our data processor. Google may store this data on servers outside your country. Access is protected by security rules so that only your own signed-in account can read or change your data, and all connections are encrypted (HTTPS).</p></section><section class="sec" id="en-s6"><div class="sec-h"><span class="num">6</span><h2>How long we keep it</h2></div><ul>
             <li>Your data is kept for as long as your account exists.</li>
             <li>The app keeps up to 10 automatic and 10 other backups; older copies are deleted automatically.</li>
             <li>When you delete your account, your cloud data and backups are deleted straight away. Workouts saved on your device stay there until you clear them.</li>
-        </ul>
-
-        <h2>7. Your rights and choices</h2>
-        <ul>
+        </ul></section><section class="sec" id="en-s7"><div class="sec-h"><span class="num">7</span><h2>Your rights and choices</h2></div><ul>
             <li><b>Access and copy</b>: download all your data at any time from <b>Profile → Backup data</b> (a readable JSON file).</li>
             <li><b>Correct</b>: edit or delete any routine or workout record in the app.</li>
             <li><b>Delete</b>: <b>Profile → Delete my account</b> removes your account, your cloud data and all backups.</li>
             <li><b>Withdraw</b>: you can sign out at any time. Because an account is needed to use the app, signing out returns you to the sign-in page; your data on the device is kept.</li>
-        </ul>
+        </ul></section><section class="sec" id="en-s8"><div class="sec-h"><span class="num">8</span><h2>Sharing files</h2></div><p>When you export a backup file, it is saved to your device and you decide who to share it with (for example a friend or coach, or an AI assistant). Anyone who receives the file can read what is in it, so share it only with people and services you trust.</p></section><section class="sec" id="en-s9"><div class="sec-h"><span class="num">9</span><h2>Children</h2></div><p>Apex Lift is not intended for children under 13. If you are under 18, use the app only with the permission of a parent or guardian. If you believe a child under 13 has created an account, contact us and we will delete it.</p></section><section class="sec" id="en-s10"><div class="sec-h"><span class="num">10</span><h2>Security</h2></div><p>We use Google's secure sign-in, encrypted connections and per-account access rules. No system is perfectly secure, so keep your Google account protected (a strong password and two-step verification).</p></section><section class="sec" id="en-s11"><div class="sec-h"><span class="num">11</span><h2>Changes to this policy</h2></div><p>If we change this policy in a meaningful way, the app will show the new version and ask you to agree again before you continue.</p></section><section class="sec" id="en-s12"><div class="sec-h"><span class="num">12</span><h2>Contact</h2></div><p>Questions, requests or complaints: message us on Instagram <a href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer">@rakanfitapp</a>.</p></section>
+      <div class="contact"><b>Questions about your data or these terms?</b><p>We usually reply within a few days.</p><a class="btn" href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>Message us on Instagram</a></div>
+    </main>
+    <footer><nav><a href="./">Back to the app</a><a href="terms.html#en">Terms of Use</a></nav>© 2026 Apex Lift. All rights reserved.</footer>
+  </div>
 
-        <h2>8. Sharing files</h2>
-        <p>When you export a backup file, it is saved to your device and you decide who to share it with (for example a friend or coach, or an AI assistant). Anyone who receives the file can read what is in it, so share it only with people and services you trust.</p>
-
-        <h2>9. Children</h2>
-        <p>Apex Lift is not intended for children under 13. If you are under 18, use the app only with the permission of a parent or guardian. If you believe a child under 13 has created an account, contact us and we will delete it.</p>
-
-        <h2>10. Security</h2>
-        <p>We use Google's secure sign-in, encrypted connections and per-account access rules. No system is perfectly secure, so keep your Google account protected (a strong password and two-step verification).</p>
-
-        <h2>11. Changes to this policy</h2>
-        <p>If we change this policy in a meaningful way, the app will show the new version and ask you to agree again before you continue.</p>
-
-        <h2>12. Contact</h2>
-        <p>Questions, requests or complaints: message us on Instagram <a href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer">@rakanfitapp</a>.</p>
-    </section>
-
-    <section id="ar" lang="ar" dir="rtl" class="hide">
+  <div class="doc hide" id="ar" lang="ar" dir="rtl">
+    <main>
+      <div class="hero">
+        <div class="eyebrow">Apex Lift · قانوني</div>
         <h1>سياسة الخصوصية</h1>
-        <p class="muted">Apex Lift · سارية من أكتوبر 2026 · الإصدار 2026-10</p>
-        <div class="box">باختصار: تسجّل الدخول بحساب Google لتُحفظ تمارينك وتتزامن بين أجهزتك. نحتفظ فقط بما يحتاجه التطبيق، ولا نبيع بياناتك أبدًا، ولا نعرض إعلانات ولا نستخدم أدوات تتبع، ويمكنك حذف كل شيء بنفسك في أي وقت.</div>
-
-        <h2>1. من نحن</h2>
-        <p>Apex Lift ("التطبيق" أو "نحن") تطبيق ويب لتسجيل التمارين. توضّح هذه السياسة المعلومات التي يجمعها التطبيق ولماذا وأين تُحفظ والخيارات المتاحة لك. بإنشاء حساب فإنك تؤكد أنك قرأت هذه السياسة.</p>
-
-        <h2>2. المعلومات التي نجمعها</h2>
-        <ul>
+        <p class="lead">كيف يجمع Apex Lift معلوماتك ويستخدمها ويحميها.</p>
+        <div class="chips"><span class="chip">سارية من أكتوبر 2026</span><span class="chip">الإصدار 2026-10</span></div>
+        <nav class="docs"><a href="privacy.html#ar" class="on">سياسة الخصوصية</a><a href="terms.html#ar" class="">شروط الاستخدام</a></nav>
+      </div>
+      <h3 class="k">باختصار</h3>
+      <div class="glance"><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 22 12a10.9 10.9 0 0 1-2.2 3.3M6.6 6.6A10.8 10.8 0 0 0 2 12s3.6 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg><b>بدون إعلانات أو تتبع</b><p>لا نعرض إعلانات ولا نستخدم أدوات تحليل.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><b>لا تُباع أبدًا</b><p>لا نبيع بياناتك ولا نؤجّرها ولا نشاركها للتسويق.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><b>لا يراها غيرك</b><p>مشفّرة ومقفلة على حساب Google الخاص بك.</p></div><div class="tile"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg><b>التحكم بيدك</b><p>نزّل بياناتك أو احذفها بنفسك في أي وقت.</p></div></div>
+      <h3 class="k">المحتويات</h3>
+      <nav class="toc"><a href="#ar-s1"><i>1</i>من نحن</a><a href="#ar-s2"><i>2</i>المعلومات التي نجمعها</a><a href="#ar-s3"><i>3</i>لماذا نستخدمها</a><a href="#ar-s4"><i>4</i>المعلومات الصحية</a><a href="#ar-s5"><i>5</i>أين تُحفظ بياناتك</a><a href="#ar-s6"><i>6</i>مدة الاحتفاظ</a><a href="#ar-s7"><i>7</i>حقوقك وخياراتك</a><a href="#ar-s8"><i>8</i>مشاركة الملفات</a><a href="#ar-s9"><i>9</i>الأطفال</a><a href="#ar-s10"><i>10</i>الأمان</a><a href="#ar-s11"><i>11</i>التغييرات على هذه السياسة</a><a href="#ar-s12"><i>12</i>التواصل</a></nav>
+      <section class="sec" id="ar-s1"><div class="sec-h"><span class="num">1</span><h2>من نحن</h2></div><p>Apex Lift ("التطبيق" أو "نحن") تطبيق ويب لتسجيل التمارين. توضّح هذه السياسة المعلومات التي يجمعها التطبيق ولماذا وأين تُحفظ والخيارات المتاحة لك. بإنشاء حساب فإنك تؤكد أنك قرأت هذه السياسة.</p></section><section class="sec" id="ar-s2"><div class="sec-h"><span class="num">2</span><h2>المعلومات التي نجمعها</h2></div><ul>
             <li><b>معلومات الحساب</b> (من تسجيل الدخول بـ Google): اسمك وبريدك الإلكتروني ورابط صورتك ومعرّف حساب فريد. لا نرى كلمة مرور Google ولا نحفظها.</li>
             <li><b>بيانات التمرين التي تُدخلها</b>: البرامج والتمارين والمجموعات والأوزان والتكرارات وأوقات الراحة وتقييم الجهد (RPE) اختياريًا والتمارين المضافة وإجابات التقييم اليومي (النوم والإجهاد والنشاط) وإجابات الإعداد (الهدف وعدد الأيام والخبرة والمعدات).</li>
             <li><b>إعدادات التطبيق</b>: أول يوم في الأسبوع ومؤقت الراحة واللغة وخيارات العرض.</li>
             <li><b>النسخ الاحتياطية</b>: نسخ مؤرخة من البيانات السابقة يحفظها التطبيق في حسابك (تلقائيًا مرة يوميًا تقريبًا، وكلما ضغطت "انسخ الآن").</li>
             <li><b>سجل الموافقة</b>: إصدار هذه الوثائق الذي وافقت عليه وتاريخ الموافقة.</li>
         </ul>
-        <p>لا نجمع موقعك أو جهات اتصالك أو صورك أو الميكروفون أو الكاميرا أو بيانات الدفع أو معرّفات الإعلانات، ولا نستخدم أدوات تحليل أو تتبع.</p>
-
-        <h2>3. لماذا نستخدمها</h2>
-        <ul>
+        <p>لا نجمع موقعك أو جهات اتصالك أو صورك أو الميكروفون أو الكاميرا أو بيانات الدفع أو معرّفات الإعلانات، ولا نستخدم أدوات تحليل أو تتبع.</p></section><section class="sec" id="ar-s3"><div class="sec-h"><span class="num">3</span><h2>لماذا نستخدمها</h2></div><ul>
             <li>لتشغيل التطبيق: عرض خطتك وتسجيل تمارينك واقتراح أوزانك القادمة وعرض تقدّمك.</li>
             <li>لحفظ نسخة احتياطية من بياناتك ومزامنتها بين أجهزتك.</li>
             <li>لتمكينك من استرجاع نسخة سابقة من بياناتك.</li>
             <li>للحفاظ على أمان الخدمة وعملها.</li>
         </ul>
-        <p>لا نبيع بياناتك ولا نؤجّرها ولا نشاركها لأغراض إعلانية، ولا نستخدمها لبناء ملفات تسويقية.</p>
-
-        <h2>4. المعلومات الصحية</h2>
-        <p>قد تصف بيانات التمرين وإجابات التقييم لياقتك وحالتك. تُستخدم هذه المعلومات فقط لتشغيل التطبيق لك، ولا تُشارك أبدًا مع جهات العمل أو شركات التأمين أو أي طرف ثالث.</p>
-
-        <h2>5. أين تُحفظ بياناتك</h2>
-        <p>تُحفظ بياناتك على جهازك وفي Google Firebase (Firebase Authentication و Cloud Firestore)، وهي خدمة تديرها Google بصفتها معالجًا للبيانات نيابةً عنا. قد تحفظ Google هذه البيانات على خوادم خارج بلدك. الوصول محمي بقواعد أمان بحيث لا يستطيع قراءة بياناتك أو تعديلها إلا حسابك المسجّل، وجميع الاتصالات مشفّرة (HTTPS).</p>
-
-        <h2>6. مدة الاحتفاظ</h2>
-        <ul>
+        <p>لا نبيع بياناتك ولا نؤجّرها ولا نشاركها لأغراض إعلانية، ولا نستخدمها لبناء ملفات تسويقية.</p></section><section class="sec" id="ar-s4"><div class="sec-h"><span class="num">4</span><h2>المعلومات الصحية</h2></div><p>قد تصف بيانات التمرين وإجابات التقييم لياقتك وحالتك. تُستخدم هذه المعلومات فقط لتشغيل التطبيق لك، ولا تُشارك أبدًا مع جهات العمل أو شركات التأمين أو أي طرف ثالث.</p></section><section class="sec" id="ar-s5"><div class="sec-h"><span class="num">5</span><h2>أين تُحفظ بياناتك</h2></div><p>تُحفظ بياناتك على جهازك وفي Google Firebase (Firebase Authentication و Cloud Firestore)، وهي خدمة تديرها Google بصفتها معالجًا للبيانات نيابةً عنا. قد تحفظ Google هذه البيانات على خوادم خارج بلدك. الوصول محمي بقواعد أمان بحيث لا يستطيع قراءة بياناتك أو تعديلها إلا حسابك المسجّل، وجميع الاتصالات مشفّرة (HTTPS).</p></section><section class="sec" id="ar-s6"><div class="sec-h"><span class="num">6</span><h2>مدة الاحتفاظ</h2></div><ul>
             <li>نحتفظ ببياناتك طوال وجود حسابك.</li>
             <li>يحتفظ التطبيق بما يصل إلى 10 نسخ تلقائية و10 نسخ أخرى، وتُحذف النسخ الأقدم تلقائيًا.</li>
             <li>عند حذف حسابك تُحذف بياناتك السحابية ونسخك الاحتياطية فورًا. التمارين المحفوظة على جهازك تبقى عليه حتى تحذفها.</li>
-        </ul>
-
-        <h2>7. حقوقك وخياراتك</h2>
-        <ul>
+        </ul></section><section class="sec" id="ar-s7"><div class="sec-h"><span class="num">7</span><h2>حقوقك وخياراتك</h2></div><ul>
             <li><b>الاطلاع والنسخ</b>: نزّل جميع بياناتك في أي وقت من <b>حسابي ← نسخ احتياطي</b> (ملف JSON مقروء).</li>
             <li><b>التصحيح</b>: عدّل أو احذف أي برنامج أو سجل تمرين داخل التطبيق.</li>
             <li><b>الحذف</b>: <b>حسابي ← حذف حسابي</b> يحذف حسابك وبياناتك السحابية وجميع النسخ الاحتياطية.</li>
             <li><b>الانسحاب</b>: يمكنك تسجيل الخروج في أي وقت. ولأن الحساب مطلوب لاستخدام التطبيق، يعيدك تسجيل الخروج إلى صفحة الدخول مع بقاء بياناتك على الجهاز.</li>
-        </ul>
-
-        <h2>8. مشاركة الملفات</h2>
-        <p>عند تصدير ملف نسخة احتياطية يُحفظ على جهازك وأنت من يقرر مع من تشاركه (مثل صديق أو مدرب أو مساعد ذكاء اصطناعي). كل من يستلم الملف يستطيع قراءة محتواه، فشاركه فقط مع أشخاص وخدمات تثق بها.</p>
-
-        <h2>9. الأطفال</h2>
-        <p>التطبيق غير موجّه للأطفال دون 13 عامًا. إذا كان عمرك أقل من 18 عامًا فاستخدم التطبيق بإذن أحد والديك أو وليّ أمرك. إذا علمت أن طفلًا دون 13 عامًا أنشأ حسابًا فتواصل معنا وسنحذفه.</p>
-
-        <h2>10. الأمان</h2>
-        <p>نستخدم تسجيل الدخول الآمن من Google واتصالات مشفّرة وقواعد وصول لكل حساب. لا يوجد نظام آمن تمامًا، لذا احمِ حساب Google بكلمة مرور قوية والتحقق بخطوتين.</p>
-
-        <h2>11. التغييرات على هذه السياسة</h2>
-        <p>إذا غيّرنا هذه السياسة تغييرًا مهمًا فسيعرض التطبيق الإصدار الجديد ويطلب موافقتك مرة أخرى قبل المتابعة.</p>
-
-        <h2>12. التواصل</h2>
-        <p>للأسئلة أو الطلبات أو الشكاوى: راسلنا على إنستغرام <a href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer">@rakanfitapp</a>.</p>
-    </section>
-
-    <div class="links"><a href="./">← Apex Lift</a><a href="privacy.html">Privacy Policy · سياسة الخصوصية</a><a href="terms.html">Terms of Use · شروط الاستخدام</a></div>
-</main>
+        </ul></section><section class="sec" id="ar-s8"><div class="sec-h"><span class="num">8</span><h2>مشاركة الملفات</h2></div><p>عند تصدير ملف نسخة احتياطية يُحفظ على جهازك وأنت من يقرر مع من تشاركه (مثل صديق أو مدرب أو مساعد ذكاء اصطناعي). كل من يستلم الملف يستطيع قراءة محتواه، فشاركه فقط مع أشخاص وخدمات تثق بها.</p></section><section class="sec" id="ar-s9"><div class="sec-h"><span class="num">9</span><h2>الأطفال</h2></div><p>التطبيق غير موجّه للأطفال دون 13 عامًا. إذا كان عمرك أقل من 18 عامًا فاستخدم التطبيق بإذن أحد والديك أو وليّ أمرك. إذا علمت أن طفلًا دون 13 عامًا أنشأ حسابًا فتواصل معنا وسنحذفه.</p></section><section class="sec" id="ar-s10"><div class="sec-h"><span class="num">10</span><h2>الأمان</h2></div><p>نستخدم تسجيل الدخول الآمن من Google واتصالات مشفّرة وقواعد وصول لكل حساب. لا يوجد نظام آمن تمامًا، لذا احمِ حساب Google بكلمة مرور قوية والتحقق بخطوتين.</p></section><section class="sec" id="ar-s11"><div class="sec-h"><span class="num">11</span><h2>التغييرات على هذه السياسة</h2></div><p>إذا غيّرنا هذه السياسة تغييرًا مهمًا فسيعرض التطبيق الإصدار الجديد ويطلب موافقتك مرة أخرى قبل المتابعة.</p></section><section class="sec" id="ar-s12"><div class="sec-h"><span class="num">12</span><h2>التواصل</h2></div><p>للأسئلة أو الطلبات أو الشكاوى: راسلنا على إنستغرام <a href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer">@rakanfitapp</a>.</p></section>
+      <div class="contact"><b>لديك سؤال عن بياناتك أو هذه الشروط؟</b><p>نرد عادةً خلال أيام قليلة.</p><a class="btn" href="https://www.instagram.com/rakanfitapp" target="_blank" rel="noopener noreferrer"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>راسلنا على إنستغرام</a></div>
+    </main>
+    <footer><nav><a href="./">العودة إلى التطبيق</a><a href="terms.html#ar">شروط الاستخدام</a></nav>© 2026 Apex Lift. جميع الحقوق محفوظة.</footer>
+  </div>
+  <button class="top" id="top" onclick="scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></button>
 <script>
     function show(l) {
         ['en', 'ar'].forEach(function (x) {
             document.getElementById(x).classList.toggle('hide', x !== l);
             document.getElementById('b-' + x).classList.toggle('on', x === l);
         });
-        document.documentElement.lang = l;
+        document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+        try { history.replaceState(null, '', '#' + l); } catch (e) {}
     }
     var saved = 'en';
     try { saved = localStorage.getItem('workoutLang_rakan_final') === 'ar' ? 'ar' : 'en'; } catch (e) {}
-    if (location.hash === '#ar') saved = 'ar';
-    if (location.hash === '#en') saved = 'en';
+    var h = location.hash.slice(1);
+    if (h === 'ar' || h === 'en') saved = h; else if (/^(ar|en)-s\d+$/.test(h)) saved = h.slice(0, 2);
     show(saved);
+    if (/^(ar|en)-s\d+$/.test(h)) setTimeout(function () { var e = document.getElementById(h); if (e) e.scrollIntoView(); }, 50);
+    var top = document.getElementById('top');
+    addEventListener('scroll', function () { top.classList.toggle('show', scrollY > 700); }, { passive: true });
 </script>
 </body>
 </html>
