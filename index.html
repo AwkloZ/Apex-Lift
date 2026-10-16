@@ -222,16 +222,6 @@
         </div>
     </div>
 
-    <!-- Edit one exercise: sets, reps, swap, delete -->
-    <div id="exedit-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExEdit()">
-        <div id="exedit-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)] max-h-[90dvh] overflow-y-auto">
-            <div class="flex justify-end px-5 pt-4">
-                <button onclick="window.appActions.closeExEdit()" class="px-4 py-2 rounded-xl bg-[#d4af37] text-black text-[11px] font-black uppercase tracking-widest tap-feedback" data-i18n="Done">Done</button>
-            </div>
-            <div id="exedit-content" class="px-5 pb-8" style="padding-bottom: max(2rem, env(safe-area-inset-bottom));"></div>
-        </div>
-    </div>
-
     <div id="side-panel-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden transition-opacity duration-300 opacity-0" onclick="window.appActions.toggleMenu()"></div>
     
     <div id="side-panel" class="fixed top-0 right-0 h-full w-80 glass-card rounded-none rounded-l-3xl z-[101] transform translate-x-full transition-transform duration-300 overflow-y-auto p-5 border-l border-white/10 shadow-2xl safe-notch pb-20">
@@ -306,6 +296,7 @@
             <i data-lucide="download-cloud" class="w-5 h-5 text-[#d4af37]"></i> <span data-i18n="Restore Data">Restore Data</span>
             <input type="file" class="hidden" accept=".json" onchange="window.appActions.importData(event)">
         </label>
+        <p id="backup-age" class="text-[10px] font-bold text-center mb-3 text-slate-500"></p>
 
         <div class="h-px w-full bg-white/10 mt-6 mb-4"></div>
         
@@ -343,6 +334,7 @@
                     <button class="tap-feedback text-[#d4af37] p-2 bg-white/5 rounded-xl border border-white/10 shadow-lg" onclick="window.appActions.toggleMenu()">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
+                    <span id="backup-dot" class="hidden absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-500 border-2 border-black pointer-events-none"></span>
                 </div>
             </header>
 

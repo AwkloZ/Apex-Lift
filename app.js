@@ -17,6 +17,28 @@
     })();
     const isAR = LANG === 'ar';
     const AR = {
+        "Confirm": "تأكيد",
+        "Edit": "تعديل",
+        "New best": "رقم قياسي",
+        "Match last & best": "مثل آخر مرة وأفضل رقم",
+        "Match best": "مثل أفضل رقم",
+        "Match last": "مثل آخر مرة",
+        "vs last": "عن آخر مرة",
+        "First log": "أول تسجيل",
+        "Workout completed": "تم إنهاء التمرين",
+        "{done} of {planned} sets": "{done} من {planned} مجموعات",
+        "Day progress": "تقدّم اليوم",
+        "Completed • tap to undo": "مكتمل • اضغط للتراجع",
+        "Finish workout": "إنهاء التمرين",
+        "Done editing": "إنهاء التعديل",
+        "Copy to...": "نسخ إلى...",
+        "Copy": "نسخ",
+        "Workout completed! 💪": "أحسنت! تم إنهاء التمرين 💪",
+        "Copied to {day}": "تم النسخ إلى {day}",
+        "Replace {day}?": "استبدال {day}؟",
+        "Its current exercises will be replaced.": "سيتم استبدال تمارينه الحالية.",
+        "Last backup: today": "آخر نسخة احتياطية: اليوم",
+        "Last backup: {n} days ago": "آخر نسخة احتياطية: قبل {n} يوم",
         "-- Skip (Do Not Import) --": "-- تخطي (لا تستورد) --",
         "1 exercise added": "تمت إضافة تمرين واحد",
         "3 quick taps to adjust today's targets.": "3 ضغطات سريعة لضبط أهداف اليوم.",
@@ -42,7 +64,6 @@
         "BW": "وزن الجسم",
         "Backup Data": "نسخ احتياطي",
         "Backup Manager": "النسخ الاحتياطي",
-        "Backup Reminder": "تذكير بالنسخ الاحتياطي",
         "Build Reps": "زِد التكرارات",
         "Build a routine with exercises to see your weekly workload goals.": "أنشئ جدولاً بالتمارين لترى أهداف حجم التمرين الأسبوعية.",
         "CORE": "الجذع",
@@ -112,7 +133,6 @@
         "In this day": "موجود في هذا اليوم",
         "In your routines": "في جداولك",
         "Invalid Backup file": "ملف النسخة الاحتياطية غير صالح",
-        "It has been over 7 days. Backup now?": "مر أكثر من 7 أيام. هل تريد أخذ نسخة احتياطية الآن؟",
         "KG": "كجم",
         "KG can be changed per set. RPE (optional) = how hard it was: 10 = no reps left, 9 = 1 left, 8 = 2 left.": "يمكنك تغيير الوزن لكل مجموعة. RPE (اختياري) = مدى الصعوبة: 10 = لا تكرارات متبقية، 9 = تكرار واحد، 8 = تكراران.",
         "LEGS": "أرجل",
@@ -134,7 +154,6 @@
         "Lower Body": "الجزء السفلي",
         "Main Routine": "الجدول الرئيسي",
         "Manual Mode Active": "الوضع اليدوي",
-        "Match": "مطابق",
         "Match old backup exercises to your active routine. Unlinked data will be skipped.": "اربط تمارين النسخة القديمة بتمارين جدولك الحالي. التمارين غير المربوطة لن تُستورد.",
         "Max 5 schedules": "الحد الأقصى 5 جداول",
         "Merge Selected Data": "دمج البيانات المختارة",
@@ -586,13 +605,29 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         }, 0);
     };
 
+    // Days you marked as finished with the "Finish workout" button (one flag per routine, day and week)
+    const DONE_KEY = 'workoutDoneDays_rakan_final';
+    const doneKey = dayId => `${currentWeekId}|${dayId}|${getWeekStart().getTime()}`;
+    const getDoneAll = () => { const v = readJSON(DONE_KEY, {}); return isObj(v) ? v : {}; };
+    const isDayFlaggedDone = dayId => !!getDoneAll()[doneKey(dayId)];
+
+    // Sets done this week vs planned sets for one day (each exercise counts up to its planned sets)
+    const dayProgress = (d, history = StorageManager.getHistory()) => {
+        let done = 0, planned = 0;
+        (d.exercises || []).forEach((ex, i) => {
+            const p = parseInt(ex.sets) || 0;
+            planned += p;
+            done += Math.min(p, setsThisWeekForDay(history[getExKey(currentWeekId, d.id, i, ex.name)], d.id));
+        });
+        return { done, planned, pct: planned ? Math.round(done / planned * 100) : 0 };
+    };
+
     const isDayCompleted = (d, history = StorageManager.getHistory()) => {
         if (d.isRest) return true;
         if (!d.exercises || d.exercises.length === 0) return false;
-        return d.exercises.every((ex, i) => {
-            const k = getExKey(currentWeekId, d.id, i, ex.name);
-            return setsThisWeekForDay(history[k], d.id) >= (parseInt(ex.sets) || 0);
-        });
+        if (isDayFlaggedDone(d.id)) return true;
+        const pr = dayProgress(d, history);
+        return pr.planned > 0 && pr.done >= pr.planned;
     };
 
     // One-time upgrade: give older logs an exact timestamp (their text date is kept as-is)
@@ -670,7 +705,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         document.getElementById('nav-container').innerHTML = schedule.map(d => {
             const comp = isDayCompleted(d, history);
             const checkHTML = comp && !d.isRest ? `<div class="absolute -top-1 -right-1 w-4 h-4 bg-[#22c55e] rounded-full flex items-center justify-center shadow-md border-[1.5px] border-black z-10"><i data-lucide="check" class="w-2.5 h-2.5 text-black"></i></div>` : '';
-            return `<button onclick="window.appActions.setActiveDay(${d.id})" class="snap-start tap-feedback nav-pill px-5 py-4 min-w-[100px] transition-all relative ${activeDay===d.id?'active-day shadow-lg':'bg-white/5'} ${activeDay!==d.id&&(getTodayId()===d.id&&!isDayIncomplete(d)?'gold-corners':(isDayIncomplete(d)?'border border-red-500/50 shadow-[0_0_10px_rgba(239,68,68,0.3)] animate-pulse':'border border-white/5'))}">${checkHTML}<div class="text-[8px] font-bold uppercase ${activeDay===d.id?'text-black/60':(isDayIncomplete(d)?'text-red-400':'text-[#d4af37]')} mb-1">${esc(tDay(d.day))}</div><div class="font-black text-[14px] uppercase tracking-tighter ${activeDay===d.id?'text-black':'text-white'}">${t('DAY {n}', { n: d.id })}</div></button>`;
+            return `<button onclick="window.appActions.setActiveDay(${d.id})" class="snap-start tap-feedback nav-pill px-5 py-4 min-w-[100px] transition-all relative ${activeDay===d.id?'active-day shadow-lg':'bg-white/5'} ${activeDay!==d.id&&(comp&&!d.isRest?'border border-[#22c55e]/70 bg-[#22c55e]/10':getTodayId()===d.id&&!isDayIncomplete(d)?'gold-corners':(isDayIncomplete(d)?'border border-red-500/50 shadow-[0_0_10px_rgba(239,68,68,0.3)] animate-pulse':'border border-white/5'))}">${checkHTML}<div class="text-[8px] font-bold uppercase ${activeDay===d.id?'text-black/60':(isDayIncomplete(d)?'text-red-400':'text-[#d4af37]')} mb-1">${esc(tDay(d.day))}</div><div class="font-black text-[14px] uppercase tracking-tighter ${activeDay===d.id?'text-black':'text-white'}">${t('DAY {n}', { n: d.id })}</div></button>`;
         }).join('');
         renderSidePanel();
         
@@ -927,6 +962,50 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         </div>`;
     };
 
+    // Editor shown inside the exercise's own card: sets, reps, swap, delete and Confirm
+    const inlineEditHTML = (i, ex) => {
+        const sets = parseInt(ex.sets) || 0;
+        return `<div class="glass-card p-4 mb-4 border-2 border-[#d4af37]/60 relative">
+            <div class="flex items-start justify-between gap-2 mb-4">
+                <div class="min-w-0">
+                    <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(tm(ex.muscle))}</div>
+                    <div class="ex-name text-[17px] font-black text-white leading-tight">${esc(ex.name)}</div>
+                </div>
+                <div class="flex gap-2 shrink-0">
+                    <button onclick="window.appActions.openPicker('replace', ${i})" class="p-2 text-slate-300 bg-white/5 rounded-lg border border-white/10 tap-feedback" aria-label="${esc(t('Swap exercise'))}"><i data-lucide="arrow-left-right" class="w-4 h-4"></i></button>
+                    <button onclick="window.appActions.deleteEx(${i})" class="p-2 text-red-400 bg-red-500/10 rounded-lg border border-red-500/20 tap-feedback" aria-label="${esc(t('Delete'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+            <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">${esc(t('Sets'))}</div>
+            <div class="flex items-center gap-3 mb-4" dir="ltr">
+                <button onclick="window.appActions.exEditSets(-1)" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 text-2xl font-black text-white tap-feedback">−</button>
+                <div class="flex-1 text-center text-2xl font-black text-white">${sets || esc(ex.sets)}</div>
+                <button onclick="window.appActions.exEditSets(1)" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 text-2xl font-black text-white tap-feedback">+</button>
+            </div>
+            <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">${esc(t('Reps'))}</div>
+            <div class="grid grid-cols-4 gap-2 mb-2" dir="ltr">${REPS_PRESETS.map(r => `<button onclick="window.appActions.exEditReps(${jsArg(r)})" class="py-2 rounded-lg text-[12px] font-black tap-feedback border ${ex.reps === r ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-white border-white/10'}">${esc(r)}</button>`).join('')}</div>
+            <input type="text" value="${esc(ex.reps)}" onchange="window.appActions.exEditReps(this.value)" placeholder="${esc(t('Custom, e.g. 5 or 6 - 8'))}" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-bold outline-none focus:border-[#d4af37] mb-4" dir="ltr">
+            <button onclick="window.appActions.closeExEdit()" class="w-full py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><i data-lucide="check" class="w-4 h-4"></i>${esc(t('Confirm'))}</button>
+        </div>`;
+    };
+
+    // Badge comparing a weight with your last session and your best ever (weights from before today)
+    const compareBadge = (cur, hA) => {
+        const prev = (hA || []).filter(l => !isToday(logTime(l)));
+        if (!prev.length || !(cur >= 0)) return '';
+        const last = getLastSession(prev);
+        const lastW = last ? last.w : 0;
+        const bestW = Math.max(0, ...prev.flatMap(logSetDetails).map(x => x.w));
+        const pill = (cls, icon, txt) => `<div class="text-[9px] font-black px-2 py-1 rounded-md border uppercase tracking-widest shadow-sm flex items-center gap-1 ${cls}">${icon ? `<i data-lucide="${icon}" class="w-3 h-3"></i>` : ''}${txt}</div>`;
+        const green = 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20', gold = 'text-[#d4af37] bg-[#d4af37]/10 border-[#d4af37]/20', grey = 'text-slate-300 bg-white/5 border-white/10', red = 'text-red-400 bg-red-500/10 border-red-500/20';
+        if (cur > bestW && bestW > 0) return pill(green, 'trophy', `${t('New best')} <span dir="ltr">+${Math.round((cur - bestW) * 10) / 10}kg</span>`);
+        if (cur === bestW && cur === lastW) return pill(gold, 'check', t('Match last & best'));
+        if (cur === bestW) return pill(gold, 'trophy', t('Match best'));
+        if (cur === lastW) return pill(grey, 'check', t('Match last'));
+        const df = Math.round((cur - lastW) * 10) / 10;
+        return pill(df > 0 ? green : red, '', `<span dir="ltr">${df > 0 ? '+' : ''}${df}kg</span> ${t('vs last')}`);
+    };
+
     const renderWorkout = () => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), isE = window.appState.editMode;
         const allHistory = StorageManager.getHistory();
@@ -934,7 +1013,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         let html = `<div class="px-2 mb-4 flex justify-between items-center gap-3 h-10">${isE&&!day.isRest?`<input type="text" value="${esc(day.title)}" onfocus="if(this.value==='New Day')this.value='';" onchange="window.appActions.updateDayTitle(this.value)" class="flex-1 bg-transparent border-b-2 border-[#d4af37]/50 text-2xl font-black uppercase text-[#d4af37] outline-none h-full pb-1 leading-none">`:`<h2 class="flex-1 font-black text-2xl uppercase text-white truncate h-full flex items-end pb-1 border-b-2 border-transparent leading-none">${esc(t(day.title))}</h2>`}<button onclick="window.appActions.toggleEditMode(event)" class="text-[#d4af37] tap-feedback bg-white/5 rounded-xl border border-white/10 shrink-0 h-10 w-10 flex items-center justify-center"><i data-lucide="${isE?'check':'edit-2'}" class="w-5 h-5"></i></button></div>`;if (isE) {
             const opts = schedule.filter(d => d.id !== activeDay).map(d => `<option value="${d.id}">${t('Day {n}', { n: d.id })} • ${esc(tDay(d.day))}</option>`).join('');
             html += `
-            <div class="px-2 mb-6 grid grid-cols-${day.isRest ? 3 : 4} gap-2">
+            <div class="px-2 mb-6 grid ${day.isRest ? 'grid-cols-4' : 'grid-cols-5'} gap-2">
                 <div class="relative tap-feedback">
                     <select onchange="if(this.value)window.appActions.applyPreset(this.value);this.value='';" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">${t('Custom Week...')}</option><option value="PPL">${t('PPL Split (6-Days)')}</option><option value="UL">${t('Upper/Lower (4-Days)')}</option><option value="FB">${t('Full Body (3-Days)')}</option></select>
                     <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="zap" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Template')}</span></div>
@@ -946,6 +1025,10 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 <div class="relative tap-feedback">
                     <select onchange="if(this.value){window.appActions.swapDay(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">${t('Swap...')}</option>${opts}</select>
                     <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="arrow-left-right" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Swap')}</span></div>
+                </div>
+                <div class="relative tap-feedback">
+                    <select onchange="if(this.value){window.appActions.copyDay(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">${t('Copy to...')}</option>${opts}</select>
+                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="copy" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Copy')}</span></div>
                 </div>
                 ${!day.isRest ? `<button onclick="window.appActions.clearDay()" class="w-full glass-card flex flex-col items-center justify-center h-14 rounded-xl text-red-400 border border-red-500/20 bg-red-500/10 z-10 relative tap-feedback"><i data-lucide="trash-2" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Clear')}</span></button>` : ''}
             </div>`;
@@ -973,12 +1056,22 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                 html += `<div class="glass-card p-10 text-center border-dashed border-white/10 mt-4"><div class="flex justify-center mb-4"><i data-lucide="clipboard-edit" class="w-10 h-10 text-slate-500 opacity-50"></i></div><h3 class="font-black text-lg uppercase text-slate-400 tracking-wider mb-2">${t('Empty Day')}</h3><p class="text-[11px] font-bold text-slate-500 leading-relaxed">${t('Tap the edit button to add exercises, apply a template, or make it a rest day.')}</p></div>`;
             } else {
                 const isTodayDay = activeDay === getTodayId();
-                if (!isE && isTodayDay) html += checkInHTML();
+                const flagged = isDayFlaggedDone(activeDay), pr = dayProgress(day, allHistory), finished = flagged || (pr.planned > 0 && pr.done >= pr.planned);
+                if (!isE) {
+                    // Completed banner + progress bar for the day
+                    if (finished) html += `<div class="glass-card p-4 mb-4 border border-[#22c55e]/50 bg-[#22c55e]/10 flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-[#22c55e] text-black flex items-center justify-center shrink-0"><i data-lucide="check" class="w-6 h-6"></i></div><div><div class="text-[13px] font-black text-[#22c55e] uppercase tracking-widest">${t('Workout completed')}</div><div class="text-[10px] font-bold text-slate-400">${t('{done} of {planned} sets', { done: pr.done, planned: pr.planned })}</div></div></div>`;
+                    html += `<div class="px-1 mb-4">
+                        <div class="flex justify-between items-end mb-1.5"><span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${t('Day progress')}</span><span class="text-[11px] font-black ${finished ? 'text-[#22c55e]' : 'text-white'}" dir="ltr">${pr.done} / ${pr.planned} • ${pr.pct}%</span></div>
+                        <div class="w-full h-2.5 bg-black/50 rounded-full overflow-hidden border border-white/5"><div class="h-full rounded-full transition-all duration-700 ${finished ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pr.pct}%"></div></div>
+                    </div>`;
+                }
+                if (!isE && isTodayDay && !finished) html += checkInHTML();
                 const easyDay = isTodayDay && (getReadinessToday() || {}).level === 'low';
                 html += `<div id="sortable-list">${day.exercises.map((ex, i) => {
                     const k = getExKey(currentWeekId, activeDay, i, ex.name), v = loggedWeights[k]||'', hT = exerciseOptions.includes(ex.name);
+                    if (window.appState.inlineEdit === i) return inlineEditHTML(i, ex);
                     if (isE) {
-                        // Compact row: tap it to edit sets/reps, ⇄ to swap, 🗑 to delete (with undo)
+                        // Compact row: tap it to edit sets/reps in place, ⇄ to swap, 🗑 to delete (with undo)
                         return `
                         <div class="glass-card p-3 flex items-center gap-2 relative mb-3">
                             <div class="handle p-2 -ms-1 text-slate-500 flex items-center justify-center cursor-grab active:cursor-grabbing hover:text-white touch-none"><i data-lucide="grip-vertical" class="w-5 h-5 pointer-events-none"></i></div>
@@ -999,27 +1092,28 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                         // Today's target comes from your last session before today (same rule as Analytics)
                         const prevSession = getLastSession(hA, true);
                         const prog = getProgression(prevSession, ex.reps), us = unitOf(ex.reps);
-                        const lK = prevSession ? prevSession.w : null;
-                        let dH=''; 
-                        if(prog){
-                            if(!v && !(loggedReps[k]||'')){ 
-                                if(easyDay && prog.type !== 'down') {
-                                    dH=`<div class="text-[9px] font-black text-slate-300 bg-white/5 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-sm flex items-center gap-1"><i data-lucide="moon" class="w-3 h-3"></i> ${t('Easy:')} <span dir="ltr">${fmtW(prog.w)} × ${prog.minR}${us}</span></div>`;
-                                } else if(prog.type === 'up') {
-                                    dH=`<div class="text-[9px] font-black text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md border border-[#22c55e]/20 uppercase tracking-widest shadow-sm shadow-[#22c55e]/10 flex items-center gap-1"><i data-lucide="arrow-up-circle" class="w-3 h-3"></i> ${t('Level Up:')} <span dir="ltr">${fmtW(prog.tW)} × ${prog.tR}${us}</span></div>`;
-                                } else if(prog.type === 'down') {
-                                    dH=`<div class="text-[9px] font-black text-red-400 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 uppercase tracking-widest shadow-sm flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> ${t('Deload:')} <span dir="ltr">${fmtW(prog.tW)} × ${prog.tR}${us}</span></div>`;
-                                } else {
-                                    dH=`<div class="text-[9px] font-black text-[#d4af37] bg-[#d4af37]/10 px-2 py-1 rounded-md border border-[#d4af37]/20 uppercase tracking-widest shadow-sm shadow-[#d4af37]/10 flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3 h-3"></i> ${t('Target:')} <span dir="ltr">${fmtW(prog.tW)} × ${prog.tR}${us}</span></div>`;
-                                }
+                        const todayLogs = hA.filter(l => isToday(logTime(l)));
+                        const todaySession = todayLogs.length ? getLastSession(todayLogs) : null;
+                        let dH='';
+                        if (v !== '' || todaySession) {
+                            // You typed a load or already logged today: compare with last session & best
+                            const cur = v !== '' ? parseFloat(v) : todaySession.w;
+                            dH = compareBadge(isNaN(cur) ? 0 : cur, hA);
+                            if (!dH && todaySession) dH = `<div class="text-[9px] font-black text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md border border-[#22c55e]/20 uppercase tracking-widest shadow-sm flex items-center gap-1"><i data-lucide="check" class="w-3 h-3"></i>${t('First log')}</div>`;
+                        } else if (prog) {
+                            if(easyDay && prog.type !== 'down') {
+                                dH=`<div class="text-[9px] font-black text-slate-300 bg-white/5 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-sm flex items-center gap-1"><i data-lucide="moon" class="w-3 h-3"></i> ${t('Easy:')} <span dir="ltr">${fmtW(prog.w)} × ${prog.minR}${us}</span></div>`;
+                            } else if(prog.type === 'up') {
+                                dH=`<div class="text-[9px] font-black text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md border border-[#22c55e]/20 uppercase tracking-widest shadow-sm shadow-[#22c55e]/10 flex items-center gap-1"><i data-lucide="arrow-up-circle" class="w-3 h-3"></i> ${t('Level Up:')} <span dir="ltr">${fmtW(prog.tW)} × ${prog.tR}${us}</span></div>`;
+                            } else if(prog.type === 'down') {
+                                dH=`<div class="text-[9px] font-black text-red-400 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 uppercase tracking-widest shadow-sm flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> ${t('Deload:')} <span dir="ltr">${fmtW(prog.tW)} × ${prog.tR}${us}</span></div>`;
                             } else {
-                                const df=(parseFloat(v||0)-lK).toFixed(1);
-                                dH=df>0?`<div class="text-[9px] font-black text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md border border-[#22c55e]/20 uppercase tracking-widest shadow-sm">+${df} kg</div>`:df<0?`<div class="text-[9px] font-black text-red-500 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20 uppercase tracking-widest shadow-sm">${df} kg</div>`:`<div class="text-[9px] font-black text-slate-400 bg-white/5 px-2 py-1 rounded-md border border-white/5 uppercase tracking-widest shadow-sm">${t('Match')}</div>`;
+                                dH=`<div class="text-[9px] font-black text-[#d4af37] bg-[#d4af37]/10 px-2 py-1 rounded-md border border-[#d4af37]/20 uppercase tracking-widest shadow-sm shadow-[#d4af37]/10 flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3 h-3"></i> ${t('Target:')} <span dir="ltr">${fmtW(prog.tW)} × ${prog.tR}${us}</span></div>`;
                             }
                         } else {
                             // No usable session yet: fall back to the last weight you entered
                             const lastW = hA.length ? parseFloat(hA[hA.length-1].w) : 0;
-                            if (lastW > 0 && !v) dH=`<div class="text-[9px] font-black text-slate-400 bg-black/40 px-2 py-1 rounded-md border border-white/5 uppercase tracking-widest shadow-sm">${t('Target:')} <span dir="ltr">${lastW+weightStep(lastW)}kg</span></div>`;
+                            if (lastW > 0) dH=`<div class="text-[9px] font-black text-slate-400 bg-black/40 px-2 py-1 rounded-md border border-white/5 uppercase tracking-widest shadow-sm">${t('Target:')} <span dir="ltr">${lastW+weightStep(lastW)}kg</span></div>`;
                         }
                         
                         // ✨ FLAWLESS NORMAL MODE CARD
@@ -1027,10 +1121,11 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                         <div class="glass-card p-4 flex flex-col justify-center relative mb-4 transition-all ${cardBorder}">
                             ${checkBadge}
                             <!-- PINNED HELP ICON -->
+                            <button onclick="window.appActions.openExEdit(${i})" class="absolute top-4 ${hT ? 'right-14' : 'right-4'} text-slate-500 hover:text-[#d4af37] tap-feedback z-10 bg-black/40 p-1.5 rounded-lg border border-white/5 shadow-sm" aria-label="${esc(t('Edit'))}"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
                             ${hT?`<a href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name+' exercise form')}" target="_blank" class="absolute top-4 right-4 text-slate-500 hover:text-[#d4af37] tap-feedback z-10 bg-black/40 p-1.5 rounded-lg border border-white/5 shadow-sm"><i data-lucide="help-circle" class="w-4 h-4"></i></a>`:''}
                             
                             <!-- TOP SECTION: HEADER WITH SEPARATOR -->
-                            <div class="border-b border-white/10 pb-3 mb-3 w-full pr-10 relative">
+                            <div class="border-b border-white/10 pb-3 mb-3 w-full pr-20 relative">
                                 <div class="flex items-center justify-between mb-2 w-full">
                                     <span class="text-[10px] font-black text-[#d4af37] uppercase tracking-[3px] opacity-80">${esc(tm(ex.muscle))}</span>
                                     <div id="delta-${esc(k)}">${dH}</div>
@@ -1074,10 +1169,14 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
                         </div>`;
                     }
                 }).join('')}</div>`;
-                if(isE) html += `<div class="px-2 mt-4 mb-10 flex gap-2"><button onclick="window.appActions.openPicker('add')" class="flex-1 glass-card p-4 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[12px] tap-feedback border-dashed border-[#d4af37]/40 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button></div>`;
+                if(isE) html += `<div class="px-2 mt-4 flex gap-2"><button onclick="window.appActions.openPicker('add')" class="flex-1 glass-card p-4 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[12px] tap-feedback border-dashed border-[#d4af37]/40 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button></div>`;
+                // Finish workout: flags the day as completed (tap again to undo)
+                else if (day.exercises.length) html += `<div class="px-1 mt-2 mb-6"><button onclick="window.appActions.toggleDayDone()" class="w-full py-4 rounded-2xl text-[13px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 ${flagged ? 'bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/40' : 'bg-[#22c55e] text-black shadow-[0_0_20px_rgba(34,197,94,0.35)]'}"><i data-lucide="${flagged ? 'rotate-ccw' : 'flag'}" class="w-5 h-5"></i>${flagged ? t('Completed • tap to undo') : t('Finish workout')}</button></div>`;
             }
         }
         
+        // Confirm button at the bottom of edit mode too
+        if (isE) html += `<div class="px-2 mt-3 mb-10"><button onclick="window.appActions.toggleEditMode(event)" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(212,175,55,0.35)]"><i data-lucide="check" class="w-5 h-5"></i>${t('Done editing')}</button></div>`;
         html += `<div id="scroll-buffer" class="w-full pointer-events-none transition-all duration-300" style="height: 0px;"></div>`;
         
 
@@ -1139,6 +1238,33 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             if (v !== 'ar' && v !== 'en') return;
             writeItem(LANG_KEY, v);
             location.reload();
+        },
+        // Finish workout / undo: flags this day as completed for this week
+        toggleDayDone: () => {
+            const all = getDoneAll(), k = doneKey(activeDay);
+            if (all[k]) delete all[k];
+            else {
+                all[k] = Date.now();
+                if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+                window.appActions.showToast(t('Workout completed! 💪'), 'success');
+            }
+            // keep only the last 60 days of flags
+            const cutoff = Date.now() - 60 * 86400000;
+            Object.keys(all).forEach(x => { if (all[x] < cutoff) delete all[x]; });
+            writeItem(DONE_KEY, JSON.stringify(all));
+            renderNav(false); renderWorkout();
+        },
+        // Copy this day (title, type and exercises) onto another day
+        copyDay: targetId => {
+            const s = getActiveSchedule(), from = s.find(d => d.id === activeDay), to = s.find(d => d.id === targetId);
+            if (!from || !to) return;
+            const doCopy = () => {
+                Object.assign(to, { title: from.title, isRest: from.isRest, recoveryType: from.recoveryType, savedTitle: from.savedTitle, exercises: JSON.parse(JSON.stringify(from.exercises || [])) });
+                StorageManager.setPlan(appData); renderNav(false); renderWorkout();
+                window.appActions.showToast(t('Copied to {day}', { day: t('Day {n}', { n: to.id }) }), 'success');
+            };
+            if ((to.exercises || []).length || to.isRest) window.appActions.showConfirm(t('Replace {day}?', { day: t('Day {n}', { n: to.id }) }), t('Its current exercises will be replaced.'), doCopy, true);
+            else doCopy();
         },
         skipCheckIn: () => { window.appState.ciSkipped = dateKey(); renderWorkout(); },
         refreshUI: () => window.appState.currentView==='workout'?renderWorkout():renderAnalytics(),
@@ -1414,6 +1540,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             if (document.activeElement) document.activeElement.blur(); 
             
             // Toggle mode and rebuild the UI
+            window.appState.inlineEdit = null;
             window.appState.editMode = !window.appState.editMode; 
             renderNav(false); 
             renderWorkout(); 
@@ -1432,6 +1559,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
         updateDayType: v => { const d=getActiveSchedule().find(x=>x.id===activeDay); if(v==='workout'){d.isRest=false; d.recoveryType=null; d.title=d.savedTitle||'New Workout'; if(!d.exercises)d.exercises=[];}else{if(!d.isRest)d.savedTitle=d.title; d.isRest=true; d.recoveryType=v; d.title=v==='active'?'Active Rest':'Complete Rest';} window.appState.editMode=true; StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },        // Delete straight away, with an Undo button for a few seconds
         deleteEx: i => {
             const d = getActiveSchedule().find(x => x.id === activeDay);
+            window.appState.inlineEdit = null;
             const removed = d.exercises.splice(i, 1)[0];
             StorageManager.setPlan(appData); renderWorkout(); renderNav(false);
             window.appActions.showToast(t('Removed {name}', { name: removed.name }), 'error', { label: t('Undo'), fn: () => {
@@ -1539,53 +1667,27 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             if (P.mode === 'add') window.appActions.renderPicker(false);
         },
 
-        // ---------- Edit one exercise (sets / reps) ----------
-        openExEdit: i => {
-            window.appState.exEditIdx = i;
-            window.appActions.renderExEdit();
-            openSheet('exedit-overlay', 'exedit-box');
-        },
-        closeExEdit: () => { closeSheet('exedit-overlay', 'exedit-box'); renderWorkout(); },
-        renderExEdit: () => {
-            const i = window.appState.exEditIdx, ex = getActiveSchedule().find(x => x.id === activeDay).exercises[i];
-            if (!ex) return;
-            const sets = parseInt(ex.sets) || 0;
-            document.getElementById('exedit-content').innerHTML = `
-                <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(tm(ex.muscle))}</div>
-                <div class="ex-name text-xl font-black text-white mb-5">${esc(ex.name)}</div>
-                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">${esc(t('Sets'))}</div>
-                <div class="flex items-center gap-3 mb-5" dir="ltr">
-                    <button onclick="window.appActions.exEditSets(-1)" class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 text-2xl font-black text-white tap-feedback">−</button>
-                    <div class="flex-1 text-center text-3xl font-black text-white">${sets || esc(ex.sets)}</div>
-                    <button onclick="window.appActions.exEditSets(1)" class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 text-2xl font-black text-white tap-feedback">+</button>
-                </div>
-                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">${esc(t('Reps'))}</div>
-                <div class="grid grid-cols-4 gap-2 mb-3" dir="ltr">${REPS_PRESETS.map(r => `<button onclick="window.appActions.exEditReps(${jsArg(r)})" class="py-2.5 rounded-lg text-[12px] font-black tap-feedback border ${ex.reps === r ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-white border-white/10'}">${esc(r)}</button>`).join('')}</div>
-                <input type="text" value="${esc(ex.reps)}" onchange="window.appActions.exEditReps(this.value)" placeholder="${esc(t('Custom, e.g. 5 or 6 - 8'))}" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-[#d4af37] mb-6" dir="ltr">
-                <div class="flex gap-2">
-                    <button onclick="window.appActions.closeExEdit(); window.appActions.openPicker('replace', ${i})" class="flex-1 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[11px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><i data-lucide="arrow-left-right" class="w-4 h-4"></i>${esc(t('Swap exercise'))}</button>
-                    <button onclick="window.appActions.closeExEdit(); window.appActions.deleteEx(${i})" class="py-3.5 px-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 tap-feedback" aria-label="${esc(t('Delete'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                </div>`;
-            if (window.lucide) window.lucide.createIcons({ root: document.getElementById('exedit-content') });
-        },
+        // ---------- Edit one exercise inside its own card ----------
+        openExEdit: i => { window.appState.inlineEdit = i; renderWorkout(); },
+        closeExEdit: () => { window.appState.inlineEdit = null; renderWorkout(); },
         exEditSets: dlt => {
-            const ex = getActiveSchedule().find(x => x.id === activeDay).exercises[window.appState.exEditIdx];
+            const ex = getActiveSchedule().find(x => x.id === activeDay).exercises[window.appState.inlineEdit];
             ex.sets = String(Math.min(10, Math.max(1, (parseInt(ex.sets) || 3) + dlt)));
-            StorageManager.setPlan(appData); window.appActions.renderExEdit();
+            StorageManager.setPlan(appData); renderWorkout();
         },
         exEditReps: v => {
             v = (v || '').trim(); if (!v) return;
-            getActiveSchedule().find(x => x.id === activeDay).exercises[window.appState.exEditIdx].reps = v.slice(0, 20);
-            StorageManager.setPlan(appData); window.appActions.renderExEdit();
+            getActiveSchedule().find(x => x.id === activeDay).exercises[window.appState.inlineEdit].reps = v.slice(0, 20);
+            StorageManager.setPlan(appData); renderWorkout();
         },
         clearDay: () => window.appActions.showConfirm(t("Clear Day"), t("Delete all exercises?"), () => { const d=getActiveSchedule().find(x=>x.id===activeDay); d.exercises=[]; d.title=""; StorageManager.setPlan(appData); renderWorkout(); }, true),
-        switchTab: tab => { window.appState.currentView=tab; window.appState.editMode=false; document.getElementById('tab-workout').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${tab==='workout'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('tab-analytics').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${tab==='analytics'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('nav-container').style.display=tab==='workout'?'flex':'none'; tab==='workout'?renderWorkout():renderAnalytics(); },
+        switchTab: tab => { window.appState.inlineEdit=null; window.appState.currentView=tab; window.appState.editMode=false; document.getElementById('tab-workout').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${tab==='workout'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('tab-analytics').className=`flex-1 glass-card py-3 text-[10px] font-black uppercase transition-all ${tab==='analytics'?'bg-[#d4af37] text-black border-none':'text-slate-400 hover:text-white border-white/5 border'}`; document.getElementById('nav-container').style.display=tab==='workout'?'flex':'none'; tab==='workout'?renderWorkout():renderAnalytics(); },
         toggleMenu: () => { window.appState.menuOpen=!window.appState.menuOpen; const o=document.getElementById('side-panel-overlay'), p=document.getElementById('side-panel'); if(window.appState.menuOpen){o.classList.remove('hidden'); setTimeout(()=>{o.classList.remove('opacity-0');p.classList.add('slide-panel-open');},10);}else{p.classList.remove('slide-panel-open'); o.classList.add('opacity-0'); setTimeout(()=>o.classList.add('hidden'),300);} },
         addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast(t("Max 5 schedules"),"error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:t('Schedule {n}', { n: appData.weeks.length+1 }),schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
         deleteWeek: id => { if(appData.weeks.length<=1)return; window.appActions.showConfirm(t("Delete Schedule"),t("Delete this week?"),()=>{appData.weeks=appData.weeks.filter(w=>w.id!==id); if(currentWeekId===id){currentWeekId=appData.weeks[0].id;StorageManager.setActiveWeek(currentWeekId);window.appActions.refreshUI();renderNav();} StorageManager.setPlan(appData); renderSidePanel(); },true); },
         renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=v||t('Unnamed'); StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=appData.weeks.find(x=>x.id===currentWeekId).name; },
         switchWeek: id => { currentWeekId=id; StorageManager.setActiveWeek(id); window.appState.hasShownSetupToast=false; const s=getActiveSchedule(); activeDay=s.some(d=>d.title==='New Day')?s.find(d=>d.title==='New Day').id:(StorageManager.getAutoSync()?getTodayId():(StorageManager.getLastDay()||getTodayId())); window.appState.editMode=false; StorageManager.setLastDay(activeDay); renderSidePanel(); renderNav(); window.appActions.refreshUI(); window.appActions.toggleMenu(); },
-        setActiveDay: id => { activeDay=id; StorageManager.setLastDay(id); window.appState.editMode=false; renderNav(); renderWorkout(); },
+        setActiveDay: id => { window.appState.inlineEdit=null; activeDay=id; StorageManager.setLastDay(id); window.appState.editMode=false; renderNav(); renderWorkout(); },
         toggleAutoSync: v => { StorageManager.setAutoSync(v); if(v && window.appState.currentView==='workout'){activeDay=getTodayId(); StorageManager.setLastDay(activeDay); renderNav(); renderWorkout();} window.appActions.showToast(t(v ? "Day Tracker Enabled" : "Manual Mode Active"), "success"); },
         openBackupModal: () => { window.appActions.toggleMenu(); openModal('smart-backup-overlay','smart-backup-box'); },
         closeBackupModal: () => closeModal('smart-backup-overlay','smart-backup-box'),
@@ -1594,7 +1696,7 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
             const doSched = document.getElementById('backup-opt-schedule').checked;
             const doSet = document.getElementById('backup-opt-settings').checked;
             if (!doProg && !doSched && !doSet) return window.appActions.showToast(t("Select at least one option!"), "error");
-            StorageManager.setBackupDate();
+            StorageManager.setBackupDate(); updateBackupStatus();
             let d = {};
             if (doProg) { d.w = StorageManager.get(); d.h = StorageManager.getHistory(); }
             if (doSched) { d.p = appData; d.aw = currentWeekId; d.cx = getCustomEx(); } // the routine on screen (even if never edited)
@@ -1810,7 +1912,16 @@ window.appState = { menuOpen: false, currentView: 'workout', editMode: false, ha
     const restEl = document.getElementById('setting-rest');
     if (restEl) restEl.value = String(StorageManager.getRestSeconds());
 
-    setTimeout(() => { const lB=StorageManager.getBackupDate(); if(!lB)StorageManager.setBackupDate(); else if(Date.now()-lB>604800000) window.appActions.showConfirm(t("Backup Reminder"),t("It has been over 7 days. Backup now?"),()=>window.appActions.openBackupModal()); }, 1500);
+    // Backup reminder without pop-ups: red dot on the menu button + "Last backup" text in the menu
+    const updateBackupStatus = () => {
+        let lB = StorageManager.getBackupDate();
+        if (!lB) { StorageManager.setBackupDate(); lB = Date.now(); }
+        const days = Math.floor((Date.now() - lB) / 86400000), old = days >= 7;
+        const dot = document.getElementById('backup-dot'); if (dot) dot.classList.toggle('hidden', !old);
+        const age = document.getElementById('backup-age');
+        if (age) { age.textContent = days < 1 ? t('Last backup: today') : t('Last backup: {n} days ago', { n: days }); age.className = `text-[10px] font-bold text-center mb-3 ${old ? 'text-red-400' : 'text-slate-500'}`; }
+    };
+    updateBackupStatus();
     setTimeout(() => window.appActions.initOnboarding(), 500);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && StorageManager.getAutoSync()) { const tT=getTodayId(), lD=getActiveSchedule().find(isDayIncomplete); if(lD){if(activeDay!==lD.id){activeDay=lD.id; StorageManager.setLastDay(activeDay); window.appState.editMode=true;renderNav();renderWorkout();}}else if(activeDay!==tT&&!window.appState.editMode&&window.appState.currentView==='workout'){activeDay=tT; StorageManager.setLastDay(activeDay); renderNav();renderWorkout();} } });
     // 📶 OFFLINE SUPPORT: save a copy of the app on the phone (see sw.js)
