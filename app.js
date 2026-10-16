@@ -278,6 +278,7 @@
         "OF {n} SETS": "من {n} مجموعات",
         "OK": "متوسط",
         "Official Instagram": "حسابنا في إنستغرام",
+        "Not now": "ليس الآن",
         "A copy of everything is saved in your account once a day. Restore one to go back to how things were.": "تُحفظ نسخة من كل بياناتك في حسابك مرة يوميًا. استرجع أي نسخة للعودة إلى ما كانت عليه.",
         "Account backups": "نسخ الحساب الاحتياطية",
         "Add more exercises from the full library here.": "أضف تمارين أخرى من المكتبة الكاملة من هنا.",
@@ -421,14 +422,14 @@
         "{n} exercises found": "تم العثور على {n} تمرين",
     };
     const t = (en, vars) => {
-        let out = (isAR && AR[en]) || en;
+        let out = (isAR && Object.prototype.hasOwnProperty.call(AR, en) && AR[en]) || en;
         if (vars) out = out.replace(/\{(\w+)\}/g, (m, k) => vars[k] !== undefined ? vars[k] : m);
         return out;
     };
     const MUSCLE_AR = { 'Abductors':'مبعدات الورك','Abs':'البطن','Adductors':'مقربات الورك','Back':'الظهر','Biceps':'البايسبس','Calves':'السمانة','Chest':'الصدر','Forearms':'الساعد','Front Delts':'الكتف الأمامي','Glutes':'المؤخرة','Hamstrings':'خلفي الفخذ','Lats':'اللاتس','Lower Back':'أسفل الظهر','Lower Chest':'أسفل الصدر','Neck':'الرقبة','Quads':'أمامي الفخذ','Rear Delts':'الكتف الخلفي','Shoulders':'الأكتاف','Side Delts':'الكتف الجانبي','Traps':'الترابيس','Triceps':'الترايسبس','Upper Chest':'أعلى الصدر','Abs & Core':'البطن والجذع','Muscle':'العضلة' };
-    const tm = m => (isAR && MUSCLE_AR[(m || '').trim()]) || m || '';
+    const tm = m => (isAR && Object.prototype.hasOwnProperty.call(MUSCLE_AR, (m || '').trim()) && MUSCLE_AR[(m || '').trim()]) || m || '';
     const DAY_AR = { SUN:'الأحد', MON:'الاثنين', TUE:'الثلاثاء', WED:'الأربعاء', THU:'الخميس', FRI:'الجمعة', SAT:'السبت' };
-    const tDay = d => (isAR && DAY_AR[d]) || d;
+    const tDay = d => (isAR && Object.prototype.hasOwnProperty.call(DAY_AR, d) && DAY_AR[d]) || d;
     const DAY_EN = { SUN:'Sunday', MON:'Monday', TUE:'Tuesday', WED:'Wednesday', THU:'Thursday', FRI:'Friday', SAT:'Saturday' };
     const dayLong = d => isAR ? (DAY_AR[d] || d) : (DAY_EN[d] || d);
     const DAY_AR_SHORT = { SUN:'أحد', MON:'اثنين', TUE:'ثلاثاء', WED:'أربعاء', THU:'خميس', FRI:'جمعة', SAT:'سبت' };
@@ -528,6 +529,9 @@
     // Arabic keyboards type ٤ or ۴: turn them into 4 so numbers always work
     const latinDigits = v => String(v == null ? '' : v).replace(/[\u0660-\u0669]/g, d => d.charCodeAt(0) - 0x660).replace(/[\u06F0-\u06F9]/g, d => d.charCodeAt(0) - 0x6F0);
     const toStr = (v, fb = '') => (typeof v === 'string' || typeof v === 'number') ? String(v) : fb;
+    // Security: names like "__proto__" can't be used as keys, and text from files/cloud is cut to a sane length
+    const safeKey = k => typeof k === 'string' && k.length > 0 && k.length <= 200 && k !== '__proto__' && k !== 'constructor' && k !== 'prototype';
+    const cut = (v, n, fb = '') => toStr(v, fb).slice(0, n);
 
     // Returns a clean plan { weeks: [...] }, or null if the data can't be used.
     // Accepts the old format too (a plain 7-day array).
@@ -545,18 +549,18 @@
                 return {
                     id: i + 1,
                     day: DAY_NAMES.includes(d.day) ? d.day : DAY_NAMES[i],
-                    title: toStr(d.title, 'New Day'),
+                    title: cut(d.title, 80, 'New Day'),
                     isRest,
                     recoveryType: isRest ? (d.recoveryType === 'active' ? 'active' : 'complete') : null,
-                    savedTitle: toStr(d.savedTitle),
-                    exercises: Array.isArray(d.exercises) ? d.exercises.filter(isObj).map(ex => ({
-                        muscle: toStr(ex.muscle, 'Muscle'), name: toStr(ex.name, 'New Exercise'), sets: latinDigits(toStr(ex.sets, '3')), reps: latinDigits(toStr(ex.reps, '10'))
+                    savedTitle: cut(d.savedTitle, 80),
+                    exercises: Array.isArray(d.exercises) ? d.exercises.filter(isObj).slice(0, 60).map(ex => ({
+                        muscle: cut(ex.muscle, 40, 'Muscle'), name: cut(ex.name, 80, 'New Exercise'), sets: latinDigits(cut(ex.sets, 10, '3')), reps: latinDigits(cut(ex.reps, 20, '10'))
                     })) : []
                 };
             });
-            let id = toStr(w.id) || `w_${Date.now()}_${wi}`;
+            let id = cut(w.id, 60) || `w_${Date.now()}_${wi}`;
             while (cleanWeeks.some(x => x.id === id)) id += '_';
-            cleanWeeks.push({ id, name: toStr(w.name, 'Routine'), schedule });
+            cleanWeeks.push({ id, name: cut(w.name, 60, 'Routine'), schedule });
         });
         return cleanWeeks.length ? { weeks: cleanWeeks.slice(0, 5) } : null;
     };
@@ -565,19 +569,19 @@
     const sanitizeHistory = raw => {
         const out = {};
         if (!isObj(raw)) return out;
-        Object.keys(raw).forEach(k => {
+        Object.keys(raw).filter(safeKey).slice(0, 600).forEach(k => {
             if (!Array.isArray(raw[k])) return;
-            const logs = raw[k].filter(l => isObj(l) && typeof l.d === 'string').map(l => {
-                const s = Array.isArray(l.s) ? l.s.map(x => parseInt(x)).filter(x => !isNaN(x)) : toStr(l.s);
-                const log = { d: l.d, w: toStr(l.w), s };
-                if (l.time !== undefined) log.time = toStr(l.time);
-                if (l.week !== undefined) log.week = toStr(l.week);
+            const logs = raw[k].slice(-HIST_CAP).filter(l => isObj(l) && typeof l.d === 'string').map(l => {
+                const s = Array.isArray(l.s) ? l.s.slice(0, 30).map(x => parseInt(x)).filter(x => !isNaN(x)) : cut(l.s, 10);
+                const log = { d: l.d.slice(0, 40), w: cut(l.w, 10), s };
+                if (l.time !== undefined) log.time = cut(l.time, 12);
+                if (l.week !== undefined) log.week = cut(l.week, 60);
                 if (typeof l.ts === 'number' && isFinite(l.ts)) log.ts = l.ts;
                 if (typeof l.dayId === 'number' && l.dayId >= 1 && l.dayId <= 7) log.dayId = l.dayId;
-                if (l.weekId !== undefined) log.weekId = toStr(l.weekId);
+                if (l.weekId !== undefined) log.weekId = cut(l.weekId, 60);
                 if (l.u === 's') log.u = 's';
-                if (Array.isArray(l.ws) && Array.isArray(l.s) && l.ws.length === l.s.length) log.ws = l.ws.map(x => toStr(x, '0'));
-                if (Array.isArray(l.rpe) && Array.isArray(l.s) && l.rpe.length === l.s.length) log.rpe = l.rpe.map(x => typeof x === 'number' && x >= 1 && x <= 10 ? x : null);
+                if (Array.isArray(l.ws) && Array.isArray(l.s) && l.ws.length === l.s.length) log.ws = l.ws.slice(0, 30).map(x => cut(x, 10, '0'));
+                if (Array.isArray(l.rpe) && Array.isArray(l.s) && l.rpe.length === l.s.length) log.rpe = l.rpe.slice(0, 30).map(x => typeof x === 'number' && x >= 1 && x <= 10 ? x : null);
                 return log;
             });
             if (logs.length) out[k] = logs;
@@ -589,7 +593,7 @@
     const sanitizeValueMap = raw => {
         const out = {};
         if (!isObj(raw)) return out;
-        Object.keys(raw).forEach(k => { const v = toStr(raw[k], null); if (v !== null) out[k] = v; });
+        Object.keys(raw).filter(safeKey).slice(0, 1000).forEach(k => { const v = toStr(raw[k], null); if (v !== null) out[k] = v.slice(0, 20); });
         return out;
     };
 
@@ -2200,6 +2204,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         importData: e => {
             const f=e.target.files[0]; if(!f)return;
+            if (f.size > 5e6) { e.target.value=''; return window.appActions.showToast(t("Invalid Backup file"),"error"); } // over 5 MB is not an Apex Lift file
             const r=new FileReader();
             r.onload=ev=>{
                 try {
@@ -2338,7 +2343,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 if(idx!==-1){ setWeekStart(d.s); document.getElementById('setting-start-day').value = d.s; }
                 count++; 
             }
-            if (count > 0) { StorageManager.setPlan(appData); activeDay = getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Data Merged Successfully!"), "success"); }
+            if (count > 0) { if (StorageManager.setPlan(appData) === false) return; activeDay = getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Data Merged Successfully!"), "success"); }
             if(!didProg) window.appActions.closeRestoreModal();
     },
     restoreDefaults: () => { window.appActions.showConfirm(t("Reset app"),t("Your routines go back to the default. Your history is kept."),()=>{const aD=DAY_NAMES, sI=aD.indexOf('SAT'); const def=JSON.parse(JSON.stringify(defaultWorkoutData)); def.forEach((d,i)=>d.day=aD[(sI+i)%7]); appData={weeks:[{id:'w_default',name:t('Main Routine'),schedule:def}]}; currentWeekId='w_default'; StorageManager.setActiveWeek('w_default'); StorageManager.setPlan(appData); StorageManager.setStartDay('SAT'); document.getElementById('setting-start-day').value='SAT'; activeDay=getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Reset Complete"));},true); },
@@ -2543,7 +2548,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             StorageManager.setShowRpe(m.showRpe === true);
             if (isObj(m.weights)) { loggedWeights = sanitizeValueMap(m.weights); StorageManager.set(loggedWeights); }
             setCustomEx(sanitizeCustomEx(m.custom));
-            if (isObj(m.profile)) writeItem(PROFILE_KEY, JSON.stringify(m.profile));
+            if (isObj(m.profile)) { const pr = {}; ['goal', 'days', 'exp', 'eq'].forEach(k => { if (typeof m.profile[k] === 'string' && m.profile[k].length <= 20) pr[k] = m.profile[k]; }); writeItem(PROFILE_KEY, JSON.stringify(pr)); }
             if (isObj(m.terms) && m.terms.v === TERMS_VERSION && !getAgree()) { try { localStorage.setItem(AGREE_KEY, JSON.stringify(m.terms)); } catch (e) {} }
             localStorage.setItem(LOCAL_UPDATED_KEY, String(m.updatedAt || Date.now()));
         } finally { Cloud.applying = false; }
@@ -2562,6 +2567,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         return [...m.values()].sort((x, y) => (logTime(x) || 0) - (logTime(y) || 0)).slice(-HIST_CAP);
     };
     const unionDel = (a, b) => [...new Set([...(a || []), ...(b || [])])].slice(-200);
+    const safeDecode = id => { try { const k = decodeURIComponent(id); return safeKey(k) ? k : null; } catch (e) { return null; } };
     const histPath = (uid, k) => `users/${uid}/history/${encodeURIComponent(k)}`;
 
     // First time on this phone: merge the phone's workouts with the cloud's, then keep both in step
@@ -2578,7 +2584,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const [snap, hs] = await Promise.all([Cloud.db.doc(`users/${uid}`).get(), Cloud.db.collection(`users/${uid}/history`).get()]);
             const cloudHist = {}, cloudDel = {};
             const cloudReset = {};
-            hs.forEach(d => { const x = d.data(), k = decodeURIComponent(d.id); if (x && Array.isArray(x.logs)) cloudHist[k] = x.logs; if (x && Array.isArray(x.del)) cloudDel[k] = x.del.map(String); if (x && Number(x.resetAt) > 0) cloudReset[k] = Number(x.resetAt); });
+            hs.forEach(d => { const x = d.data(), k = safeDecode(d.id); if (!k) return; if (x && Array.isArray(x.logs)) cloudHist[k] = x.logs; if (x && Array.isArray(x.del)) cloudDel[k] = x.del.map(String); if (x && Number(x.resetAt) > 0) cloudReset[k] = Number(x.resetAt); });
             const clean = sanitizeHistory(cloudHist);
             // a different account was used on this phone before: its workouts are already in that account, so start from this account's
             const switched = !!prevUid && prevUid !== uid;
@@ -2647,7 +2653,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const h = StorageManager.getHistory(), del = getDeleted(), resets = getResets(); let changed = false, delChanged = false, behind = false;
             qs.docChanges().forEach(ch => {
                 if (ch.doc.metadata.hasPendingWrites) return; // our own upload coming back
-                const k = decodeURIComponent(ch.doc.id);
+                const k = safeDecode(ch.doc.id); if (!k) return; // a damaged name can't stop the sync
                 // removed in the cloud (account deleted elsewhere): the workouts on this phone stay
                 if (ch.type === 'removed') { delete Cloud.sent['h:' + k]; return; }
                 const data = ch.doc.data() || {}, logs = sanitizeHistory({ [k]: data.logs })[k] || [];
@@ -2675,7 +2681,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         try { localStorage.removeItem(CLOUD_KEY); } catch (e) {}
         setCloudStatus('off');
         // an account is needed to use the app: back to the sign-in page (workouts stay on the phone)
-        if (gateOn() && !wasPending) showWelcome(true);
+        if (gateOn() && !wasPending && requireSignIn()) showWelcome(true);
     };
     window.addEventListener('online', () => { if (Cloud.user) scheduleFlush(200); });
     window.addEventListener('offline', () => { if (Cloud.user) setCloudStatus('offline'); });
@@ -2842,6 +2848,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // 👋 WELCOME: intro pages you swipe through, then Google sign-in (required).
     // Automated tests run without the sign-in page unless they ask for it (localStorage workoutTestGate = 1).
     const INTRO_KEY = 'workoutIntroSeen_rakan_final';
+    // ⚙️ SWITCH: true = an account is needed to use the app; false = sign-in is optional ("Not now" on the sign-in page).
+    const REQUIRE_SIGN_IN = false;
+    const requireSignIn = () => { try { return REQUIRE_SIGN_IN || localStorage.getItem('workoutForceSignIn') === '1'; } catch (e) { return REQUIRE_SIGN_IN; } };
     const gateOn = () => { try { return !navigator.webdriver || localStorage.getItem('workoutTestGate') === '1'; } catch (e) { return true; } };
     const isSignedIn = () => { const f = getCloudFlag(); return !!(f && f.uid); };
     const welcomeOpen = () => document.getElementById('welcome-overlay').classList.contains('flex');
@@ -2881,6 +2890,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 ? `<button id="welcome-continue" onclick="window.appActions.welcomeContinue()" ${agreed ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback disabled:opacity-40 transition-opacity">${t('Continue')}</button>`
                 : `<button id="welcome-google" onclick="window.appActions.welcomeSignIn()" ${agreed && !loading ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-white text-[#1f1f1f] text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity">${GOOGLE_G}${loading ? t('Signing in…') : t('Continue with Google')}</button>`}
                <label class="flex items-start gap-3 mt-4 cursor-pointer text-start" dir="${isAR ? 'rtl' : 'ltr'}"><input id="welcome-agree" type="checkbox" ${agreed ? 'checked' : ''} onchange="window.appActions.welcomeAgree(this.checked)" class="mt-0.5 w-5 h-5 shrink-0 accent-[#d4af37]"><span class="text-[12px] font-bold text-slate-400 leading-snug">${t('I agree to the {terms} and the {privacy}.', { terms: `<a href="terms.html" target="_blank" rel="noopener" class="text-[#d4af37] underline">${t('Terms of Use')}</a>`, privacy: `<a href="privacy.html" target="_blank" rel="noopener" class="text-[#d4af37] underline">${t('Privacy Policy')}</a>` })}</span></label>`;
+        if (gate && !isSignedIn() && !requireSignIn()) gate.insertAdjacentHTML('beforeend', `<button id="welcome-later" onclick="window.appActions.welcomeLater()" class="w-full mt-3 py-3 text-[13px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${t('Not now')}</button>`);
         document.getElementById('welcome-actions').innerHTML = last ? '' : `<div class="flex gap-3"><button onclick="window.appActions.welcomeGo(${W_SLIDES.length - 1})" class="px-5 py-4 rounded-2xl text-[13px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${t('Skip')}</button><button onclick="window.appActions.welcomeGo(${welcomeIdx + 1})" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button></div>`;
         if (window.lucide) window.lucide.createIcons({ root: document.getElementById('welcome-overlay') });
     };
@@ -2966,7 +2976,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (!all.length) { list.innerHTML = `<div class="p-8 text-center text-[13px] font-bold text-slate-500">${t('No backups yet. Tap Back up now to make the first one.')}</div>`; return; }
             list.innerHTML = all.map(b => `<div class="flex items-center gap-3 px-5 py-3.5 border-b border-white/5">
                 <span class="w-10 h-10 rounded-full ${b.kind === 'auto' ? 'bg-white/5 text-slate-300' : 'bg-[#d4af37]/15 text-[#d4af37]'} flex items-center justify-center shrink-0"><i data-lucide="${b.kind === 'auto' ? 'clock' : b.kind === 'before-restore' ? 'rotate-ccw' : 'save'}" class="w-5 h-5"></i></span>
-                <div class="flex-1 min-w-0"><div class="text-[14px] font-black text-white">${esc(fmtDate(b.createdAt, true))}</div><div class="text-[11px] font-bold text-slate-400">${esc(kindLabel(b.kind))} · ${t('{n} workouts', { n: b.workouts || 0 })} · ${t('{n} exercises', { n: b.exercises || 0 })}</div></div>
+                <div class="flex-1 min-w-0"><div class="text-[14px] font-black text-white">${esc(fmtDate(b.createdAt, true))}</div><div class="text-[11px] font-bold text-slate-400">${esc(kindLabel(b.kind))} · ${t('{n} workouts', { n: Number(b.workouts) || 0 })} · ${t('{n} exercises', { n: Number(b.exercises) || 0 })}</div></div>
                 <button onclick="window.appActions.restoreBackup(${jsArg(b.id)}, ${jsArg(fmtDate(b.createdAt, true))})" class="shrink-0 px-3.5 py-2 rounded-lg bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-white tap-feedback">${t('Restore')}</button>
             </div>`).join('');
             if (window.lucide) window.lucide.createIcons({ root: list });
@@ -3029,6 +3039,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             try { if (on) localStorage.setItem(AGREE_KEY, JSON.stringify({ v: TERMS_VERSION, at: Date.now() })); else localStorage.removeItem(AGREE_KEY); } catch (e) {}
             updateWelcomeUI();
         },
+        welcomeLater: () => { hideWelcome(); window.appActions.initOnboarding(); },
         welcomeContinue: () => {
             if (!getAgree()) return;
             hideWelcome(); window.appActions.initOnboarding();
@@ -3109,7 +3120,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     if (getCloudFlag()) loadFirebase().catch(() => setCloudStatus('offline'));
     // First launch (or signed out): intro pages + sign-in. Signed in: straight to the app (setup questions if needed).
     setTimeout(() => {
-        if (gateOn() && (!isSignedIn() || !getAgree())) showWelcome(localStorage.getItem(INTRO_KEY) === '1' || isSignedIn());
+        const introSeen = localStorage.getItem(INTRO_KEY) === '1';
+        if (gateOn() && ((!isSignedIn() && (requireSignIn() || !introSeen)) || (isSignedIn() && !getAgree()))) showWelcome(introSeen || isSignedIn());
         else window.appActions.initOnboarding();
     }, 300);
     // Coming back to the app on a new day: jump to today (unless a workout is open)

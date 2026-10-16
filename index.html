@@ -12,9 +12,8 @@
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-    <!-- Tailwind is pinned to one version so a new release can't change the design. If it fails to load, fall back to the latest. -->
-    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-    <script>window.tailwind || document.write('<script src="https://cdn.tailwindcss.com"><\/script>');</script>
+    <!-- Design styles are stored inside the app (built from Tailwind), so no outside code runs and it works offline -->
+    <link rel="stylesheet" href="tailwind.css">
     <!-- Icons and drag & drop are stored inside the app (vendor folder), so they work offline -->
     <script src="vendor/lucide-1.49.0.min.js"></script>
     <script src="vendor/sortable-1.15.7.min.js"></script>
@@ -418,4 +417,4 @@
 
     <script src="app.js"></script>
 </body>
-</html>
+</html>

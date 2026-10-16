@@ -1,11 +1,53 @@
 rules_version = '2';
-// Apex Lift: each signed-in person can only read and write their own data
-// (their routines, workout history and account backups).
+// Apex Lift security rules.
+// - Only the signed-in owner can read or change their own data. Nobody can list or read other users.
+// - Only the data the app actually uses is accepted (known paths, known fields, size limits),
+//   so the database can't be filled with junk.
 // Paste this into Firebase console → Firestore Database → Rules → Publish.
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{uid}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
     }
+    function fields() {
+      return request.resource.data;
+    }
+
+    // routines + settings
+    match /users/{uid} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && fields().keys().hasOnly(['plan', 'activeWeek', 'startDay', 'rest', 'showRpe', 'weights', 'custom', 'profile', 'terms', 'updatedAt']);
+
+      // workout history: one document per exercise
+      match /history/{exercise} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid) && exercise.size() <= 1000
+          && fields().keys().hasOnly(['logs', 'del', 'resetAt', 'updatedAt'])
+          && fields().logs is list && fields().logs.size() <= 400
+          && (!('del' in fields()) || (fields().del is list && fields().del.size() <= 200));
+      }
+
+      // account backups (a small summary + the data split into parts)
+      match /backups/{backupId} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && fields().keys().hasOnly(['createdAt', 'kind', 'parts', 'workouts', 'exercises', 'routines', 'size'])
+          && fields().kind in ['auto', 'manual', 'before-restore']
+          && fields().createdAt is int && fields().workouts is int && fields().exercises is int
+          && fields().routines is int && fields().size is int
+          && fields().parts is int && fields().parts >= 1 && fields().parts <= 30;
+
+        match /parts/{partId} {
+          allow read, delete: if isOwner(uid);
+          allow create, update: if isOwner(uid)
+            && fields().keys().hasOnly(['d'])
+            && fields().d is string && fields().d.size() <= 400000;
+        }
+      }
+    }
+
+    // everything else is closed
   }
 }

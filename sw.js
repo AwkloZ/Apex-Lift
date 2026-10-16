@@ -3,14 +3,15 @@
 // How it works:
 // - App files (index.html, app.js, ...) : try the internet first so you always get the newest version,
 //   but if there is no answer within 3 seconds (bad gym signal) use the saved copy.
-// - Outside files (Tailwind design, Google font): use the saved copy, refresh it in the background.
+// - Outside files (Google font): use the saved copy, refresh it in the background.
 //
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
-const CACHE = 'apex-lift-v8';
+const CACHE = 'apex-lift-v9';
 const APP_FILES = [
     './',
     'index.html',
     'style.css',
+    'tailwind.css',
     'app.js',
     'manifest.webmanifest',
     'vendor/lucide-1.49.0.min.js',
@@ -22,7 +23,7 @@ const APP_FILES = [
     'privacy.html',
     'terms.html'
 ];
-const OUTSIDE_FILES = ['https://cdn.tailwindcss.com/3.4.17'];
+const OUTSIDE_FILES = [];
 const NETWORK_TIMEOUT_MS = 3000;
 
 self.addEventListener('install', event => {
@@ -81,7 +82,7 @@ self.addEventListener('fetch', event => {
     if (url.pathname.startsWith('/__/')) return;
     if (url.origin === self.location.origin) {
         event.respondWith(networkFirst(request));
-    } else if (url.hostname === 'cdn.tailwindcss.com' || url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+    } else if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
         // only the design and the font; Firebase (login, database) must always go to the internet
         event.respondWith(cacheFirst(request));
     }
