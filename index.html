@@ -84,10 +84,9 @@
 
     <!-- Log Sets / Focus session (slides up; swipe down or ⌄ to minimize, the timer keeps running) -->
     <div id="active-workout-overlay" class="sheet-overlay fixed inset-0 bg-black/80 backdrop-blur-sm z-[300] hidden flex-col justify-end opacity-0 transition-opacity duration-300">
-        <div id="active-workout-box" class="w-full max-w-2xl mx-auto bg-[#0f0f0f] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[94dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
+        <div id="active-workout-box" class="w-full max-w-2xl mx-auto bg-[#0f0f0f] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[86dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div class="flex items-center gap-3 px-4 pb-3 shrink-0">
-                <button id="aw-min-btn" onclick="window.appActions.minimizeSession()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 border border-white/10 text-slate-300 flex items-center justify-center tap-feedback" aria-label="Minimize"><i data-lucide="chevron-down" class="w-5 h-5"></i></button>
+            <div class="flex items-center gap-3 px-5 pb-3 pt-1 shrink-0">
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2">
                         <span id="aw-pulse-dot" class="w-2 h-2 rounded-full bg-[#d4af37] shrink-0"></span>
@@ -96,7 +95,6 @@
                     <h3 id="aw-title" class="ex-name text-[19px] font-black text-white leading-tight truncate">Exercise</h3>
                 </div>
                 <div id="aw-timer" class="text-2xl font-black text-white tabular-nums shrink-0">00:00</div>
-                <button onclick="window.appActions.closeActiveWorkout()" class="w-10 h-10 shrink-0 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center tap-feedback" aria-label="Cancel"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div id="aw-info" class="px-4 pb-3 flex flex-wrap gap-2 shrink-0"></div>
             <div id="aw-scroll" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-3 pb-4">
@@ -121,9 +119,12 @@
                     </div>
                     <div class="h-1 bg-black/40"><div id="aw-rest-bar" class="h-full bg-[#22c55e]" style="width:100%"></div></div>
                 </div>
+                <!-- one-hand: everything you tap is down here -->
                 <div class="flex gap-2">
+                <button id="aw-min-btn" onclick="window.appActions.minimizeSession()" class="w-14 shrink-0 rounded-2xl bg-white/5 border border-white/10 text-slate-200 flex items-center justify-center tap-feedback" aria-label="Minimize"><i data-lucide="chevron-down" class="w-6 h-6"></i></button>
                 <button id="aw-finish-btn" onclick="window.appActions.finishActiveWorkout()" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback shadow-[0_0_20px_rgba(212,175,55,0.35)]">Save</button>
                 <button id="aw-next-btn" onclick="window.appActions.finishActiveWorkout(true)" class="hidden flex-1 py-4 rounded-2xl bg-white/10 text-white text-[13px] font-black uppercase tracking-widest tap-feedback items-center justify-center gap-2"><span data-i18n="Save & next">Save & next</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                <button id="aw-close-btn" onclick="window.appActions.closeActiveWorkout()" class="w-14 shrink-0 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center tap-feedback" aria-label="Cancel workout"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
             </div>
         </div>

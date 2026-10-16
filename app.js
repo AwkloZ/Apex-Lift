@@ -1804,9 +1804,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             saveSessionDraft();
         },
         sessionChanged: () => saveSessionDraft(),
-        // KG / reps boxes: Arabic digits (٤٫٥) become 4.5, anything that isn't a number is dropped
+        // KG / reps boxes: Arabic digits (٤٫٥ or ٤،٥) become 4.5, anything that isn't a number is dropped
         numInput: (el, decimal) => {
-            let v = latinDigits(el.value).replace(/[٫,]/g, '.');
+            let v = latinDigits(el.value).replace(/[\u066B\u066C\u060C\u2396,]/g, '.'); // every decimal / comma mark an Arabic keypad can type
             v = decimal ? v.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1').slice(0, 6) : v.replace(/[^0-9]/g, '').slice(0, 3);
             if (v !== el.value) el.value = v;
             saveSessionDraft();
