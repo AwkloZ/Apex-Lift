@@ -1,0 +1,4 @@
+# Google sign-in runs through this website's own address so Google shows "apex-liftt.netlify.app"
+# instead of the Firebase address. Netlify passes these pages on to Firebase.
+/__/auth/*      https://apex-lift-52a18.firebaseapp.com/__/auth/:splat      200
+/__/firebase/*  https://apex-lift-52a18.firebaseapp.com/__/firebase/:splat  200

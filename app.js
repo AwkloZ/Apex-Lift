@@ -2317,7 +2317,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // Security rules (only you can read/write your data) are in firestore.rules — paste them into Firebase.
     const FIREBASE_CONFIG = {
         apiKey: 'AIzaSyCItVZimtbvod94CGUfYx1xwgSTW_mEq0Y',
-        authDomain: 'apex-lift-52a18.firebaseapp.com',
+        // On the live site, sign-in runs through our own address (Netlify passes /__/auth/ on to Firebase, see _redirects),
+        // so Google's sign-in screen shows apex-liftt.netlify.app instead of the firebaseapp.com address
+        authDomain: location.hostname === 'apex-liftt.netlify.app' ? location.host : 'apex-lift-52a18.firebaseapp.com',
         projectId: 'apex-lift-52a18',
         storageBucket: 'apex-lift-52a18.firebasestorage.app',
         messagingSenderId: '682655190858',
@@ -2326,7 +2328,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const FB_DIR = 'vendor/firebase-12.19.0/';
     const CLOUD_KEY = 'workoutCloud_rakan_final', CLOUD_LASTUID = 'workoutCloudLastUid_rakan_final', LOCAL_UPDATED_KEY = 'workoutLocalUpdated_rakan_final';
     const MAIN_KEYS = new Set([StorageManager.PLAN_KEY, StorageManager.ACTIVE_WEEK, StorageManager.START_KEY, StorageManager.REST_KEY, StorageManager.RPE_KEY, StorageManager.KEY, CUSTOM_KEY, PROFILE_KEY]);
-    const Cloud = { status: 'off', user: null, auth: null, db: null, unsub: [], sent: {}, timer: null, flushing: false, again: false, applying: false, lastSync: 0, loading: null };
+    const Cloud = { err: '', status: 'off', user: null, auth: null, db: null, unsub: [], sent: {}, timer: null, flushing: false, again: false, applying: false, lastSync: 0, loading: null };
     const getCloudFlag = () => { const v = readJSON(CLOUD_KEY, null); return isObj(v) ? v : null; };
     const loadScript = src => new Promise((ok, fail) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = () => fail(new Error('Could not load ' + src)); document.head.appendChild(el); });
     // Firebase is only downloaded when someone uses sign-in, so the app stays fast for everyone else
@@ -2346,7 +2348,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         if (c === 'auth/network-request-failed' || /load/i.test((e && e.message) || '')) return t('No internet connection. Try again when online.');
         return t('Sign-in failed. Please try again.') + (c ? ` (${c})` : '');
     };
-    const setCloudStatus = st => { Cloud.status = st; renderAccount(); };
+    const setCloudStatus = (st, e) => { Cloud.status = st; Cloud.err = st === 'error' ? ((e && e.code) || '') : ''; renderAccount(); };
     const scheduleFlush = (ms = 1500) => { if (!Cloud.user) return; clearTimeout(Cloud.timer); Cloud.timer = setTimeout(cloudFlush, ms); };
     cloudTouch = key => {
         if (MAIN_KEYS.has(key)) { try { localStorage.setItem(LOCAL_UPDATED_KEY, String(Date.now())); } catch (e) {} }
@@ -2417,7 +2419,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             refreshAfterCloud();
             await cloudFlush();
             cloudSubscribe(uid);
-        } catch (e) { console.warn('Cloud sync failed', e); setCloudStatus('error'); }
+        } catch (e) { console.warn('Cloud sync failed', e); setCloudStatus('error', e); }
     };
     // Upload whatever changed since the last upload
     const cloudFlush = async () => {
@@ -2443,7 +2445,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 }
             }
             Cloud.lastSync = Date.now(); setCloudStatus('synced');
-        } catch (e) { console.warn('Cloud upload failed', e); Cloud.sent = {}; setCloudStatus('error'); }
+        } catch (e) { console.warn('Cloud upload failed', e); Cloud.sent = {}; setCloudStatus('error', e); }
         finally { clearTimeout(slow); Cloud.flushing = false; if (Cloud.again) { Cloud.again = false; scheduleFlush(300); } }
     };
     // Live updates from your other phones
@@ -2491,7 +2493,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const name = u.displayName || u.name || '', email = u.email || '', photo = u.photoURL || u.photo || '';
             const st = { off: ['bg-slate-500', t('Connecting…')], loading: ['bg-slate-500', t('Connecting…')], syncing: ['bg-[#d4af37] animate-pulse', t('Syncing…')],
                 synced: ['bg-[#22c55e]', t('Synced · {time}', { time: Cloud.lastSync ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(Cloud.lastSync) : '' })],
-                offline: ['bg-slate-400', t('Offline · will sync when online')], error: ['bg-red-500', t('Sync problem · tap Sync now')] }[Cloud.status] || ['bg-slate-500', ''];
+                offline: ['bg-slate-400', t('Offline · will sync when online')], error: ['bg-red-500', t('Sync problem · tap Sync now') + (Cloud.err ? ` (${Cloud.err.replace(/^firestore\//, '')})` : '')] }[Cloud.status] || ['bg-slate-500', ''];
             el.innerHTML = `<div class="glass-card p-5 border border-[#22c55e]/25">
                 <div class="flex items-center gap-3">
                     ${photo ? `<img src="${esc(photo)}" alt="" referrerpolicy="no-referrer" class="w-12 h-12 rounded-full object-cover shrink-0">` : `<span class="w-12 h-12 rounded-full bg-[#d4af37] text-black text-[18px] font-black flex items-center justify-center shrink-0">${esc((name || email || '?').charAt(0).toUpperCase())}</span>`}
@@ -2524,7 +2526,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 if (!Cloud.user) setCloudStatus('off');
             }
         },
-        cloudSyncNow: () => { if (!Cloud.user) return; Cloud.sent = {}; cloudFlush(); },
+        // if the first connection failed (no live updates yet), start over; otherwise just upload everything again
+        cloudSyncNow: () => { if (!Cloud.user) return; if (!Cloud.unsub.length) return cloudSignedIn(Cloud.user); Cloud.sent = {}; cloudFlush(); },
         cloudSignOut: () => window.appActions.showConfirm(t('Sign out?'), t('Your workouts stay on this phone. Sign in again anytime to sync.'), async () => {
             try { await Promise.race([cloudFlush(), new Promise(r => setTimeout(r, 4000))]); } catch (e) {}
             Cloud.unsub.forEach(u => u()); Cloud.unsub = [];
@@ -2551,7 +2554,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 try { localStorage.removeItem(CLOUD_LASTUID); } catch (e) {}
                 cloudSignedOut();
                 window.appActions.showToast(t('Account deleted'), 'success');
-            } catch (e) { console.warn(e); setCloudStatus('error'); window.appActions.showToast(cloudErrorText(e), 'error'); }
+            } catch (e) { console.warn(e); setCloudStatus('error', e); window.appActions.showToast(cloudErrorText(e), 'error'); }
         }, true)
     });
 

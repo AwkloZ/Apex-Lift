@@ -6,7 +6,7 @@
 // - Outside files (Tailwind design, Google font): use the saved copy, refresh it in the background.
 //
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
-const CACHE = 'apex-lift-v2';
+const CACHE = 'apex-lift-v3';
 const APP_FILES = [
     './',
     'index.html',
@@ -76,6 +76,8 @@ self.addEventListener('fetch', event => {
     if (request.method !== 'GET') return;
     const url = new URL(request.url);
     if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+    // Google sign-in pages (/__/auth/...) are passed on to Firebase by Netlify: never save or replace them
+    if (url.pathname.startsWith('/__/')) return;
     if (url.origin === self.location.origin) {
         event.respondWith(networkFirst(request));
     } else if (url.hostname === 'cdn.tailwindcss.com' || url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
