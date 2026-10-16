@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#050505">
+    <title>Admin · Apex Lift</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap">
+    <style>
+        :root { color-scheme: dark; --gold: #d4af37; --bg: #050505; --card: #111113; --line: rgba(255,255,255,0.08); --muted: #94a3b8; }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--bg); color: #e5e7eb; font: 14px/1.5 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Tahoma, sans-serif; }
+        a { color: var(--gold); }
+        .bar { position: sticky; top: 0; z-index: 5; background: rgba(5,5,5,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
+        .bar-in { max-width: 1200px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+        .logo { font-weight: 900; font-style: italic; letter-spacing: -0.04em; font-size: 19px; color: #fff; text-transform: uppercase; }
+        .logo span { color: var(--gold); }
+        .tag { font-size: 11px; font-weight: 800; color: #000; background: var(--gold); padding: 3px 8px; border-radius: 6px; }
+        .grow { flex: 1; }
+        main { max-width: 1200px; margin: 0 auto; padding: 18px 16px 60px; }
+        .btn { border: 1px solid var(--line); background: #18181b; color: #fff; font: 800 13px/1 inherit; font-family: inherit; padding: 10px 14px; border-radius: 10px; cursor: pointer; }
+        .btn.gold { background: var(--gold); color: #000; border-color: var(--gold); }
+        .btn:disabled { opacity: .5; cursor: default; }
+        .center { text-align: center; padding: 60px 16px; }
+        .center h1 { color: #fff; font-size: 26px; margin: 0 0 8px; }
+        .center p { color: var(--muted); margin: 0 0 20px; }
+        .uid { font-family: ui-monospace, Menlo, monospace; background: #18181b; border: 1px solid var(--line); padding: 10px 12px; border-radius: 10px; display: inline-block; color: #fff; user-select: all; word-break: break-all; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 16px; }
+        .stat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+        .stat b { display: block; font-size: 24px; color: #fff; font-weight: 900; }
+        .stat span { color: var(--muted); font-size: 12px; font-weight: 700; }
+        .tools { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+        .tools input { flex: 1; min-width: 200px; background: #111113; border: 1px solid var(--line); color: #fff; border-radius: 10px; padding: 10px 12px; font: 600 14px inherit; font-family: inherit; outline: none; }
+        .tools input:focus { border-color: var(--gold); }
+        .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+        table { width: 100%; border-collapse: collapse; min-width: 980px; }
+        th, td { text-align: start; padding: 11px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+        th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); cursor: pointer; user-select: none; position: sticky; top: 0; background: #131316; }
+        th.sorted { color: var(--gold); }
+        tbody tr { cursor: pointer; }
+        tbody tr:hover { background: rgba(255,255,255,0.03); }
+        td.name { color: #fff; font-weight: 800; }
+        td.muted { color: var(--muted); }
+        .pill { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: rgba(34,197,94,.12); color: #22c55e; }
+        .pill.off { background: rgba(255,255,255,.06); color: var(--muted); }
+        .drawer { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; z-index: 20; }
+        .drawer.open { display: block; }
+        .panel { position: absolute; top: 0; bottom: 0; inset-inline-end: 0; width: min(560px, 100%); background: #0c0c0e; border-inline-start: 1px solid var(--line); overflow-y: auto; padding: calc(env(safe-area-inset-top) + 16px) 18px 40px; }
+        .panel h2 { color: #fff; margin: 0; font-size: 22px; }
+        .panel h3 { color: var(--gold); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; margin: 22px 0 8px; }
+        .kv { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .kv div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+        .kv span { display: block; color: var(--muted); font-size: 11px; font-weight: 700; }
+        .kv b { color: #fff; }
+        .list div { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+        .list div span:last-child { color: var(--muted); text-align: end; }
+        .err { color: #f87171; font-weight: 700; }
+        .note { color: var(--muted); font-size: 12px; margin-top: 18px; }
+    </style>
+</head>
+<body>
+    <header class="bar"><div class="bar-in">
+        <div class="logo" dir="ltr">APEX <span>LIFT</span></div><span class="tag">ADMIN</span>
+        <div class="grow"></div>
+        <span id="who" class="note" style="margin:0"></span>
+        <button id="signout" class="btn" hidden>Sign out</button>
+    </div></header>
+    <main id="main"><div class="center"><p>Loading…</p></div></main>
+    <div id="drawer" class="drawer"><div id="panel" class="panel"></div></div>
+    <script src="vendor/firebase-12.19.0/firebase-app-compat.js"></script>
+    <script src="vendor/firebase-12.19.0/firebase-auth-compat.js"></script>
+    <script src="vendor/firebase-12.19.0/firebase-firestore-compat.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

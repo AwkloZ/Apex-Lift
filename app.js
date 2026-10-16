@@ -278,6 +278,19 @@
         "OF {n} SETS": "من {n} مجموعات",
         "OK": "متوسط",
         "Official Instagram": "حسابنا في إنستغرام",
+        "About you": "معلومات عنك",
+        "Birth year": "سنة الميلاد",
+        "Height (cm)": "الطول (سم)",
+        "Weight (kg)": "الوزن (كجم)",
+        "Sex": "الجنس",
+        "Male": "ذكر",
+        "Female": "أنثى",
+        "Prefer not to say": "أفضّل عدم الذكر",
+        "Apex Lift is for ages {n} and up.": "Apex Lift مخصص لمن أعمارهم {n} عامًا فأكثر.",
+        "Optional. Used to tailor the app and to improve Apex Lift. Never sold or shared.": "اختياري. يُستخدم لتخصيص التطبيق وتطوير Apex Lift، ولا يُباع ولا يُشارك أبدًا.",
+        "Body weight": "وزن الجسم",
+        "Please check this number.": "يرجى التحقق من هذا الرقم.",
+        "Optional. Helps the app fit you. You can change it anytime in Profile.": "اختياري. يساعد التطبيق على مناسبتك، ويمكنك تغييره في أي وقت من حسابي.",
         "Not now": "ليس الآن",
         "A copy of everything is saved in your account once a day. Restore one to go back to how things were.": "تُحفظ نسخة من كل بياناتك في حسابك مرة يوميًا. استرجع أي نسخة للعودة إلى ما كانت عليه.",
         "Account backups": "نسخ الحساب الاحتياطية",
@@ -672,7 +685,7 @@
     const getResets = () => { const v = readJSON(RESET_KEY, {}); return isObj(v) ? v : {}; };
     const setResets = d => { try { localStorage.setItem(RESET_KEY, JSON.stringify(d)); } catch (e) {} };
     // Terms of Use & Privacy Policy: which version the user agreed to, and when
-    const TERMS_VERSION = '2026-10';
+    const TERMS_VERSION = '2026-10.2';
     const AGREE_KEY = 'workoutAgreed_rakan_final';
     const getAgree = () => { const v = readJSON(AGREE_KEY, null); return isObj(v) && v.v === TERMS_VERSION ? v : null; };
     const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
@@ -836,6 +849,23 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // exp: 'new' = one set less on accessories, 'adv' = one set more on the first two lifts of each day (never more than 4)
     const PROFILE_KEY = 'workoutProfile_rakan_final';
     const getProfile = () => { const v = readJSON(PROFILE_KEY, {}); return isObj(v) ? v : {}; };
+    // "About you" (all optional): birth year, sex, height, body weight + a log of body weight over time
+    const BODY_KEY = 'workoutBody_rakan_final';
+    const MIN_AGE = 13;
+    const thisYear = () => new Date().getFullYear();
+    const sanitizeBody = raw => {
+        const b = isObj(raw) ? raw : {}, out = {};
+        const y = parseInt(latinDigits(b.birthYear)); if (y >= thisYear() - 100 && y <= thisYear() - 5) out.birthYear = y;
+        if (['male', 'female', 'na'].includes(b.sex)) out.sex = b.sex;
+        const h = parseFloat(latinDigits(b.heightCm)); if (h >= 100 && h <= 250) out.heightCm = Math.round(h);
+        const w = parseFloat(latinDigits(b.weightKg)); if (w >= 25 && w <= 350) out.weightKg = Math.round(w * 10) / 10;
+        if (Array.isArray(b.log)) out.log = b.log.filter(x => isObj(x) && typeof x.t === 'number' && isFinite(x.t) && parseFloat(x.kg) >= 25 && parseFloat(x.kg) <= 350)
+            .map(x => ({ t: x.t, kg: Math.round(parseFloat(x.kg) * 10) / 10 })).sort((a, c) => a.t - c.t).slice(-200);
+        return out;
+    };
+    const getBody = () => sanitizeBody(readJSON(BODY_KEY, {}));
+    const setBody = b => writeItem(BODY_KEY, JSON.stringify(sanitizeBody(b)));
+    const ageOf = b => b.birthYear ? thisYear() - b.birthYear : null;
     const programSchedule = (prog, exp) => {
         const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
         return prog.week.map((slot, i) => {
@@ -1447,6 +1477,54 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         return true;
     }
 
+
+    // 🙋 ABOUT YOU form, used in the setup questions and in Profile
+    const youngHTML = ctx => `<p id="${ctx}-young" class="text-[12px] font-bold text-red-400">${t('Apex Lift is for ages {n} and up.', { n: MIN_AGE })}</p>`;
+    const aboutFormHTML = (ctx = 'about') => { // ctx keeps the ids unique (setup questions vs Profile)
+        const b = getBody(), age = ageOf(b), young = age !== null && age < MIN_AGE;
+        const inp = 'w-full bg-black/40 border border-white/10 rounded-xl px-3 py-3 text-white text-center font-black outline-none focus:border-[#d4af37]';
+        const sexBtn = (v, l) => `<button onclick="window.appActions.setAbout('sex', ${jsArg(v)})" class="flex-1 py-3 rounded-xl text-[12px] font-black tap-feedback border ${b.sex === v ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-white border-white/10'}">${l}</button>`;
+        const field = (f, label, val, ph, mode) => `<label class="block"><span class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">${label}</span><input id="${ctx}-${f}" type="text" inputmode="${mode}" autocomplete="off" value="${val === undefined ? '' : esc(val)}" placeholder="${esc(ph)}" onchange="window.appActions.setAbout(${jsArg(f)}, this.value)" class="${inp}" dir="ltr"></label>`;
+        return `<div class="space-y-4">
+            <div class="grid grid-cols-3 gap-3">
+                ${field('birthYear', t('Birth year'), b.birthYear, String(thisYear() - 25), 'numeric')}
+                ${field('heightCm', t('Height (cm)'), b.heightCm, '175', 'numeric')}
+                ${field('weightKg', t('Weight (kg)'), b.weightKg, '75', 'decimal')}
+            </div>
+            <div id="${ctx}-young-slot">${young ? youngHTML(ctx) : ''}</div>
+            <div><span class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">${t('Sex')}</span>
+            <div class="flex gap-2">${sexBtn('male', t('Male'))}${sexBtn('female', t('Female'))}${sexBtn('na', t('Prefer not to say'))}</div></div>
+            <p class="text-[11px] font-bold text-slate-500 leading-snug">${t('Optional. Used to tailor the app and to improve Apex Lift. Never sold or shared.')}</p>
+        </div>`;
+    };
+    // Profile → About you, with a small body-weight chart
+    const renderAbout = () => {
+        const el = document.getElementById('about-card'); if (!el) return;
+        el.innerHTML = `<div class="glass-card p-5 border border-white/10">
+            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="user-round" class="w-5 h-5"></i></span><div class="text-[16px] font-black text-white">${t('About you')}</div></div>
+            ${aboutFormHTML('pf')}<div id="pf-chart">${bodyChartHTML()}</div></div>`;
+        if (window.lucide) window.lucide.createIcons({ root: el });
+    };
+    const bodyChartHTML = () => {
+        const b = getBody(), log = b.log || [];
+        let chart = '';
+        if (log.length >= 2) {
+            const W = 300, H = 70, ks = log.map(x => x.kg), lo = Math.min(...ks), hi = Math.max(...ks), span = Math.max(1, hi - lo);
+            const pts = log.map((x, i) => `${(i / (log.length - 1) * W).toFixed(1)},${(H - 6 - (x.kg - lo) / span * (H - 12)).toFixed(1)}`).join(' ');
+            const diff = Math.round((ks[ks.length - 1] - ks[0]) * 10) / 10;
+            chart = `<div class="mt-4 rounded-xl bg-black/30 border border-white/5 p-3"><div class="flex justify-between text-[11px] font-black mb-1"><span class="text-slate-400">${t('Body weight')}</span><span class="${diff <= 0 ? 'text-[#22c55e]' : 'text-[#d4af37]'}" dir="ltr">${diff > 0 ? '+' : ''}${diff} kg</span></div><svg viewBox="0 0 ${W} ${H}" class="w-full h-auto" dir="ltr"><polyline points="${pts}" fill="none" stroke="#d4af37" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>`;
+        }
+        return chart;
+    };
+    // after typing: refresh only the warning, the chart and the cleaned-up numbers (never the box you're typing in)
+    const refreshAbout = () => {
+        const b = getBody(), age = ageOf(b), young = age !== null && age < MIN_AGE;
+        ['about', 'pf'].forEach(ctx => {
+            const slot = document.getElementById(`${ctx}-young-slot`); if (slot) slot.innerHTML = young ? youngHTML(ctx) : '';
+            ['birthYear', 'heightCm', 'weightKg'].forEach(f => { const i = document.getElementById(`${ctx}-${f}`); if (i && i !== document.activeElement) i.value = b[f] === undefined ? '' : b[f]; });
+        });
+        const ch = document.getElementById('pf-chart'); if (ch) ch.innerHTML = bodyChartHTML();
+    };
 
     // 🏠 TODAY: the selected day with one big Start button and a simple list of its exercises
     // Cards slide in when you open a different tab or day, but not when the same screen just refreshes
@@ -2171,6 +2249,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             document.getElementById('workout-container').classList.toggle('hidden', tab === 'profile');
             renderNav(); renderWorkout();
             const sc = document.querySelector('.scrollable-content'); if (sc) sc.scrollTop = 0;
+            if (tab === 'profile') renderAbout();
             if (tab === 'profile' && Cloud.user) hint('profile-account', '#account-card', t('Your account: sync, older backups and sign out are here.'));
         },
         addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast(t("Up to 5 routines"),"error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:t('Routine {n}', { n: appData.weeks.length+1 }),schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
@@ -2352,7 +2431,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         startWizard: (firstRun = false) => {
             let hasLang = false; try { hasLang = localStorage.getItem(LANG_KEY) !== null; } catch (e) {}
             const pr = getProfile();
-            window.appState.wiz = { firstRun, steps: [...(hasLang ? [] : ['lang']), 'goal', 'days', 'exp', 'eq', 'start', 'result'], step: 0,
+            window.appState.wiz = { firstRun, steps: [...(hasLang ? [] : ['lang']), 'goal', 'days', 'exp', 'eq', 'about', 'start', 'result'], step: 0,
                 goal: pr.goal || null, days: pr.days || null, exp: pr.exp || null, eq: pr.eq || null, showAll: false };
             window.appActions.renderWizard();
             openModal('onboarding-overlay', 'onboarding-box');
@@ -2382,6 +2461,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 + opt('new', t('Less than 1 year'), t('Fewer sets to start'), 'sprout', W.exp) + opt('mid', t('1 to 3 years'), t('Standard sets'), 'trending-up', W.exp) + opt('adv', t('More than 3 years'), t('Extra sets on the main lifts'), 'flame', W.exp);
             if (key === 'eq') body = head(t('Where do you train?'), '')
                 + opt('gym', t('Full gym'), t('Barbells, machines and cables'), 'building-2', W.eq) + opt('db', t('Dumbbells only'), t('Home or a small gym'), 'dumbbell', W.eq);
+            if (key === 'about') body = head(t('About you'), t('Optional. Helps the app fit you. You can change it anytime in Profile.')) + aboutFormHTML()
+                + `<button id="wiz-about-next" onclick="window.appActions.wizChoose('about', 'done')" class="w-full mt-6 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback">${t('Next')}</button>`;
             if (key === 'start') body = head(t('Which day does your week start?'), t('Your week in the app starts on this day.'))
                 + ['SAT', 'SUN', 'MON'].map(d => opt(d, esc(dayLong(d)), '', 'calendar', StorageManager.getStartDay())).join('');
             if (key === 'result') {
@@ -2410,6 +2491,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         wizChoose: (key, val) => {
             const W = window.appState.wiz;
+            if (key === 'about') { const a = ageOf(getBody()); if (a !== null && a < MIN_AGE) return window.appActions.showToast(t('Apex Lift is for ages {n} and up.', { n: MIN_AGE }), 'error'); }
             if (key === 'lang') {
                 writeItem(LANG_KEY, val);
                 if (val !== LANG) return location.reload(); // the setup continues in the chosen language
@@ -2501,7 +2583,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     };
     const FB_DIR = 'vendor/firebase-12.19.0/';
     const CLOUD_KEY = 'workoutCloud_rakan_final', CLOUD_LASTUID = 'workoutCloudLastUid_rakan_final', LOCAL_UPDATED_KEY = 'workoutLocalUpdated_rakan_final';
-    const MAIN_KEYS = new Set([StorageManager.PLAN_KEY, StorageManager.ACTIVE_WEEK, StorageManager.START_KEY, StorageManager.REST_KEY, StorageManager.RPE_KEY, StorageManager.KEY, CUSTOM_KEY, PROFILE_KEY]);
+    const MAIN_KEYS = new Set([BODY_KEY, StorageManager.PLAN_KEY, StorageManager.ACTIVE_WEEK, StorageManager.START_KEY, StorageManager.REST_KEY, StorageManager.RPE_KEY, StorageManager.KEY, CUSTOM_KEY, PROFILE_KEY]);
     const Cloud = { err: '', status: 'off', user: null, auth: null, db: null, unsub: [], sent: {}, timer: null, flushing: false, again: false, applying: false, lastSync: 0, loading: null };
     const getCloudFlag = () => { const v = readJSON(CLOUD_KEY, null); return isObj(v) ? v : null; };
     const loadScript = src => new Promise((ok, fail) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = () => fail(new Error('Could not load ' + src)); document.head.appendChild(el); });
@@ -2531,8 +2613,15 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // What the phone has (routines + settings), in a form Firestore accepts
     const collectMain = () => JSON.parse(JSON.stringify({
         plan: appData, activeWeek: currentWeekId, startDay: StorageManager.getStartDay(), rest: StorageManager.getRestSeconds(),
-        showRpe: StorageManager.getShowRpe(), weights: StorageManager.get(), custom: getCustomEx(), profile: getProfile(), terms: getAgree()
+        showRpe: StorageManager.getShowRpe(), weights: StorageManager.get(), custom: getCustomEx(), profile: getProfile(), terms: getAgree(),
+        body: getBody(), account: accountSummary()
     }));
+    // name, email, sign-up date and last active day (changes at most once a day, so it doesn't cause extra uploads)
+    const accountSummary = () => {
+        if (!Cloud.user) return null;
+        const f = getCloudFlag() || {};
+        return { name: (Cloud.user.displayName || f.name || '').slice(0, 100), email: (Cloud.user.email || f.email || '').slice(0, 200), createdAt: Number(f.since) || Date.now(), lastSeen: dateKey() };
+    };
     // Put cloud routines + settings onto this phone
     const applyMain = m => {
         Cloud.applying = true;
@@ -2549,6 +2638,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (isObj(m.weights)) { loggedWeights = sanitizeValueMap(m.weights); StorageManager.set(loggedWeights); }
             setCustomEx(sanitizeCustomEx(m.custom));
             if (isObj(m.profile)) { const pr = {}; ['goal', 'days', 'exp', 'eq'].forEach(k => { if (typeof m.profile[k] === 'string' && m.profile[k].length <= 20) pr[k] = m.profile[k]; }); writeItem(PROFILE_KEY, JSON.stringify(pr)); }
+            if (isObj(m.body)) setBody(m.body);
+            if (isObj(m.account) && Number(m.account.createdAt) > 0) { const f = getCloudFlag(); if (f && f.uid && !f.since) writeItem(CLOUD_KEY, JSON.stringify({ ...f, since: Number(m.account.createdAt) })); }
             if (isObj(m.terms) && m.terms.v === TERMS_VERSION && !getAgree()) { try { localStorage.setItem(AGREE_KEY, JSON.stringify(m.terms)); } catch (e) {} }
             localStorage.setItem(LOCAL_UPDATED_KEY, String(m.updatedAt || Date.now()));
         } finally { Cloud.applying = false; }
@@ -2558,7 +2649,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const sd = document.getElementById('setting-start-day'); if (sd) sd.value = StorageManager.getStartDay();
         const rs = document.getElementById('setting-rest'); if (rs) rs.value = String(StorageManager.getRestSeconds());
         const rp = document.getElementById('setting-rpe'); if (rp) rp.checked = StorageManager.getShowRpe();
-        renderNav(); renderWorkout();
+        renderNav(); renderWorkout(); renderAbout();
     };
     // Combine two lists of logs without duplicates (same time, weight and reps = same log)
     const mergeLogs = (a, b, del) => {
@@ -2574,7 +2665,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const cloudSignedIn = async user => {
         const prevUid = localStorage.getItem(CLOUD_LASTUID);
         Cloud.user = user;
-        writeItem(CLOUD_KEY, JSON.stringify({ uid: user.uid, name: user.displayName || '', email: user.email || '', photo: user.photoURL || '' }));
+        const oldFlag = getCloudFlag() || {};
+        writeItem(CLOUD_KEY, JSON.stringify({ uid: user.uid, name: user.displayName || '', email: user.email || '', photo: user.photoURL || '', since: oldFlag.uid === user.uid && oldFlag.since ? oldFlag.since : (user.metadata && Date.parse(user.metadata.creationTime)) || Date.now() }));
         setCloudStatus('syncing');
         // signed in from the welcome screen: close it; the setup questions come after the account is loaded
         const fromWelcome = welcomeOpen();
@@ -3038,6 +3130,23 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         welcomeAgree: on => {
             try { if (on) localStorage.setItem(AGREE_KEY, JSON.stringify({ v: TERMS_VERSION, at: Date.now() })); else localStorage.removeItem(AGREE_KEY); } catch (e) {}
             updateWelcomeUI();
+        },
+        setAbout: (field, value) => {
+            const b = getBody(), v = latinDigits(value).trim();
+            if (field === 'sex') b.sex = b.sex === value ? undefined : value;
+            else if (field === 'birthYear') { const y = parseInt(v); if (!v) delete b.birthYear; else if (y >= thisYear() - 100 && y <= thisYear() - 5) b.birthYear = y; else window.appActions.showToast(t('Please check this number.'), 'error'); }
+            else if (field === 'heightCm') { const h = parseFloat(v); if (!v) delete b.heightCm; else if (h >= 100 && h <= 250) b.heightCm = h; else window.appActions.showToast(t('Please check this number.'), 'error'); }
+            else if (field === 'weightKg') {
+                const w = parseFloat(v.replace(/[\u066B\u060C,]/g, '.'));
+                if (!v) delete b.weightKg;
+                else if (w >= 25 && w <= 350) { b.weightKg = w; const log = (b.log || []).filter(x => dateKey(x.t) !== dateKey()); log.push({ t: Date.now(), kg: w }); b.log = log; }
+                else window.appActions.showToast(t('Please check this number.'), 'error');
+            }
+            setBody(b);
+            if (field === 'sex') {
+                renderAbout();
+                const ob = document.getElementById('onboarding-overlay'); if (ob && ob.classList.contains('flex') && window.appState.wiz && window.appState.wiz.steps[window.appState.wiz.step] === 'about') window.appActions.renderWizard();
+            } else setTimeout(refreshAbout, 0);
         },
         welcomeLater: () => { hideWelcome(); window.appActions.initOnboarding(); },
         welcomeContinue: () => {
