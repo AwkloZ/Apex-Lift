@@ -279,6 +279,28 @@
         "OF {n} SETS": "من {n} مجموعات",
         "OK": "متوسط",
         "Official Instagram": "حسابنا في إنستغرام",
+        "Account deleted": "تم حذف الحساب",
+        "Back up & sync": "النسخ الاحتياطي والمزامنة",
+        "Connecting…": "جارٍ الاتصال…",
+        "Continue with Google": "المتابعة باستخدام Google",
+        "Delete my account": "حذف حسابي",
+        "Delete your account?": "حذف حسابك؟",
+        "No internet connection. Try again when online.": "لا يوجد اتصال بالإنترنت. حاول مرة أخرى عند الاتصال.",
+        "Offline · will sync when online": "غير متصل · ستتم المزامنة عند الاتصال",
+        "Privacy policy": "سياسة الخصوصية",
+        "Sign in to keep your workouts safe in the cloud and use them on any phone.": "سجّل الدخول لحفظ تمارينك في السحابة واستخدامها على أي جوال.",
+        "Sign out": "تسجيل الخروج",
+        "Sign out?": "تسجيل الخروج؟",
+        "Sign-in failed. Please try again.": "فشل تسجيل الدخول. حاول مرة أخرى.",
+        "Signed out": "تم تسجيل الخروج",
+        "Signing in…": "جارٍ تسجيل الدخول…",
+        "Sync now": "زامن الآن",
+        "Sync problem · tap Sync now": "مشكلة في المزامنة · اضغط زامن الآن",
+        "Synced · {time}": "تمت المزامنة · {time}",
+        "Syncing…": "جارٍ المزامنة…",
+        "This deletes your cloud backup and your account. The workouts on this phone stay.": "سيحذف هذا نسختك السحابية وحسابك. التمارين المحفوظة على هذا الجوال تبقى.",
+        "This website is not allowed in Firebase yet (Authentication → Settings → Authorized domains).": "هذا الموقع غير مسموح في Firebase بعد (Authentication ← Settings ← Authorized domains).",
+        "Your workouts stay on this phone. Sign in again anytime to sync.": "تمارينك تبقى على هذا الجوال. سجّل الدخول مرة أخرى في أي وقت للمزامنة.",
         "Old:": "القديم:",
         "Overwrites current schedule": "يستبدل الجدول الحالي",
         "PULL": "سحب",
@@ -527,9 +549,11 @@
             return fallback;
         }
     };
+    // Set later by the cloud module: called after every save so changes can be uploaded
+    let cloudTouch = () => {};
     // Writes safely: shows a message instead of failing silently when storage is full.
     const writeItem = (key, value) => {
-        try { localStorage.setItem(key, value); return true; }
+        try { localStorage.setItem(key, value); cloudTouch(key); return true; }
         catch (e) {
             console.error(`Could not save "${key}"`, e);
             if (window.appActions) window.appActions.showToast(t("Storage full: data not saved. Backup & delete old records."), "error");
@@ -543,14 +567,14 @@
         getReps: () => { const v = readJSON(StorageManager.REPS_KEY, {}); return isObj(v) ? v : {}; }, setReps: d => writeItem(StorageManager.REPS_KEY, JSON.stringify(d)),
         getHistory: () => { const v = readJSON(StorageManager.HIST_KEY, {}); return isObj(v) ? v : {}; }, setHistory: d => writeItem(StorageManager.HIST_KEY, JSON.stringify(d)),
         getPlan: () => readJSON(StorageManager.PLAN_KEY, null), setPlan: d => writeItem(StorageManager.PLAN_KEY, JSON.stringify(d)),
-        getStartDay: () => { const v = localStorage.getItem(StorageManager.START_KEY); return DAY_NAMES.includes(v) ? v : 'SAT'; }, setStartDay: v => localStorage.setItem(StorageManager.START_KEY, v),
-        getActiveWeek: () => localStorage.getItem(StorageManager.ACTIVE_WEEK), setActiveWeek: v => localStorage.setItem(StorageManager.ACTIVE_WEEK, v),
+        getStartDay: () => { const v = localStorage.getItem(StorageManager.START_KEY); return DAY_NAMES.includes(v) ? v : 'SAT'; }, setStartDay: v => { localStorage.setItem(StorageManager.START_KEY, v); cloudTouch(StorageManager.START_KEY); },
+        getActiveWeek: () => localStorage.getItem(StorageManager.ACTIVE_WEEK), setActiveWeek: v => { localStorage.setItem(StorageManager.ACTIVE_WEEK, v); cloudTouch(StorageManager.ACTIVE_WEEK); },
         getBackupDate: () => parseInt(localStorage.getItem(StorageManager.BACKUP_DATE)) || 0, setBackupDate: () => localStorage.setItem(StorageManager.BACKUP_DATE, Date.now()),
         RPE_KEY: 'workoutShowRpe_rakan_final',
-        getShowRpe: () => localStorage.getItem(StorageManager.RPE_KEY) === 'true', setShowRpe: v => localStorage.setItem(StorageManager.RPE_KEY, v ? 'true' : 'false'),
+        getShowRpe: () => localStorage.getItem(StorageManager.RPE_KEY) === 'true', setShowRpe: v => { localStorage.setItem(StorageManager.RPE_KEY, v ? 'true' : 'false'); cloudTouch(StorageManager.RPE_KEY); },
         REST_KEY: 'workoutRest_rakan_final',
         getRestSeconds: () => { const v = parseInt(localStorage.getItem(StorageManager.REST_KEY)); return [60,90,120,180].includes(v) ? v : 90; },
-        setRestSeconds: v => { if ([60,90,120,180].includes(parseInt(v))) localStorage.setItem(StorageManager.REST_KEY, String(parseInt(v))); },
+        setRestSeconds: v => { if ([60,90,120,180].includes(parseInt(v))) { localStorage.setItem(StorageManager.REST_KEY, String(parseInt(v))); cloudTouch(StorageManager.REST_KEY); } },
         getOnboard: () => localStorage.getItem(StorageManager.ONBOARD_KEY) === 'true', setOnboard: () => localStorage.setItem(StorageManager.ONBOARD_KEY, 'true')
     };
 
@@ -2287,6 +2311,250 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }
     };
 
+    // ☁️ CLOUD BACKUP & SYNC (optional): sign in with Google; data is kept in Firebase (Firestore).
+    // The phone stays the main copy and keeps working offline; the cloud mirrors it and brings it to your other phones.
+    // Data layout: users/{uid} = routines + settings, users/{uid}/history/{exercise} = that exercise's logs.
+    // Security rules (only you can read/write your data) are in firestore.rules — paste them into Firebase.
+    const FIREBASE_CONFIG = {
+        apiKey: 'AIzaSyCItVZimtbvod94CGUfYx1xwgSTW_mEq0Y',
+        authDomain: 'apex-lift-52a18.firebaseapp.com',
+        projectId: 'apex-lift-52a18',
+        storageBucket: 'apex-lift-52a18.firebasestorage.app',
+        messagingSenderId: '682655190858',
+        appId: '1:682655190858:web:70d756fba8e17de80cbbb3'
+    };
+    const FB_DIR = 'vendor/firebase-12.19.0/';
+    const CLOUD_KEY = 'workoutCloud_rakan_final', CLOUD_LASTUID = 'workoutCloudLastUid_rakan_final', LOCAL_UPDATED_KEY = 'workoutLocalUpdated_rakan_final';
+    const MAIN_KEYS = new Set([StorageManager.PLAN_KEY, StorageManager.ACTIVE_WEEK, StorageManager.START_KEY, StorageManager.REST_KEY, StorageManager.RPE_KEY, StorageManager.KEY, CUSTOM_KEY, PROFILE_KEY]);
+    const Cloud = { status: 'off', user: null, auth: null, db: null, unsub: [], sent: {}, timer: null, flushing: false, again: false, applying: false, lastSync: 0, loading: null };
+    const getCloudFlag = () => { const v = readJSON(CLOUD_KEY, null); return isObj(v) ? v : null; };
+    const loadScript = src => new Promise((ok, fail) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = () => fail(new Error('Could not load ' + src)); document.head.appendChild(el); });
+    // Firebase is only downloaded when someone uses sign-in, so the app stays fast for everyone else
+    const loadFirebase = () => Cloud.loading || (Cloud.loading = (async () => {
+        if (!window.firebase) await loadScript(FB_DIR + 'firebase-app-compat.js');
+        if (!firebase.auth) await loadScript(FB_DIR + 'firebase-auth-compat.js');
+        if (!firebase.firestore) await loadScript(FB_DIR + 'firebase-firestore-compat.js');
+        if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+        Cloud.auth = firebase.auth(); Cloud.db = firebase.firestore();
+        try { await Cloud.db.enablePersistence({ synchronizeTabs: true }); } catch (e) { /* private mode or another tab: still works online */ }
+        Cloud.auth.getRedirectResult().catch(e => window.appActions.showToast(cloudErrorText(e), 'error'));
+        Cloud.auth.onAuthStateChanged(u => { if (u) cloudSignedIn(u); else cloudSignedOut(); });
+    })().catch(e => { Cloud.loading = null; throw e; }));
+    const cloudErrorText = e => {
+        const c = (e && e.code) || '';
+        if (c === 'auth/unauthorized-domain') return t('This website is not allowed in Firebase yet (Authentication → Settings → Authorized domains).');
+        if (c === 'auth/network-request-failed' || /load/i.test((e && e.message) || '')) return t('No internet connection. Try again when online.');
+        return t('Sign-in failed. Please try again.') + (c ? ` (${c})` : '');
+    };
+    const setCloudStatus = st => { Cloud.status = st; renderAccount(); };
+    const scheduleFlush = (ms = 1500) => { if (!Cloud.user) return; clearTimeout(Cloud.timer); Cloud.timer = setTimeout(cloudFlush, ms); };
+    cloudTouch = key => {
+        if (MAIN_KEYS.has(key)) { try { localStorage.setItem(LOCAL_UPDATED_KEY, String(Date.now())); } catch (e) {} }
+        if (Cloud.user && !Cloud.applying && (MAIN_KEYS.has(key) || key === StorageManager.HIST_KEY)) scheduleFlush();
+    };
+    // What the phone has (routines + settings), in a form Firestore accepts
+    const collectMain = () => JSON.parse(JSON.stringify({
+        plan: appData, activeWeek: currentWeekId, startDay: StorageManager.getStartDay(), rest: StorageManager.getRestSeconds(),
+        showRpe: StorageManager.getShowRpe(), weights: StorageManager.get(), custom: getCustomEx(), profile: getProfile()
+    }));
+    // Put cloud routines + settings onto this phone
+    const applyMain = m => {
+        Cloud.applying = true;
+        try {
+            const plan = sanitizePlan(m.plan);
+            if (plan) {
+                appData = plan; StorageManager.setPlan(plan);
+                currentWeekId = plan.weeks.some(w => w.id === m.activeWeek) ? m.activeWeek : plan.weeks[0].id;
+                StorageManager.setActiveWeek(currentWeekId);
+            }
+            if (DAY_NAMES.includes(m.startDay)) StorageManager.setStartDay(m.startDay);
+            StorageManager.setRestSeconds(m.rest);
+            StorageManager.setShowRpe(m.showRpe === true);
+            if (isObj(m.weights)) { loggedWeights = sanitizeValueMap(m.weights); StorageManager.set(loggedWeights); }
+            setCustomEx(sanitizeCustomEx(m.custom));
+            if (isObj(m.profile)) writeItem(PROFILE_KEY, JSON.stringify(m.profile));
+            localStorage.setItem(LOCAL_UPDATED_KEY, String(m.updatedAt || Date.now()));
+        } finally { Cloud.applying = false; }
+        refreshAfterCloud();
+    };
+    const refreshAfterCloud = () => {
+        const sd = document.getElementById('setting-start-day'); if (sd) sd.value = StorageManager.getStartDay();
+        const rs = document.getElementById('setting-rest'); if (rs) rs.value = String(StorageManager.getRestSeconds());
+        const rp = document.getElementById('setting-rpe'); if (rp) rp.checked = StorageManager.getShowRpe();
+        renderNav(); renderWorkout();
+    };
+    // Combine two lists of logs without duplicates (same time, weight and reps = same log)
+    const logSig = l => `${logTime(l)}|${l.w}|${Array.isArray(l.s) ? l.s.join(',') : l.s}`;
+    const mergeLogs = (a, b) => {
+        const m = new Map(); [...(a || []), ...(b || [])].forEach(l => m.set(logSig(l), l));
+        return [...m.values()].sort((x, y) => (logTime(x) || 0) - (logTime(y) || 0)).slice(-150);
+    };
+    const histPath = (uid, k) => `users/${uid}/history/${encodeURIComponent(k)}`;
+
+    // First time on this phone: merge the phone's workouts with the cloud's, then keep both in step
+    const cloudSignedIn = async user => {
+        const prevUid = localStorage.getItem(CLOUD_LASTUID);
+        Cloud.user = user;
+        writeItem(CLOUD_KEY, JSON.stringify({ uid: user.uid, name: user.displayName || '', email: user.email || '', photo: user.photoURL || '' }));
+        setCloudStatus('syncing');
+        try {
+            const uid = user.uid;
+            const [snap, hs] = await Promise.all([Cloud.db.doc(`users/${uid}`).get(), Cloud.db.collection(`users/${uid}/history`).get()]);
+            const cloudHist = {};
+            hs.forEach(d => { const x = d.data(); if (x && Array.isArray(x.logs)) cloudHist[decodeURIComponent(d.id)] = x.logs; });
+            // workouts: keep everything from both sides
+            const local = StorageManager.getHistory(), clean = sanitizeHistory(cloudHist), merged = { ...local };
+            Object.keys(clean).forEach(k => { merged[k] = mergeLogs(local[k], clean[k]); });
+            Cloud.applying = true; StorageManager.setHistory(merged); Cloud.applying = false;
+            // routines + settings: the account wins on a new phone, otherwise the newest change wins
+            if (snap.exists) {
+                const m = snap.data(), localU = Number(localStorage.getItem(LOCAL_UPDATED_KEY)) || 0;
+                if (prevUid !== uid || (m.updatedAt || 0) > localU) applyMain(m);
+            }
+            Cloud.sent = {};
+            Object.keys(clean).forEach(k => { Cloud.sent['h:' + k] = JSON.stringify(clean[k]); });
+            localStorage.setItem(CLOUD_LASTUID, uid);
+            refreshAfterCloud();
+            await cloudFlush();
+            cloudSubscribe(uid);
+        } catch (e) { console.warn('Cloud sync failed', e); setCloudStatus('error'); }
+    };
+    // Upload whatever changed since the last upload
+    const cloudFlush = async () => {
+        if (!Cloud.user) return;
+        if (Cloud.flushing) { Cloud.again = true; return; }
+        Cloud.flushing = true; clearTimeout(Cloud.timer);
+        let slow = null;
+        try {
+            const uid = Cloud.user.uid, ops = [];
+            const main = collectMain(), mj = JSON.stringify(main);
+            if (mj !== Cloud.sent.main) { ops.push(['set', `users/${uid}`, { ...main, updatedAt: Number(localStorage.getItem(LOCAL_UPDATED_KEY)) || Date.now() }]); Cloud.sent.main = mj; }
+            const h = StorageManager.getHistory();
+            Object.keys(h).forEach(k => { const j = JSON.stringify(h[k]); if (j !== Cloud.sent['h:' + k]) { ops.push(['set', histPath(uid, k), { logs: h[k], updatedAt: Date.now() }]); Cloud.sent['h:' + k] = j; } });
+            Object.keys(Cloud.sent).filter(x => x.startsWith('h:') && !(x.slice(2) in h)).forEach(x => { ops.push(['delete', histPath(uid, x.slice(2))]); delete Cloud.sent[x]; });
+            if (ops.length) {
+                setCloudStatus(navigator.onLine === false ? 'offline' : 'syncing');
+                // weak gym signal: the change is already saved on the phone, it just hasn't reached the cloud yet
+                slow = setTimeout(() => { if (Cloud.flushing) setCloudStatus('offline'); }, 5000);
+                for (let i = 0; i < ops.length; i += 400) {
+                    const b = Cloud.db.batch();
+                    ops.slice(i, i + 400).forEach(([op, path, data]) => op === 'set' ? b.set(Cloud.db.doc(path), JSON.parse(JSON.stringify(data))) : b.delete(Cloud.db.doc(path)));
+                    await b.commit(); // offline: waits here and finishes when the phone is back online
+                }
+            }
+            Cloud.lastSync = Date.now(); setCloudStatus('synced');
+        } catch (e) { console.warn('Cloud upload failed', e); Cloud.sent = {}; setCloudStatus('error'); }
+        finally { clearTimeout(slow); Cloud.flushing = false; if (Cloud.again) { Cloud.again = false; scheduleFlush(300); } }
+    };
+    // Live updates from your other phones
+    const cloudSubscribe = uid => {
+        Cloud.unsub.forEach(u => u()); Cloud.unsub = [];
+        Cloud.unsub.push(Cloud.db.doc(`users/${uid}`).onSnapshot(snap => {
+            if (!snap.exists || snap.metadata.hasPendingWrites) return;
+            const m = snap.data(), localU = Number(localStorage.getItem(LOCAL_UPDATED_KEY)) || 0;
+            if ((m.updatedAt || 0) > localU) { applyMain(m); Cloud.sent.main = JSON.stringify(collectMain()); }
+        }, e => console.warn(e)));
+        Cloud.unsub.push(Cloud.db.collection(`users/${uid}/history`).onSnapshot(qs => {
+            const h = StorageManager.getHistory(); let changed = false;
+            qs.docChanges().forEach(ch => {
+                if (ch.doc.metadata.hasPendingWrites) return; // our own upload coming back
+                const k = decodeURIComponent(ch.doc.id), mine = JSON.stringify(h[k] || null), unsynced = h[k] && mine !== Cloud.sent['h:' + k];
+                if (ch.type === 'removed') { if (h[k] && !unsynced) { delete h[k]; changed = true; } delete Cloud.sent['h:' + k]; return; }
+                const logs = sanitizeHistory({ [k]: (ch.doc.data() || {}).logs })[k] || [];
+                const next = unsynced ? mergeLogs(h[k], logs) : logs;
+                if (JSON.stringify(next) !== mine) { h[k] = next; changed = true; }
+                Cloud.sent['h:' + k] = JSON.stringify(logs);
+            });
+            if (changed) { Cloud.applying = true; StorageManager.setHistory(h); Cloud.applying = false; refreshAfterCloud(); scheduleFlush(); }
+        }, e => console.warn(e)));
+    };
+    const cloudSignedOut = () => {
+        Cloud.unsub.forEach(u => u()); Cloud.unsub = []; Cloud.user = null; Cloud.sent = {};
+        try { localStorage.removeItem(CLOUD_KEY); } catch (e) {}
+        setCloudStatus('off');
+    };
+    window.addEventListener('online', () => { if (Cloud.user) scheduleFlush(200); });
+    window.addEventListener('offline', () => { if (Cloud.user) setCloudStatus('offline'); });
+
+    // Profile → account card
+    const GOOGLE_G = '<svg viewBox="0 0 48 48" class="w-5 h-5" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
+    const renderAccount = () => {
+        const el = document.getElementById('account-card'); if (!el) return;
+        const flag = getCloudFlag(), u = Cloud.user || (flag && flag.uid ? flag : null);
+        if (!u) {
+            el.innerHTML = `<div class="glass-card p-5 border border-white/10">
+                <div class="flex items-center gap-3 mb-3"><span class="w-11 h-11 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="cloud" class="w-6 h-6"></i></span>
+                <div><div class="text-[16px] font-black text-white">${t('Back up & sync')}</div><div class="text-[12px] font-bold text-slate-400 leading-snug">${t('Sign in to keep your workouts safe in the cloud and use them on any phone.')}</div></div></div>
+                <button onclick="window.appActions.cloudSignIn()" ${Cloud.status === 'loading' ? 'disabled' : ''} class="w-full py-3.5 rounded-xl bg-white text-[#1f1f1f] text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-60">${GOOGLE_G}${Cloud.status === 'loading' ? t('Signing in…') : t('Continue with Google')}</button>
+                <a href="privacy.html" target="_blank" rel="noopener" class="block text-center text-[11px] font-bold text-slate-500 mt-3 underline">${t('Privacy policy')}</a></div>`;
+        } else {
+            const name = u.displayName || u.name || '', email = u.email || '', photo = u.photoURL || u.photo || '';
+            const st = { off: ['bg-slate-500', t('Connecting…')], loading: ['bg-slate-500', t('Connecting…')], syncing: ['bg-[#d4af37] animate-pulse', t('Syncing…')],
+                synced: ['bg-[#22c55e]', t('Synced · {time}', { time: Cloud.lastSync ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(Cloud.lastSync) : '' })],
+                offline: ['bg-slate-400', t('Offline · will sync when online')], error: ['bg-red-500', t('Sync problem · tap Sync now')] }[Cloud.status] || ['bg-slate-500', ''];
+            el.innerHTML = `<div class="glass-card p-5 border border-[#22c55e]/25">
+                <div class="flex items-center gap-3">
+                    ${photo ? `<img src="${esc(photo)}" alt="" referrerpolicy="no-referrer" class="w-12 h-12 rounded-full object-cover shrink-0">` : `<span class="w-12 h-12 rounded-full bg-[#d4af37] text-black text-[18px] font-black flex items-center justify-center shrink-0">${esc((name || email || '?').charAt(0).toUpperCase())}</span>`}
+                    <div class="min-w-0 flex-1"><div class="text-[16px] font-black text-white truncate">${esc(name || email)}</div><div class="text-[11px] font-bold text-slate-400 truncate">${esc(email)}</div>
+                    <div class="flex items-center gap-1.5 mt-1"><span class="w-2 h-2 rounded-full ${st[0]}"></span><span class="text-[11px] font-bold text-slate-300">${esc(st[1])}</span></div></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                    <button onclick="window.appActions.cloudSyncNow()" class="py-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-white tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="refresh-cw" class="w-4 h-4"></i>${t('Sync now')}</button>
+                    <button onclick="window.appActions.cloudSignOut()" class="py-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-slate-300 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="log-out" class="w-4 h-4"></i>${t('Sign out')}</button>
+                </div>
+                <div class="flex justify-between mt-3"><a href="privacy.html" target="_blank" rel="noopener" class="text-[11px] font-bold text-slate-500 underline">${t('Privacy policy')}</a><button onclick="window.appActions.cloudDelete()" class="text-[11px] font-bold text-red-400 underline tap-feedback">${t('Delete my account')}</button></div></div>`;
+        }
+        if (window.lucide) window.lucide.createIcons({ root: el });
+        if (typeof updateBackupStatus === 'function') updateBackupStatus();
+    };
+    Object.assign(window.appActions, {
+        cloudSignIn: async () => {
+            setCloudStatus('loading');
+            try { await loadFirebase(); } catch (e) { window.appActions.showToast(t('No internet connection. Try again when online.'), 'error'); return setCloudStatus('off'); }
+            const provider = new firebase.auth.GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            try { await Cloud.auth.signInWithPopup(provider); }
+            catch (e) {
+                // Home-screen apps and some browsers block pop-ups: use a full-page sign-in instead
+                if (['auth/popup-blocked', 'auth/operation-not-supported-in-this-environment', 'auth/cancelled-popup-request'].includes(e.code)) {
+                    writeItem(CLOUD_KEY, JSON.stringify({ pending: true }));
+                    return Cloud.auth.signInWithRedirect(provider);
+                }
+                if (e.code !== 'auth/popup-closed-by-user') window.appActions.showToast(cloudErrorText(e), 'error');
+                if (!Cloud.user) setCloudStatus('off');
+            }
+        },
+        cloudSyncNow: () => { if (!Cloud.user) return; Cloud.sent = {}; cloudFlush(); },
+        cloudSignOut: () => window.appActions.showConfirm(t('Sign out?'), t('Your workouts stay on this phone. Sign in again anytime to sync.'), async () => {
+            try { await Promise.race([cloudFlush(), new Promise(r => setTimeout(r, 4000))]); } catch (e) {}
+            Cloud.unsub.forEach(u => u()); Cloud.unsub = [];
+            try { await Cloud.auth.signOut(); } catch (e) {}
+            cloudSignedOut();
+            window.appActions.showToast(t('Signed out'), 'success');
+        }),
+        cloudDelete: () => window.appActions.showConfirm(t('Delete your account?'), t('This deletes your cloud backup and your account. The workouts on this phone stay.'), async () => {
+            if (!Cloud.user) return;
+            setCloudStatus('syncing');
+            try {
+                const uid = Cloud.user.uid;
+                Cloud.unsub.forEach(u => u()); Cloud.unsub = [];
+                const qs = await Cloud.db.collection(`users/${uid}/history`).get(), paths = [];
+                qs.forEach(d => paths.push(`users/${uid}/history/${d.id}`));
+                paths.push(`users/${uid}`);
+                for (let i = 0; i < paths.length; i += 400) { const b = Cloud.db.batch(); paths.slice(i, i + 400).forEach(x => b.delete(Cloud.db.doc(x))); await b.commit(); }
+                try { await Cloud.auth.currentUser.delete(); }
+                catch (e) {
+                    if (e.code !== 'auth/requires-recent-login') throw e;
+                    await Cloud.auth.currentUser.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider());
+                    await Cloud.auth.currentUser.delete();
+                }
+                try { localStorage.removeItem(CLOUD_LASTUID); } catch (e) {}
+                cloudSignedOut();
+                window.appActions.showToast(t('Account deleted'), 'success');
+            } catch (e) { console.warn(e); setCloudStatus('error'); window.appActions.showToast(cloudErrorText(e), 'error'); }
+        }, true)
+    });
+
     // Apply the language to the fixed parts of the page (index.html) and set right-to-left for Arabic
     const applyStaticLanguage = () => {
         document.documentElement.lang = LANG;
@@ -2324,12 +2592,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const updateBackupStatus = () => {
         let lB = StorageManager.getBackupDate();
         if (!lB) { StorageManager.setBackupDate(); lB = Date.now(); }
-        const days = Math.floor((Date.now() - lB) / 86400000), old = days >= 7;
+        const days = Math.floor((Date.now() - lB) / 86400000), old = days >= 7 && !Cloud.user && !getCloudFlag();
         const dot = document.getElementById('backup-dot'); if (dot) dot.classList.toggle('hidden', !old);
         const age = document.getElementById('backup-age');
         if (age) { age.textContent = days < 1 ? t('Last backup: today') : t('Last backup: {n} days ago', { n: days }); age.className = `text-[10px] font-bold text-center mb-3 ${old ? 'text-red-400' : 'text-slate-500'}`; }
     };
     updateBackupStatus();
+    renderAccount();
+    if (getCloudFlag()) loadFirebase().catch(() => setCloudStatus('offline'));
     setTimeout(() => window.appActions.initOnboarding(), 500);
     // Coming back to the app on a new day: jump to today (unless a workout is open)
     let lastToday = getTodayId();

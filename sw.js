@@ -6,7 +6,7 @@
 // - Outside files (Tailwind design, Google font): use the saved copy, refresh it in the background.
 //
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
-const CACHE = 'apex-lift-v1';
+const CACHE = 'apex-lift-v2';
 const APP_FILES = [
     './',
     'index.html',
@@ -18,7 +18,8 @@ const APP_FILES = [
     'icons/icon-192.png',
     'icons/icon-512.png',
     'icons/icon-maskable-512.png',
-    'icons/apple-touch-icon.png'
+    'icons/apple-touch-icon.png',
+    'privacy.html'
 ];
 const OUTSIDE_FILES = ['https://cdn.tailwindcss.com/3.4.17'];
 const NETWORK_TIMEOUT_MS = 3000;
@@ -77,7 +78,8 @@ self.addEventListener('fetch', event => {
     if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
     if (url.origin === self.location.origin) {
         event.respondWith(networkFirst(request));
-    } else if (/(^|\.)tailwindcss\.com$|(^|\.)googleapis\.com$|(^|\.)gstatic\.com$/.test(url.hostname)) {
+    } else if (url.hostname === 'cdn.tailwindcss.com' || url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+        // only the design and the font; Firebase (login, database) must always go to the internet
         event.respondWith(cacheFirst(request));
     }
 });
