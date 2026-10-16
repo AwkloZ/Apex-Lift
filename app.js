@@ -2348,7 +2348,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         if (c === 'auth/network-request-failed' || /load/i.test((e && e.message) || '')) return t('No internet connection. Try again when online.');
         return t('Sign-in failed. Please try again.') + (c ? ` (${c})` : '');
     };
-    const setCloudStatus = (st, e) => { Cloud.status = st; Cloud.err = st === 'error' ? ((e && e.code) || '') : ''; renderAccount(); };
+    const setCloudStatus = (st, e, step) => { Cloud.status = st; Cloud.err = st === 'error' ? [((e && e.code) || '').replace(/^firestore\//, ''), step].filter(Boolean).join(', ') : ''; renderAccount(); };
     const scheduleFlush = (ms = 1500) => { if (!Cloud.user) return; clearTimeout(Cloud.timer); Cloud.timer = setTimeout(cloudFlush, ms); };
     cloudTouch = key => {
         if (MAIN_KEYS.has(key)) { try { localStorage.setItem(LOCAL_UPDATED_KEY, String(Date.now())); } catch (e) {} }
@@ -2419,7 +2419,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             refreshAfterCloud();
             await cloudFlush();
             cloudSubscribe(uid);
-        } catch (e) { console.warn('Cloud sync failed', e); setCloudStatus('error', e); }
+        } catch (e) { console.warn('Cloud sync failed', e); setCloudStatus('error', e, 'read'); }
     };
     // Upload whatever changed since the last upload
     const cloudFlush = async () => {
@@ -2437,7 +2437,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (ops.length) {
                 setCloudStatus(navigator.onLine === false ? 'offline' : 'syncing');
                 // weak gym signal: the change is already saved on the phone, it just hasn't reached the cloud yet
-                slow = setTimeout(() => { if (Cloud.flushing) setCloudStatus('offline'); }, 5000);
+                slow = setTimeout(() => { if (Cloud.flushing && navigator.onLine === false) setCloudStatus('offline'); }, 5000);
                 for (let i = 0; i < ops.length; i += 400) {
                     const b = Cloud.db.batch();
                     ops.slice(i, i + 400).forEach(([op, path, data]) => op === 'set' ? b.set(Cloud.db.doc(path), JSON.parse(JSON.stringify(data))) : b.delete(Cloud.db.doc(path)));
@@ -2445,7 +2445,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 }
             }
             Cloud.lastSync = Date.now(); setCloudStatus('synced');
-        } catch (e) { console.warn('Cloud upload failed', e); Cloud.sent = {}; setCloudStatus('error', e); }
+        } catch (e) { console.warn('Cloud upload failed', e); Cloud.sent = {}; setCloudStatus('error', e, 'save'); }
         finally { clearTimeout(slow); Cloud.flushing = false; if (Cloud.again) { Cloud.again = false; scheduleFlush(300); } }
     };
     // Live updates from your other phones
@@ -2493,7 +2493,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const name = u.displayName || u.name || '', email = u.email || '', photo = u.photoURL || u.photo || '';
             const st = { off: ['bg-slate-500', t('Connecting…')], loading: ['bg-slate-500', t('Connecting…')], syncing: ['bg-[#d4af37] animate-pulse', t('Syncing…')],
                 synced: ['bg-[#22c55e]', t('Synced · {time}', { time: Cloud.lastSync ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(Cloud.lastSync) : '' })],
-                offline: ['bg-slate-400', t('Offline · will sync when online')], error: ['bg-red-500', t('Sync problem · tap Sync now') + (Cloud.err ? ` (${Cloud.err.replace(/^firestore\//, '')})` : '')] }[Cloud.status] || ['bg-slate-500', ''];
+                offline: ['bg-slate-400', t('Offline · will sync when online')], error: ['bg-red-500', t('Sync problem · tap Sync now') + (Cloud.err ? ` (${Cloud.err})` : '')] }[Cloud.status] || ['bg-slate-500', ''];
             el.innerHTML = `<div class="glass-card p-5 border border-[#22c55e]/25">
                 <div class="flex items-center gap-3">
                     ${photo ? `<img src="${esc(photo)}" alt="" referrerpolicy="no-referrer" class="w-12 h-12 rounded-full object-cover shrink-0">` : `<span class="w-12 h-12 rounded-full bg-[#d4af37] text-black text-[18px] font-black flex items-center justify-center shrink-0">${esc((name || email || '?').charAt(0).toUpperCase())}</span>`}
