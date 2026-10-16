@@ -31,10 +31,6 @@ body {
     border-radius: 32px;
 }
 
-.nav-pill {
-    border-radius: 20px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
 @keyframes smooth-pulse {
     0%, 100% { opacity: 1; }
@@ -43,15 +39,8 @@ body {
 
 .animate-pulse-glow { animation: smooth-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 
-.gold-corners { border: 2px solid #d4af37 !important; }
 
-.active-day {
-    background: #d4af37 !important;
-    border: 1px solid #d4af37 !important;
-    animation: smooth-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
 
-.active-day div { color: #000 !important; }
 
 * { touch-action: manipulation; }
 
@@ -65,7 +54,6 @@ input[type="number"] {
     text-align: center;
 }
 
-.selectable-text { -webkit-user-select: text; user-select: text; }
 
 @keyframes walk-bounce { 
     0%, 100% { transform: translateY(0) rotate(-5deg); } 
@@ -73,7 +61,6 @@ input[type="number"] {
 }
 .animate-walk { animation: walk-bounce 1s ease-in-out infinite; }
 
-.save-glow { box-shadow: 0 0 15px rgba(34,197,94,0.4); border-color: #22c55e !important; }
 
 .fade-in { animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -106,7 +93,6 @@ input[type="number"] {
 
 .tap-feedback:active { transform: scale(0.97); opacity: 0.8; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
-.slide-panel-open { transform: translateX(0) !important; }
 
 /* ===== Arabic =====
    The layout stays the same as English (side menu on the right, nothing mirrored).
@@ -118,8 +104,11 @@ input[type="number"] {
 :root[lang="ar"] .italic { font-style: normal; }
 
 /* A minimized Log/Focus session bar sits at the bottom: keep room for it */
-body.has-mini .scrollable-content { padding-bottom: 7rem; }
-body.has-mini #toast-container { bottom: 6rem; }
+/* Room for the bottom tab bar (and the minimized workout bar above it) */
+.scrollable-content { padding-bottom: calc(110px + env(safe-area-inset-bottom)) !important; }
+#toast-container { bottom: calc(80px + env(safe-area-inset-bottom)) !important; }
+body.has-mini .scrollable-content { padding-bottom: calc(180px + env(safe-area-inset-bottom)) !important; }
+body.has-mini #toast-container { bottom: calc(150px + env(safe-area-inset-bottom)) !important; }
 /* Number inputs in the sets table: no spin arrows */
 #aw-sets-container input::-webkit-outer-spin-button, #aw-sets-container input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 #aw-sets-container input[type=number] { -moz-appearance: textfield; }

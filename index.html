@@ -94,7 +94,7 @@
     </div>
 
     <!-- Minimized session: stays at the bottom while you look at your schedule; tap to go back -->
-    <button id="aw-mini" onclick="window.appActions.expandSession()" class="hidden fixed bottom-4 left-4 right-4 z-[250] max-w-xl mx-auto bg-[#161616]/95 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl px-4 py-3 items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] tap-feedback text-start">
+    <button id="aw-mini" onclick="window.appActions.expandSession()" style="bottom: calc(84px + env(safe-area-inset-bottom));" class="hidden fixed left-4 right-4 z-[250] max-w-xl mx-auto bg-[#161616]/95 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl px-4 py-3 items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] tap-feedback text-start">
         <span id="aw-mini-dot" class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shrink-0"></span>
         <span class="flex-1 min-w-0">
             <span id="aw-mini-name" class="ex-name block text-[14px] font-black text-white truncate"></span>
@@ -112,6 +112,7 @@
                     <p id="history-modal-title" class="ex-name text-[10px] font-bold text-[#d4af37] uppercase tracking-widest mt-1">Exercise Name</p>
                 </div>
                 <div class="flex items-center gap-2">
+                    <a id="history-howto" href="#" target="_blank" rel="noopener noreferrer" class="p-2 bg-white/5 rounded-full text-slate-400 hover:text-[#d4af37] tap-feedback" aria-label="How to"><i data-lucide="help-circle" class="w-5 h-5"></i></a>
                     <button id="history-edit-btn" onclick="window.appActions.toggleHistoryEdit()" class="p-2 bg-white/5 rounded-full text-slate-400 hover:text-[#d4af37] tap-feedback transition-colors"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
                     <button onclick="window.appActions.closeHistoryModal()" class="p-2 bg-white/5 rounded-full text-slate-400 hover:text-white tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
@@ -240,15 +241,21 @@
         </div>
     </div>
 
-    <div id="side-panel-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden transition-opacity duration-300 opacity-0" onclick="window.appActions.toggleMenu()"></div>
-    
-    <div id="side-panel" class="fixed top-0 right-0 h-full w-80 glass-card rounded-none rounded-l-3xl z-[101] transform translate-x-full transition-transform duration-300 overflow-y-auto p-5 border-l border-white/10 shadow-2xl safe-notch pb-20">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-black italic tracking-tighter uppercase text-white">APEX <span class="text-[#d4af37]">LIFT</span></h2>
-            <button class="text-white/50 hover:text-white tap-feedback p-2 bg-white/5 rounded-full" onclick="window.appActions.toggleMenu()"><i data-lucide="x" class="w-5 h-5"></i></button>
-        </div>
+    <div class="scrollable-content p-6">
+        <div class="w-full max-w-2xl mx-auto">
+            <header class="flex justify-between items-center safe-notch mb-5 px-1">
+                <h1 dir="ltr" class="text-3xl font-black italic tracking-tighter uppercase leading-none text-white flex items-end gap-2">
+                    APEX <span class="text-[#d4af37]">LIFT</span>
+                </h1>
+                <div class="flex items-center gap-1.5 text-[#22c55e] text-[10px] font-bold uppercase tracking-widest max-w-[45%]">
+                    <i data-lucide="calendar-days" class="w-3.5 h-3.5 shrink-0"></i>
+                    <p id="active-week-label" class="truncate leading-none"><span data-i18n="Week Active">Week Active</span></p>
+                </div>
+            </header>
 
-        <div class="mb-6">
+            <!-- Plan tab: your routines (weeks) -->
+            <section id="plan-routines" class="hidden mb-5">
+        <div class="mb-2">
             <span class="text-[10px] font-black text-[#d4af37] uppercase tracking-[3px] opacity-80 mb-3 block"><span data-i18n="Workouts Schedule">Workouts Schedule</span></span>
             <div id="weeks-container" class="space-y-3 mb-4"></div>
            <button onclick="window.appActions.addWeek()" class="w-full glass-card py-3 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[11px] tap-feedback border-dashed border-[#d4af37]/40 bg-[#d4af37]/5 rounded-xl">
@@ -258,14 +265,21 @@
             </button>
         </div>
 
+            </section>
+
+            <nav id="nav-container" class="grid grid-cols-7 gap-1.5 mb-6"></nav>
+            <main id="workout-container" class="space-y-4"></main>
+
+            <!-- Profile tab: settings, backup, contact -->
+            <section id="profile-view" class="hidden pb-6">
         <div class="h-px w-full bg-white/10 mt-6 mb-4"></div>
 
         <span class="text-[10px] font-black text-slate-500 uppercase tracking-[3px] opacity-80 mb-3 block"><span data-i18n="App Settings">App Settings</span></span>
         
         <label class="flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-white/5 active:bg-white/10 w-full text-left text-[11px] font-bold uppercase tracking-wider text-white transition-colors cursor-pointer border border-white/5 tap-feedback">
-            <div class="flex items-start gap-3"><i data-lucide="crosshair" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Day Tracker">Day Tracker</span></div>
+            <div class="flex items-start gap-3"><i data-lucide="gauge" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Show RPE">Show RPE</span></div>
             <div class="relative inline-block w-8 h-4 rounded-full bg-black border border-white/20">
-                <input type="checkbox" id="setting-auto-sync" onchange="window.appActions.toggleAutoSync(this.checked)" class="peer sr-only">
+                <input type="checkbox" id="setting-rpe" onchange="window.appActions.toggleRpe(this.checked)" class="peer sr-only">
                 <div class="absolute w-4 h-4 bg-slate-500 rounded-full left-0 top-0 transition-all peer-checked:bg-[#d4af37] peer-checked:translate-x-full shadow-sm"></div>
             </div>
         </label>
@@ -334,35 +348,29 @@
         </button>
 
         <span class="text-[10px] font-black text-slate-500 uppercase tracking-[3px] opacity-80 mt-10 mb-2 block text-center"><span data-i18n="Developed By">Developed By</span> <span class="text-[#d4af37]">Rakan Alharbi</span></span>
+            </section>
+        </div>
     </div>
 
-    <div class="scrollable-content p-6">
-        <div class="w-full max-w-2xl mx-auto">
-            <header class="flex justify-between items-start safe-notch mb-8 px-1">
-                <div>
-                    <h1 dir="ltr" class="text-4xl font-black italic tracking-tighter uppercase leading-none text-white flex items-end gap-2">
-                        APEX <span class="text-[#d4af37]">LIFT</span>
-                    </h1>
-                    <div class="flex items-center gap-2 mt-3 text-[#22c55e] animate-pulse-glow">
-                        <i data-lucide="calendar-days" class="w-3 h-3 -mt-[1.5px]"></i>
-                        <p id="active-week-label" class="text-[9px] font-bold uppercase tracking-[3px] leading-none"><span data-i18n="Week Active">Week Active</span></p>
-                    </div>
-                </div>
-                <div class="relative mt-1">
-                    <button class="tap-feedback text-[#d4af37] p-2 bg-white/5 rounded-xl border border-white/10 shadow-lg" onclick="window.appActions.toggleMenu()">
-                        <i data-lucide="menu" class="w-6 h-6"></i>
-                    </button>
-                    <span id="backup-dot" class="hidden absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-500 border-2 border-black pointer-events-none"></span>
-                </div>
-            </header>
+    <!-- Bottom tab bar -->
+    <nav id="tab-bar" class="fixed bottom-0 inset-x-0 z-[150] bg-[#0b0b0b]/95 backdrop-blur-xl border-t border-white/10" style="padding-bottom: env(safe-area-inset-bottom);">
+        <div class="max-w-2xl mx-auto grid grid-cols-4">
+            <button id="tabbtn-today" onclick="window.appActions.switchTab('today')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="dumbbell" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Today">Today</span></button>
+            <button id="tabbtn-plan" onclick="window.appActions.switchTab('plan')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="calendar-range" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Plan">Plan</span></button>
+            <button id="tabbtn-progress" onclick="window.appActions.switchTab('progress')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="trending-up" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Progress">Progress</span></button>
+            <button id="tabbtn-profile" onclick="window.appActions.switchTab('profile')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative"><i data-lucide="user" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Profile">Profile</span><span id="backup-dot" class="hidden absolute top-1.5 left-1/2 ml-2 w-3 h-3 rounded-full bg-red-500 border-2 border-black pointer-events-none"></span></button>
+        </div>
+    </nav>
 
-            <div class="flex gap-2 mb-6 px-1">
-                <button id="tab-workout" onclick="window.appActions.switchTab('workout')" class="flex-1 glass-card py-3 text-[10px] font-black uppercase tracking-widest transition-all bg-[#d4af37] text-black border-none"><span data-i18n="Workout">Workout</span></button>
-                <button id="tab-analytics" onclick="window.appActions.switchTab('analytics')" class="flex-1 glass-card py-3 text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-white border-white/5 border"><span data-i18n="Analytics">Analytics</span></button>
-            </div>
-
-            <nav id="nav-container" class="flex gap-3 overflow-x-auto pb-8 pt-2 scrollbar-hide snap-x"></nav>
-            <main id="workout-container" class="space-y-4"></main>
+    <!-- Workout summary (after Finish) -->
+    <div id="summary-overlay" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[9000] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 px-6">
+        <div id="summary-box" class="glass-card bg-[#111] p-6 w-full max-w-sm transform scale-95 transition-transform duration-300 border border-[#22c55e]/30 text-center">
+            <div class="w-16 h-16 rounded-full bg-[#22c55e] text-black flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(34,197,94,0.4)]"><i data-lucide="trophy" class="w-8 h-8"></i></div>
+            <h3 class="text-2xl font-black text-white mb-1" data-i18n="Workout complete!">Workout complete!</h3>
+            <p id="summary-title" class="text-[12px] font-bold text-slate-400 mb-5"></p>
+            <div id="summary-stats" class="grid grid-cols-3 gap-2 mb-4"></div>
+            <div id="summary-prs" class="text-start mb-5"></div>
+            <button onclick="window.appActions.closeSummary()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback" data-i18n="Done">Done</button>
         </div>
     </div>
 
