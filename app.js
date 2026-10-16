@@ -234,7 +234,6 @@
         "Done": "تم",
         "Easy Day": "يوم خفيف",
         "Easy day: targets adjusted": "يوم خفيف: تم تعديل الأهداف",
-        "Edit All": "تعديل الكل",
         "Energy": "النشاط",
         "Enter Sets or Reps": "أدخل المجموعات أو التكرارات",
         "Enter reps first": "أدخل التكرارات أولاً",
@@ -279,6 +278,17 @@
         "OF {n} SETS": "من {n} مجموعات",
         "OK": "متوسط",
         "Official Instagram": "حسابنا في إنستغرام",
+        "Push & Bi": "دفع وبايسبس",
+        "Pull & TRI": "سحب وترايسبس",
+        "Legs A": "أرجل أ",
+        "Lower Body & Abs": "الجزء السفلي والبطن",
+        "Finish workout?": "إنهاء التمرين؟",
+        "{n} sets are still empty. Only the sets you did will be saved.": "{n} مجموعات ما زالت فارغة. سيتم حفظ المجموعات التي أديتها فقط.",
+        "Log the rest": "سجّل الباقي",
+        "Name this day": "سمِّ هذا اليوم",
+        "Same for all": "نفس العدد للكل",
+        "Drag to reorder": "اسحب لإعادة الترتيب",
+        "You have an unfinished workout. Finish it to save your sets.": "لديك تمرين لم يكتمل. أنهِه لحفظ مجموعاتك.",
         "Account deleted": "تم حذف الحساب",
         "Back up & sync": "النسخ الاحتياطي والمزامنة",
         "Connecting…": "جارٍ الاتصال…",
@@ -470,6 +480,8 @@
     // 🛡️ DATA VALIDATION (used for saved data and imported backup files)
     const DAY_NAMES = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
     const isObj = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+    // Arabic keyboards type ٤ or ۴: turn them into 4 so numbers always work
+    const latinDigits = v => String(v == null ? '' : v).replace(/[\u0660-\u0669]/g, d => d.charCodeAt(0) - 0x660).replace(/[\u06F0-\u06F9]/g, d => d.charCodeAt(0) - 0x6F0);
     const toStr = (v, fb = '') => (typeof v === 'string' || typeof v === 'number') ? String(v) : fb;
 
     // Returns a clean plan { weeks: [...] }, or null if the data can't be used.
@@ -493,7 +505,7 @@
                     recoveryType: isRest ? (d.recoveryType === 'active' ? 'active' : 'complete') : null,
                     savedTitle: toStr(d.savedTitle),
                     exercises: Array.isArray(d.exercises) ? d.exercises.filter(isObj).map(ex => ({
-                        muscle: toStr(ex.muscle, 'Muscle'), name: toStr(ex.name, 'New Exercise'), sets: toStr(ex.sets, '3'), reps: toStr(ex.reps, '10')
+                        muscle: toStr(ex.muscle, 'Muscle'), name: toStr(ex.name, 'New Exercise'), sets: latinDigits(toStr(ex.sets, '3')), reps: latinDigits(toStr(ex.reps, '10'))
                     })) : []
                 };
             });
@@ -578,7 +590,7 @@
         getOnboard: () => localStorage.getItem(StorageManager.ONBOARD_KEY) === 'true', setOnboard: () => localStorage.setItem(StorageManager.ONBOARD_KEY, 'true')
     };
 
-    const getExKey = (w, d, i, n) => (n||'').trim() === '' || (n||'').trim() === 'New Exercise' ? `temp_${w}_${d}_${i}` : `global_${(n||'').trim().toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+    const getExKey = (w, d, i, n) => (n||'').trim() === '' || (n||'').trim() === 'New Exercise' ? `temp_${w}_${d}_${i}` : `global_${(n||'').trim().toLowerCase().replace(/[^\p{L}\p{N}]/gu, '_')}`;
 
     // 📅 DATES
     // New logs store `ts` (a timestamp). Older logs only have the text date `d` ("15 Oct 2026 • 5:03 PM"),
@@ -598,6 +610,14 @@
         return new Date(year, mon, parseInt(m[1]), h, min).getTime();
     };
     const logTime = log => typeof log.ts === 'number' ? log.ts : parseLogDate(log.d);
+    // Each exercise keeps its newest 400 logs (more than 2 years at 3 sessions a week)
+    const HIST_CAP = 400;
+    // A log's fingerprint: same time, weight and reps = the same log (used to merge lists without duplicates)
+    const logSig = l => `${logTime(l)}|${l.w}|${Array.isArray(l.s) ? l.s.join(',') : l.s}`;
+    // Records you deleted, remembered so another phone (or an old backup) can't bring them back
+    const DELETED_KEY = 'workoutDeleted_rakan_final';
+    const getDeleted = () => { const v = readJSON(DELETED_KEY, {}); return isObj(v) ? v : {}; };
+    const setDeleted = d => { try { localStorage.setItem(DELETED_KEY, JSON.stringify(d)); } catch (e) {} };
     const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
     const isToday = t => !isNaN(t) && startOfDay(t) === startOfDay(Date.now());
     const formatLogDate = n => { const hr = n.getHours(); return `${n.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})} • ${hr%12||12}:${n.getMinutes().toString().padStart(2,'0')} ${hr>=12?'PM':'AM'}`; };
@@ -616,7 +636,8 @@
     // Exercises that can be logged without a load (0 / empty = bodyweight)
     const BODYWEIGHT = ['Bicycle Crunch','Bird Dog','Chest Dip','Chin-up','Clamshell','Close-Grip Push-up','Copenhagen Plank','Crunch','Dead Bug','Decline Crunch','Decline Push-up','Deficit Push-up','Diamond Push-up','Dragon Flag','Fire Hydrant','Glute Bridge','Glute-Ham Raise','Hanging Knee Raise','Hanging Leg Raise','Hollow Body Hold','Incline Push-up','Inverted Row','Leg Raise','Nordic Hamstring Curl','Pistol Squat','Plank','Pull-up','Push-up','Reverse Crunch','Russian Twist','Sissy Squat','Sit-up','Superman','Toe Touch','Tricep Dip','V-up','Wall Sit','Back Extension','Frog Pump','Standing Leg Raise','Neck Curl','Neck Extension','Neck Lateral Flexion',
         'Archer Push-up','Bench Dip','Box Jump','Captain\'s Chair Leg Raise','Cossack Squat','Dead Hang','Decline Sit-up','Donkey Kick','Flutter Kick','Hanging Windshield Wiper','Hyperextension','L-Sit','Mountain Climber','Oblique Crunch','Reverse Nordic','Side Lunge','Side Plank','Side-Lying Leg Raise','Single Leg Glute Bridge','Sliding Leg Curl','Stability Ball Leg Curl','Stomach Vacuum','Wide-Grip Pull-up','Neutral Grip Pull-up','Assisted Chin-up'];
-    const isBodyweight = name => BODYWEIGHT.includes((name || '').trim());
+    const BODYWEIGHT_LC = new Set(BODYWEIGHT.map(x => x.toLowerCase()));
+    const isBodyweight = name => BODYWEIGHT_LC.has((name || '').trim().toLowerCase());
     const fmtW = w => (parseFloat(w) > 0 ? `${parseFloat(w)}kg` : 'BW');
 
     // Every set of a log as { w, r, rpe }. Older logs have one weight for all sets.
@@ -755,7 +776,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     let activeDay = getTodayId();
 
     // Build a 7-day schedule from a program, starting on the user's first day of the week.
-    // exp: 'new' = one set less on accessories, 'adv' = one set more on the first two lifts of each day
+    // exp: 'new' = one set less on accessories, 'adv' = one set more on the first two lifts of each day (never more than 4)
     const PROFILE_KEY = 'workoutProfile_rakan_final';
     const getProfile = () => { const v = readJSON(PROFILE_KEY, {}); return isObj(v) ? v : {}; };
     const programSchedule = (prog, exp) => {
@@ -768,7 +789,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             return { ...base, title, savedTitle: title, isRest: false, recoveryType: null, exercises: list.map(([name, muscle, sets, reps], j) => {
                 let n = parseInt(sets);
                 if (exp === 'new' && j >= 2) n = Math.max(2, n - 1);
-                if (exp === 'adv' && j < 2) n = Math.min(5, n + 1);
+                if (exp === 'adv' && j < 2) n = Math.max(n, Math.min(4, n + 1));
                 return { muscle, name, sets: String(n), reps };
             }) };
         });
@@ -819,6 +840,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         if (document.activeElement) document.activeElement.blur();
         o.classList.add('opacity-0'); b.classList.add('translate-y-full');
         setTimeout(() => {
+            if (!o.classList.contains('opacity-0')) return; // opened again in the meantime: leave it open
             o.classList.add('hidden'); o.classList.remove('flex');
             if (document.querySelectorAll('.sheet-overlay.flex').length === 0) { const sc = document.querySelector('.scrollable-content'); if (sc) sc.style.overflow = ''; }
         }, 300);
@@ -829,6 +851,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // itself, so it can never accidentally leave the page.
     const backStack = []; let backGuard = false;
     const pushBack = (id, fn) => {
+        popBack(id); // one entry per window, even if it was opened twice
         backStack.push({ id, fn });
         if (!backGuard) { try { history.pushState({ apexGuard: 1 }, ''); backGuard = true; } catch (e) {} }
     };
@@ -879,7 +902,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
 
     // 🏋️ LOG / FOCUS SESSION helpers. An unsaved session is kept in storage so it survives the app being closed.
     const SESSION_KEY = 'workoutSession_rakan_final';
-    const fmtClock = sec => `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+    const fmtClock = sec => { const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), x = String(sec % 60).padStart(2, '0'); return h ? `${h}:${String(m).padStart(2, '0')}:${x}` : `${String(m).padStart(2, '0')}:${x}`; };
     // All sets of the last session before today (for the "Previous" column)
     const lastSessionSets = hA => {
         const logs = (hA || []).filter(l => !isNaN(logTime(l)) && !isToday(logTime(l)));
@@ -905,7 +928,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const closeModal = (overlayId, boxId, ms = 300, after) => {
         const o = document.getElementById(overlayId), b = document.getElementById(boxId);
         o.classList.add('opacity-0'); b.classList.add('scale-95');
-        setTimeout(() => { o.classList.add('hidden'); o.classList.remove('flex'); if (after) after(); }, ms);
+        setTimeout(() => { if (o.classList.contains('opacity-0')) { o.classList.add('hidden'); o.classList.remove('flex'); } if (after) after(); }, ms);
     };
 
     // 🎨 4. CORE UI RENDERING
@@ -1330,6 +1353,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const suggestionFor = (hA, ex, easy) => {
         const prog = getProgression(getLastSession(hA, true), ex.reps);
         if (!prog) return null;
+        // done with no extra weight (bodyweight, plank...): ask for more reps or seconds, never "add 2.5 kg"
+        if (!(prog.w > 0) && prog.type === 'up') return { type: 'build', w: 0, r: prog.maxR + (isTimed(ex.reps) ? 5 : 1) };
         if (easy && prog.type !== 'down') return { type: 'easy', w: prog.w, r: prog.minR };
         return { type: prog.type, w: prog.tW, r: prog.tR };
     };
@@ -1345,7 +1370,30 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         return `<span class="inline-flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-md border ${c.cls}"><i data-lucide="${c.icon}" class="w-3 h-3"></i>${t(c.label)} <span dir="ltr">${fmtW(sg.w)} × ${sg.r}${timed ? 's' : ''}</span></span>`;
     };
 
+    // New first day of the week: every workout stays on its own weekday (Push on Saturday stays on Saturday),
+    // only the order of the week changes. Logged workouts are re-pointed so "done this week" stays right.
+    function setWeekStart(v) {
+        const aD = DAY_NAMES, idx = aD.indexOf(v); if (idx === -1) return false;
+        StorageManager.setStartDay(v);
+        const h = StorageManager.getHistory(), S = window.appState.sess; let hChanged = false;
+        appData.weeks.forEach(w => {
+            const byDay = {}; w.schedule.forEach(d => { byDay[d.day] = d; });
+            if (Object.keys(byDay).length !== 7) { w.schedule.forEach((d, i) => d.day = aD[(idx + i) % 7]); return; }
+            const move = {};
+            w.schedule = aD.map((_, i) => { const d = byDay[aD[(idx + i) % 7]]; move[d.id] = i + 1; d.id = i + 1; return d; });
+            Object.values(h).forEach(list => list.forEach(l => { if (l.weekId === w.id && typeof l.dayId === 'number' && move[l.dayId] && move[l.dayId] !== l.dayId) { l.dayId = move[l.dayId]; hChanged = true; } }));
+            if (S && S.weekId === w.id && move[S.dayId]) S.dayId = move[S.dayId];
+        });
+        if (hChanged) StorageManager.setHistory(h);
+        StorageManager.setPlan(appData);
+        return true;
+    }
+
+
     // 🏠 TODAY: the selected day with one big Start button and a simple list of its exercises
+    // Cards slide in when you open a different tab or day, but not when the same screen just refreshes
+    let lastAnimKey = '';
+    const enterClass = key => { const k = `${window.appState.currentView}|${currentWeekId}|${activeDay}|${key || ''}`; if (k === lastAnimKey) return ''; lastAnimKey = k; return 'stagger'; };
     const renderToday = () => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), history = StorageManager.getHistory();
         const isT = activeDay === getTodayId(), S = window.appState.sess;
@@ -1358,18 +1406,21 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         } else if (!day.exercises.length) {
             html += `<div class="glass-card p-8 text-center border-dashed border-white/10"><div class="flex justify-center mb-4"><i data-lucide="clipboard-edit" class="w-10 h-10 text-slate-500"></i></div><h3 class="font-black text-lg text-white mb-2">${t('No exercises yet')}</h3><p class="text-[12px] font-bold text-slate-400 mb-5">${t('Add exercises to this day in the Plan tab.')}</p><button onclick="window.appActions.switchTab('plan')" class="px-6 py-3 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback">${t('Plan this day')}</button></div>`;
         } else {
-            const pr = dayProgress(day, history), finished = pr.planned > 0 && pr.done >= pr.planned;
+            const pr = dayProgress(day, history), allDone = pr.planned > 0 && pr.done >= pr.planned;
+            // trained this day today (finished a workout), even if some sets were skipped
+            const doneToday = isT && day.exercises.some((ex, i) => (history[getExKey(currentWeekId, day.id, i, ex.name)] || []).some(l => logDayId(l) === day.id && isToday(logTime(l))));
+            const finished = allDone || doneToday;
             const mins = Math.max(10, Math.round(pr.planned * 2.5 / 5) * 5);
-            const running = S && S.dayId === day.id;
+            const running = S && S.dayId === day.id && (!S.weekId || S.weekId === currentWeekId);
             const btn = running
                 ? `<button onclick="window.appActions.expandSession()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>${t('Continue workout')}</button>`
                 : finished
-                ? `<div class="w-full py-3.5 rounded-2xl bg-[#22c55e]/10 border border-[#22c55e]/40 text-[#22c55e] text-[13px] font-black uppercase tracking-widest flex items-center justify-center gap-2"><i data-lucide="check-circle" class="w-5 h-5"></i>${t('Workout completed')}</div><button onclick="window.appActions.startWorkout()" class="w-full mt-2 py-2 text-[11px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${t('Log more sets')}</button>`
+                ? `<div class="w-full py-3.5 rounded-2xl bg-[#22c55e]/10 border border-[#22c55e]/40 text-[#22c55e] text-[13px] font-black uppercase tracking-widest flex items-center justify-center gap-2"><i data-lucide="check-circle" class="w-5 h-5"></i>${t('Workout completed')}</div><button onclick="window.appActions.startWorkout()" class="w-full mt-2 py-2 text-[11px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${allDone ? t('Log more sets') : t('Log the rest')}</button>`
                 : `<button onclick="window.appActions.startWorkout()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><i data-lucide="play" class="w-5 h-5 fill-current"></i>${pr.done > 0 ? t('Continue workout') : t('Start workout')}</button>`;
             html += `<div class="glass-card p-5 mb-4 ${finished ? 'border border-[#22c55e]/30' : ''}">
                 <h2 class="text-[26px] font-black text-white leading-tight mb-1">${esc(t(day.title))}</h2>
                 <div class="text-[12px] font-bold text-slate-400 mb-4">${t('{n} exercises', { n: day.exercises.length })} · ${t('{n} sets', { n: pr.planned })} · ${t('~{n} min', { n: mins })}</div>
-                ${pr.done > 0 ? `<div class="mb-4"><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('Day progress')}</span><span class="${finished ? 'text-[#22c55e]' : 'text-white'}" dir="ltr">${pr.done} / ${pr.planned}</span></div><div class="w-full h-2 bg-black/50 rounded-full overflow-hidden"><div class="h-full rounded-full ${finished ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pr.pct}%"></div></div></div>` : ''}
+                ${pr.done > 0 ? `<div class="mb-4"><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('Day progress')}</span><span class="${finished ? 'text-[#22c55e]' : 'text-white'}" dir="ltr">${pr.done} / ${pr.planned}</span></div><div class="w-full h-2 bg-black/50 rounded-full overflow-hidden"><div class="bar-fill h-full rounded-full ${finished ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pr.pct}%"></div></div></div>` : ''}
                 ${btn}
             </div>`;
             if (isT && !finished && !running) html += checkInHTML();
@@ -1390,7 +1441,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 </button>`;
             }).join('');
         }
-        document.getElementById('workout-container').innerHTML = `<div class="fade-in">${html}</div>`;
+        document.getElementById('workout-container').innerHTML = `<div class="${enterClass()}">${html}</div>`;
         if (window.lucide) window.lucide.createIcons();
     };
 
@@ -1432,33 +1483,31 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // 🗓️ PLAN: edit the selected day (title, type, exercises, templates)
     const renderPlanDay = () => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay);
-        let html = `<div class="px-2 mb-4 flex justify-between items-center gap-3 h-10">${!day.isRest?`<input type="text" value="${esc(day.title)}" onfocus="if(this.value==='New Day')this.value='';" onchange="window.appActions.updateDayTitle(this.value)" class="flex-1 bg-transparent border-b-2 border-[#d4af37]/50 text-2xl font-black uppercase text-[#d4af37] outline-none h-full pb-1 leading-none">`:`<h2 class="flex-1 font-black text-2xl uppercase text-white truncate h-full flex items-end pb-1 border-b-2 border-transparent leading-none">${esc(dayLong(day.day))} · ${esc(t(day.title))}</h2>`}</div>`;
+        const planned = day.exercises.reduce((a, ex) => a + (parseInt(ex.sets) || 0), 0);
+        let html = `<div class="px-1 mb-1 text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${esc(dayLong(day.day))}</div>`;
+        html += !day.isRest
+            ? `<label class="flex items-center gap-2 px-1 mb-1 group"><input type="text" value="${esc(day.title === 'New Day' ? '' : t(day.title))}" placeholder="${esc(t('Name this day'))}" onchange="window.appActions.updateDayTitle(this.value)" class="day-title-input flex-1 min-w-0 bg-transparent border-b-2 border-transparent focus:border-[#d4af37] text-[26px] font-black text-white placeholder:text-slate-600 outline-none leading-tight py-0.5 transition-colors"><i data-lucide="pencil" class="w-4 h-4 text-slate-500 shrink-0"></i></label>
+               <div class="px-1 mb-5 text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: day.exercises.length })} · ${t('{n} sets', { n: planned })}</div>`
+            : `<h2 class="px-1 mb-5 text-[26px] font-black text-white leading-tight">${esc(day.recoveryType === 'active' ? t('Active Rest') : t('Complete Rest'))}</h2>`;
         {
             const opts = schedule.filter(d => d.id !== activeDay).map(d => `<option value="${d.id}">${t('Day {n}', { n: d.id })} • ${esc(tDay(d.day))}</option>`).join('');
+            const pill = 'flex items-center justify-center gap-1.5 h-10 px-3.5 rounded-full border text-[11px] font-black whitespace-nowrap';
+            const selPill = (sel, icon, label) => `<div class="relative shrink-0 tap-feedback">${sel}<div class="${pill} bg-white/5 border-white/10 text-slate-200"><i data-lucide="${icon}" class="w-4 h-4"></i>${label}</div></div>`;
             html += `
-            <div class="px-2 mb-6 grid ${day.isRest ? 'grid-cols-4' : 'grid-cols-5'} gap-2">
-                <button onclick="window.appActions.openPrograms()" class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-[#d4af37]/40 bg-[#d4af37]/10 text-[#d4af37] tap-feedback"><i data-lucide="layout-list" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Programs')}</span></button>
-                <div class="relative tap-feedback">
-                    <select onchange="window.appActions.updateDayType(this.value)" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="workout" ${!day.isRest ? 'selected' : ''}>${t('Workout')}</option><option value="active" ${day.isRest && day.recoveryType === 'active' ? 'selected' : ''}>${t('Active Rest')}</option><option value="complete" ${day.isRest && day.recoveryType === 'complete' ? 'selected' : ''}>${t('Complete Rest')}</option></select>
-                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="settings-2" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Day type')}</span></div>
-                </div>
-                <div class="relative tap-feedback">
-                    <select onchange="if(this.value){window.appActions.swapDay(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">${t('Swap...')}</option>${opts}</select>
-                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="arrow-left-right" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Swap')}</span></div>
-                </div>
-                <div class="relative tap-feedback">
-                    <select onchange="if(this.value){window.appActions.copyDay(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">${t('Copy to...')}</option>${opts}</select>
-                    <div class="glass-card flex flex-col items-center justify-center h-14 rounded-xl border border-white/10 bg-white/5"><i data-lucide="copy" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Copy')}</span></div>
-                </div>
-                ${!day.isRest ? `<button onclick="window.appActions.clearDay()" class="w-full glass-card flex flex-col items-center justify-center h-14 rounded-xl text-red-400 border border-red-500/20 bg-red-500/10 z-10 relative tap-feedback"><i data-lucide="trash-2" class="w-4 h-4"></i><span class="text-[8px] font-black uppercase tracking-widest mt-1">${t('Clear')}</span></button>` : ''}
+            <div class="flex gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 pb-1 mb-5">
+                <button onclick="window.appActions.openPrograms()" class="${pill} shrink-0 bg-[#d4af37]/10 border-[#d4af37]/40 text-[#d4af37] tap-feedback"><i data-lucide="layout-list" class="w-4 h-4"></i>${t('Programs')}</button>
+                ${selPill(`<select onchange="window.appActions.updateDayType(this.value)" class="absolute inset-0 w-full h-full opacity-0 z-10" aria-label="${esc(t('Day type'))}"><option value="workout" ${!day.isRest ? 'selected' : ''}>${t('Workout')}</option><option value="active" ${day.isRest && day.recoveryType === 'active' ? 'selected' : ''}>${t('Active Rest')}</option><option value="complete" ${day.isRest && day.recoveryType === 'complete' ? 'selected' : ''}>${t('Complete Rest')}</option></select>`, 'settings-2', t('Day type'))}
+                ${selPill(`<select onchange="if(this.value){window.appActions.swapDay(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10" aria-label="${esc(t('Swap'))}"><option value="">${t('Swap...')}</option>${opts}</select>`, 'arrow-left-right', t('Swap'))}
+                ${selPill(`<select onchange="if(this.value){window.appActions.copyDay(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10" aria-label="${esc(t('Copy'))}"><option value="">${t('Copy to...')}</option>${opts}</select>`, 'copy', t('Copy'))}
+                ${!day.isRest && day.exercises.length ? `<button onclick="window.appActions.clearDay()" class="${pill} shrink-0 bg-red-500/10 border-red-500/25 text-red-400 tap-feedback"><i data-lucide="trash-2" class="w-4 h-4"></i>${t('Clear')}</button>` : ''}
             </div>`;
             
             // GLOBAL SETS & REPS EDITOR
             if (!day.isRest && day.exercises.length > 0) {
                 html += `
-                <div class="px-2 mb-4">
-                    <div class="glass-card p-4 flex items-center justify-between gap-2 shadow-lg border border-[#d4af37]/30 bg-[#d4af37]/5">
-                        <div class="text-[10px] font-black uppercase text-[#d4af37] tracking-widest flex items-center"><i data-lucide="copy" class="w-3.5 h-3.5 me-1"></i> ${t('Edit All')}</div>
+                <div class="mb-4">
+                    <div class="rounded-2xl px-4 py-3 flex items-center justify-between gap-2 border border-white/10 bg-white/[0.03]">
+                        <div class="text-[11px] font-black text-slate-300 leading-tight min-w-0">${t('Same for all')}</div>
                         <div class="flex items-center gap-2">
                             <input type="text" id="global-sets" placeholder="${t('Sets')}" class="w-[72px] placeholder:text-[11px] bg-black/40 text-white text-[14px] font-bold text-center rounded-lg py-2 border border-white/10 outline-none focus:border-[#d4af37]">
                             <input type="text" id="global-reps" placeholder="${t('Reps')}" class="w-[72px] placeholder:text-[11px] bg-black/40 text-white text-[14px] font-bold text-center rounded-lg py-2 border border-white/10 outline-none focus:border-[#d4af37]">
@@ -1474,15 +1523,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     if (window.appState.inlineEdit === i) return inlineEditHTML(i, ex);
                     // Compact row: tap it to edit sets/reps in place, ⇄ to swap, 🗑 to delete (with undo)
                     return `
-                        <div class="glass-card p-3 flex items-center gap-2 relative mb-3">
-                            <div class="handle p-2 -ms-1 text-slate-500 flex items-center justify-center cursor-grab active:cursor-grabbing hover:text-white touch-none"><i data-lucide="grip-vertical" class="w-5 h-5 pointer-events-none"></i></div>
-                            <button onclick="window.appActions.openExEdit(${i})" class="flex-1 min-w-0 text-start tap-feedback">
-                                <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest truncate">${esc(tm(ex.muscle))}</div>
-                                <div class="ex-name text-[15px] font-black text-white leading-tight line-clamp-2">${esc(ex.name)}</div>
+                        <div class="glass-card ps-1 pe-2 py-2.5 flex items-center gap-1.5 relative mb-2.5">
+                            <div class="handle p-2 text-slate-600 flex items-center justify-center cursor-grab active:cursor-grabbing hover:text-white touch-none" aria-label="${esc(t('Drag to reorder'))}"><i data-lucide="grip-vertical" class="w-5 h-5 pointer-events-none"></i></div>
+                            <button onclick="window.appActions.openExEdit(${i})" class="flex-1 min-w-0 text-start tap-feedback py-0.5">
+                                <span class="ex-name block text-[15px] font-black text-white leading-tight">${esc(ex.name)}</span>
+                                <span class="flex items-center gap-1.5 mt-1 text-[11px] font-bold text-slate-400"><span class="truncate">${esc(tm(ex.muscle))}</span><span class="shrink-0 px-1.5 py-0.5 rounded-md bg-[#d4af37]/10 text-[#d4af37] font-black" dir="ltr">${esc(ex.sets)} × ${esc(ex.reps)}</span></span>
                             </button>
-                            <button onclick="window.appActions.openExEdit(${i})" class="shrink-0 bg-black/40 border border-white/10 rounded-lg px-2.5 py-1.5 text-[12px] font-black text-white tap-feedback" dir="ltr">${esc(ex.sets)} × ${esc(ex.reps)}</button>
-                            <button onclick="window.appActions.openPicker('replace', ${i})" class="shrink-0 p-2 text-slate-400 bg-white/5 rounded-lg border border-white/10 tap-feedback" aria-label="${esc(t('Swap exercise'))}"><i data-lucide="arrow-left-right" class="w-4 h-4"></i></button>
-                            <button onclick="window.appActions.deleteEx(${i})" class="shrink-0 p-2 text-red-400 bg-red-500/10 rounded-lg border border-red-500/20 tap-feedback" aria-label="${esc(t('Delete'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <button onclick="window.appActions.openPicker('replace', ${i})" class="shrink-0 w-9 h-9 flex items-center justify-center text-slate-400 rounded-full hover:bg-white/5 tap-feedback" aria-label="${esc(t('Swap exercise'))}"><i data-lucide="arrow-left-right" class="w-4 h-4"></i></button>
+                            <button onclick="window.appActions.deleteEx(${i})" class="shrink-0 w-9 h-9 flex items-center justify-center text-red-400/80 rounded-full hover:bg-red-500/10 tap-feedback" aria-label="${esc(t('Delete'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>`;
                 }).join('')}</div>`;
                 html += `<div class="px-2 mt-4 mb-10 flex gap-2"><button onclick="window.appActions.openPicker('add')" class="flex-1 glass-card p-4 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[12px] tap-feedback border-dashed border-[#d4af37]/40 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button></div>`;
@@ -1490,7 +1538,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         
         
 
-        document.getElementById('workout-container').innerHTML = html;
+        document.getElementById('workout-container').innerHTML = `<div class="${enterClass()}">${html}</div>`;
         if(!day.isRest && day.exercises.length > 0 && window.Sortable) {
             const listEl = document.getElementById('sortable-list');
             if (listEl) {
@@ -1506,7 +1554,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         showToast: (m, type='success', action=null) => {
             const c = document.getElementById('toast-container'); c.innerHTML=''; const d=document.createElement('div'), iS=type==='success', cS=iS?'text-[#22c55e]':'text-red-400', bS=iS?'bg-[#22c55e]/10 border-[#22c55e]/20':'bg-red-500/10 border-red-500/20';
             d.className=`glass-card p-4 flex items-center gap-3 border shadow-2xl transform translate-y-full opacity-0 transition-all duration-500 mt-2 ${bS} backdrop-blur-3xl pointer-events-auto`;
-            d.innerHTML=`<i data-lucide="${iS?'check-circle':'alert-circle'}" class="w-5 h-5 shrink-0 ${cS}"></i><span class="text-[12px] font-black uppercase tracking-widest flex-1">${esc(m)}</span>${action ? `<button class="shrink-0 px-3 py-1.5 rounded-lg bg-white/10 text-white text-[11px] font-black uppercase tracking-widest tap-feedback">${esc(action.label)}</button>` : ''}`;
+            d.innerHTML=`<i data-lucide="${iS?'check-circle':'alert-circle'}" class="w-5 h-5 shrink-0 ${cS}"></i><span class="text-[13px] font-bold text-white leading-snug flex-1">${esc(m)}</span>${action ? `<button class="shrink-0 px-3 py-1.5 rounded-lg bg-white/10 text-white text-[11px] font-black uppercase tracking-widest tap-feedback">${esc(action.label)}</button>` : ''}`;
             if (action) d.querySelector('button').onclick = () => { action.fn(); d.remove(); };
             c.appendChild(d); if(window.lucide) window.lucide.createIcons({root:d}); void d.offsetWidth; d.classList.remove('translate-y-full','opacity-0');
             setTimeout(()=>{if(c.contains(d)){d.classList.add('opacity-0','translate-y-full');setTimeout(()=>{if(c.contains(d))d.remove();},500);}}, action ? 5000 : 3500);
@@ -1514,10 +1562,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         showConfirm: (title, m, ok, dng=false) => {
             const y = document.getElementById('confirm-yes-btn');
             document.getElementById('confirm-title').innerText=title; document.getElementById('confirm-message').innerText=m;
-            y.className=`flex-1 glass-card py-3.5 text-[11px] font-black uppercase tracking-widest shadow-lg ${dng?'text-white bg-red-500/80 border-red-500/50 shadow-red-500/20':'text-black bg-[#d4af37] border-none shadow-[#d4af37]/20'}`;
+            y.className=`flex-1 rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest shadow-lg tap-feedback ${dng?'text-white bg-red-500 shadow-red-500/20':'text-black bg-[#d4af37] shadow-[#d4af37]/20'}`;
             document.getElementById('confirm-icon').innerHTML=`<i data-lucide="${dng?'alert-octagon':'alert-triangle'}" class="w-6 h-6 ${dng?'text-red-500':'text-[#d4af37]'}"></i>`;
             if(window.lucide) window.lucide.createIcons({root: document.getElementById('confirm-icon')});
-            const nY = y.cloneNode(true); y.parentNode.replaceChild(nY,y); nY.onclick=()=>{window.appActions.closeConfirm();setTimeout(ok,200);};
+            const nY = y.cloneNode(true); y.parentNode.replaceChild(nY,y); nY.onclick=()=>{nY.onclick=null;window.appActions.closeConfirm();setTimeout(ok,200);}; // runs once, even on a double tap
             openModal('custom-confirm-overlay','custom-confirm-box');
             pushBack('confirm', () => window.appActions.closeConfirm());
         },
@@ -1565,11 +1613,11 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         skipCheckIn: () => { window.appState.ciSkipped = dateKey(); renderWorkout(); },
         refreshUI: () => renderWorkout(),
         openHistoryModal: (k, title) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=title; const hw=document.getElementById('history-howto'); if(hw) hw.href=`https://www.youtube.com/results?search_query=${encodeURIComponent(title+' exercise form')}`; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); pushBack('history', () => window.appActions.closeHistoryModal()); },
-        closeHistoryModal: () => { popBack('history'); const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{o.classList.add('hidden');o.classList.remove('flex');},300); },
+        closeHistoryModal: () => { popBack('history'); const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{if(o.classList.contains('opacity-0')){o.classList.add('hidden');o.classList.remove('flex');}},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
         refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-500 text-[12px] font-bold uppercase tracking-widest">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('WEEK {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-[2px] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
          html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[10px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[10px] text-slate-400">${t('KG')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">${h.u==='s'?t('SEC'):t('REPS')}</span></span>`:''}`}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=exerciseStatsHTML(hA)+html; bindCharts(c); if(window.lucide) window.lucide.createIcons({root:c}); },
-        deleteHistoryRecord: (k, i) => window.appActions.showConfirm(t("Delete Record"), t("Remove this record?"), () => { let h=StorageManager.getHistory(); if(h[k]){h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast(t("Deleted"),"error");} }, true),
+        deleteHistoryRecord: (k, i) => window.appActions.showConfirm(t("Delete Record"), t("Remove this record?"), () => { let h=StorageManager.getHistory(); if(h[k]&&h[k][i]){const dl=getDeleted(); dl[k]=[...(dl[k]||[]), logSig(h[k][i])].slice(-200); setDeleted(dl); h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast(t("Deleted"),"error");} }, true),
         handleTyping: (k, type, v) => { 
             if (type === 'load') { loggedWeights[k] = v; StorageManager.set(loggedWeights); } 
             else { loggedReps[k] = v; StorageManager.setReps(loggedReps); }
@@ -1580,7 +1628,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         startWorkout: (dayId = activeDay, restore = null) => {
             const S0 = window.appState.sess;
             if (S0 && !restore) {
-                if (S0.dayId === dayId) return window.appActions.expandSession();
+                if (S0.dayId === dayId && (!S0.weekId || S0.weekId === currentWeekId)) return window.appActions.expandSession();
                 if (sessionHasData()) return window.appActions.showConfirm(t('Discard current session?'), t('Unsaved sets for {name} will be lost.', { name: t(S0.title) }), () => { window.appActions.discardSession(); window.appActions.startWorkout(dayId); }, true);
                 window.appActions.discardSession();
             }
@@ -1589,7 +1637,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const history = StorageManager.getHistory();
             const easy = dayId === getTodayId() && (getReadinessToday() || {}).level === 'low';
             const S = window.appState.sess = restore ? { ...restore } : {
-                dayId, title: day.title, startedAt: Date.now(),
+                dayId, title: day.title, startedAt: Date.now(), weekId: currentWeekId, showRpe: StorageManager.getShowRpe(),
                 exercises: day.exercises.map((ex, i) => {
                     const k = getExKey(currentWeekId, dayId, i, ex.name), hA = history[k] || [];
                     const sg = suggestionFor(hA, ex, easy), last = getLastSession(hA);
@@ -1613,7 +1661,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         renderSession: (rows = null) => {
             const S = window.appState.sess; if (!S) return;
-            const showRpe = StorageManager.getShowRpe();
+            if (typeof S.showRpe !== 'boolean') S.showRpe = StorageManager.getShowRpe();
+            const showRpe = S.showRpe;
             S.cols = showRpe ? '28px minmax(0,1fr) 64px 56px 48px 42px' : '28px minmax(0,1fr) 72px 64px 44px';
             S.rowSeq = 0; // rows are numbered from 1 again every time the table is built
             document.getElementById('aw-title').innerText = t(S.title);
@@ -1654,7 +1703,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const S = window.appState.sess; if (!S) return;
             const all = document.querySelectorAll('#aw-sets-container .aw-row'), done = document.querySelectorAll('#aw-sets-container .aw-row[data-done="1"]');
             const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
-            document.getElementById('aw-info').innerHTML = `<div class="w-full"><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('{n} exercises', { n: S.exercises.length })}</span><span class="text-white" dir="ltr">${done.length} / ${all.length} ${t('sets')}</span></div><div class="w-full h-2 bg-black/60 rounded-full overflow-hidden"><div class="h-full bg-[#22c55e] rounded-full transition-all" style="width:${pct}%"></div></div></div>`;
+            const old = document.getElementById('aw-progress-fill'), prevPct = old ? parseFloat(old.style.width) || 0 : pct;
+            document.getElementById('aw-info').innerHTML = `<div class="w-full"><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('{n} exercises', { n: S.exercises.length })}</span><span class="text-white" dir="ltr">${done.length} / ${all.length} ${t('sets')}</span></div><div class="w-full h-2 bg-black/60 rounded-full overflow-hidden"><div id="aw-progress-fill" class="bar-fill h-full bg-[#22c55e] rounded-full" style="width:${prevPct}%"></div></div></div>`;
+            const fill = document.getElementById('aw-progress-fill'); void fill.offsetWidth; fill.style.width = pct + '%';
         },
         // Adds one set row to exercise e
         addSetRow: (e, r = null, building = false) => {
@@ -1666,13 +1717,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             S.rowSeq = (S.rowSeq || 0) + 1;
             const i = S.rowSeq, n = ex.offset + rowsNow.length + 1, prev = prevSets[n - 1];
             const ph = ex.sg ? ex.pr : prev ? prev.r : ex.pr;
-            const showRpe = StorageManager.getShowRpe();
+            const showRpe = S.showRpe;
             const inCls = 'w-full h-11 rounded-lg bg-black/50 border border-white/10 text-center text-[16px] font-black text-white outline-none focus:border-[#d4af37] placeholder:text-slate-600 placeholder:font-bold';
             box.insertAdjacentHTML('beforeend', `
                 <div class="aw-row grid items-center gap-1.5 px-2 py-1 rounded-xl transition-colors ${r.done ? 'bg-[#22c55e]/10' : ''}" data-i="${i}" data-e="${e}" data-done="${r.done ? 1 : 0}" id="aw-row-${i}" dir="ltr" style="grid-template-columns:${S.cols}">
                     <span class="w-7 h-7 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center" id="aw-num-${i}">${n}</span>
                     <button type="button" onclick="window.appActions.copyPrev(${i})" data-w="${prev ? prev.w : ''}" data-r="${prev ? prev.r : ''}" class="text-start text-[12px] font-bold text-slate-500 truncate tap-feedback">${prev ? `${prev.w > 0 ? prev.w : t('BW')} × ${prev.r}${ex.timed ? 's' : ''}${prev.rpe ? ` @${prev.rpe}` : ''}` : '—'}</button>
-                    <input id="aw-w-${i}" type="number" inputmode="decimal" step="0.5" value="${esc(r.w)}" placeholder="${t('BW')}" oninput="window.appActions.sessionChanged()" class="${inCls} text-[#d4af37]">
+                    <input id="aw-w-${i}" type="number" inputmode="decimal" step="0.5" value="${esc(r.w)}" placeholder="${isBodyweight(ex.name) ? t('BW') : t('KG')}" oninput="window.appActions.sessionChanged()" class="${inCls} text-[#d4af37]">
                     <input id="aw-rep-${i}" type="number" inputmode="numeric" value="${esc(r.r)}" placeholder="${ph}" oninput="window.appActions.sessionChanged()" class="${inCls}">
                     ${showRpe ? `<select id="aw-rpe-${i}" onchange="window.appActions.sessionChanged()" class="${inCls} appearance-none text-[14px]"><option value="">–</option>${[6,7,8,9,10].map(x => `<option value="${x}" ${String(r.rpe) === String(x) ? 'selected' : ''}>${x}</option>`).join('')}</select>` : ''}
                     <button type="button" id="aw-done-${i}" onclick="window.appActions.completeSet(${i})" class="h-11 rounded-lg flex items-center justify-center tap-feedback border ${r.done ? 'bg-[#22c55e] border-[#22c55e] text-black' : 'bg-white/5 border-white/10 text-slate-400'}" aria-label="${esc(t('Done'))}"><i data-lucide="check" class="w-5 h-5"></i></button>
@@ -1708,6 +1759,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 else return window.appActions.showToast(t(window.appState.sess && window.appState.sess.exercises[Number(row.dataset.e)].timed ? "Enter seconds first" : "Enter reps first"), "error");
             }
             setDone(true);
+            const btn = document.getElementById(`aw-done-${i}`);
+            [btn, row].forEach(el => { if (el) { el.classList.remove('pop', 'row-flash'); void el.offsetWidth; } });
+            if (btn) btn.classList.add('pop'); row.classList.add('row-flash');
             if (navigator.vibrate) navigator.vibrate(30);
             window.appActions.updateSessionInfo();
             const next = [...document.querySelectorAll('#aw-sets-container .aw-row')].find(r => r.dataset.done !== '1');
@@ -1719,13 +1773,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         startRest: secs => {
             const S = window.appState.sess; if (!S) return;
-            window.appState.awRestEnd = Date.now() + secs * 1000; S.restOver = false;
+            window.appState.awRestEnd = Date.now() + secs * 1000; window.appState.awRestTotal = secs * 1000; S.restOver = false;
             const bar = document.getElementById('aw-rest');
-            bar.classList.remove('hidden'); bar.classList.add('flex');
+            if (bar.classList.contains('hidden')) { bar.classList.remove('hidden'); bar.classList.add('flex'); bar.classList.remove('slide-up'); void bar.offsetWidth; bar.classList.add('slide-up'); }
+            document.getElementById('aw-rest-time').classList.remove('rest-urgent');
             document.getElementById('aw-rest-label').innerText = t('Rest');
             window.appActions.sessionTick();
         },
-        restAdd: secs => { if (window.appState.awRestEnd) { window.appState.awRestEnd = Math.max(Date.now() + 1000, window.appState.awRestEnd + secs * 1000); window.appActions.sessionTick(); } },
+        restAdd: secs => { if (window.appState.awRestEnd) { window.appState.awRestEnd = Math.max(Date.now() + 1000, window.appState.awRestEnd + secs * 1000); window.appState.awRestTotal = Math.max(window.appState.awRestTotal || 0, window.appState.awRestEnd - Date.now()); window.appActions.sessionTick(); } },
         restSkip: () => {
             window.appState.awRestEnd = null;
             const bar = document.getElementById('aw-rest');
@@ -1741,10 +1796,12 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             let rest = null;
             if (window.appState.awRestEnd) {
                 const left = Math.ceil((window.appState.awRestEnd - Date.now()) / 1000);
-                if (left > 0) { rest = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`; document.getElementById('aw-rest-time').innerText = rest; }
+                const rt = document.getElementById('aw-rest-time'), rb = document.getElementById('aw-rest-bar');
+                if (rb) rb.style.width = `${Math.max(0, Math.min(100, (window.appState.awRestEnd - Date.now()) / (window.appState.awRestTotal || 1) * 100))}%`;
+                if (left > 0) { rest = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`; rt.innerText = rest; rt.classList.toggle('rest-urgent', left <= 3); }
                 else if (!S.restOver) {
                     S.restOver = true;
-                    document.getElementById('aw-rest-label').innerText = t('Rest over'); document.getElementById('aw-rest-time').innerText = t('GO!');
+                    document.getElementById('aw-rest-label').innerText = t('Rest over'); rt.innerText = t('GO!'); rt.classList.remove('rest-urgent'); rt.classList.add('pop');
                     if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
                     setTimeout(() => { if (window.appState.sess === S && S.restOver) window.appActions.restSkip(); }, 4000);
                 }
@@ -1797,9 +1854,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             else window.appActions.discardSession();
         },
         // Finish: save every filled set, then show the summary
-        finishActiveWorkout: () => {
+        finishActiveWorkout: (confirmed = false) => {
             const S = window.appState.sess; if (!S) return;
-            const filled = sessionRows().filter(x => parseInt(x.r) > 0 && S.exercises[x.e]);
+            const rows = sessionRows().filter(x => S.exercises[x.e]), filled = rows.filter(x => parseInt(x.r) > 0);
             if (!filled.length) return window.appActions.showToast(t("Enter reps for at least 1 set"), "error");
             // a weighted exercise needs a KG (type 0 for bodyweight)
             const bad = filled.find(x => x.w === '' && !isBodyweight(S.exercises[x.e].name));
@@ -1807,7 +1864,11 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 const row = document.getElementById(`aw-row-${bad.i}`); if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return window.appActions.showToast(t('Enter KG for every set (0 = bodyweight)'), 'error');
             }
-            const h = StorageManager.getHistory(), n = new Date();
+            // some sets still empty: make sure that's on purpose
+            const left = rows.length - filled.length;
+            if (left > 0 && confirmed !== 'yes') return window.appActions.showConfirm(t('Finish workout?'), t('{n} sets are still empty. Only the sets you did will be saved.', { n: left }), () => window.appActions.finishActiveWorkout('yes'));
+            // dated when the workout started (a session that runs past midnight stays on its own day)
+            const h = StorageManager.getHistory(), n = new Date(S.startedAt || Date.now()), wkId = S.weekId || currentWeekId;
             const duration = Math.floor((Date.now() - S.startedAt) / 1000);
             let sets = 0, volume = 0; const prs = [];
             S.exercises.forEach((ex, e) => {
@@ -1827,15 +1888,15 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     d: formatLogDate(n),   // text date (for display and older app versions)
                     ts: n.getTime(),       // exact time (used for all date calculations)
                     w, s: reps, time: fmtClock(duration),
-                    week: (appData.weeks.find(x => x.id === currentWeekId) || {}).name || 'Routine',
-                    weekId: currentWeekId, // which routine this was logged in
+                    week: (appData.weeks.find(x => x.id === wkId) || {}).name || 'Routine',
+                    weekId: wkId,          // which routine this was logged in
                     dayId: S.dayId         // which day of the routine this was logged for
                 };
                 if (ex.timed) entry.u = 's';
                 if (ws.some(x => x !== w)) entry.ws = ws; // only stored when weights differ per set
                 if (rpe.some(x => x !== null)) entry.rpe = rpe;
                 (h[ex.k] = h[ex.k] || []).push(entry);
-                if (h[ex.k].length > 150) h[ex.k] = h[ex.k].slice(-150);
+                if (h[ex.k].length > HIST_CAP) h[ex.k] = h[ex.k].slice(-HIST_CAP);
                 loggedWeights[ex.k] = w === '0' ? '' : w;
             });
             StorageManager.setHistory(h); StorageManager.set(loggedWeights);
@@ -1847,18 +1908,37 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         showSummary: ({ title, duration, sets, volume, prs }) => {
             document.getElementById('summary-title').innerText = `${t(title)} · ${fmtDate(Date.now(), false)}`;
-            const stat = (v, l) => `<div class="bg-white/5 rounded-xl py-3"><div class="text-[18px] font-black text-white" dir="ltr">${v}</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${l}</div></div>`;
-            document.getElementById('summary-stats').innerHTML = stat(fmtClock(duration), t('Time')) + stat(sets, t('sets')) + stat(`${Math.round(volume).toLocaleString('en-US')}`, t('kg lifted'));
+            const stat = (v, l, count) => `<div class="bg-white/5 rounded-xl py-3"><div class="text-[18px] font-black text-white tabular-nums" dir="ltr" ${count !== undefined ? `data-count="${count}"` : ''}>${v}</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${l}</div></div>`;
+            document.getElementById('summary-stats').innerHTML = stat(fmtClock(duration), t('Time')) + stat(0, t('sets'), sets) + stat(0, t('kg lifted'), Math.round(volume));
             document.getElementById('summary-prs').innerHTML = prs.length
                 ? `<div class="text-[11px] font-black text-[#d4af37] uppercase tracking-widest mb-2">🏆 ${t('New records')}</div>` + prs.map(x => `<div class="flex justify-between gap-2 py-2 border-b border-white/5 last:border-0"><span class="ex-name text-[13px] font-bold text-white truncate">${esc(x.name)}</span><span class="text-[13px] font-black text-[#22c55e] shrink-0" dir="ltr">${x.w}kg (+${x.plus})</span></div>`).join('')
                 : '';
             openModal('summary-overlay', 'summary-box');
             pushBack('summary', () => window.appActions.closeSummary());
+            // trophy bounces in, the numbers count up, and new records get a burst of gold
+            const box = document.getElementById('summary-box'), tr = box.querySelector('.summary-trophy');
+            if (tr) { tr.classList.remove('trophy-in'); void tr.offsetWidth; tr.classList.add('trophy-in'); }
+            const nums = document.querySelectorAll('#summary-stats [data-count]'), t0 = performance.now();
+            const step = now => { const k = Math.min(1, (now - t0) / 800), e = 1 - Math.pow(1 - k, 3); nums.forEach(el => { el.textContent = Math.round(Number(el.dataset.count) * e).toLocaleString('en-US'); }); if (k < 1) requestAnimationFrame(step); };
+            requestAnimationFrame(step);
+            box.querySelectorAll('.confetti').forEach(c => c.remove());
+            if (prs.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                const colors = ['#d4af37', '#22c55e', '#ffffff', '#f5d76e'];
+                for (let k = 0; k < 28; k++) {
+                    const c = document.createElement('span'), a = Math.random() * Math.PI * 2, d = 90 + Math.random() * 120;
+                    c.className = 'confetti'; c.style.background = colors[k % colors.length];
+                    c.style.setProperty('--x', `${Math.cos(a) * d}px`); c.style.setProperty('--y', `${Math.sin(a) * d - 40}px`); c.style.setProperty('--r', `${Math.random() * 720 - 360}deg`);
+                    c.style.animationDelay = `${0.25 + Math.random() * 0.15}s`; c.style.top = '64px';
+                    box.appendChild(c); setTimeout(() => c.remove(), 1700);
+                }
+            }
         },
         closeSummary: () => { popBack('summary'); closeModal('summary-overlay', 'summary-box'); },
         applyGlobalSetsReps: () => {
-            const s = document.getElementById('global-sets').value;
-            const r = document.getElementById('global-reps').value;
+            let s = latinDigits(document.getElementById('global-sets').value).trim();
+            const r = latinDigits(document.getElementById('global-reps').value).trim().slice(0, 20);
+            if (s && !(parseInt(s) > 0)) return window.appActions.showToast(t("Enter Sets or Reps"), "error");
+            if (s) s = String(Math.min(10, parseInt(s)));
             if (!s && !r) return window.appActions.showToast(t("Enter Sets or Reps"), "error");
             const d = getActiveSchedule().find(x => x.id === activeDay);
             d.exercises.forEach(ex => {
@@ -1869,7 +1949,11 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             renderWorkout();
             window.appActions.showToast(t("Updated all exercises"), "success");
         },
-        updateStartOfWeek: v => { const aD=DAY_NAMES, idx=aD.indexOf(v); if(idx===-1)return; StorageManager.setStartDay(v); appData.weeks.forEach(w=>w.schedule.forEach((d,i)=>d.day=aD[(idx+i)%7])); StorageManager.setPlan(appData); activeDay=getTodayId(); const s=document.getElementById('setting-start-day'); if(s)s.value=v; renderNav(false); renderWorkout(); setTimeout(()=>window.appActions.showToast(t('Week starts on {d}', { d: tDay(v) }),"success"),300); },
+        // Settings → Week starts on (see setWeekStart)
+        updateStartOfWeek: v => {
+            if (!setWeekStart(v)) return;
+            activeDay=getTodayId(); const s=document.getElementById('setting-start-day'); if(s)s.value=v; renderNav(false); renderWorkout(); setTimeout(()=>window.appActions.showToast(t('Week starts on {d}', { d: tDay(v) }),"success"),300);
+        },
         swapDay: tId => { const s=getActiveSchedule(), d1=s.find(d=>d.id===activeDay), d2=s.find(d=>d.id===tId); if(!d1||!d2)return; const tT=d1.title, tE=JSON.stringify(d1.exercises), tIR=d1.isRest, tRT=d1.recoveryType, tST=d1.savedTitle; d1.title=d2.title; d1.exercises=JSON.parse(JSON.stringify(d2.exercises||[])); d1.isRest=d2.isRest; d1.recoveryType=d2.recoveryType; d1.savedTitle=d2.savedTitle; d2.title=tT; d2.exercises=JSON.parse(tE||'[]'); d2.isRest=tIR; d2.recoveryType=tRT; d2.savedTitle=tST; StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },
         updateDayTitle: v => { getActiveSchedule().find(d=>d.id===activeDay).title=v.trim()||'New Day'; StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },
         updateDayType: v => { const d=getActiveSchedule().find(x=>x.id===activeDay); if(v==='workout'){d.isRest=false; d.recoveryType=null; d.title=d.savedTitle||'New Workout'; if(!d.exercises)d.exercises=[];}else{if(!d.isRest)d.savedTitle=d.title; d.isRest=true; d.recoveryType=v; d.title=v==='active'?'Active Rest':'Complete Rest';} StorageManager.setPlan(appData); renderWorkout(); renderNav(false); },        // Delete straight away, with an Undo button for a few seconds
@@ -1962,7 +2046,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         pickerConfirm: () => {
             const P = window.appState.picker, d = getActiveSchedule().find(x => x.id === activeDay);
             if (!P.sel.length) return;
-            P.sel.forEach(x => d.exercises.push(newExercise(x.name, x.muscle)));
+            const picked = P.sel; P.sel = []; // a double tap can't add them twice
+            picked.forEach(x => d.exercises.push(newExercise(x.name, x.muscle)));
             // Give an unnamed day a name from its muscles, e.g. "Chest & Triceps"
             if (!d.title || !d.title.trim() || d.title === 'New Day' || d.title === t('New Day')) {
                 const ms = [...new Set(d.exercises.map(e => tm(e.muscle)))].slice(0, 2);
@@ -1970,7 +2055,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 d.savedTitle = d.title;
             }
             StorageManager.setPlan(appData);
-            const n = P.sel.length;
+            const n = picked.length;
             window.appActions.closePicker(); renderWorkout(); renderNav(false);
             window.appActions.showToast(n === 1 ? t('1 exercise added') : t('{n} exercises added', { n }), 'success');
         },
@@ -1993,7 +2078,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             StorageManager.setPlan(appData); renderWorkout();
         },
         exEditReps: v => {
-            v = (v || '').trim(); if (!v) return;
+            v = latinDigits(v).trim(); if (!v) return;
             getActiveSchedule().find(x => x.id === activeDay).exercises[window.appState.inlineEdit].reps = v.slice(0, 20);
             StorageManager.setPlan(appData); renderWorkout();
         },
@@ -2001,7 +2086,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         switchTab: tab => {
             if (tab === 'workout') tab = 'today'; if (tab === 'analytics') tab = 'progress';
             window.appState.inlineEdit = null; window.appState.currentView = tab;
+            const prevTab = document.querySelector('.tab-btn.text-\\[\\#d4af37\\]');
             ['today', 'plan', 'progress', 'profile'].forEach(v => { const b = document.getElementById('tabbtn-' + v); if (b) b.className = `tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative ${v === tab ? 'text-[#d4af37]' : 'text-slate-500'}`; });
+            const ic = document.querySelector(`#tabbtn-${tab} svg`);
+            if (ic && (!prevTab || prevTab.id !== 'tabbtn-' + tab)) { ic.classList.remove('hop'); void ic.getBoundingClientRect(); ic.classList.add('hop'); }
             document.getElementById('nav-container').style.display = (tab === 'today' || tab === 'plan') ? '' : 'none';
             document.getElementById('plan-routines').classList.toggle('hidden', tab !== 'plan');
             document.getElementById('profile-view').classList.toggle('hidden', tab !== 'profile');
@@ -2015,8 +2103,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         switchWeek: id => { currentWeekId=id; StorageManager.setActiveWeek(id); activeDay=getTodayId(); window.appState.inlineEdit=null; renderNav(); renderWorkout(); },
         setActiveDay: id => { window.appState.inlineEdit=null; activeDay=id; renderNav(); renderWorkout(); },
         toggleRpe: v => { StorageManager.setShowRpe(v); window.appActions.showToast(t(v ? 'RPE column on' : 'RPE column off'), 'success'); },
-        openBackupModal: () => { openModal('smart-backup-overlay','smart-backup-box'); },
-        closeBackupModal: () => closeModal('smart-backup-overlay','smart-backup-box'),
+        openBackupModal: () => { openModal('smart-backup-overlay','smart-backup-box'); pushBack('backup', () => window.appActions.closeBackupModal()); },
+        closeBackupModal: () => { popBack('backup'); closeModal('smart-backup-overlay','smart-backup-box'); },
         executeSmartBackup: () => {
             const doProg = document.getElementById('backup-opt-progress').checked;
             const doSched = document.getElementById('backup-opt-schedule').checked;
@@ -2069,13 +2157,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     document.getElementById('restore-opt-schedule').disabled = !d.p;
                     document.getElementById('restore-opt-settings').checked = false;
                     document.getElementById('restore-opt-settings').disabled = !d.s;
-                    openModal('smart-restore-overlay','smart-restore-box');
+                    openModal('smart-restore-overlay','smart-restore-box'); pushBack('restore', () => window.appActions.closeRestoreModal());
                 } catch(err) { window.appActions.showToast(t("Invalid Backup file"),"error"); }
             };
             r.readAsText(f); e.target.value='';
         },
         closeRestoreModal: () => {
-            closeModal('smart-restore-overlay','smart-restore-box', 300, () => { window.appState.pendingRestoreData = null; });
+            popBack('restore'); closeModal('smart-restore-overlay','smart-restore-box', 300, () => { window.appState.pendingRestoreData = null; });
         },
         executeSmartRestore: () => {
             const d = window.appState.pendingRestoreData; if(!d) return;
@@ -2135,10 +2223,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 html += `<div class="bg-black/40 p-3 rounded-xl border border-white/5 mb-3 last:mb-0"><div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 pb-1 border-b border-white/5 flex justify-between items-center"><span class="truncate pe-2">${t('Old:')} ${esc(readable)}</span><span class="text-[8px] text-[#d4af37] bg-[#d4af37]/10 px-1.5 py-0.5 rounded shadow-sm shrink-0 border border-[#d4af37]/20">${esc(t(oldGroup.toUpperCase()))}</span></div><select id="map_${esc(oldKey)}" class="w-full bg-black/60 p-2.5 rounded-lg text-[12px] font-bold text-white outline-none cursor-pointer border border-white/10 tap-feedback">${opts}</select></div>`;
             });
             ml.innerHTML = html || `<div class="text-center text-[10px] font-bold text-slate-500 uppercase py-4">${t('No exercises found')}</div>`;
-            openModal('smart-mapping-overlay','smart-mapping-box');
+            openModal('smart-mapping-overlay','smart-mapping-box'); pushBack('mapping', () => window.appActions.closeMappingModal());
         },
         closeMappingModal: () => {
-            closeModal('smart-mapping-overlay','smart-mapping-box');
+            popBack('mapping'); closeModal('smart-mapping-overlay','smart-mapping-box');
         },
         executeMappedMerge: () => {
             const { d, doSched, doSet } = window.appState.mappingConfig;
@@ -2150,14 +2238,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     currW[newKey] = d.w[oldKey];
                     let oldHist = (d.h && d.h[oldKey]) || [];
                     if(oldHist.length > 0) {
-                        let mergedH = [...(currH[newKey] || []), ...oldHist];
-                        let unique = [];
-                        let seen = new Set();
-                        mergedH.forEach(item => {
-                            let str = `${item.d}_${item.w}`;
-                            if(!seen.has(str)) { seen.add(str); unique.push(item); }
-                        });
-                        currH[newKey] = unique;
+                        // both lists together, in date order, without duplicates (and without records you deleted)
+                        currH[newKey] = mergeLogs(currH[newKey], sanitizeHistory({ x: oldHist }).x || [], getDeleted()[newKey]);
+                        const newest = currH[newKey][currH[newKey].length - 1];
+                        if (newest) currW[newKey] = newest.w; // "last weight" = the newest log, not the backup's
                     }
                 }
             });
@@ -2179,7 +2263,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (doSet && d.s) { 
                 const aD=DAY_NAMES, idx=aD.indexOf(d.s);
                 if (d.rt) { StorageManager.setRestSeconds(d.rt); const rs = document.getElementById('setting-rest'); if (rs) rs.value = String(d.rt); }
-                if(idx!==-1){ StorageManager.setStartDay(d.s); appData.weeks.forEach(w=>w.schedule.forEach((dDay,i)=>dDay.day=aD[(idx+i)%7])); document.getElementById('setting-start-day').value = d.s; }
+                if(idx!==-1){ setWeekStart(d.s); document.getElementById('setting-start-day').value = d.s; }
                 count++; 
             }
             if (count > 0) { StorageManager.setPlan(appData); activeDay = getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Data Merged Successfully!"), "success"); }
@@ -2195,6 +2279,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 goal: pr.goal || null, days: pr.days || null, exp: pr.exp || null, eq: pr.eq || null, showAll: false };
             window.appActions.renderWizard();
             openModal('onboarding-overlay', 'onboarding-box');
+            // phone Back: previous question; on the first question it closes (the very first setup stays open)
+            const onBack = () => {
+                const W = window.appState.wiz;
+                if (W && W.step > 0) { window.appActions.wizBack(); pushBack('wizard', onBack); }
+                else if (W && !W.firstRun) closeModal('onboarding-overlay', 'onboarding-box', 300);
+                else pushBack('wizard', onBack);
+            };
+            pushBack('wizard', onBack);
         },
         renderWizard: () => {
             const W = window.appState.wiz, key = W.steps[W.step];
@@ -2245,10 +2337,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 writeItem(LANG_KEY, val);
                 if (val !== LANG) return location.reload(); // the setup continues in the chosen language
             } else if (key === 'start') {
-                const idx = DAY_NAMES.indexOf(val);
-                StorageManager.setStartDay(val);
-                appData.weeks.forEach(w => w.schedule.forEach((d, i) => d.day = DAY_NAMES[(idx + i) % 7]));
-                StorageManager.setPlan(appData);
+                setWeekStart(val);
                 const sel = document.getElementById('setting-start-day'); if (sel) sel.value = val;
                 activeDay = getTodayId();
             } else W[key] = val;
@@ -2259,10 +2348,16 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         wizBack: () => { const W = window.appState.wiz; if (W.step > 0) { W.step--; window.appActions.renderWizard(); } },
         wizPick: id => { window.appState.wiz.pick = id; window.appActions.renderWizard(); },
         // program = use the chosen program, own = start with empty days, skip = keep things as they are
-        wizFinish: mode => {
+        wizFinish: (mode, sure = false) => {
             const W = window.appState.wiz;
+            if (W.done) return; // double tap
+            // already 5 routines: the current one would be replaced, so ask first
+            if (!sure && !W.firstRun && mode !== 'skip' && appData.weeks.length >= 5)
+                return window.appActions.showConfirm(t('Replace current routine?'), t('You have 5 routines (the most). The current one will be replaced; your history is kept.'), () => window.appActions.wizFinish(mode, true), true);
+            W.done = true;
             writeItem(PROFILE_KEY, JSON.stringify({ goal: W.goal, days: W.days, exp: W.exp, eq: W.eq }));
             StorageManager.setOnboard();
+            popBack('wizard');
             closeModal('onboarding-overlay', 'onboarding-box', 300);
             if (mode === 'program') {
                 const id = W.pick || recommendProgram(W);
@@ -2278,6 +2373,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         // Put a program into the app: as a new routine (keeps your current one) or replacing the current one
         applyProgram: (id, { exp = (getProfile().exp || 'mid'), replace = false } = {}) => {
             const prog = PROGRAMS.find(p => p.id === id); if (!prog) return;
+            if (window.appState.programBusy === id) return; // double tap: add it only once
+            window.appState.programBusy = id; setTimeout(() => { if (window.appState.programBusy === id) window.appState.programBusy = null; }, 1000);
             const schedule = programSchedule(prog, exp);
             if (replace || appData.weeks.length >= 5) { const w = appData.weeks.find(x => x.id === currentWeekId); w.schedule = schedule; w.name = t(prog.name); }
             else { const wid = 'w_' + Date.now(); appData.weeks.push({ id: wid, name: t(prog.name), schedule }); currentWeekId = wid; StorageManager.setActiveWeek(wid); }
@@ -2386,11 +2483,12 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         renderNav(); renderWorkout();
     };
     // Combine two lists of logs without duplicates (same time, weight and reps = same log)
-    const logSig = l => `${logTime(l)}|${l.w}|${Array.isArray(l.s) ? l.s.join(',') : l.s}`;
-    const mergeLogs = (a, b) => {
-        const m = new Map(); [...(a || []), ...(b || [])].forEach(l => m.set(logSig(l), l));
-        return [...m.values()].sort((x, y) => (logTime(x) || 0) - (logTime(y) || 0)).slice(-150);
+    const mergeLogs = (a, b, del) => {
+        const gone = new Set(del || []), m = new Map();
+        [...(a || []), ...(b || [])].forEach(l => { const g = logSig(l); if (!gone.has(g)) m.set(g, l); });
+        return [...m.values()].sort((x, y) => (logTime(x) || 0) - (logTime(y) || 0)).slice(-HIST_CAP);
     };
+    const unionDel = (a, b) => [...new Set([...(a || []), ...(b || [])])].slice(-200);
     const histPath = (uid, k) => `users/${uid}/history/${encodeURIComponent(k)}`;
 
     // First time on this phone: merge the phone's workouts with the cloud's, then keep both in step
@@ -2402,12 +2500,15 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         try {
             const uid = user.uid;
             const [snap, hs] = await Promise.all([Cloud.db.doc(`users/${uid}`).get(), Cloud.db.collection(`users/${uid}/history`).get()]);
-            const cloudHist = {};
-            hs.forEach(d => { const x = d.data(); if (x && Array.isArray(x.logs)) cloudHist[decodeURIComponent(d.id)] = x.logs; });
-            // workouts: keep everything from both sides
-            const local = StorageManager.getHistory(), clean = sanitizeHistory(cloudHist), merged = { ...local };
-            Object.keys(clean).forEach(k => { merged[k] = mergeLogs(local[k], clean[k]); });
-            Cloud.applying = true; StorageManager.setHistory(merged); Cloud.applying = false;
+            const cloudHist = {}, cloudDel = {};
+            hs.forEach(d => { const x = d.data(), k = decodeURIComponent(d.id); if (x && Array.isArray(x.logs)) cloudHist[k] = x.logs; if (x && Array.isArray(x.del)) cloudDel[k] = x.del.map(String); });
+            const clean = sanitizeHistory(cloudHist);
+            // a different account was used on this phone before: its workouts are already in that account, so start from this account's
+            const switched = !!prevUid && prevUid !== uid;
+            const local = switched ? {} : StorageManager.getHistory(), merged = { ...local }, del = switched ? {} : getDeleted();
+            // workouts: keep everything from both sides (except records deleted on either side)
+            Object.keys(clean).forEach(k => { del[k] = unionDel(del[k], cloudDel[k]); merged[k] = mergeLogs(local[k], clean[k], del[k]); });
+            Cloud.applying = true; StorageManager.setHistory(merged); setDeleted(del); Cloud.applying = false;
             // routines + settings: the account wins on a new phone, otherwise the newest change wins
             if (snap.exists) {
                 const m = snap.data(), localU = Number(localStorage.getItem(LOCAL_UPDATED_KEY)) || 0;
@@ -2432,8 +2533,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const main = collectMain(), mj = JSON.stringify(main);
             if (mj !== Cloud.sent.main) { ops.push(['set', `users/${uid}`, { ...main, updatedAt: Number(localStorage.getItem(LOCAL_UPDATED_KEY)) || Date.now() }]); Cloud.sent.main = mj; }
             const h = StorageManager.getHistory();
-            Object.keys(h).forEach(k => { const j = JSON.stringify(h[k]); if (j !== Cloud.sent['h:' + k]) { ops.push(['set', histPath(uid, k), { logs: h[k], updatedAt: Date.now() }]); Cloud.sent['h:' + k] = j; } });
-            Object.keys(Cloud.sent).filter(x => x.startsWith('h:') && !(x.slice(2) in h)).forEach(x => { ops.push(['delete', histPath(uid, x.slice(2))]); delete Cloud.sent[x]; });
+            const del = getDeleted();
+            Object.keys(h).forEach(k => { const j = JSON.stringify(h[k]); if (j !== Cloud.sent['h:' + k]) { ops.push(['set', histPath(uid, k), { logs: h[k], del: del[k] || [], updatedAt: Date.now() }]); Cloud.sent['h:' + k] = j; } });
             if (ops.length) {
                 setCloudStatus(navigator.onLine === false ? 'offline' : 'syncing');
                 // weak gym signal: the change is already saved on the phone, it just hasn't reached the cloud yet
@@ -2457,17 +2558,23 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if ((m.updatedAt || 0) > localU) { applyMain(m); Cloud.sent.main = JSON.stringify(collectMain()); }
         }, e => console.warn(e)));
         Cloud.unsub.push(Cloud.db.collection(`users/${uid}/history`).onSnapshot(qs => {
-            const h = StorageManager.getHistory(); let changed = false;
+            const h = StorageManager.getHistory(), del = getDeleted(); let changed = false, delChanged = false, behind = false;
             qs.docChanges().forEach(ch => {
                 if (ch.doc.metadata.hasPendingWrites) return; // our own upload coming back
-                const k = decodeURIComponent(ch.doc.id), mine = JSON.stringify(h[k] || null), unsynced = h[k] && mine !== Cloud.sent['h:' + k];
-                if (ch.type === 'removed') { if (h[k] && !unsynced) { delete h[k]; changed = true; } delete Cloud.sent['h:' + k]; return; }
-                const logs = sanitizeHistory({ [k]: (ch.doc.data() || {}).logs })[k] || [];
-                const next = unsynced ? mergeLogs(h[k], logs) : logs;
+                const k = decodeURIComponent(ch.doc.id);
+                // removed in the cloud (account deleted elsewhere): the workouts on this phone stay
+                if (ch.type === 'removed') { delete Cloud.sent['h:' + k]; return; }
+                const data = ch.doc.data() || {}, logs = sanitizeHistory({ [k]: data.logs })[k] || [];
+                if (Array.isArray(data.del)) { const d2 = unionDel(del[k], data.del.map(String)); if (d2.length !== (del[k] || []).length) { del[k] = d2; delChanged = true; } }
+                // both lists together, so a phone that was behind can never erase workouts from another phone
+                const mine = JSON.stringify(h[k] || null), next = mergeLogs(h[k], logs, del[k]);
                 if (JSON.stringify(next) !== mine) { h[k] = next; changed = true; }
                 Cloud.sent['h:' + k] = JSON.stringify(logs);
+                if (JSON.stringify(next) !== JSON.stringify(logs)) behind = true; // the cloud is missing some of ours
             });
-            if (changed) { Cloud.applying = true; StorageManager.setHistory(h); Cloud.applying = false; refreshAfterCloud(); scheduleFlush(); }
+            if (changed || delChanged) { Cloud.applying = true; if (changed) StorageManager.setHistory(h); setDeleted(del); Cloud.applying = false; }
+            if (changed) refreshAfterCloud();
+            if (behind) scheduleFlush();
         }, e => console.warn(e)));
     };
     const cloudSignedOut = () => {
@@ -2558,6 +2665,22 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }, true)
     });
 
+    // 📱 iPhone home-screen app: some iOS versions give the app a screen that is shorter than the phone,
+    // leaving a black strip at the bottom. Measure the missing part and stretch the app down to the real edge (style.css uses --ios-gap).
+    const fixIosGap = () => {
+        let gap = 0;
+        const standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+        if (standalone && /iPhone|iPod/.test(navigator.userAgent)) {
+            const fullH = window.innerWidth < window.innerHeight ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+            gap = Math.round(fullH - window.innerHeight);
+            if (gap < 0 || gap > 100) gap = 0; // a bigger difference is the keyboard, not the bug
+        }
+        document.documentElement.style.setProperty('--ios-gap', gap + 'px');
+    };
+    fixIosGap();
+    window.addEventListener('resize', fixIosGap);
+    window.addEventListener('orientationchange', () => setTimeout(fixIosGap, 300));
+
     // Apply the language to the fixed parts of the page (index.html) and set right-to-left for Arabic
     const applyStaticLanguage = () => {
         document.documentElement.lang = LANG;
@@ -2578,12 +2701,15 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     (() => {
         const dr = readJSON(SESSION_KEY, null);
         const ok = isObj(dr) && Array.isArray(dr.exercises) && dr.exercises.length && Array.isArray(dr.rows)
-            && typeof dr.startedAt === 'number' && Date.now() - dr.startedAt < 12 * 3600000 && getActiveSchedule().some(d => d.id === dr.dayId);
+            && typeof dr.startedAt === 'number' && Date.now() - dr.startedAt < 72 * 3600000 && getActiveSchedule().some(d => d.id === dr.dayId);
         if (!ok) { clearSessionDraft(); return; }
         dr.exercises = dr.exercises.filter(isObj).slice(0, 40).map(x => ({ k: toStr(x.k), name: toStr(x.name), muscle: toStr(x.muscle), sets: parseInt(x.sets) || 1, repsStr: toStr(x.repsStr), timed: isTimed(toStr(x.repsStr)), offset: parseInt(x.offset) || 0, pw: toStr(x.pw), pr: parseInt(x.pr) || 8, sg: isObj(x.sg) && SUGG[x.sg.type] ? { type: x.sg.type, w: parseFloat(x.sg.w) || 0, r: parseInt(x.sg.r) || 0 } : null }));
         dr.rows = dr.rows.filter(isObj).slice(0, 200).map(r => ({ e: parseInt(r.e) || 0, w: toStr(r.w), r: toStr(r.r), rpe: toStr(r.rpe), done: r.done === true }));
         dr.title = toStr(dr.title);
+        if (typeof dr.weekId !== 'string' || !appData.weeks.some(w => w.id === dr.weekId)) dr.weekId = currentWeekId;
         window.appActions.startWorkout(dr.dayId, dr);
+        // forgot to tap Finish yesterday? keep the sets and remind instead of throwing them away
+        if (Date.now() - dr.startedAt > 6 * 3600000) setTimeout(() => window.appActions.showToast(t('You have an unfinished workout. Finish it to save your sets.'), 'error'), 800);
     })();
     document.getElementById('setting-start-day').value = StorageManager.getStartDay();
     const rpeEl = document.getElementById('setting-rpe');

@@ -6,7 +6,7 @@
 // - Outside files (Tailwind design, Google font): use the saved copy, refresh it in the background.
 //
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
-const CACHE = 'apex-lift-v3';
+const CACHE = 'apex-lift-v4';
 const APP_FILES = [
     './',
     'index.html',

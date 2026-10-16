@@ -30,8 +30,8 @@
             </div>
             <p id="confirm-message" class="text-[12px] font-bold text-slate-400 mb-6 leading-relaxed"></p>
             <div class="flex gap-3">
-                <button onclick="window.appActions.closeConfirm()" class="flex-1 glass-card py-3.5 text-[11px] font-black uppercase tracking-widest text-white border border-white/10 hover:bg-white/5 tap-feedback"><span data-i18n="Cancel">Cancel</span></button>
-                <button id="confirm-yes-btn" class="flex-1 glass-card py-3.5 text-[11px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-lg"><span data-i18n="Yes, Do it">Yes, Do it</span></button>
+                <button onclick="window.appActions.closeConfirm()" class="flex-1 rounded-xl bg-white/5 py-3.5 text-[12px] font-black uppercase tracking-widest text-white border border-white/10 tap-feedback"><span data-i18n="Cancel">Cancel</span></button>
+                <button id="confirm-yes-btn" class="flex-1 rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-lg"><span data-i18n="Yes, Do it">Yes, Do it</span></button>
             </div>
         </div>
     </div>
@@ -72,8 +72,16 @@
                 <button onclick="window.appActions.closeActiveWorkout()" class="w-10 h-10 shrink-0 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center tap-feedback" aria-label="Cancel"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div id="aw-info" class="px-4 pb-3 flex flex-wrap gap-2 shrink-0"></div>
-            <div id="aw-rest" class="hidden items-center justify-between mx-4 mb-3 px-4 py-3 rounded-2xl bg-[#22c55e]/10 border border-[#22c55e]/25 shrink-0">
-                <div class="flex items-center gap-2">
+            <div id="aw-scroll" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-3 pb-4">
+                <div id="aw-table-head" class="grid items-center gap-1.5 px-2 pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest"></div>
+                <div id="aw-sets-container" class="space-y-1.5"></div>
+                <p class="text-[10px] font-bold text-slate-500 leading-relaxed px-2 mt-3"><span data-i18n="Tap a previous set to copy it. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.">Tap a previous set to copy it. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.</span></p>
+                <div id="aw-next" class="mt-4"></div>
+            </div>
+            <div class="p-4 shrink-0 border-t border-white/5" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
+                <div id="aw-rest" class="hidden flex-col mb-3 rounded-2xl bg-[#22c55e]/10 border border-[#22c55e]/25 overflow-hidden">
+                    <div class="flex items-center justify-between px-4 py-3">
+                    <div class="flex items-center gap-2">
                     <i data-lucide="timer" class="w-5 h-5 text-[#22c55e]"></i>
                     <span id="aw-rest-label" class="text-[11px] font-black uppercase tracking-widest text-[#22c55e]"><span data-i18n="Rest">Rest</span></span>
                     <span id="aw-rest-time" class="text-2xl font-black text-white tabular-nums leading-none">1:30</span>
@@ -83,20 +91,13 @@
                     <button onclick="window.appActions.restAdd(15)" class="text-[11px] font-black text-white bg-white/10 px-2.5 py-1.5 rounded-lg tap-feedback">+15</button>
                     <button onclick="window.appActions.restSkip()" class="text-[11px] font-black uppercase text-slate-300 bg-white/5 px-2.5 py-1.5 rounded-lg tap-feedback"><span data-i18n="Skip">Skip</span></button>
                 </div>
-            </div>
-            <div id="aw-scroll" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-3 pb-4">
-                <div id="aw-table-head" class="grid items-center gap-1.5 px-2 pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest"></div>
-                <div id="aw-sets-container" class="space-y-1.5"></div>
-                <div class="flex gap-2 mt-3 px-1">
-                    <button onclick="window.appActions.addSetRow()" class="flex-1 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-slate-300 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i><span data-i18n="Add set">Add set</span></button>
-                    <button onclick="window.appActions.removeSetRow()" class="py-2.5 px-4 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-slate-400 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="minus" class="w-4 h-4"></i><span data-i18n="Remove set">Remove set</span></button>
+                    </div>
+                    <div class="h-1 bg-black/40"><div id="aw-rest-bar" class="h-full bg-[#22c55e]" style="width:100%"></div></div>
                 </div>
-                <p class="text-[10px] font-bold text-slate-500 leading-relaxed px-2 mt-3"><span data-i18n="Tap a previous set to copy it. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.">Tap a previous set to copy it. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.</span></p>
-                <div id="aw-next" class="mt-4"></div>
-            </div>
-            <div class="p-4 shrink-0 border-t border-white/5 flex gap-2" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
+                <div class="flex gap-2">
                 <button id="aw-finish-btn" onclick="window.appActions.finishActiveWorkout()" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback shadow-[0_0_20px_rgba(212,175,55,0.35)]">Save</button>
                 <button id="aw-next-btn" onclick="window.appActions.finishActiveWorkout(true)" class="hidden flex-1 py-4 rounded-2xl bg-white/10 text-white text-[13px] font-black uppercase tracking-widest tap-feedback items-center justify-center gap-2"><span data-i18n="Save & next">Save & next</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                </div>
             </div>
         </div>
     </div>
@@ -167,7 +168,7 @@
                 </label>
             </div>
             
-            <button onclick="window.appActions.executeSmartBackup()" class="w-full glass-card py-3.5 text-[11px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)]"><i data-lucide="download" class="w-4 h-4 inline mr-1 -mt-0.5"></i> <span data-i18n="Export Selected Data">Export Selected Data</span></button>
+            <button onclick="window.appActions.executeSmartBackup()" class="w-full rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)]"><i data-lucide="download" class="w-4 h-4 inline mr-1 -mt-0.5"></i> <span data-i18n="Export Selected Data">Export Selected Data</span></button>
         </div>
     </div>
     <div id="smart-restore-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 px-6">
@@ -208,7 +209,7 @@
                 </label>
             </div>
             
-            <button onclick="window.appActions.executeSmartRestore()" class="w-full glass-card py-3.5 text-[11px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)]"><i data-lucide="check-circle" class="w-4 h-4 inline mr-1 -mt-0.5"></i> <span data-i18n="Merge Selected Data">Merge Selected Data</span></button>
+            <button onclick="window.appActions.executeSmartRestore()" class="w-full rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)]"><i data-lucide="check-circle" class="w-4 h-4 inline mr-1 -mt-0.5"></i> <span data-i18n="Merge Selected Data">Merge Selected Data</span></button>
         </div>
     </div>
     <div id="smart-mapping-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 px-6">
@@ -225,7 +226,7 @@
             
             <div id="mapping-list" class="space-y-3 mb-6 overflow-y-auto flex-1 pr-2 rounded-xl"></div>
             
-            <button onclick="window.appActions.executeMappedMerge()" class="w-full glass-card py-3.5 text-[11px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)] shrink-0"><i data-lucide="check-circle" class="w-4 h-4 inline mr-1 -mt-0.5"></i> <span data-i18n="Confirm & Merge">Confirm & Merge</span></button>
+            <button onclick="window.appActions.executeMappedMerge()" class="w-full rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)] shrink-0"><i data-lucide="check-circle" class="w-4 h-4 inline mr-1 -mt-0.5"></i> <span data-i18n="Confirm & Merge">Confirm & Merge</span></button>
         </div>
     </div>
     <!-- Exercise picker (slides up from the bottom) -->
@@ -377,8 +378,8 @@
 
     <!-- Workout summary (after Finish) -->
     <div id="summary-overlay" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[9000] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 px-6">
-        <div id="summary-box" class="glass-card bg-[#111] p-6 w-full max-w-sm transform scale-95 transition-transform duration-300 border border-[#22c55e]/30 text-center">
-            <div class="w-16 h-16 rounded-full bg-[#22c55e] text-black flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(34,197,94,0.4)]"><i data-lucide="trophy" class="w-8 h-8"></i></div>
+        <div id="summary-box" class="relative glass-card bg-[#111] p-6 w-full max-w-sm transform scale-95 transition-transform duration-300 border border-[#22c55e]/30 text-center">
+            <div class="summary-trophy w-16 h-16 rounded-full bg-[#22c55e] text-black flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(34,197,94,0.4)]"><i data-lucide="trophy" class="w-8 h-8"></i></div>
             <h3 class="text-2xl font-black text-white mb-1" data-i18n="Workout complete!">Workout complete!</h3>
             <p id="summary-title" class="text-[12px] font-bold text-slate-400 mb-5"></p>
             <div id="summary-stats" class="grid grid-cols-3 gap-2 mb-4"></div>

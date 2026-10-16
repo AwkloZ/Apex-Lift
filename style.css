@@ -106,9 +106,71 @@ input[type="number"] {
 /* A minimized Log/Focus session bar sits at the bottom: keep room for it */
 /* Room for the bottom tab bar (and the minimized workout bar above it) */
 .scrollable-content { padding-bottom: calc(110px + env(safe-area-inset-bottom)) !important; }
-#toast-container { bottom: calc(80px + env(safe-area-inset-bottom)) !important; }
+#toast-container { bottom: calc(80px + env(safe-area-inset-bottom) - var(--ios-gap)) !important; }
 body.has-mini .scrollable-content { padding-bottom: calc(180px + env(safe-area-inset-bottom)) !important; }
-body.has-mini #toast-container { bottom: calc(150px + env(safe-area-inset-bottom)) !important; }
+body.has-mini #toast-container { bottom: calc(150px + env(safe-area-inset-bottom) - var(--ios-gap)) !important; }
+
+/* iPhone home-screen fix: --ios-gap is the strip iOS leaves empty at the bottom (0 everywhere else, set in app.js) */
+:root { --ios-gap: 0px; }
+body { height: calc(100dvh + var(--ios-gap)); }
+#tab-bar, .fixed.inset-0 { bottom: calc(0px - var(--ios-gap)) !important; }
+#aw-mini { bottom: calc(84px + env(safe-area-inset-bottom) - var(--ios-gap)) !important; }
+#active-workout-box { height: calc(94dvh + var(--ios-gap)) !important; }
+#picker-box { height: calc(85dvh + var(--ios-gap)) !important; }
 /* Number inputs in the sets table: no spin arrows */
 #aw-sets-container input::-webkit-outer-spin-button, #aw-sets-container input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 #aw-sets-container input[type=number] { -moz-appearance: textfield; }
+
+/* ===== Motion =====
+   Short, soft animations so the app feels alive without slowing you down.
+   Phones set to "Reduce motion" get none of them (see the end of this file). */
+.tap-feedback { transition: transform 0.12s ease, opacity 0.12s ease; }
+.tap-feedback:active { transform: scale(0.96); opacity: 0.85; }
+
+/* sheets and pop-ups slide like iOS: fast start, gentle stop */
+[id$="-box"], #aw-mini { transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1) !important; }
+
+/* cards come in one after another */
+.stagger > * { opacity: 0; animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.stagger > *:nth-child(1) { animation-delay: 0s; }
+.stagger > *:nth-child(2) { animation-delay: 0.04s; }
+.stagger > *:nth-child(3) { animation-delay: 0.08s; }
+.stagger > *:nth-child(4) { animation-delay: 0.12s; }
+.stagger > *:nth-child(5) { animation-delay: 0.16s; }
+.stagger > *:nth-child(6) { animation-delay: 0.2s; }
+.stagger > *:nth-child(7) { animation-delay: 0.24s; }
+.stagger > *:nth-child(n+8) { animation-delay: 0.28s; }
+
+/* a set ticked off: the check pops and the row glows green for a moment */
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+.pop { animation: pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes row-flash { from { background-color: rgba(34, 197, 94, 0.35); } to { background-color: rgba(34, 197, 94, 0.1); } }
+.row-flash { animation: row-flash 0.6s ease-out; }
+
+/* progress bars glide to their new value */
+.bar-fill { transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* rest timer: thin bar that runs down; the last seconds pulse */
+#aw-rest-bar { transition: width 0.25s linear; }
+@keyframes urgent { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.rest-urgent { animation: urgent 1s ease-in-out infinite; color: #d4af37 !important; }
+@keyframes slide-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.slide-up { animation: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* workout summary: trophy bounces in, a little burst of gold for new records */
+@keyframes trophy-in { 0% { transform: scale(0.3) rotate(-20deg); opacity: 0; } 60% { transform: scale(1.15) rotate(6deg); opacity: 1; } 100% { transform: scale(1) rotate(0); } }
+.trophy-in { animation: trophy-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.confetti { position: absolute; top: 50%; left: 50%; width: 7px; height: 12px; border-radius: 2px; pointer-events: none; animation: confetti 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes confetti { from { transform: translate(-50%, -50%) rotate(0); opacity: 1; } to { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; } }
+
+/* bottom tabs: the chosen icon gives a small hop */
+@keyframes hop { 0% { transform: translateY(0); } 40% { transform: translateY(-4px); } 100% { transform: translateY(0); } }
+.hop { animation: hop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    .stagger > * { opacity: 1; }
+}
+
+/* Plan: the day name is edited in place at its full size (bigger than 16px, so iPhone won't zoom) */
+input.day-title-input { font-size: 26px !important; }
