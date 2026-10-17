@@ -81,10 +81,18 @@
         </div>
     </div>
 
-    <!-- Log Sets / Focus session (slides up; swipe down or ⌄ to minimize, the timer keeps running) -->
+    <!-- Exercise pop-up on Today: details, Start workout, History -->
+    <div id="ex-sheet-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExSheet()">
+        <div id="ex-sheet-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col transform translate-y-full transition-transform duration-300" style="padding-bottom: max(1.25rem, env(safe-area-inset-bottom));">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div id="ex-sheet-content"></div>
+        </div>
+    </div>
+
+    <!-- Workout (slides up and stays open until you finish or discard it) -->
     <div id="active-workout-overlay" class="sheet-overlay fixed inset-0 bg-black/80 backdrop-blur-sm z-[300] hidden flex-col justify-end opacity-0 transition-opacity duration-300">
         <div id="active-workout-box" class="w-full max-w-2xl mx-auto bg-[#0f0f0f] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[86dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="pt-4 shrink-0"></div>
             <div class="flex items-center gap-3 px-5 pb-3 pt-1 shrink-0">
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2">
@@ -99,7 +107,7 @@
             <div id="aw-scroll" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-3 pb-4">
                 <div id="aw-table-head" class="grid items-center gap-1.5 px-2 pb-2 text-[9px] font-black text-slate-500 uppercase tracking-widest"></div>
                 <div id="aw-sets-container" class="space-y-1.5"></div>
-                <p class="text-[10px] font-bold text-slate-500 leading-relaxed px-2 mt-3"><span data-i18n="Tap a previous set to copy it. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.">Tap a previous set to copy it. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.</span></p>
+                <p class="text-[10px] font-bold text-slate-500 leading-relaxed px-2 mt-3"><span data-i18n="Type the KG and reps you did: the set turns green by itself. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.">Type the KG and reps you did: the set turns green by itself. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.</span></p>
                 <div id="aw-next" class="mt-4"></div>
             </div>
             <div class="p-4 shrink-0 border-t border-white/5" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
@@ -120,7 +128,6 @@
                 </div>
                 <!-- one-hand: everything you tap is down here -->
                 <div class="flex gap-2">
-                <button id="aw-min-btn" onclick="window.appActions.minimizeSession()" class="w-14 shrink-0 rounded-2xl bg-white/5 border border-white/10 text-slate-200 flex items-center justify-center tap-feedback" aria-label="Minimize"><i data-lucide="chevron-down" class="w-6 h-6"></i></button>
                 <button id="aw-finish-btn" onclick="window.appActions.finishActiveWorkout()" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback shadow-[0_0_20px_rgba(212,175,55,0.35)]">Save</button>
                 <button id="aw-next-btn" onclick="window.appActions.finishActiveWorkout(true)" class="hidden flex-1 py-4 rounded-2xl bg-white/10 text-white text-[13px] font-black uppercase tracking-widest tap-feedback items-center justify-center gap-2"><span data-i18n="Save & next">Save & next</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                 <button id="aw-close-btn" onclick="window.appActions.closeActiveWorkout()" class="w-14 shrink-0 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center tap-feedback" aria-label="Cancel workout"><i data-lucide="x" class="w-6 h-6"></i></button>
@@ -303,7 +310,7 @@
 
             </section>
 
-            <nav id="nav-container" class="grid grid-cols-7 gap-1.5 mb-6"></nav>
+            <nav id="nav-container" class="grid grid-cols-7 gap-1.5 mb-4"></nav>
             <main id="workout-container" class="space-y-4"></main>
 
             <!-- Profile tab: settings, backup, contact -->
