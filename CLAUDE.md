@@ -8,6 +8,7 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 - Never leave work only on a separate `claude/...` branch: the owner tests by pulling `Main` into VS Code automatically, and work on other branches gets lost between chats.
 - Before starting, pull `Main` again: another chat may have pushed since.
 - After pushing, tell the owner the commit (short hash and title).
+- Don't send files, zips or screenshots in the chat: the owner gets everything from `Main`. This applies to every Apex chat.
 
 ## Files
 
