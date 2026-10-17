@@ -14,6 +14,7 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 
 - `index.html`, `app.js`, `style.css`: the app. `app.js` holds everything (storage, screens, cloud sync, translations in the `AR` table).
 - `library.js`: exercises, muscles and ready-made programs. Shared by the app and the coach builder.
+- `require-sign-in.js`: the switch that makes Google sign-in required. Delete the file to make sign-in optional ("Not now"); add it back to require it again. It is not in `APP_FILES` on purpose.
 - `admin.html`, `admin.js`: the admin page (users, insights, client notes, visits).
 - `admin-coach.js`: the coach schedule builder; sends routines and messages to `users/{uid}/coach/plan`.
 - `firestore.rules`: database security rules. They are **not** deployed by Netlify: after changing them, tell the owner to paste them into Firebase (Firestore Database → Rules → Publish) **before** deploying the site.

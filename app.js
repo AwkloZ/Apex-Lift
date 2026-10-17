@@ -794,7 +794,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '18';
+    const APP_VERSION = '19';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3364,8 +3364,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // 👋 WELCOME: intro pages you swipe through, then Google sign-in (required).
     // Automated tests run without the sign-in page unless they ask for it (localStorage workoutTestGate = 1).
     const INTRO_KEY = 'workoutIntroSeen_rakan_final';
-    // ⚙️ SWITCH: true = an account is needed to use the app; false = sign-in is optional ("Not now" on the sign-in page).
-    const REQUIRE_SIGN_IN = false;
+    // ⚙️ SWITCH: the file require-sign-in.js turns this on (an account is needed to use the app).
+    // Delete that file and sign-in becomes optional again ("Not now" on the sign-in page).
+    const REQUIRE_SIGN_IN = window.APEX_REQUIRE_SIGN_IN === true;
     const requireSignIn = () => { try { return REQUIRE_SIGN_IN || localStorage.getItem('workoutForceSignIn') === '1'; } catch (e) { return REQUIRE_SIGN_IN; } };
     const gateOn = () => { try { return !navigator.webdriver || localStorage.getItem('workoutTestGate') === '1'; } catch (e) { return true; } };
     const isSignedIn = () => { const f = getCloudFlag(); return !!(f && f.uid); };
@@ -3572,7 +3573,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 const ob = document.getElementById('onboarding-overlay'); if (ob && ob.classList.contains('flex') && window.appState.wiz && window.appState.wiz.steps[window.appState.wiz.step] === 'about') window.appActions.renderWizard();
             } else setTimeout(refreshAbout, 0);
         },
-        welcomeLater: () => { hideWelcome(); window.appActions.initOnboarding(); },
+        welcomeLater: () => { if (requireSignIn() && !isSignedIn()) return; hideWelcome(); window.appActions.initOnboarding(); },
         welcomeContinue: () => {
             if (!getAgree()) return;
             hideWelcome(); window.appActions.initOnboarding();
