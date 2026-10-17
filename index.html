@@ -84,7 +84,7 @@
 
     <!-- Exercise pop-up on Today (middle of the screen): details, Start workout, History -->
     <div id="ex-sheet-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExSheet()">
-        <div id="ex-sheet-box" class="w-full max-w-md bg-[#111] rounded-3xl border border-white/10 pt-5 pb-5 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+        <div id="ex-sheet-box" class="w-full max-w-md max-h-[88dvh] overflow-y-auto bg-[#111] rounded-3xl border border-white/10 pt-5 pb-5 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
             <div id="ex-sheet-content"></div>
         </div>
     </div>
@@ -310,7 +310,7 @@
 
             </section>
 
-            <nav id="nav-container" class="grid grid-cols-7 gap-1.5 mb-4"></nav>
+            <nav id="nav-container" class="mb-4"></nav>
             <main id="workout-container" class="space-y-4"></main>
 
             <!-- Profile tab: settings, backup, contact -->

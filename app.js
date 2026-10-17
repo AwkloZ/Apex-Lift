@@ -445,6 +445,18 @@
         "New record": "رقم قياسي جديد",
         "{name} saved · {n} sets": "تم حفظ {name} · {n} مجموعات",
         "Close": "إغلاق",
+        "Week of {range}": "أسبوع {range}",
+        "{a} of {b} workouts done": "تم {a} من {b} تمارين",
+        "Reps per set": "التكرار لكل مجموعة",
+        "Seconds per set": "الثواني لكل مجموعة",
+        "{w} kg for {r} reps": "{w} كجم لـ {r} تكرار",
+        "{w} kg for {r} sec": "{w} كجم لـ {r} ثانية",
+        "{r} reps": "{r} تكرار",
+        "{r} sec": "{r} ثانية",
+        "All {n} sets": "كل المجموعات ({n})",
+        "{a} of {b} sets": "{a} من {b} مجموعات",
+        "Set {n}": "المجموعة {n}",
+        "First time doing this exercise": "أول مرة تؤدي هذا التمرين",
         "Theme": "المظهر",
         "Dark": "داكن",
         "Light": "فاتح",
@@ -763,7 +775,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '12';
+    const APP_VERSION = '13';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1086,17 +1098,22 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         if(window.lucide) window.lucide.createIcons();
     };
 
-    // Week strip: the 7 days of the routine with the day and its workout name; ✓ = done, red dot = empty (Plan tab)
+    // Week bar: the week's dates and how many workouts are done, then one bar with the 7 days
+    // (weekday, date, short workout name). Selected = gold pill, today = gold dot, done = green date, red dot = empty day (Plan tab)
     const renderNav = () => {
         const schedule = getActiveSchedule(), history = StorageManager.getHistory(), today = getTodayId(), view = window.appState.currentView;
-        document.getElementById('nav-container').innerHTML = schedule.map(d => {
-            const sel = activeDay === d.id, comp = !d.isRest && isDayCompleted(d, history), empty = isDayIncomplete(d), isT = today === d.id;
+        const ws = getWeekStart(), dateOf = id => new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() + id - 1);
+        const doneOf = d => !d.isRest && (d.exercises || []).length > 0 && isDayCompleted(d, history);
+        const train = schedule.filter(d => !d.isRest && (d.exercises || []).length), doneN = train.filter(doneOf).length;
+        const head = `<div class="wk-head"><span class="wk-head-t">${t('Week of {range}', { range: `<span dir="ltr">${esc(fmtDayMonth(dateOf(1)))} – ${esc(fmtDayMonth(dateOf(7)))}</span>` })}</span><span class="wk-head-s">${t('{a} of {b} workouts done', { a: doneN, b: train.length })}</span></div>
+            <div class="wk-bar">${schedule.map(d => `<i class="${d.isRest ? 'is-rest' : doneOf(d) ? 'is-on' : ''}"></i>`).join('')}</div>`;
+        const cells = schedule.map(d => {
+            const sel = activeDay === d.id, comp = doneOf(d), empty = isDayIncomplete(d), isT = today === d.id;
             const name = d.isRest ? shortTitle(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : shortTitle(d.title);
-            const label = empty && view === 'plan' ? '<span class="w-1.5 h-1.5 rounded-full bg-red-500 mt-1"></span>'
-                : `<span class="day-chip-wo ${d.isRest ? 'is-rest' : ''}">${esc(empty ? '—' : name)}</span>`;
-            const cls = sel ? 'bg-[#d4af37] text-black border-[#d4af37]' : comp ? 'bg-[#22c55e]/10 border-[#22c55e]/40 text-[#22c55e]' : isT ? 'bg-white/5 border-[#d4af37]/70 text-white' : 'bg-white/5 border-white/5 text-slate-300';
-            return `<button onclick="window.appActions.setActiveDay(${d.id})" class="day-chip rounded-2xl tap-feedback border transition-colors ${cls}" aria-label="${esc(dayLong(d.day) + ' · ' + (d.isRest ? name : t(d.title)))}">${comp ? '<span class="day-tick"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>' : ''}<span class="day-chip-name">${esc(dayShort(d.day))}</span>${label}</button>`;
-        }).join('');
+            const mark = empty && view === 'plan' ? '<span class="wk-dot is-empty"></span>' : isT ? '<span class="wk-dot"></span>' : '';
+            return `<button onclick="window.appActions.setActiveDay(${d.id})" class="wk-day tap-feedback ${sel ? 'is-sel' : ''} ${d.isRest ? 'is-rest' : ''} ${comp ? 'is-done' : ''}" aria-pressed="${sel}" aria-label="${esc(dayLong(d.day) + ' ' + dateOf(d.id).getDate() + ' · ' + (d.isRest ? name : t(d.title)) + (comp ? ' · ' + t('Done') : ''))}"><span class="wk-wd">${esc(dayShort(d.day))}</span><span class="wk-dt">${dateOf(d.id).getDate()}</span><span class="wk-wo">${esc(empty ? '—' : name)}</span><span class="wk-mk">${mark}</span></button>`;
+        });
+        document.getElementById('nav-container').innerHTML = head + `<div class="wk-strip">${cells.join('')}</div>`;
         renderSidePanel();
     };
 
@@ -1618,6 +1635,17 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         });
         return { title: day.title, duration: Math.floor((Date.now() - start) / 1000), sets, volume, prs };
     };
+    // "8 - 10" -> "8–10" (one dash, no spaces) so a rep range never reads like a sum
+    const fmtReps = r => String(r == null ? '' : r).trim().replace(/\s*[-–]\s*/g, '–');
+    // Today's target as a sentence: "60 kg for 10 reps" (no × or - signs)
+    const targetSentence = (sg, timed) => sg.w > 0
+        ? t(timed ? '{w} kg for {r} sec' : '{w} kg for {r} reps', { w: fmtW(sg.w).replace('kg', ''), r: sg.r })
+        : t(timed ? '{r} sec' : '{r} reps', { r: sg.r });
+    // Number circle on a Today card with a ring that fills as this week's sets get done (all done = green with a tick)
+    const progressRing = (done, total, n) => {
+        const r = 16, c = 2 * Math.PI * r, p = total > 0 ? Math.min(1, done / total) : 0, full = p >= 1;
+        return `<span class="ex-ring ${full ? 'is-full' : ''}"><svg viewBox="0 0 38 38" aria-hidden="true"><circle cx="19" cy="19" r="${r}" class="ex-ring-bg"/>${p > 0 && !full ? `<circle cx="19" cy="19" r="${r}" class="ex-ring-fg" stroke-dasharray="${(c * p).toFixed(1)} ${c.toFixed(1)}"/>` : ''}</svg><span class="ex-ring-n">${full ? '<i data-lucide="check" class="w-4 h-4"></i>' : n}</span></span>`;
+    };
     // Today's target in one short coloured line: ↑ add weight, ↓ go lighter
     const suggestionText = (sg, timed) => {
         const cls = { up: 'text-[#22c55e]', down: 'text-red-400', build: 'text-[#d4af37]', easy: 'text-slate-300' }[sg.type];
@@ -1646,18 +1674,21 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     <h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${esc(t(day.title))}</h2>
                 </div>
                 <div class="text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: day.exercises.length })} · ${t('{n} sets', { n: pr.planned })} · ${t('~{n} min', { n: mins })}</div>
-                ${pr.done > 0 ? `<div><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('Day progress')}</span><span class="${finished ? 'text-[#22c55e]' : 'text-white'}" dir="ltr">${pr.done} / ${pr.planned}</span></div><div class="w-full h-1.5 bg-black/50 rounded-full overflow-hidden"><div class="bar-fill h-full rounded-full ${finished ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pr.pct}%"></div></div></div>` : ''}
+                ${pr.done > 0 ? `<div><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('Done this week')}</span><span class="${finished ? 'text-[#22c55e]' : 'text-white'}" dir="ltr">${pr.done} / ${pr.planned}</span></div><div class="w-full h-1.5 bg-black/50 rounded-full overflow-hidden"><div class="bar-fill h-full rounded-full ${finished ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pr.pct}%"></div></div></div>` : ''}
                 ${running ? `<button onclick="window.appActions.expandSession()" class="w-full py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><span class="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0"></span><span class="truncate">${t('Continue workout')}</span></button>` : ''}
                 ${isT && !finished ? checkInChip() : ''}
             </div>`;
             if (isT && !finished && window.appState.ciOpen) html += checkInHTML();
             html += `<div class="space-y-2">` + day.exercises.map((ex, i) => {
-                const done = fin[i], isRun = running && (S.exIdx === i || S.exIdx == null);
-                return `<button id="ex-card-${i}" onclick="window.appActions.openExSheet(${i})" class="w-full glass-card ex-card flex items-center gap-2.5 text-start tap-feedback ${done ? 'border border-[#22c55e]/30' : ''}">
-                    <span class="w-[30px] h-[30px] shrink-0 rounded-full flex items-center justify-center text-[13px] font-black ${done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'}">${done ? '<i data-lucide="check" class="w-3.5 h-3.5"></i>' : i + 1}</span>
+                const isRun = running && (S.exIdx === i || S.exIdx == null), planned = parseInt(ex.sets) || 0;
+                const doneSets = Math.min(setsThisWeekForDay(history[getExKey(currentWeekId, day.id, i, ex.name)] || [], day.id), planned);
+                const full = planned > 0 && doneSets >= planned, part = doneSets > 0 && !full;
+                const plan = `${t('{n} sets', { n: planned })} · ${t(isTimed(ex.reps) ? '{r} sec' : '{r} reps', { r: `<span dir="ltr">${esc(fmtReps(ex.reps))}</span>` })}`;
+                return `<button id="ex-card-${i}" onclick="window.appActions.openExSheet(${i})" class="w-full glass-card ex-card ${full ? 'is-full' : part ? 'is-part' : ''} flex items-center gap-3 text-start tap-feedback">
+                    ${progressRing(doneSets, planned, i + 1)}
                     ${isRun ? '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>' : ''}
-                    <span class="ex-name flex-1 min-w-0 text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500 shrink-0"></i>
+                    <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span><span class="block text-[11.5px] font-bold mt-0.5 truncate ${full ? 'text-[#22c55e]' : 'text-slate-400'}">${full ? t('Done this week') : plan}</span></span>
+                    <span class="ex-pill">${t('{n} sets', { n: `<span dir="ltr">${doneSets}/${planned}</span>` })}</span>
                 </button>`;
             }).join('') + `</div>`;
         }
@@ -1828,8 +1859,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const S = window.appState.sess, timed = isTimed(ex.reps), planned = parseInt(ex.sets) || 0, doneSets = setsThisWeekForDay(hA, day.id);
             const easy = day.id === getTodayId() && (getReadinessToday() || {}).level === 'low', sg = suggestionFor(hA, ex, easy), last = lastSessionText(hA, timed);
             const isRun = S && S.dayId === day.id && (!S.weekId || S.weekId === currentWeekId) && (S.exIdx === i || S.exIdx == null);
-            const done = exercisesFinished(day, history)[i];
-            const box = (label, value) => `<div class="rounded-2xl bg-white/5 border border-white/5 px-3.5 py-3 min-w-0"><div class="text-[10px] font-black text-slate-500 uppercase tracking-widest">${label}</div><div class="text-[15px] font-black text-white mt-1 truncate">${value}</div></div>`;
+            const prev = lastSessionSets(hA), full = planned > 0 && doneSets >= planned, shown = Math.min(doneSets, planned);
+            const tile = (label, value) => `<div class="rounded-2xl bg-white/5 px-3.5 py-2.5 min-w-0"><div class="text-[10px] font-black text-slate-500 uppercase tracking-widest">${label}</div><div class="text-[22px] font-black text-white leading-tight mt-0.5"><span dir="ltr">${value}</span></div></div>`;
+            const tgtCls = sg ? { up: 'is-up', down: 'is-down' }[sg.type] || '' : '';
             document.getElementById('ex-sheet-content').innerHTML = `<div class="px-5 pt-1">
                 <div class="flex items-start gap-2">
                     <div class="flex-1 min-w-0">
@@ -1839,13 +1871,18 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
                     <button onclick="window.appActions.closeExSheet()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
-                <div class="grid grid-cols-2 gap-2 mt-4">
-                    ${box(t('Sets × reps'), `<span dir="ltr">${esc(ex.sets)} × ${esc(ex.reps)}</span>`)}
-                    ${box(t("Today's target"), sg ? suggestionText(sg, timed) : '<span class="text-slate-500">—</span>')}
+                <div class="ex-week ${full ? 'is-full' : shown > 0 ? 'is-part' : ''} mt-4">
+                    <div class="flex items-baseline justify-between gap-2"><span class="text-[12px] font-black">${t('Done this week')}</span><b class="text-[15px] font-black">${full ? t('All {n} sets', { n: planned }) : t('{a} of {b} sets', { a: shown, b: planned })}</b></div>
+                    <div class="ex-segs" dir="ltr">${Array.from({ length: planned }, (_, k) => `<i class="${k < shown ? 'is-on' : ''}"></i>`).join('')}</div>
                 </div>
-                <div class="mt-2">${box(last ? `${t('Last time')} · ${esc(last.when)}` : t('Last time'), last ? `<span dir="ltr">${last.body}</span>` : `<span class="text-slate-500">${t('First time')}</span>`)}</div>
-                ${doneSets > 0 ? `<div class="mt-3 text-[11px] font-black ${done ? 'text-[#22c55e]' : 'text-slate-400'}">${t('Done this week')}: <span dir="ltr">${Math.min(doneSets, planned || doneSets)} / ${planned}</span></div>` : ''}
-                <button onclick="window.appActions.closeExSheet(); window.appActions.startWorkout(${day.id}, null, ${i})" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : done ? t('Log more sets') : t('Start workout')}</button>
+                <div class="grid grid-cols-2 gap-2 mt-2.5">${tile(t('Sets'), esc(ex.sets))}${tile(t(timed ? 'Seconds per set' : 'Reps per set'), esc(fmtReps(ex.reps)))}</div>
+                ${sg ? `<div class="ex-target ${tgtCls} mt-2"><i data-lucide="target" class="w-[18px] h-[18px] shrink-0"></i><div class="min-w-0"><div class="ex-target-l">${t("Today's target")}${sg.type !== 'build' ? ` · ${t(SUGG[sg.type].label).replace(/[:：]\s*$/, '')}` : ''}</div><div class="text-[16px] font-black text-white">${targetSentence(sg, timed)}</div></div></div>` : ''}
+                <div class="mt-3">
+                    <div class="flex justify-between px-0.5 mb-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest"><span>${t('Last time')}</span><span>${last ? esc(last.when) : ''}</span></div>
+                    ${prev.length ? `<table class="ex-last-tbl" dir="ltr"><thead><tr><th>#</th><th>${t('KG')}</th><th>${t(timed ? 'SEC' : 'REPS')}</th></tr></thead><tbody>${prev.map((x, k) => `<tr><td>${t('Set {n}', { n: k + 1 })}</td><td>${x.w > 0 ? x.w : t('BW')}</td><td>${x.r}</td></tr>`).join('')}</tbody></table>`
+                        : `<div class="rounded-2xl bg-white/5 px-3.5 py-3 text-[13px] font-bold text-slate-400">${t('First time doing this exercise')}</div>`}
+                </div>
+                <button onclick="window.appActions.closeExSheet(); window.appActions.startWorkout(${day.id}, null, ${i})" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : full ? t('Log more sets') : shown > 0 ? t('Continue') : t('Start workout')}</button>
             </div>`;
             if (window.lucide) window.lucide.createIcons({ root: document.getElementById('ex-sheet-box') });
             openModal('ex-sheet-overlay', 'ex-sheet-box');
@@ -1948,7 +1985,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     <div class="flex items-start justify-between gap-2 px-1 mb-2">
                         <div class="min-w-0">
                             <div class="ex-name text-[17px] font-black text-white leading-tight">${esc(ex.name)}</div>
-                            <div class="text-[11px] font-bold text-slate-400 mt-0.5">${esc(tm(ex.muscle))} · <span dir="ltr">${ex.sets} × ${esc(ex.repsStr)}</span></div>
+                            <div class="text-[11px] font-bold text-slate-400 mt-0.5">${esc(tm(ex.muscle))} · ${t('{n} sets', { n: ex.sets })} · ${t(ex.timed ? '{r} sec' : '{r} reps', { r: `<span dir="ltr">${esc(fmtReps(ex.repsStr))}</span>` })}</div>
                         </div>
                         <span class="shrink-0">${suggestionChip(ex.sg, ex.timed)}</span>
                     </div>
@@ -2004,7 +2041,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 <div class="aw-row grid items-center gap-1.5 px-2 py-1 rounded-xl transition-colors ${r.done ? 'is-done' : ''} ${r.logged ? 'is-logged' : ''}" data-i="${i}" data-e="${e}" data-done="${r.done ? 1 : 0}" ${r.logged ? 'data-logged="1"' : ''} id="aw-row-${i}" dir="ltr" style="grid-template-columns:${S.cols}">
                     <span class="w-7 h-7 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center" id="aw-num-${i}">${n}</span>
                     <input id="aw-w-${i}" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.w)}" ${r.logged ? 'disabled' : ''} placeholder="${isBodyweight(ex.name) ? t('BW') : t('KG')}" oninput="window.appActions.numInput(this, true)" class="${inCls} text-[#d4af37]">
-                    <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" ${r.logged ? 'disabled' : ''} placeholder="${ex.timed ? t('SEC') : t('REPS')}" oninput="window.appActions.numInput(this, false)" onchange="window.appActions.repsChanged(${i})" class="${inCls}">
+                    <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" ${r.logged ? 'disabled' : ''} placeholder="${ex.timed ? t('SEC') : t('REPS')}" oninput="window.appActions.numInput(this, false)" onblur="window.appActions.repsChanged(${i})" onkeydown="if(event.key==='Enter')this.blur()" class="${inCls}">
                     ${showRpe ? `<select id="aw-rpe-${i}" ${r.logged ? 'disabled' : ''} onchange="window.appActions.sessionChanged()" class="${inCls} appearance-none text-[14px]"><option value="">–</option>${[6,7,8,9,10].map(x => `<option value="${x}" ${String(r.rpe) === String(x) ? 'selected' : ''}>${x}</option>`).join('')}</select>` : ''}
                 </div>`);
             document.getElementById(`aw-note-${e}`).classList.add('hidden');
@@ -2014,7 +2051,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const rows = document.querySelectorAll(`#aw-rows-${e} .aw-row`);
             if (rows.length && rows[rows.length - 1].dataset.logged !== '1') { rows[rows.length - 1].remove(); if (rows.length === 1) document.getElementById(`aw-note-${e}`).classList.remove('hidden'); window.appActions.updateSessionInfo(); saveSessionDraft(); }
         },
-        // Reps typed (keyboard Done or tapping elsewhere): the set turns green by itself; emptying it undoes that
+        // Reps typed, then the box is left (keyboard Done/Enter or tapping elsewhere): the set turns green by itself; emptying it undoes that.
+        // Uses blur, not change: change never fires after numInput turns Arabic digits (٨) into 8
         repsChanged: i => {
             const row = document.getElementById(`aw-row-${i}`), ok = parseInt((document.getElementById(`aw-rep-${i}`) || {}).value) > 0;
             if (row && ok !== (row.dataset.done === '1')) window.appActions.completeSet(i);
