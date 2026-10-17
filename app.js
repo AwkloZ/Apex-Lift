@@ -457,6 +457,7 @@
         "{a} of {b} sets": "{a} من {b} مجموعات",
         "Set {n}": "المجموعة {n}",
         "First time doing this exercise": "أول مرة تؤدي هذا التمرين",
+        "+{n} extra": "+{n} إضافية",
         "Theme": "المظهر",
         "Dark": "داكن",
         "Light": "فاتح",
@@ -775,7 +776,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '13';
+    const APP_VERSION = '14';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1070,6 +1071,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const body = sets.every(x => x.w === sets[0].w) ? `${fmtW(sets[0].w)} × ${sets.map(x => x.r + u).join(' · ')}` : sets.map(x => `${fmtW(x.w)} × ${x.r}${u}`).join(' · ');
         return { when: fmtDate(logTime(logs[logs.length - 1]), false), body };
     };
+    // "Last time" in the exercise pop-up: every set from the last date this exercise was done on this day of the plan
+    // (today included, all of that date's sessions together); falls back to any day if it was never done on this one
+    const lastDaySets = (hA, dayId) => {
+        const valid = (hA || []).filter(l => !isNaN(logTime(l))), mine = valid.filter(l => logDayId(l) === dayId), logs = mine.length ? mine : valid;
+        if (!logs.length) return null;
+        const ts = Math.max(...logs.map(logTime)), day = startOfDay(ts);
+        return { ts, sets: logs.filter(l => startOfDay(logTime(l)) === day).flatMap(logSetDetails) };
+    };
     const sessionRows = () => [...document.querySelectorAll('#aw-sets-container .aw-row')].map(r => {
         const i = r.dataset.i, val = id => ((document.getElementById(id) || {}).value || '').trim();
         return { i, e: Number(r.dataset.e), w: val(`aw-w-${i}`), r: val(`aw-rep-${i}`), rpe: val(`aw-rpe-${i}`), done: r.dataset.done === '1', logged: r.dataset.logged === '1' };
@@ -1100,7 +1109,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
 
     // Week bar: the week's dates and how many workouts are done, then one bar with the 7 days
     // (weekday, date, short workout name). Selected = gold pill, today = gold dot, done = green date, red dot = empty day (Plan tab)
-    const renderNav = () => {
+    const weekNavHTML = () => {
         const schedule = getActiveSchedule(), history = StorageManager.getHistory(), today = getTodayId(), view = window.appState.currentView;
         const ws = getWeekStart(), dateOf = id => new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() + id - 1);
         const doneOf = d => !d.isRest && (d.exercises || []).length > 0 && isDayCompleted(d, history);
@@ -1113,7 +1122,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const mark = empty && view === 'plan' ? '<span class="wk-dot is-empty"></span>' : isT ? '<span class="wk-dot"></span>' : '';
             return `<button onclick="window.appActions.setActiveDay(${d.id})" class="wk-day tap-feedback ${sel ? 'is-sel' : ''} ${d.isRest ? 'is-rest' : ''} ${comp ? 'is-done' : ''}" aria-pressed="${sel}" aria-label="${esc(dayLong(d.day) + ' ' + dateOf(d.id).getDate() + ' · ' + (d.isRest ? name : t(d.title)) + (comp ? ' · ' + t('Done') : ''))}"><span class="wk-wd">${esc(dayShort(d.day))}</span><span class="wk-dt">${dateOf(d.id).getDate()}</span><span class="wk-wo">${esc(empty ? '—' : name)}</span><span class="wk-mk">${mark}</span></button>`;
         });
-        document.getElementById('nav-container').innerHTML = head + `<div class="wk-strip">${cells.join('')}</div>`;
+        return head + `<div class="wk-strip">${cells.join('')}</div>`;
+    };
+    // Plan tab: the week bar on its own; Today: the same bar at the top of the day card (#today-week)
+    const renderNav = () => {
+        const html = weekNavHTML();
+        document.getElementById('nav-container').innerHTML = html;
+        const tw = document.getElementById('today-week'); if (tw) tw.innerHTML = html;
         renderSidePanel();
     };
 
@@ -1654,21 +1669,22 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const renderToday = () => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), history = StorageManager.getHistory();
         const isT = activeDay === getTodayId(), S = window.appState.sess;
-        const eyebrow = `<div class="px-1 mb-2 text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}</div>`;
-        let html = coachCardHTML();
+        const weekTop = `<div id="today-week" class="today-week">${weekNavHTML()}</div>`;
+        const dayLabel = `<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}</div>`;
+        let html = '';
         if (day.isRest) {
-            html += eyebrow + `<div class="glass-card p-10 text-center border-dashed border-[#d4af37]/20"><div class="text-[#d4af37] flex justify-center mb-4"><i data-lucide="${day.recoveryType==='active'?'footprints':'moon'}" class="w-12 h-12 ${day.recoveryType==='active'?'animate-walk':'animate-pulse-glow'}"></i></div><h3 class="font-black text-xl mb-1">${day.recoveryType==='active'?t('Active Rest'):t('Complete Rest')}</h3><p class="text-[12px] font-bold text-slate-400">${t('Recover well. See you next session.')}</p></div>`;
+            html += `<div class="glass-card today-card">${weekTop}<div class="today-body is-row"><div class="flex-1 min-w-0">${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${day.recoveryType==='active'?t('Active Rest'):t('Complete Rest')}</h2><div class="text-[12px] font-bold text-slate-400 mt-1">${t('Recover well. See you next session.')}</div></div><i data-lucide="${day.recoveryType==='active'?'footprints':'moon'}" class="w-9 h-9 text-[#d4af37] shrink-0 ${day.recoveryType==='active'?'animate-walk':'animate-pulse-glow'}"></i></div></div>` + coachCardHTML();
             // Point to the next training day so a rest day is never a dead end
             const nextDay = [1, 2, 3, 4, 5, 6].map(o => schedule.find(d => d.id === ((activeDay - 1 + o) % 7) + 1)).find(d => d && !d.isRest && d.exercises.length);
             if (nextDay) html += `<button onclick="window.appActions.setActiveDay(${nextDay.id})" class="w-full glass-card p-4 mt-3 flex items-center gap-3 text-start tap-feedback"><span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-clock" class="w-5 h-5"></i></span><span class="flex-1 min-w-0"><span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">${t('Next workout')}</span><span class="block text-[15px] font-black text-white truncate">${esc(dayLong(nextDay.day))} · ${esc(t(nextDay.title))}</span></span><i data-lucide="chevron-right" class="w-5 h-5 text-slate-500 shrink-0"></i></button>`;
         } else if (!day.exercises.length) {
-            html += eyebrow + `<div class="glass-card p-8 text-center border-dashed border-white/10"><div class="flex justify-center mb-4"><i data-lucide="clipboard-edit" class="w-10 h-10 text-slate-500"></i></div><h3 class="font-black text-lg text-white mb-2">${t('No exercises yet')}</h3><p class="text-[12px] font-bold text-slate-400 mb-5">${t('Add exercises to this day in the Plan tab.')}</p><button onclick="window.appActions.switchTab('plan')" class="px-6 py-3 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback">${t('Plan this day')}</button></div>`;
+            html += `<div class="glass-card today-card">${weekTop}<div class="today-body">${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight -mt-1.5">${t('No exercises yet')}</h2><div class="text-[12px] font-bold text-slate-400">${t('Add exercises to this day in the Plan tab.')}</div><button onclick="window.appActions.switchTab('plan')" class="self-start px-5 py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback">${t('Plan this day')}</button></div></div>` + coachCardHTML();
         } else {
             const pr = dayProgress(day, history), fin = exercisesFinished(day, history);
             const finished = (pr.planned > 0 && pr.done >= pr.planned) || fin.every(Boolean);
             const mins = Math.max(10, Math.round(pr.planned * 2.5 / 5) * 5);
             const running = S && S.dayId === day.id && (!S.weekId || S.weekId === currentWeekId);
-            html += `<div class="glass-card today-card ${finished ? 'border border-[#22c55e]/30' : ''}">
+            html += `<div class="glass-card today-card ${finished ? 'border border-[#22c55e]/30' : ''}">${weekTop}<div class="today-body">
                 <div>
                     <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}${finished ? ` · <span class="text-[#22c55e]">${t('Done')}</span>` : ''}</div>
                     <h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${esc(t(day.title))}</h2>
@@ -1677,18 +1693,18 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 ${pr.done > 0 ? `<div><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('Done this week')}</span><span class="${finished ? 'text-[#22c55e]' : 'text-white'}" dir="ltr">${pr.done} / ${pr.planned}</span></div><div class="w-full h-1.5 bg-black/50 rounded-full overflow-hidden"><div class="bar-fill h-full rounded-full ${finished ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pr.pct}%"></div></div></div>` : ''}
                 ${running ? `<button onclick="window.appActions.expandSession()" class="w-full py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><span class="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0"></span><span class="truncate">${t('Continue workout')}</span></button>` : ''}
                 ${isT && !finished ? checkInChip() : ''}
-            </div>`;
+            </div></div>` + coachCardHTML();
             if (isT && !finished && window.appState.ciOpen) html += checkInHTML();
             html += `<div class="space-y-2">` + day.exercises.map((ex, i) => {
                 const isRun = running && (S.exIdx === i || S.exIdx == null), planned = parseInt(ex.sets) || 0;
-                const doneSets = Math.min(setsThisWeekForDay(history[getExKey(currentWeekId, day.id, i, ex.name)] || [], day.id), planned);
+                const doneSets = setsThisWeekForDay(history[getExKey(currentWeekId, day.id, i, ex.name)] || [], day.id), extra = Math.max(0, doneSets - planned);
                 const full = planned > 0 && doneSets >= planned, part = doneSets > 0 && !full;
                 const plan = `${t('{n} sets', { n: planned })} · ${t(isTimed(ex.reps) ? '{r} sec' : '{r} reps', { r: `<span dir="ltr">${esc(fmtReps(ex.reps))}</span>` })}`;
                 return `<button id="ex-card-${i}" onclick="window.appActions.openExSheet(${i})" class="w-full glass-card ex-card ${full ? 'is-full' : part ? 'is-part' : ''} flex items-center gap-3 text-start tap-feedback">
                     ${progressRing(doneSets, planned, i + 1)}
                     ${isRun ? '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>' : ''}
                     <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span><span class="block text-[11.5px] font-bold mt-0.5 truncate ${full ? 'text-[#22c55e]' : 'text-slate-400'}">${full ? t('Done this week') : plan}</span></span>
-                    <span class="ex-pill">${t('{n} sets', { n: `<span dir="ltr">${doneSets}/${planned}</span>` })}</span>
+                    <span class="ex-pill">${t('{n} sets', { n: `<span dir="ltr">${doneSets}/${planned}</span>` })}${extra ? ` <span class="ex-pill-extra" dir="ltr">+${extra}</span>` : ''}</span>
                 </button>`;
             }).join('') + `</div>`;
         }
@@ -1857,9 +1873,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const day = getActiveSchedule().find(d => d.id === activeDay), ex = day && day.exercises[i]; if (!ex) return;
             const history = StorageManager.getHistory(), k = getExKey(currentWeekId, day.id, i, ex.name), hA = history[k] || [];
             const S = window.appState.sess, timed = isTimed(ex.reps), planned = parseInt(ex.sets) || 0, doneSets = setsThisWeekForDay(hA, day.id);
-            const easy = day.id === getTodayId() && (getReadinessToday() || {}).level === 'low', sg = suggestionFor(hA, ex, easy), last = lastSessionText(hA, timed);
+            const easy = day.id === getTodayId() && (getReadinessToday() || {}).level === 'low', sg = suggestionFor(hA, ex, easy);
             const isRun = S && S.dayId === day.id && (!S.weekId || S.weekId === currentWeekId) && (S.exIdx === i || S.exIdx == null);
-            const prev = lastSessionSets(hA), full = planned > 0 && doneSets >= planned, shown = Math.min(doneSets, planned);
+            // sets past the plan count too (4 of 3 = +1 extra); the target only shows while sets are left this week
+            const lastDay = lastDaySets(hA, day.id), prev = lastDay ? lastDay.sets : [], full = planned > 0 && doneSets >= planned, shown = doneSets, extra = Math.max(0, doneSets - planned);
             const tile = (label, value) => `<div class="rounded-2xl bg-white/5 px-3.5 py-2.5 min-w-0"><div class="text-[10px] font-black text-slate-500 uppercase tracking-widest">${label}</div><div class="text-[22px] font-black text-white leading-tight mt-0.5"><span dir="ltr">${value}</span></div></div>`;
             const tgtCls = sg ? { up: 'is-up', down: 'is-down' }[sg.type] || '' : '';
             document.getElementById('ex-sheet-content').innerHTML = `<div class="px-5 pt-1">
@@ -1872,13 +1889,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     <button onclick="window.appActions.closeExSheet()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <div class="ex-week ${full ? 'is-full' : shown > 0 ? 'is-part' : ''} mt-4">
-                    <div class="flex items-baseline justify-between gap-2"><span class="text-[12px] font-black">${t('Done this week')}</span><b class="text-[15px] font-black">${full ? t('All {n} sets', { n: planned }) : t('{a} of {b} sets', { a: shown, b: planned })}</b></div>
-                    <div class="ex-segs" dir="ltr">${Array.from({ length: planned }, (_, k) => `<i class="${k < shown ? 'is-on' : ''}"></i>`).join('')}</div>
+                    <div class="flex items-baseline justify-between gap-2"><span class="text-[12px] font-black">${t('Done this week')}</span><b class="text-[15px] font-black">${extra ? `${t('{a} of {b} sets', { a: shown, b: planned })} <span class="ex-extra">${t('+{n} extra', { n: extra })}</span>` : full ? t('All {n} sets', { n: planned }) : t('{a} of {b} sets', { a: shown, b: planned })}</b></div>
+                    <div class="ex-segs" dir="ltr">${Array.from({ length: Math.max(planned, shown) }, (_, k) => `<i class="${k >= planned ? 'is-extra' : k < shown ? 'is-on' : ''}"></i>`).join('')}</div>
                 </div>
                 <div class="grid grid-cols-2 gap-2 mt-2.5">${tile(t('Sets'), esc(ex.sets))}${tile(t(timed ? 'Seconds per set' : 'Reps per set'), esc(fmtReps(ex.reps)))}</div>
-                ${sg ? `<div class="ex-target ${tgtCls} mt-2"><i data-lucide="target" class="w-[18px] h-[18px] shrink-0"></i><div class="min-w-0"><div class="ex-target-l">${t("Today's target")}${sg.type !== 'build' ? ` · ${t(SUGG[sg.type].label).replace(/[:：]\s*$/, '')}` : ''}</div><div class="text-[16px] font-black text-white">${targetSentence(sg, timed)}</div></div></div>` : ''}
+                ${sg && !full ? `<div class="ex-target ${tgtCls} mt-2"><i data-lucide="target" class="w-[18px] h-[18px] shrink-0"></i><div class="min-w-0"><div class="ex-target-l">${t("Today's target")}${sg.type !== 'build' ? ` · ${t(SUGG[sg.type].label).replace(/[:：]\s*$/, '')}` : ''}</div><div class="text-[16px] font-black text-white">${targetSentence(sg, timed)}</div></div></div>` : ''}
                 <div class="mt-3">
-                    <div class="flex justify-between px-0.5 mb-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest"><span>${t('Last time')}</span><span>${last ? esc(last.when) : ''}</span></div>
+                    <div class="flex justify-between px-0.5 mb-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest"><span>${t('Last time')}</span><span>${lastDay ? esc(isToday(lastDay.ts) ? t('Today') : fmtDate(lastDay.ts, false)) : ''}</span></div>
                     ${prev.length ? `<table class="ex-last-tbl" dir="ltr"><thead><tr><th>#</th><th>${t('KG')}</th><th>${t(timed ? 'SEC' : 'REPS')}</th></tr></thead><tbody>${prev.map((x, k) => `<tr><td>${t('Set {n}', { n: k + 1 })}</td><td>${x.w > 0 ? x.w : t('BW')}</td><td>${x.r}</td></tr>`).join('')}</tbody></table>`
                         : `<div class="rounded-2xl bg-white/5 px-3.5 py-3 text-[13px] font-bold text-slate-400">${t('First time doing this exercise')}</div>`}
                 </div>
@@ -2422,7 +2439,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             ['today', 'plan', 'progress', 'profile'].forEach(v => { const b = document.getElementById('tabbtn-' + v); if (b) b.className = `tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative ${v === tab ? 'text-[#d4af37]' : 'text-slate-500'}`; });
             const ic = document.querySelector(`#tabbtn-${tab} svg`);
             if (ic && (!prevTab || prevTab.id !== 'tabbtn-' + tab)) { ic.classList.remove('hop'); void ic.getBoundingClientRect(); ic.classList.add('hop'); }
-            document.getElementById('nav-container').style.display = (tab === 'today' || tab === 'plan') ? '' : 'none';
+            document.getElementById('nav-container').style.display = tab === 'plan' ? '' : 'none'; // Today shows it inside the day card
             document.getElementById('plan-routines').classList.toggle('hidden', tab !== 'plan');
             document.getElementById('profile-view').classList.toggle('hidden', tab !== 'profile');
             document.getElementById('workout-container').classList.toggle('hidden', tab === 'profile');
@@ -3393,7 +3410,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     };
     const todayHints = () => {
         hint('today-ex', '#workout-container .ex-card', t('Tap an exercise to see its details and start it.'));
-        if (hintSeen('today-ex')) hint('today-days', '#nav-container', t('Tap a day, or swipe left or right, to see another day of your plan.'));
+        if (hintSeen('today-ex')) hint('today-days', '#today-week', t('Tap a day, or swipe left or right, to see another day of your plan.'));
     };
 
     Object.assign(window.appActions, {

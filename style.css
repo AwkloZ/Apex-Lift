@@ -222,7 +222,13 @@ input.day-title-input { font-size: 26px !important; }
 :root[lang="ar"] .wk-wo { line-height: 1.35; min-height: 2.7em; }
 
 /* Day card and exercise cards: smaller and tighter than the other cards */
-.glass-card.today-card { border-radius: 24px; padding: 14px 16px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
+.glass-card.today-card { border-radius: 24px; padding: 12px 12px 14px; margin-bottom: 10px; display: flex; flex-direction: column; }
+/* Today: the week bar sits at the top of the day card; the selected day's details are under a thin line */
+.today-week .wk-head { margin: 2px 4px 8px; }
+.today-week .wk-bar { margin: 0 4px 8px; }
+.today-week .wk-strip { background: transparent; border: 0; padding: 0; border-radius: 0; box-shadow: none; }
+.today-body { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; padding: 12px 4px 0; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.today-body.is-row { flex-direction: row; align-items: center; gap: 12px; }
 .glass-card.ex-card { border-radius: 22px; padding: 17px 14px; }
 .ex-card .ex-name { font-size: 16.5px; }
 
@@ -238,6 +244,8 @@ input.day-title-input { font-size: 26px !important; }
 .ex-card.is-part .ex-pill { background: rgba(212, 175, 55, 0.15); color: #d4af37; }
 .glass-card.ex-card.is-full { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.45); }
 .ex-card.is-full .ex-pill { background: #22c55e; color: #000; }
+.ex-pill-extra { margin-inline-start: 2px; padding: 1px 6px; border-radius: 999px; background: #d4af37; color: #000; font-size: 10px; }
+.ex-extra { font-size: 11px; font-weight: 900; padding: 2px 7px; border-radius: 999px; background: #d4af37; color: #000; vertical-align: 2px; }
 
 /* Exercise pop-up: "Done this week" bar, target box, last-time table */
 .ex-week { border-radius: 16px; padding: 11px 14px 12px; background: rgba(255, 255, 255, 0.05); color: #cbd5e1; }
@@ -249,6 +257,7 @@ input.day-title-input { font-size: 26px !important; }
 .ex-segs { display: flex; gap: 4px; margin-top: 8px; }
 .ex-segs i { flex: 1; height: 7px; border-radius: 5px; background: rgba(255, 255, 255, 0.1); }
 .ex-segs i.is-on { background: #22c55e; }
+.ex-segs i.is-extra { background: #d4af37; }
 .ex-target { display: flex; align-items: center; gap: 10px; border-radius: 16px; padding: 10px 14px; border: 1px solid rgba(212, 175, 55, 0.4); background: rgba(212, 175, 55, 0.1); color: #d4af37; }
 .ex-target.is-up { border-color: rgba(34, 197, 94, 0.45); background: rgba(34, 197, 94, 0.1); color: #22c55e; }
 .ex-target.is-down { border-color: rgba(248, 113, 113, 0.45); background: rgba(248, 113, 113, 0.1); color: #f87171; }
@@ -304,6 +313,8 @@ input.day-title-input { font-size: 26px !important; }
 :root[data-theme="light"] .wk-bar i { background: rgba(0, 0, 0, 0.1); }
 :root[data-theme="light"] .wk-bar i.is-on { background: #22c55e; }
 :root[data-theme="light"] .wk-bar i.is-rest { background: transparent; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14); }
+:root[data-theme="light"] .today-body { border-top-color: rgba(0, 0, 0, 0.08); }
+:root[data-theme="light"] .today-week .wk-strip { background: transparent; box-shadow: none; }
 :root[data-theme="light"] .wk-strip { background: #fff; border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(0, 0, 0, 0.04); }
 :root[data-theme="light"] .wk-dt { color: #111318; }
 :root[data-theme="light"] .wk-wd, :root[data-theme="light"] .wk-day.is-rest :is(.wk-dt, .wk-wo) { color: #8a94a2; }
@@ -326,6 +337,7 @@ input.day-title-input { font-size: 26px !important; }
 :root[data-theme="light"] .ex-week.is-full b { color: #15803d; }
 :root[data-theme="light"] .ex-segs i { background: rgba(0, 0, 0, 0.1); }
 :root[data-theme="light"] .ex-segs i.is-on { background: #22c55e; }
+:root[data-theme="light"] .ex-segs i.is-extra { background: #d4af37; }
 :root[data-theme="light"] .ex-target { color: #8a6a0c; }
 :root[data-theme="light"] .ex-target.is-up { color: #15803d; }
 :root[data-theme="light"] .ex-target.is-down { color: #b91c1c; }
