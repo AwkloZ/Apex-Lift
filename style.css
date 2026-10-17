@@ -349,3 +349,18 @@ input.day-title-input { font-size: 26px !important; }
 :root[data-theme="light"] svg line[stroke="#262626"] { stroke: #e5e7eb; }
 :root[data-theme="light"] svg text[fill="#e2e8f0"] { fill: #111318; }
 :root[data-theme="light"] svg circle[stroke="#111111"] { stroke: #ffffff; }
+
+/* Plan tab = the editor: dashed gold day card, exercise cards with a ⋮⋮ grip */
+.glass-card.plan-card { border: 1.5px dashed rgba(212, 175, 55, 0.55); }
+.glass-card.plan-ex { border-radius: 22px; padding: 11px 12px 11px 4px; }
+.plan-ex .handle { cursor: grab; touch-action: none; -webkit-touch-callout: none; }
+.plan-ex .handle:active { cursor: grabbing; color: #d4af37; }
+/* where the card will land, and the card you hold */
+.plan-ghost { background: rgba(212, 175, 55, 0.06) !important; border: 2px dashed rgba(212, 175, 55, 0.6) !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.plan-ghost > * { visibility: hidden; }
+.plan-drag { opacity: 1 !important; background: #262628 !important; border: 2px solid #d4af37 !important; box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 0 6px rgba(212, 175, 55, 0.12) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.plan-drag .handle { color: #d4af37; }
+.plan-drag .plan-ex-n { background: #d4af37; color: #111; }
+.plan-chosen .tap-feedback:active { transform: none; opacity: 1; }
+:root[data-theme="light"] .glass-card.plan-card { border: 1.5px dashed rgba(180, 140, 20, 0.6); }
+:root[data-theme="light"] .plan-drag { background: #ffffff !important; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18), 0 0 0 6px rgba(212, 175, 55, 0.15) !important; }

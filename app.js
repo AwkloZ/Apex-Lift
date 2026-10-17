@@ -19,6 +19,19 @@
     const AR = {
         "Next workout": "التمرين القادم",
         "Change exercise": "تغيير التمرين",
+        "Editing your schedule": "تعديل جدولك",
+        "Changes here update your Today page": "التغييرات هنا تُحدّث صفحة اليوم",
+        "Routine": "الجدول",
+        "More": "المزيد",
+        "More day tools": "أدوات اليوم الأخرى",
+        "Swap with another day": "تبديل مع يوم آخر",
+        "Copy to another day": "نسخ إلى يوم آخر",
+        "Same sets & reps for all": "نفس المجموعات والتكرارات للكل",
+        "Clear this day": "مسح هذا اليوم",
+        "Hold ⋮⋮ and drag to change the order": "اضغط مطولًا على ⋮⋮ واسحب لتغيير الترتيب",
+        "Order saved": "تم حفظ الترتيب",
+        "Drag to reorder": "اسحب لإعادة الترتيب",
+        "Tap an exercise to edit it. Hold ⋮⋮ and drag to change the order.": "اضغط على التمرين لتعديله. اضغط مطولًا على ⋮⋮ واسحب لتغيير الترتيب.",
         "Change to {name}?": "التغيير إلى {name}؟",
         "{old} will be replaced with {sets} sets of {reps}.": "سيتم استبدال {old} بـ {sets} مجموعات × {reps}.",
         "Sets and reps": "المجموعات والتكرارات",
@@ -38,7 +51,6 @@
                 "Day cleared": "تم مسح اليوم",
         "Change {name}": "تغيير {name}",
         "Changed to {name}": "تم التغيير إلى {name}",
-        "Tap an exercise to edit it. Press and hold to drag it into a new order.": "اضغط على التمرين لتعديله. اضغط مطولًا واسحبه لتغيير الترتيب.",
         "{n} routines": "{n} جداول",
         "Day tools": "أدوات اليوم",
         "1 to 3 years": "من سنة إلى 3 سنوات",
@@ -794,7 +806,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '19';
+    const APP_VERSION = '20';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1123,10 +1135,15 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const renderSidePanel = () => {
         const active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0], open = !!window.appState.routinesOpen;
         const row = w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold uppercase tracking-wider w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[9px] font-black tracking-widest uppercase shrink-0">${t('Active')}</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[10px] font-bold tracking-widest uppercase tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">${t('Select')}</button>`}${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20" aria-label="${esc(t('Delete routine'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`;
-        document.getElementById('weeks-container').innerHTML = `<div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''}">
-            <button onclick="window.appActions.toggleRoutines()" class="w-full p-4 flex items-center gap-3 text-start tap-feedback" aria-expanded="${open}">
-                <span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-range" class="w-5 h-5"></i></span>
-                <span class="flex-1 min-w-0"><span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">${t('My routines')}</span><span class="block text-[15px] font-black text-white truncate">${esc(t(active.name))}</span></span>
+        // Plan is where the schedule is edited: a gold strip says so, so it isn't mistaken for Today
+        document.getElementById('weeks-container').innerHTML = `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-[#d4af37]/15 border border-[#d4af37]/45">
+            <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
+            <span class="flex-1 min-w-0"><span class="block text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${t('Editing your schedule')}</span><span class="block text-[11px] font-semibold text-slate-300 mt-px">${t('Changes here update your Today page')}</span></span>
+        </div>
+        <div class="glass-card rounded-2xl ${open ? 'border border-[#d4af37]/30' : ''}" style="border-radius:16px">
+            <button onclick="window.appActions.toggleRoutines()" class="w-full px-3.5 py-2.5 flex items-center gap-2.5 text-start tap-feedback" aria-expanded="${open}" aria-label="${esc(t('My routines'))}">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest shrink-0">${t('Routine')}</span>
+                <span class="flex-1 min-w-0 text-[14px] font-black text-white truncate">${esc(t(active.name))}</span>
                 <span class="shrink-0 text-[11px] font-black text-slate-400" dir="ltr">${appData.weeks.length}</span>
                 <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}"></i>
             </button>
@@ -1789,29 +1806,36 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         else if (v === 'progress') renderAnalytics();
     };
 
-    // 🗓️ PLAN: build the selected day. Same cards as Today: one card for the day (name, details and tools), then the exercises
+    // 🗓️ PLAN: build the selected day. It looks like Today but marked as an editor: dashed gold day card,
+    // a pencil on the day name, and exercise cards with a ⋮⋮ grip (drag) and a sets × reps chip (tap to edit)
     const renderPlanDay = () => {
-        const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay);
+        const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), S = window.appState;
         const planned = day.exercises.reduce((a, ex) => a + (parseInt(ex.sets) || 0), 0);
-        const mins = Math.max(10, Math.round(planned * 2.5 / 5) * 5);
+        const mins = Math.max(10, Math.round(planned * 2.5 / 5) * 5), hasEx = !day.isRest && day.exercises.length > 0;
         const opts = schedule.filter(d => d.id !== activeDay).map(d => `<option value="${d.id}">${t('Day {n}', { n: d.id })} • ${esc(tDay(d.day))}</option>`).join('');
         const pill = 'flex items-center justify-center gap-1.5 h-10 px-3.5 rounded-full border text-[11px] font-black whitespace-nowrap';
-        const selPill = (sel, icon, label) => `<div class="relative shrink-0 tap-feedback">${sel}<div class="${pill} bg-white/5 border-white/10 text-slate-200"><i data-lucide="${icon}" class="w-4 h-4"></i>${label}</div></div>`;
         const dayLabel = `<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(dayLong(day.day))}</div>`;
-        let html = `<div class="glass-card today-card"><div id="today-week" class="today-week">${weekNavHTML()}</div><div class="today-body">
+        // ⋯ More: the tools used less often. Swap / Copy open the phone's own day list
+        const mItem = 'relative w-full flex items-center gap-2.5 px-3 py-3 rounded-xl text-start text-[13px] font-extrabold tap-feedback';
+        const daySelect = fn => `<select onchange="if(this.value){window.appState.planMore=false;window.appActions.${fn}(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10"><option value="">${t('Day {n}', { n: '…' })}</option>${opts}</select>`;
+        const moreMenu = !S.planMore ? '' : `<div class="absolute end-3 top-full -mt-3 z-[61] w-[230px] p-1.5 rounded-2xl bg-[#111] border border-white/15 shadow-[0_20px_40px_rgba(0,0,0,0.7)]" role="menu">
+                <div class="${mItem} text-slate-200" role="menuitem">${daySelect('swapDay')}<i data-lucide="arrow-up-down" class="w-4 h-4 text-slate-400"></i>${t('Swap with another day')}</div>
+                <div class="${mItem} text-slate-200" role="menuitem">${daySelect('copyDay')}<i data-lucide="copy" class="w-4 h-4 text-slate-400"></i>${t('Copy to another day')}</div>
+                ${hasEx ? `<button onclick="window.appState.planMore=false;window.appState.sameAll=!window.appState.sameAll;window.appActions.refreshUI()" class="${mItem} text-slate-200" role="menuitem"><i data-lucide="list-checks" class="w-4 h-4 text-slate-400"></i>${t('Same sets & reps for all')}</button>
+                <button onclick="window.appState.planMore=false;window.appActions.clearDay()" class="${mItem} text-red-400" role="menuitem"><i data-lucide="trash-2" class="w-4 h-4"></i>${t('Clear this day')}</button>` : ''}
+            </div>`;
+        let html = `<div class="glass-card today-card plan-card relative ${S.planMore ? 'z-20' : ''}"><div id="today-week" class="today-week">${weekNavHTML()}</div><div class="today-body">
             ${!day.isRest
-                ? `<div>${dayLabel}<input type="text" value="${esc(day.title === 'New Day' ? '' : t(day.title))}" placeholder="${esc(t('Name this day'))}" onchange="window.appActions.updateDayTitle(this.value)" aria-label="${esc(t('Name this day'))}" class="day-title-input w-full bg-transparent border-b-2 border-transparent focus:border-[#d4af37] text-[21px] font-black text-white placeholder:text-slate-600 outline-none leading-tight mt-0.5 transition-colors"></div>
+                ? `<div>${dayLabel}<label class="flex items-center gap-2 mt-0.5 border-b-[1.5px] border-dashed border-white/25 focus-within:border-solid focus-within:border-[#d4af37] transition-colors"><input type="text" value="${esc(day.title === 'New Day' ? '' : t(day.title))}" placeholder="${esc(t('Name this day'))}" onchange="window.appActions.updateDayTitle(this.value)" aria-label="${esc(t('Name this day'))}" class="day-title-input flex-1 min-w-0 bg-transparent text-[21px] font-black text-white placeholder:text-slate-600 outline-none leading-tight pb-1"><i data-lucide="pencil" class="w-4 h-4 text-[#d4af37] shrink-0"></i></label></div>
                    <div class="text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: day.exercises.length })} · ${t('{n} sets', { n: planned })}${planned ? ` · ${t('~{n} min', { n: mins })}` : ''}</div>`
                 : `<div>${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${esc(day.recoveryType === 'active' ? t('Active Rest') : t('Complete Rest'))}</h2></div>
                    <div class="text-[12px] font-bold text-slate-400">${t('Recover well. See you next session.')}</div>`}
-            <div class="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 pt-1" role="toolbar" aria-label="${esc(t('Day tools'))}">
+            <div class="flex gap-2" role="toolbar" aria-label="${esc(t('Day tools'))}">
                 <button onclick="window.appActions.openPrograms()" class="${pill} shrink-0 bg-[#d4af37]/10 border-[#d4af37]/40 text-[#d4af37] tap-feedback"><i data-lucide="layout-list" class="w-4 h-4"></i>${t('Programs')}</button>
-                ${selPill(`<select onchange="window.appActions.updateDayType(this.value)" class="absolute inset-0 w-full h-full opacity-0 z-10" aria-label="${esc(t('Day type'))}"><option value="workout" ${!day.isRest ? 'selected' : ''}>${t('Workout')}</option><option value="active" ${day.isRest && day.recoveryType === 'active' ? 'selected' : ''}>${t('Active Rest')}</option><option value="complete" ${day.isRest && day.recoveryType === 'complete' ? 'selected' : ''}>${t('Complete Rest')}</option></select>`, 'settings-2', t('Day type'))}
-                ${selPill(`<select onchange="if(this.value){window.appActions.swapDay(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10" aria-label="${esc(t('Swap'))}"><option value="">${t('Swap...')}</option>${opts}</select>`, 'arrow-up-down', t('Swap'))}
-                ${selPill(`<select onchange="if(this.value){window.appActions.copyDay(parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10" aria-label="${esc(t('Copy'))}"><option value="">${t('Copy to...')}</option>${opts}</select>`, 'copy', t('Copy'))}
-                ${!day.isRest && day.exercises.length ? `<button onclick="window.appActions.clearDay()" class="${pill} shrink-0 bg-red-500/10 border-red-500/25 text-red-400 tap-feedback"><i data-lucide="trash-2" class="w-4 h-4"></i>${t('Clear')}</button>` : ''}
+                <div class="relative shrink-0 tap-feedback"><select onchange="window.appActions.updateDayType(this.value)" class="absolute inset-0 w-full h-full opacity-0 z-10" aria-label="${esc(t('Day type'))}"><option value="workout" ${!day.isRest ? 'selected' : ''}>${t('Workout')}</option><option value="active" ${day.isRest && day.recoveryType === 'active' ? 'selected' : ''}>${t('Active Rest')}</option><option value="complete" ${day.isRest && day.recoveryType === 'complete' ? 'selected' : ''}>${t('Complete Rest')}</option></select><div class="${pill} bg-white/5 border-white/10 text-slate-200">${t('Day type')}<i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></div></div>
+                <button onclick="window.appActions.togglePlanMore()" class="${pill} shrink-0 tap-feedback ${S.planMore ? 'bg-[#d4af37] border-[#d4af37] text-black' : 'bg-white/5 border-white/10 text-slate-200'}" aria-haspopup="menu" aria-expanded="${!!S.planMore}" aria-label="${esc(t('More day tools'))}"><i data-lucide="ellipsis" class="w-4 h-4"></i>${t('More')}</button>
             </div>
-            ${!day.isRest && day.exercises.length ? `<div class="flex items-center justify-between gap-2">
+            ${hasEx && S.sameAll ? `<div class="flex items-center justify-between gap-2">
                 <div class="text-[11px] font-black text-slate-300 leading-tight min-w-0">${t('Same for all')}</div>
                 <div class="flex items-center gap-2">
                     <input type="text" id="global-sets" placeholder="${t('Sets')}" class="w-[72px] placeholder:text-[11px] bg-black/40 text-white text-[14px] font-bold text-center rounded-lg py-2 border border-white/10 outline-none focus:border-[#d4af37]">
@@ -1819,31 +1843,46 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     <button onclick="window.appActions.applyGlobalSetsReps()" class="bg-[#d4af37] text-black px-3 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest tap-feedback shadow-sm">${t('Apply')}</button>
                 </div>
             </div>` : ''}
-        </div></div>`;
+        </div>${moreMenu}</div>`;
 
         if (!day.isRest) {
-            // Same card as Today (number, name, sets and reps), with the muscle in the pill instead of what was done.
-            // Tap to edit it in a pop-up; press and hold to drag it into a new order
-            html += `<div id="sortable-list" class="space-y-2">${day.exercises.map((ex, i) => `<button onclick="window.appActions.openExEdit(${i})" class="w-full glass-card ex-card flex items-center gap-3 text-start tap-feedback select-none">
-                    ${progressRing(0, 0, i + 1)}
-                    <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span><span class="block text-[11.5px] font-bold mt-0.5 truncate text-slate-400">${t('{n} sets', { n: esc(ex.sets) })} · ${t(isTimed(ex.reps) ? '{r} sec' : '{r} reps', { r: `<span dir="ltr">${esc(fmtReps(ex.reps))}</span>` })}</span></span>
-                    <span class="ex-pill max-w-[38%] truncate">${esc(tm(ex.muscle))}</span>
-                </button>`).join('')}</div>`;
-            html += `<button onclick="window.appActions.openPicker('add')" class="w-full glass-card p-4 mt-2 mb-10 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[12px] tap-feedback border-dashed border-[#d4af37]/40 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button>`;
+            const grip = `<svg width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true"><circle cx="5" cy="4" r="1.8"/><circle cx="11" cy="4" r="1.8"/><circle cx="5" cy="10" r="1.8"/><circle cx="11" cy="10" r="1.8"/><circle cx="5" cy="16" r="1.8"/><circle cx="11" cy="16" r="1.8"/></svg>`;
+            if (day.exercises.length > 1) html += `<div class="px-1.5 mb-2 text-[11px] font-extrabold text-slate-400">${t('Hold ⋮⋮ and drag to change the order')}</div>`;
+            // ⋮⋮ drags straight away (no waiting, no fight with scrolling); the rest of the card opens the editor
+            html += `<div id="sortable-list" class="space-y-2">${day.exercises.map((ex, i) => `<div class="glass-card plan-ex flex items-center gap-1.5" data-i="${i}">
+                    <span class="handle w-9 h-11 shrink-0 flex items-center justify-center text-slate-500" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>
+                    <button onclick="window.appActions.openExEdit(${i})" class="flex-1 min-w-0 flex items-center gap-2.5 text-start tap-feedback py-0.5">
+                        <span class="plan-ex-n w-[26px] h-[26px] shrink-0 rounded-full bg-white/5 flex items-center justify-center text-[12px] font-black text-slate-300">${i + 1}</span>
+                        <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span><span class="block text-[11.5px] font-bold mt-0.5 truncate text-slate-400">${esc(tm(ex.muscle))}</span></span>
+                        <span class="shrink-0 text-[11px] font-black px-2.5 py-1 rounded-full bg-[#d4af37]/15 text-[#d4af37]" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span>
+                        <i data-lucide="pencil" class="w-4 h-4 text-slate-500 shrink-0 me-1"></i>
+                    </button>
+                </div>`).join('')}</div>`;
+            html += `<button onclick="window.appActions.openPicker('add')" class="w-full p-4 mt-2.5 mb-10 rounded-[20px] flex items-center justify-center gap-2 text-[#d4af37] font-black uppercase tracking-widest text-[12px] tap-feedback border-[1.5px] border-dashed border-[#d4af37]/50 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button>`;
         }
 
         document.getElementById('workout-container').innerHTML = `<div class="${enterClass()}">${html}</div>`;
-        if(!day.isRest && day.exercises.length > 0 && window.Sortable) {
-            const listEl = document.getElementById('sortable-list');
-            if (listEl) {
-                if (window.appState.sortableInstance) window.appState.sortableInstance.destroy();
-                window.appState.sortableInstance = new Sortable(listEl, { delay: 250, delayOnTouchOnly: true, touchStartThreshold: 6, animation: 300, forceAutoScrollFallback: true, scrollSensitivity: 100, scrollSpeed: 20, fallbackClass: 'sortable-fallback', chosenClass: 'sortable-chosen', ghostClass: 'sortable-ghost', scroll: document.querySelector('.scrollable-content'), onEnd: (evt) => { if(evt.oldIndex===evt.newIndex)return; const m = day.exercises.splice(evt.oldIndex,1)[0]; day.exercises.splice(evt.newIndex,0,m); StorageManager.setPlan(appData); renderWorkout(); } });
-            }
+        if (window.appState.sortableInstance) { window.appState.sortableInstance.destroy(); window.appState.sortableInstance = null; }
+        const listEl = document.getElementById('sortable-list');
+        if (listEl && day.exercises.length > 1 && window.Sortable) {
+            window.appState.sortableInstance = new Sortable(listEl, {
+                handle: '.handle', animation: 220, forceFallback: true, fallbackOnBody: true, fallbackTolerance: 3,
+                scroll: document.querySelector('.scrollable-content'), forceAutoScrollFallback: true, scrollSensitivity: 90, scrollSpeed: 18,
+                chosenClass: 'plan-chosen', ghostClass: 'plan-ghost', fallbackClass: 'plan-drag', dragClass: 'plan-drag',
+                onStart: () => { try { if (navigator.vibrate) navigator.vibrate(15); } catch (e) {} },
+                onEnd: evt => {
+                    if (evt.oldIndex === evt.newIndex) return;
+                    const before = day.exercises.slice();
+                    const m = day.exercises.splice(evt.oldIndex, 1)[0]; day.exercises.splice(evt.newIndex, 0, m);
+                    StorageManager.setPlan(appData); renderWorkout();
+                    window.appActions.showToast(t('Order saved'), 'success', { label: t('Undo'), fn: () => { day.exercises = before; StorageManager.setPlan(appData); renderWorkout(); } });
+                }
+            });
         }
         if (window.lucide) window.lucide.createIcons();
         renderExEdit();
         if (typeof hint === 'function' && !day.isRest && day.exercises.length) {
-            hint('plan-edit', '#sortable-list > button', t('Tap an exercise to edit it. Press and hold to drag it into a new order.'));
+            hint('plan-edit', '#sortable-list > div', t('Tap an exercise to edit it. Hold ⋮⋮ and drag to change the order.'));
             if (hintSeen('plan-edit')) hint('plan-add', '#workout-container button[onclick*="openPicker(\'add\')"]', t('Add more exercises from the full library here.'));
         }
     };
@@ -2524,7 +2563,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }, true),
         switchTab: tab => {
             if (tab === 'workout') tab = 'today'; if (tab === 'analytics') tab = 'progress';
-            window.appState.inlineEdit = null; window.appState.currentView = tab;
+            window.appState.inlineEdit = null; window.appState.planMore = false; window.appState.currentView = tab;
             const prevTab = document.querySelector('.tab-btn.text-\\[\\#d4af37\\]');
             ['today', 'plan', 'progress', 'profile'].forEach(v => { const b = document.getElementById('tabbtn-' + v); if (b) b.className = `tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative ${v === tab ? 'text-[#d4af37]' : 'text-slate-500'}`; });
             const ic = document.querySelector(`#tabbtn-${tab} svg`);
@@ -2540,10 +2579,27 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast(t("Up to 5 routines"),"error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:t('Routine {n}', { n: appData.weeks.length+1 }),schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
         deleteWeek: id => { if(appData.weeks.length<=1)return; window.appActions.showConfirm(t("Delete routine"),t("Delete this routine? Your history is kept."),()=>{appData.weeks=appData.weeks.filter(w=>w.id!==id); if(currentWeekId===id){currentWeekId=appData.weeks[0].id;StorageManager.setActiveWeek(currentWeekId);window.appActions.refreshUI();renderNav();} StorageManager.setPlan(appData); renderSidePanel(); },true); },
+        // ⋯ More menu on the Plan day card; a tap anywhere outside it closes it
+        togglePlanMore: v => {
+            const open = window.appState.planMore = v === undefined ? !window.appState.planMore : v;
+            renderWorkout();
+            if (!open) return;
+            const away = e => {
+                if (e.target.closest('[role="menu"], [aria-haspopup="menu"]')) return;
+                document.removeEventListener('pointerdown', away, true);
+                if (!window.appState.planMore) return;
+                // close only: the tap that closes the menu doesn't also press what is under it
+                window.appState.planMore = false; e.stopPropagation(); renderWorkout();
+                const eat = ev => { ev.stopPropagation(); ev.preventDefault(); };
+                document.addEventListener('click', eat, { capture: true, once: true });
+                setTimeout(() => document.removeEventListener('click', eat, true), 600);
+            };
+            setTimeout(() => document.addEventListener('pointerdown', away, true), 0);
+        },
         toggleRoutines: () => { window.appState.routinesOpen = !window.appState.routinesOpen; renderSidePanel(); },
         renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=v||t('Unnamed'); StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=appData.weeks.find(x=>x.id===currentWeekId).name; },
         switchWeek: id => { currentWeekId=id; StorageManager.setActiveWeek(id); activeDay=getTodayId(); window.appState.inlineEdit=null; renderNav(); renderWorkout(); },
-        setActiveDay: id => { window.appState.inlineEdit=null; activeDay=id; renderNav(); renderWorkout(); },
+        setActiveDay: id => { window.appState.inlineEdit=null; window.appState.planMore=false; activeDay=id; renderNav(); renderWorkout(); },
         toggleRpe: v => { StorageManager.setShowRpe(v); window.appActions.showToast(t(v ? 'RPE column on' : 'RPE column off'), 'success'); },
         openBackupModal: () => { openModal('smart-backup-overlay','smart-backup-box'); pushBack('backup', () => window.appActions.closeBackupModal()); },
         closeBackupModal: () => { popBack('backup'); closeModal('smart-backup-overlay','smart-backup-box'); },
