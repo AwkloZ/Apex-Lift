@@ -11,10 +11,10 @@ service cloud.firestore {
     function isOwner(uid) {
       return request.auth != null && request.auth.uid == uid;
     }
-    // ⚠️ Replace PUT-YOUR-ADMIN-UID-HERE with your User UID
-    // (Firebase console → Authentication → Users → your account → copy "User UID").
+    // The admin's User UID (Firebase console → Authentication → Users). To add another admin, add its UID to the list.
+    // A User UID is not secret: it only names an account, it can't be used to sign in.
     function isAdmin() {
-      return request.auth != null && request.auth.uid in ['PUT-YOUR-ADMIN-UID-HERE'];
+      return request.auth != null && request.auth.uid in ['O5aONnMMOLQI67fNpoNfu9GBrOL2'];
     }
     function fields() {
       return request.resource.data;
