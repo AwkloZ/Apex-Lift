@@ -688,7 +688,7 @@
     const getResets = () => { const v = readJSON(RESET_KEY, {}); return isObj(v) ? v : {}; };
     const setResets = d => { try { localStorage.setItem(RESET_KEY, JSON.stringify(d)); } catch (e) {} };
     // Terms of Use & Privacy Policy: which version the user agreed to, and when
-    const TERMS_VERSION = '2026-10.3';
+    const TERMS_VERSION = '2026-10.4';
     const AGREE_KEY = 'workoutAgreed_rakan_final';
     const getAgree = () => { const v = readJSON(AGREE_KEY, null); return isObj(v) && v.v === TERMS_VERSION ? v : null; };
     const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
@@ -760,7 +760,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '11';
+    const APP_VERSION = '12';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -2928,8 +2928,32 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         finally { clearTimeout(slow); Cloud.flushing = false; if (Cloud.again) { Cloud.again = false; scheduleFlush(300); } }
     };
     // Live updates from your other phones
+    // 🟢 PRESENCE + VISITS (users/{uid}/presence/app): while the app is open on screen it says "I'm here" every 2 minutes,
+    // so the admin page can show who is using the app right now, how many times each user opened it and for how long.
+    // A visit = one stretch of use; coming back after 30 minutes away starts a new one. The last 30 visits are kept.
+    const PRES_MS = 120000, VISIT_GAP = 30 * 60000;
+    const presPath = uid => `users/${uid}/presence/app`;
+    const presence = { timer: null, doc: null, uid: null };
+    const presenceBeat = async (off = false) => {
+        if (!Cloud.user || (!off && document.visibilityState !== 'visible')) return;
+        const uid = Cloud.user.uid, now = Date.now();
+        if (presence.uid !== uid) { presence.doc = null; presence.uid = uid; }
+        if (!presence.doc) { try { const snap = await Cloud.db.doc(presPath(uid)).get(); presence.doc = snap.exists ? snap.data() : {}; } catch (e) { presence.doc = {}; } }
+        const p = presence.doc, recent = (Array.isArray(p.recent) ? p.recent : []).filter(v => isObj(v) && Number(v.s) > 0 && Number(v.e) >= Number(v.s)).slice(-30);
+        let visits = Number(p.visits) || 0;
+        const last = recent[recent.length - 1];
+        if (last && now - last.e < VISIT_GAP) last.e = now;
+        else if (!off) { recent.push({ s: now, e: now }); visits++; }
+        presence.doc = { at: now, off, visits, recent: recent.slice(-30) };
+        Cloud.db.doc(presPath(uid)).set(presence.doc).catch(e => console.warn('Presence', e));
+    };
+    const presenceStart = () => { clearInterval(presence.timer); presenceBeat(); presence.timer = setInterval(() => presenceBeat(), PRES_MS); };
+    const presenceStop = () => { clearInterval(presence.timer); presence.timer = null; presence.doc = null; presence.uid = null; };
+    document.addEventListener('visibilitychange', () => { if (Cloud.user && presence.timer) presenceBeat(document.visibilityState !== 'visible'); });
+
     const cloudSubscribe = uid => {
         Cloud.unsub.forEach(u => u()); Cloud.unsub = [];
+        presenceStart();
         Cloud.unsub.push(Cloud.db.doc(`users/${uid}`).onSnapshot(snap => {
             if (!snap.exists || snap.metadata.hasPendingWrites) return;
             const m = snap.data(), localU = Number(localStorage.getItem(LOCAL_UPDATED_KEY)) || 0;
@@ -2965,6 +2989,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }, e => console.warn(e)));
     };
     const cloudSignedOut = () => {
+        presenceStop();
         Cloud.unsub.forEach(u => u()); Cloud.unsub = []; Cloud.user = null; Cloud.sent = {};
         const wasPending = (getCloudFlag() || {}).pending;
         try { localStorage.removeItem(CLOUD_KEY); } catch (e) {}
@@ -3045,7 +3070,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 // every account backup (and its parts) goes too
                 const bs = await Cloud.db.collection(`users/${uid}/backups`).get();
                 bs.forEach(d => { const n = Number((d.data() || {}).parts) || 1; for (let i = 0; i < n; i++) paths.push(`users/${uid}/backups/${d.id}/parts/${i}`); paths.push(`users/${uid}/backups/${d.id}`); });
-                paths.push(coachPath(uid), `users/${uid}`);
+                presenceStop();
+                paths.push(coachPath(uid), presPath(uid), `users/${uid}`);
                 for (let i = 0; i < paths.length; i += 400) { const b = Cloud.db.batch(); paths.slice(i, i + 400).forEach(x => b.delete(Cloud.db.doc(x))); await b.commit(); }
                 try { await Cloud.auth.currentUser.delete(); }
                 catch (e) {

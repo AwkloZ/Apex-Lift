@@ -59,6 +59,16 @@ service cloud.firestore {
         }
       }
 
+      // presence + visits: "using the app now" and the last 30 visits (written by the app while it is open)
+      match /presence/{docId} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow delete: if isOwner(uid);
+        allow create, update: if isOwner(uid) && docId == 'app'
+          && fields().keys().hasOnly(['at', 'off', 'visits', 'recent'])
+          && fields().at is int && fields().off is bool && fields().visits is int
+          && fields().recent is list && fields().recent.size() <= 30;
+      }
+
       // coach plan: written by the admin, read by the user's app, which only marks it as applied (appliedAt)
       match /coach/{docId} {
         allow read: if isOwner(uid) || isAdmin();
@@ -76,6 +86,11 @@ service cloud.firestore {
           && fields().diff(resource.data).affectedKeys().hasOnly(['appliedAt'])
           && fields().appliedAt is int;
       }
+    }
+
+    // the admin page reads everyone's presence with one query (collection group)
+    match /{path=**}/presence/{docId} {
+      allow read: if isAdmin();
     }
 
     // coach: saved routine templates (admin only)

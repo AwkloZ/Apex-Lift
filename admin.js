@@ -33,11 +33,15 @@
     const lab = (k, v) => (LABEL[k] && LABEL[k][v]) || '';
     const setupLabel = v => !v ? '' : v.startsWith('left:') ? `Left at "${v.slice(5)}"` : lab('setup', v) || v;
     const logTime = l => (num(l && l.ts) !== null ? l.ts : Date.parse(l && l.d));
-    const STATUS = { active: ['Active', 'b-active'], risk: ['At risk', 'b-risk'], inactive: ['Inactive', 'b-inactive'], none: ['Not started', 'b-none'] };
+    // training status (gold/amber/grey/red); green is kept for "online now"
+    const STATUS = { active: ['Training', 'b-train'], risk: ['At risk', 'b-risk'], inactive: ['Inactive', 'b-inactive'], none: ['Not started', 'b-none'] };
+    const ONLINE_MS = 5 * 60000; // the app says "I'm here" every 2 minutes while it is open
+    const fmtTime = t => new Date(t).toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true });
+    const fmtDur = ms => { const m = Math.max(1, Math.round(ms / 60000)); return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60} min`; };
 
     firebase.initializeApp(FIREBASE_CONFIG);
     const auth = firebase.auth(), db = firebase.firestore();
-    let users = [], clients = {}, tab = 'users', sortKey = 'lastActive', sortDir = -1, query = '', fStatus = '', fGoal = '', fClients = false;
+    let users = [], clients = {}, presence = {}, presUnsub = null, tab = 'users', sortKey = 'lastActive', sortDir = -1, query = '', fStatus = '', fGoal = '', fClients = false;
 
     // writes "who looked at what" to adminLog (append-only, see firestore.rules); never blocks the page
     const audit = (uid, action) => { const u = auth.currentUser; if (u) db.collection('adminLog').add({ uid, action, at: Date.now(), by: u.email || u.uid }).catch(e => console.warn('adminLog', e)); };
@@ -87,6 +91,12 @@
     };
     const isNew = u => u.joined && Date.now() - u.joined < 7 * DAY;
     const finish = u => {
+        const p = presence[u.uid];
+        u.online = !!(p && !p.off && Date.now() - (num(p.at) || 0) < ONLINE_MS);
+        u.visits = p ? (num(p.visits) || 0) : null;
+        u.recent = p && Array.isArray(p.recent) ? p.recent.filter(v => isObj(v) && num(v.s) && num(v.e)).sort((a, b) => b.s - a.s) : [];
+        u.lastVisit = p ? num(p.at) : null;
+        if (u.lastVisit) u.lastActive = Math.max(u.lastActive || 0, u.lastVisit);
         const c = clients[u.uid] || {};
         u.client = c.client === true; u.notes = String(c.notes || ''); u.followUp = String(c.followUp || '');
         u.status = statusOf(u); u.statusLabel = STATUS[u.status][0];
@@ -98,12 +108,28 @@
         users = []; qs.forEach(d => users.push(toUser(d)));
         users.forEach(finish);
         render();
+        watchPresence();
         // users on older app versions send no activity summary: work it out from their workout history
         // (only for them, and only until they open the updated app)
         const queue = users.filter(u => !u.hasActivity);
         const worker = async () => { while (queue.length) { const u = queue.shift(); try { summarize(u, await loadHistory(u)); } catch (e) { console.warn(e); } finish(u); } };
         if (queue.length) { await Promise.all([1, 2, 3, 4].map(worker)); render(); }
     };
+    // who is using the app right now (live) and their visits: one query for everyone, then only changes
+    const watchPresence = () => {
+        if (presUnsub) presUnsub();
+        presUnsub = db.collectionGroup('presence').onSnapshot(qs => {
+            qs.docChanges().forEach(ch => { const uid = ch.doc.ref.parent.parent.id; if (ch.type === 'removed') delete presence[uid]; else presence[uid] = ch.doc.data() || {}; });
+            refreshLive();
+        }, e => console.warn('presence', e));
+    };
+    // online dots go out by themselves 5 minutes after the last "I'm here"
+    const refreshLive = () => {
+        users.forEach(finish);
+        const st = document.querySelector('.stats'); if (st) st.innerHTML = kpis();
+        if (tab === 'users' && $('rows')) renderRows();
+    };
+    setInterval(() => { if (users.length) refreshLive(); }, 30000);
     // the same summary the app sends (activitySummary in app.js), worked out here from the history
     const summarize = (u, h) => {
         const days = new Set(), count = {}; let last = 0;
@@ -166,11 +192,13 @@
     const countBy = (list, f) => { const m = {}; list.forEach(u => { const k = f(u); if (k) m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
 
     // ---------- page ----------
-    const COLS = [['name', 'Name'], ['email', 'Email'], ['statusLabel', 'Status'], ['goal', 'Goal'], ['days', 'Days/wk'], ['exp', 'Experience'], ['routine', 'Routine'], ['workouts', 'Workouts'], ['lastWorkout', 'Last workout'], ['lastActive', 'Last active'], ['joined', 'Joined'], ['age', 'Age'], ['sex', 'Sex'], ['platform', 'Phone'], ['lang', 'Language'], ['version', 'App'], ['followUp', 'Follow-up']];
+    const COLS = [['name', 'Name'], ['email', 'Email'], ['statusLabel', 'Status'], ['goal', 'Goal'], ['days', 'Days/wk'], ['exp', 'Experience'], ['routine', 'Routine'], ['workouts', 'Workouts'], ['lastWorkout', 'Last workout'], ['visits', 'Visits'], ['lastActive', 'Last active'], ['joined', 'Joined'], ['age', 'Age'], ['sex', 'Sex'], ['platform', 'Phone'], ['lang', 'Language'], ['version', 'App'], ['followUp', 'Follow-up']];
     const cell = (u, k) => {
         const v = u[k];
-        if (k === 'statusLabel') return `<span class="badge ${STATUS[u.status][1]}">${esc(v)}</span>${isNew(u) ? '<span class="badge b-new">New</span>' : ''}${u.client ? '<span class="badge b-client">Client</span>' : ''}`;
-        if (k === 'joined' || k === 'lastActive' || k === 'lastWorkout') return esc(fmtDate(v));
+        if (k === 'statusLabel') return `${u.online ? '<span class="badge b-online">Online now</span>' : ''}<span class="badge ${STATUS[u.status][1]}">${esc(v)}</span>${isNew(u) ? '<span class="badge b-new">New</span>' : ''}${u.client ? '<span class="badge b-client">Client</span>' : ''}`;
+        if (k === 'lastActive') return u.online ? '<span class="ok">Now</span>' : esc(v ? `${fmtDate(v)}${u.lastVisit === v ? ` · ${fmtTime(v)}` : ''}` : '');
+        if (k === 'visits') return v === null ? '<span class="muted">—</span>' : esc(v);
+        if (k === 'joined' || k === 'lastWorkout') return esc(fmtDate(v));
         if (k === 'workouts') return v === null ? '<span class="muted">—</span>' : esc(v);
         // users on app versions before 11 never uploaded their name and email: it arrives when they next open the app
         if (k === 'name' && !v) return `<span class="muted" title="${esc(u.uid)}">Not shared yet · ${esc(u.uid.slice(0, 6))}</span>`;
@@ -179,14 +207,14 @@
     };
     const filtered = () => {
         const q = query.trim().toLowerCase();
-        let list = users.filter(u => (!fStatus || (fStatus === 'new' ? isNew(u) : fStatus === 'due' ? (keyTs(u.followUp) || Infinity) <= Date.now() : u.status === fStatus)) && (!fGoal || u.goalKey === fGoal) && (!fClients || u.client));
+        let list = users.filter(u => (!fStatus || (fStatus === 'online' ? u.online : fStatus === 'new' ? isNew(u) : fStatus === 'due' ? (keyTs(u.followUp) || Infinity) <= Date.now() : u.status === fStatus)) && (!fGoal || u.goalKey === fGoal) && (!fClients || u.client));
         if (q) list = list.filter(u => [u.name, u.email, u.goal, u.routine, u.uid, u.notes].some(x => String(x).toLowerCase().includes(q)));
         return list.sort((a, b) => { const x = a[sortKey], y = b[sortKey]; if (x == null || x === '') return 1; if (y == null || y === '') return -1; return (x > y ? 1 : x < y ? -1 : 0) * sortDir; });
     };
     const kpis = () => {
         const week = Date.now() - 7 * DAY, month = Date.now() - 30 * DAY, ages = users.map(u => u.age).filter(Boolean);
         const due = users.filter(u => (keyTs(u.followUp) || Infinity) <= Date.now()).length;
-        return [[users.length, 'Users'], [users.filter(u => u.lastWorkout > week).length, 'Trained last 7 days'], [users.filter(u => u.lastWorkout > month).length, 'Trained last 30 days'],
+        return [[users.length, 'Users'], [users.filter(u => u.online).length, 'Online now'], [users.filter(u => u.lastVisit > week).length, 'Opened the app last 7 days'], [users.filter(u => u.lastWorkout > week).length, 'Trained last 7 days'], [users.filter(u => u.lastWorkout > month).length, 'Trained last 30 days'],
             [users.filter(isNew).length, 'New this week'], [users.reduce((s, u) => s + (u.workouts > 0 ? u.workouts : 0), 0), 'Workouts logged'], [users.filter(u => u.client).length, 'Coaching clients'],
             [due, 'Follow-ups due'], [ages.length ? Math.round(ages.reduce((a, b) => a + b, 0) / ages.length) : '—', 'Average age']]
             .map(([v, l]) => `<div class="stat"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join('');
@@ -200,7 +228,7 @@
     };
     const renderUsers = () => {
         const goals = Object.entries(LABEL.goal).map(([k, l]) => `<option value="${k}" ${fGoal === k ? 'selected' : ''}>${l}</option>`).join('');
-        const st = [['', 'All users'], ['active', 'Active (7 days)'], ['risk', 'At risk (8–30 days)'], ['inactive', 'Inactive (30+ days)'], ['none', 'Not started'], ['new', 'New this week'], ['due', 'Follow-up due']]
+        const st = [['', 'All users'], ['online', 'Online now'], ['active', 'Training (7 days)'], ['risk', 'At risk (8–30 days)'], ['inactive', 'Inactive (30+ days)'], ['none', 'Not started'], ['new', 'New this week'], ['due', 'Follow-up due']]
             .map(([k, l]) => `<option value="${k}" ${fStatus === k ? 'selected' : ''}>${l}</option>`).join('');
         $('view').innerHTML = `<div class="tools"><input id="q" type="search" placeholder="Search name, email, goal, notes…" value="${esc(query)}">
                 <select id="fs" aria-label="Status">${st}</select><select id="fg" aria-label="Goal"><option value="">All goals</option>${goals}</select>
@@ -257,6 +285,7 @@
                 ${card('Sign-ups per week', 'Last 12 weeks', barChart(signups))}
                 ${card('Active users per week', 'Users who logged at least one workout', barChart(activeW))}
                 ${card('Workouts per week', 'Workout days logged by all users', barChart(workoutsW))}
+                ${card('App visits per week', 'Times users opened the app (each user\'s last 30 visits)', barChart(wk.map(b => ({ label: `${fmtShort(b.from)} – ${fmtShort(b.to - DAY)}`, short: fmtShort(b.from), v: users.reduce((n, u) => n + u.recent.filter(v => v.s >= b.from && v.s < b.to).length, 0) }))))}
                 ${card('Retention', 'Of the users who joined each week: the share who trained in their 1st, 2nd and 4th week',
                     `<div style="overflow-x:auto"><table class="mini"><thead><tr><th>Joined week of</th><th>Users</th><th>Week 1</th><th>Week 2</th><th>Week 4</th></tr></thead><tbody>${cohorts.map(c => `<tr><td>${esc(c.label)}</td><td class="c">${c.n}</td>${c.n ? c.w.map(pctCell).join('') : '<td class="c muted">—</td>'.repeat(3)}</tr>`).join('')}</tbody></table></div>`)}
                 ${card('Where users drop off', 'Share of all signed-in users', hbars(funnel, users.length))}
@@ -309,7 +338,7 @@
         const rAvg = f => rd.length ? (rd.reduce((s, r) => s + (num(r[f]) || 0), 0) / rd.length).toFixed(1) : '';
         $('panel').dataset.uid = u.uid;
         $('panel').innerHTML = `<div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div><h2>${esc(u.name || 'Name not shared yet')}</h2><div class="note" style="margin:2px 0 0">${esc(u.email || 'Their name and email arrive when they open the updated app.')}</div>
-                <div style="margin-top:8px"><span class="badge ${STATUS[u.status][1]}">${esc(u.statusLabel)}</span>${isNew(u) ? '<span class="badge b-new">New</span>' : ''}${u.client ? '<span class="badge b-client">Client</span>' : ''}</div></div><button class="btn" id="close">Close</button></div>
+                <div style="margin-top:8px">${u.online ? '<span class="badge b-online">Online now</span>' : ''}<span class="badge ${STATUS[u.status][1]}">${esc(u.statusLabel)}</span>${isNew(u) ? '<span class="badge b-new">New</span>' : ''}${u.client ? '<span class="badge b-client">Client</span>' : ''}</div></div><button class="btn" id="close">Close</button></div>
 
             <h3>Coaching</h3>
             <div class="row"><button class="btn gold" id="c-new">Send a new routine</button><button class="btn" id="c-note">Send a message</button></div>
@@ -321,6 +350,9 @@
 
             <h3>Routines</h3><div class="list">${plan.map(w => `<div><span>${esc(w.name)}${w.id === m.activeWeek ? ' <span class="pill">active</span>' : ''}<br><span class="note" style="margin:0">${(Array.isArray(w.schedule) ? w.schedule : []).filter(d => isObj(d) && !d.isRest && Array.isArray(d.exercises) && d.exercises.length).length} training days</span></span><span><button class="btn" data-edit="${esc(w.id)}">Edit &amp; send</button></span></div>`).join('') || '<div><span class="note">None</span></div>'}</div>
 
+            <h3>Visits</h3>${u.visits === null ? '<p class="note">Shown once they open the updated app.</p>' : `
+                <div class="kv"><div><span>Visits</span><b>${esc(u.visits)}</b></div><div><span>Average visit (last ${u.recent.length})</span><b>${u.recent.length ? esc(fmtDur(u.recent.reduce((a, v) => a + (v.e - v.s), 0) / u.recent.length)) : '—'}</b></div></div>
+                <div class="list" style="margin-top:6px">${u.recent.slice(0, 10).map((v, i) => `<div><span>${esc(fmtDate(v.s))} · ${esc(fmtTime(v.s))}</span><span>${i === 0 && u.online ? '<span class="ok">Using the app now</span> · ' : ''}${esc(fmtDur(v.e - v.s))}</span></div>`).join('')}</div>`}
             <h3>Workouts per week</h3>${u.hasActivity ? barChart(wk, { h: 110 }) : '<p class="note">Shown once they open the updated app.</p>'}
             <h3>About</h3><div class="kv">${kv('Age', u.age)}${kv('Sex', u.sex)}${kv('Height', u.heightCm && u.heightCm + ' cm')}${kv('Weight', u.weightKg && u.weightKg + ' kg')}${kv('Goal', u.goal)}${kv('Days per week', u.days)}${kv('Experience', u.exp)}${kv('Equipment', u.eq)}
                 ${kv('Workouts', u.workouts)}${kv('Exercises', u.exercises)}${kv('Last workout', u.lastWorkout && `${fmtDate(u.lastWorkout)} (${ago(u.lastWorkout)})`)}${kv('Last active', u.lastActive && `${fmtDate(u.lastActive)} (${ago(u.lastActive)})`)}
@@ -413,9 +445,9 @@
     const toCSV = rows => '﻿' + rows.map(r => r.map(csvCell).join(',')).join('\r\n'); // ﻿: Excel opens Arabic names correctly
     const downloadCSV = () => {
         const head = ['Name', 'Email', 'Status', 'Client', 'Follow-up', 'Age', 'Sex', 'Height (cm)', 'Weight (kg)', 'Goal', 'Days per week', 'Experience', 'Equipment', 'Routine', 'Routines', 'Workouts', 'Exercises',
-            'Last workout', 'Last active', 'Joined', 'Setup', 'Phone', 'Installed', 'Language', 'App version', 'Terms version', 'User UID'];
+            'Last workout', 'Visits', 'Last active', 'Joined', 'Setup', 'Phone', 'Installed', 'Language', 'App version', 'Terms version', 'User UID'];
         const rows = filtered().map(u => [u.name, u.email, u.statusLabel, u.client ? 'Yes' : '', u.followUp, u.age, u.sex, u.heightCm, u.weightKg, u.goal, u.days, u.exp, u.eq, u.routine, u.routines, u.workouts, u.exercises,
-            iso(u.lastWorkout), iso(u.lastActive), iso(u.joined), u.setup, u.platform, u.installed, u.lang, u.version, u.terms, u.uid]);
+            iso(u.lastWorkout), u.visits, iso(u.lastActive), iso(u.joined), u.setup, u.platform, u.installed, u.lang, u.version, u.terms, u.uid]);
         saveFile(`ApexLift_users_${iso(Date.now())}.csv`, toCSV([head, ...rows]), 'text/csv;charset=utf-8');
     };
     // one row per set, for the users in the current list (reads their full history)
