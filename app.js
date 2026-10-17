@@ -305,9 +305,9 @@
         "Restore": "استرجاع",
         "Restore this backup?": "استرجاع هذه النسخة؟",
         "Restoring…": "جارٍ الاسترجاع…",
-        "Tap a day to see or train another day of your plan.": "اضغط على يوم لعرض أو تمرين يوم آخر من خطتك.",
+        "Tap a day, or swipe left or right, to see another day of your plan.": "اضغط على يوم، أو اسحب يمينًا أو يسارًا، لترى يومًا آخر من خطتك.",
         "Tap an exercise to change its sets and reps. Hold ⋮⋮ and drag to reorder.": "اضغط على التمرين لتغيير المجموعات والتكرارات. اضغط مطولًا على ⋮⋮ واسحب لإعادة الترتيب.",
-        "Tap here to start. Your weights from last time are already filled in.": "اضغط هنا للبدء. أوزانك من المرة السابقة مكتوبة مسبقًا.",
+        "Tap an exercise to start it or see its history. Your weights from last time are already filled in.": "اضغط على تمرين لتبدأه أو لترى سجله. أوزانك من المرة السابقة مكتوبة مسبقًا.",
         "Tap ⌄ to look at your plan. The workout keeps running at the bottom.": "اضغط ⌄ لمشاهدة خطتك، ويستمر التمرين في الأسفل.",
         "Terms of Use": "شروط الاستخدام",
         "Your account: sync, older backups and sign out are here.": "حسابك: المزامنة والنسخ السابقة وتسجيل الخروج هنا.",
@@ -420,6 +420,11 @@
         "Yes, Do it": "نعم، نفّذ",
         "{n} exercises added": "تمت إضافة {n} تمارين",
         "{n} exercises found": "تم العثور على {n} تمرين",
+        "Start": "ابدأ",
+        "History": "السجل",
+        "How do you feel?": "كيف تشعر اليوم؟",
+        "New record": "رقم قياسي جديد",
+        "{name} saved · {n} sets": "تم حفظ {name} · {n} مجموعات",
     };
     const t = (en, vars) => {
         let out = (isAR && Object.prototype.hasOwnProperty.call(AR, en) && AR[en]) || en;
@@ -434,6 +439,20 @@
     const dayLong = d => isAR ? (DAY_AR[d] || d) : (DAY_EN[d] || d);
     const DAY_AR_SHORT = { SUN:'أحد', MON:'اثنين', TUE:'ثلاثاء', WED:'أربعاء', THU:'خميس', FRI:'جمعة', SAT:'سبت' };
     const dayShort = d => isAR ? (DAY_AR_SHORT[d] || d) : (DAY_EN[d] || d).slice(0, 3);
+    // Workout name short enough for the week strip: built-in names have a fixed short form,
+    // your own names lose filler words ("Push Day" -> "Push"); anything longer is cut after 2 lines
+    const SHORT_TITLE = {
+        'Upper Body': ['Upper', 'علوي'], 'Lower Body': ['Lower', 'سفلي'], 'Full Body': ['Full Body', 'جسم كامل'],
+        'Full Body A': ['Full A', 'كامل A'], 'Full Body B': ['Full B', 'كامل B'],
+        'Upper Hypertrophy': ['Upper Hyp', 'علوي تضخيم'], 'Lower Hypertrophy': ['Lower Hyp', 'سفلي تضخيم'],
+        'Glutes & Hamstrings': ['Glutes & Hams', 'مؤخرة وفخذ'], 'Shoulders & Arms': ['Shldr & Arms', 'أكتاف وذراعين'],
+        'Lower Body & Abs': ['Lower & Abs', 'سفلي وبطن'], 'Push & Bi': ['Push & Bi', 'دفع وباي'], 'Pull & TRI': ['Pull & TRI', 'سحب وتراي'], 'Complete Rest': ['Rest', 'راحة'], 'Active Rest': ['Active', 'راحة نشطة']
+    };
+    const shortTitle = title => {
+        const s = SHORT_TITLE[(title || '').trim()]; if (s) return isAR ? s[1] : s[0];
+        const words = t(title || '').trim().split(/\s+/), kept = words.filter(w => !/^(day|body|workout|session|يوم|تمرين)$/i.test(w));
+        return (kept.length ? kept : words).join(' ');
+    };
     // Dates are shown in the chosen language (always the normal calendar and 0-9 digits)
     const fmtDate = (ts, withTime = true) => {
         const d = new Date(ts);
@@ -947,6 +966,22 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         });
     };
 
+    // 👈 SWIPE left / right on Today to go to the next / previous day (the layout is never mirrored, so the same in Arabic)
+    const enableDaySwipe = el => {
+        if (!el) return;
+        let x0 = null, y0 = 0, t0 = 0;
+        el.addEventListener('touchstart', e => {
+            if (window.appState.currentView !== 'today' || e.touches.length > 1 || e.target.closest('input, select, textarea, .scrollbar-hide')) { x0 = null; return; }
+            x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+        }, { passive: true });
+        el.addEventListener('touchend', e => {
+            if (x0 === null) return;
+            const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+            if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.6 || Date.now() - t0 > 600) return;
+            window.appActions.setActiveDay(((activeDay - 1 + (dx < 0 ? 1 : 6)) % 7) + 1);
+        });
+    };
+
     // 🔒 Keep the screen on during a Focus session (where supported)
     let wakeLock = null;
     const keepAwake = async on => {
@@ -995,16 +1030,16 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         if(window.lucide) window.lucide.createIcons();
     };
 
-    // Week strip: the 7 days of the routine with real day names; ✓ = done, moon = rest, red dot = empty (Plan tab)
+    // Week strip: the 7 days of the routine with the day and its workout name; ✓ = done, red dot = empty (Plan tab)
     const renderNav = () => {
         const schedule = getActiveSchedule(), history = StorageManager.getHistory(), today = getTodayId(), view = window.appState.currentView;
         document.getElementById('nav-container').innerHTML = schedule.map(d => {
             const sel = activeDay === d.id, comp = !d.isRest && isDayCompleted(d, history), empty = isDayIncomplete(d), isT = today === d.id;
-            const mark = comp ? '<i data-lucide="check" class="w-4 h-4"></i>'
-                : d.isRest ? '<i data-lucide="moon" class="w-3.5 h-3.5 opacity-60"></i>'
-                : `<span class="w-1.5 h-1.5 rounded-full ${empty && view === 'plan' ? 'bg-red-500' : sel ? 'bg-black/40' : 'bg-white/30'}"></span>`;
+            const name = d.isRest ? shortTitle(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : shortTitle(d.title);
+            const label = empty && view === 'plan' ? '<span class="w-1.5 h-1.5 rounded-full bg-red-500 mt-1"></span>'
+                : `<span class="day-chip-wo ${d.isRest ? 'is-rest' : ''}">${esc(empty ? '—' : name)}</span>`;
             const cls = sel ? 'bg-[#d4af37] text-black border-[#d4af37]' : comp ? 'bg-[#22c55e]/10 border-[#22c55e]/40 text-[#22c55e]' : isT ? 'bg-white/5 border-[#d4af37]/70 text-white' : 'bg-white/5 border-white/5 text-slate-300';
-            return `<button onclick="window.appActions.setActiveDay(${d.id})" class="rounded-2xl py-2.5 flex flex-col items-center gap-1 tap-feedback border transition-colors ${cls}"><span class="text-[11px] font-black leading-none truncate max-w-full px-0.5">${esc(dayShort(d.day))}</span><span class="h-4 flex items-center">${mark}</span></button>`;
+            return `<button onclick="window.appActions.setActiveDay(${d.id})" class="day-chip rounded-2xl tap-feedback border transition-colors ${cls}" aria-label="${esc(dayLong(d.day) + ' · ' + (d.isRest ? name : t(d.title)))}">${comp ? '<span class="day-tick"><i data-lucide="check" class="w-2.5 h-2.5"></i></span>' : ''}<span class="day-chip-name">${esc(dayShort(d.day))}</span>${label}</button>`;
         }).join('');
         renderSidePanel();
     };
@@ -1371,15 +1406,23 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         if (typeof hint === 'function') hint('progress-tabs', '#workout-container .scrollbar-hide', t('Your records, next targets and weekly volume per muscle are here.'));
         if (window.lucide) window.lucide.createIcons();
     };
-    // Daily check-in card (shown on today's workout day)
+    const READY = {
+        high:   { c: '#22c55e', t: 'Push Day',   i: 'zap',      d: 'Well recovered. Go for your targets.' },
+        normal: { c: '#d4af37', t: 'Normal Day', i: 'activity', d: 'Follow your targets as planned.' },
+        low:    { c: '#ef4444', t: 'Easy Day',   i: 'moon',     d: 'Low recovery: no weight increases today. Keep your weight, aim for the bottom of the range and stop 2 reps before failure.' }
+    };
+    // Small button in today's day card: "How do you feel?" or the result. Tap to open the check-in
+    const checkInChip = () => {
+        const r = getReadinessToday(), open = !!window.appState.ciOpen;
+        if (!r && window.appState.ciSkipped === dateKey()) return '';
+        const L = r ? READY[r.level] : null, c = L ? L.c : '#d4af37';
+        return `<button onclick="window.appActions.toggleCheckIn()" class="self-start inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-widest tap-feedback" style="color:${c};border-color:${c}55;background:${c}14" aria-expanded="${open}"><i data-lucide="${L ? L.i : 'activity'}" class="w-3.5 h-3.5"></i>${L ? `${t(L.t)} <span class="text-slate-500">• ${r.score}/6</span>` : t('How do you feel?')}<i data-lucide="chevron-${open ? 'up' : 'down'}" class="w-3 h-3 opacity-70"></i></button>`;
+    };
+    // Daily check-in card (opened from the button in today's day card)
     const checkInHTML = () => {
         const r = getReadinessToday();
         if (r) {
-            const L = {
-                high:   { c: '#22c55e', t: t('Push Day'),   i: 'zap',      d: t('Well recovered. Go for your targets.') },
-                normal: { c: '#d4af37', t: t('Normal Day'), i: 'activity', d: t('Follow your targets as planned.') },
-                low:    { c: '#ef4444', t: t('Easy Day'),   i: 'moon',     d: t('Low recovery: no weight increases today. Keep your weight, aim for the bottom of the range and stop 2 reps before failure.') }
-            }[r.level];
+            const R = READY[r.level], L = { c: R.c, t: t(R.t), i: R.i, d: t(R.d) };
             return `<div class="glass-card p-4 mb-4 flex items-center gap-3 border" style="border-color:${L.c}55">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:${L.c}1a;color:${L.c}"><i data-lucide="${L.i}" class="w-5 h-5"></i></div>
                 <div class="flex-1 min-w-0">
@@ -1448,56 +1491,90 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     }
 
 
-    // 🏠 TODAY: the selected day with one big Start button and a simple list of its exercises
+    // 🏠 TODAY: the selected day: a small day card, then its exercises. Tap an exercise to open it: Start (that exercise only) and History
     // Cards slide in when you open a different tab or day, but not when the same screen just refreshes
     let lastAnimKey = '';
     const enterClass = key => { const k = `${window.appState.currentView}|${currentWeekId}|${activeDay}|${key || ''}`; if (k === lastAnimKey) return ''; lastAnimKey = k; return 'stagger'; };
+    // Exercises of a day that are finished: all planned sets done this week, or trained today (even with some sets skipped)
+    const exercisesFinished = (day, history) => day.exercises.map((ex, i) => {
+        const hA = history[getExKey(currentWeekId, day.id, i, ex.name)] || [], planned = parseInt(ex.sets) || 0;
+        return (planned > 0 && setsThisWeekForDay(hA, day.id) >= planned) || hA.some(l => logDayId(l) === day.id && isToday(logTime(l)));
+    });
+    // The whole day's summary once its last exercise is done: every set logged for this day today
+    const daySummary = (day, h) => {
+        let sets = 0, volume = 0, start = Date.now(); const prs = [], seen = new Set();
+        day.exercises.forEach((ex, i) => {
+            const k = getExKey(currentWeekId, day.id, i, ex.name); if (seen.has(k)) return; seen.add(k);
+            const all = h[k] || [], mine = all.filter(l => logDayId(l) === day.id && isToday(logTime(l)));
+            if (!mine.length) return;
+            const best = Math.max(0, ...all.filter(l => !isToday(logTime(l))).flatMap(logSetDetails).map(x => x.w));
+            const top = Math.max(0, ...mine.flatMap(logSetDetails).map(x => x.w));
+            if (best > 0 && top > best) prs.push({ name: ex.name, w: top, plus: Math.round((top - best) * 10) / 10 });
+            mine.forEach(l => { start = Math.min(start, logTime(l)); logSetDetails(l).forEach(x => { sets++; if (l.u !== 's') volume += x.r * x.w; }); });
+        });
+        return { title: day.title, duration: Math.floor((Date.now() - start) / 1000), sets, volume, prs };
+    };
+    // Today's target in one short coloured line: ↑ add weight, ↓ go lighter
+    const suggestionText = (sg, timed) => {
+        const cls = { up: 'text-[#22c55e]', down: 'text-red-400', build: 'text-[#d4af37]', easy: 'text-slate-300' }[sg.type];
+        return `<span class="font-black ${cls}" title="${esc(t(SUGG[sg.type].label))}" dir="ltr">${{ up: '↑ ', down: '↓ ' }[sg.type] || ''}${fmtW(sg.w)} × ${sg.r}${timed ? 's' : ''}</span>`;
+    };
     const renderToday = () => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), history = StorageManager.getHistory();
         const isT = activeDay === getTodayId(), S = window.appState.sess;
-        let html = `<div class="px-1 mb-2 text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}</div>`;
+        const eyebrow = `<div class="px-1 mb-2 text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}</div>`;
+        let html = '';
         if (day.isRest) {
-            html += `<div class="glass-card p-10 text-center border-dashed border-[#d4af37]/20"><div class="text-[#d4af37] flex justify-center mb-4"><i data-lucide="${day.recoveryType==='active'?'footprints':'moon'}" class="w-12 h-12 ${day.recoveryType==='active'?'animate-walk':'animate-pulse-glow'}"></i></div><h3 class="font-black text-xl mb-1">${day.recoveryType==='active'?t('Active Rest'):t('Complete Rest')}</h3><p class="text-[12px] font-bold text-slate-400">${t('Recover well. See you next session.')}</p></div>`;
+            html += eyebrow + `<div class="glass-card p-10 text-center border-dashed border-[#d4af37]/20"><div class="text-[#d4af37] flex justify-center mb-4"><i data-lucide="${day.recoveryType==='active'?'footprints':'moon'}" class="w-12 h-12 ${day.recoveryType==='active'?'animate-walk':'animate-pulse-glow'}"></i></div><h3 class="font-black text-xl mb-1">${day.recoveryType==='active'?t('Active Rest'):t('Complete Rest')}</h3><p class="text-[12px] font-bold text-slate-400">${t('Recover well. See you next session.')}</p></div>`;
             // Point to the next training day so a rest day is never a dead end
             const nextDay = [1, 2, 3, 4, 5, 6].map(o => schedule.find(d => d.id === ((activeDay - 1 + o) % 7) + 1)).find(d => d && !d.isRest && d.exercises.length);
             if (nextDay) html += `<button onclick="window.appActions.setActiveDay(${nextDay.id})" class="w-full glass-card p-4 mt-3 flex items-center gap-3 text-start tap-feedback"><span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-clock" class="w-5 h-5"></i></span><span class="flex-1 min-w-0"><span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">${t('Next workout')}</span><span class="block text-[15px] font-black text-white truncate">${esc(dayLong(nextDay.day))} · ${esc(t(nextDay.title))}</span></span><i data-lucide="chevron-right" class="w-5 h-5 text-slate-500 shrink-0"></i></button>`;
         } else if (!day.exercises.length) {
-            html += `<div class="glass-card p-8 text-center border-dashed border-white/10"><div class="flex justify-center mb-4"><i data-lucide="clipboard-edit" class="w-10 h-10 text-slate-500"></i></div><h3 class="font-black text-lg text-white mb-2">${t('No exercises yet')}</h3><p class="text-[12px] font-bold text-slate-400 mb-5">${t('Add exercises to this day in the Plan tab.')}</p><button onclick="window.appActions.switchTab('plan')" class="px-6 py-3 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback">${t('Plan this day')}</button></div>`;
+            html += eyebrow + `<div class="glass-card p-8 text-center border-dashed border-white/10"><div class="flex justify-center mb-4"><i data-lucide="clipboard-edit" class="w-10 h-10 text-slate-500"></i></div><h3 class="font-black text-lg text-white mb-2">${t('No exercises yet')}</h3><p class="text-[12px] font-bold text-slate-400 mb-5">${t('Add exercises to this day in the Plan tab.')}</p><button onclick="window.appActions.switchTab('plan')" class="px-6 py-3 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback">${t('Plan this day')}</button></div>`;
         } else {
-            const pr = dayProgress(day, history), allDone = pr.planned > 0 && pr.done >= pr.planned;
-            // trained this day today (finished a workout), even if some sets were skipped
-            const doneToday = isT && day.exercises.some((ex, i) => (history[getExKey(currentWeekId, day.id, i, ex.name)] || []).some(l => logDayId(l) === day.id && isToday(logTime(l))));
-            const finished = allDone || doneToday;
+            const pr = dayProgress(day, history), fin = exercisesFinished(day, history);
+            const finished = (pr.planned > 0 && pr.done >= pr.planned) || fin.every(Boolean);
             const mins = Math.max(10, Math.round(pr.planned * 2.5 / 5) * 5);
             const running = S && S.dayId === day.id && (!S.weekId || S.weekId === currentWeekId);
-            const btn = running
-                ? `<button onclick="window.appActions.expandSession()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>${t('Continue workout')}</button>`
-                : finished
-                ? `<div class="w-full py-3.5 rounded-2xl bg-[#22c55e]/10 border border-[#22c55e]/40 text-[#22c55e] text-[13px] font-black uppercase tracking-widest flex items-center justify-center gap-2"><i data-lucide="check-circle" class="w-5 h-5"></i>${t('Workout completed')}</div><button onclick="window.appActions.startWorkout()" class="w-full mt-2 py-2 text-[11px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${allDone ? t('Log more sets') : t('Log the rest')}</button>`
-                : `<button onclick="window.appActions.startWorkout()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><i data-lucide="play" class="w-5 h-5 fill-current"></i>${pr.done > 0 ? t('Continue workout') : t('Start workout')}</button>`;
-            html += `<div class="glass-card p-5 mb-4 ${finished ? 'border border-[#22c55e]/30' : ''}">
-                <h2 class="text-[26px] font-black text-white leading-tight mb-1">${esc(t(day.title))}</h2>
-                <div class="text-[12px] font-bold text-slate-400 mb-4">${t('{n} exercises', { n: day.exercises.length })} · ${t('{n} sets', { n: pr.planned })} · ${t('~{n} min', { n: mins })}</div>
-                ${pr.done > 0 ? `<div class="mb-4"><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('Day progress')}</span><span class="${finished ? 'text-[#22c55e]' : 'text-white'}" dir="ltr">${pr.done} / ${pr.planned}</span></div><div class="w-full h-2 bg-black/50 rounded-full overflow-hidden"><div class="bar-fill h-full rounded-full ${finished ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pr.pct}%"></div></div></div>` : ''}
-                ${btn}
+            const o = window.appState.openEx, openI = o && o.w === currentWeekId && o.d === day.id ? o.i : -1;
+            html += `<div class="glass-card today-card ${finished ? 'border border-[#22c55e]/30' : ''}">
+                <div>
+                    <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}${finished ? ` · <span class="text-[#22c55e]">${t('Done')}</span>` : ''}</div>
+                    <h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${esc(t(day.title))}</h2>
+                </div>
+                <div class="text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: day.exercises.length })} · ${t('{n} sets', { n: pr.planned })} · ${t('~{n} min', { n: mins })}</div>
+                ${pr.done > 0 ? `<div><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('Day progress')}</span><span class="${finished ? 'text-[#22c55e]' : 'text-white'}" dir="ltr">${pr.done} / ${pr.planned}</span></div><div class="w-full h-1.5 bg-black/50 rounded-full overflow-hidden"><div class="bar-fill h-full rounded-full ${finished ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pr.pct}%"></div></div></div>` : ''}
+                ${running ? `<button onclick="window.appActions.expandSession()" class="w-full py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><span class="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0"></span><span class="truncate">${t('Continue workout')}</span></button>` : ''}
+                ${isT && !finished ? checkInChip() : ''}
             </div>`;
-            if (isT && !finished && !running) html += checkInHTML();
+            if (isT && !finished && window.appState.ciOpen) html += checkInHTML();
             const easy = isT && (getReadinessToday() || {}).level === 'low';
-            html += `<div class="px-1 mb-2 mt-2 text-[11px] font-black text-slate-500 uppercase tracking-widest">${t('Exercises')}</div>`;
-            html += day.exercises.map((ex, i) => {
+            html += `<div class="space-y-2">` + day.exercises.map((ex, i) => {
                 const k = getExKey(currentWeekId, day.id, i, ex.name), hA = history[k] || [];
-                const doneSets = setsThisWeekForDay(hA, day.id), planned = parseInt(ex.sets) || 0, exDone = planned > 0 && doneSets >= planned;
-                const last = getLastSession(hA, true), timed = isTimed(ex.reps);
-                const lastTxt = last ? `${t('Last:')} <span dir="ltr">${fmtW(last.w)} × ${last.sets.join(' · ')}${timed ? 's' : ''}</span>` : t('First time');
-                return `<button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-full glass-card p-4 mb-2.5 flex items-start gap-3 text-start tap-feedback ${exDone ? 'border border-[#22c55e]/30' : ''}">
-                    <span class="w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-[13px] font-black ${exDone ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'}">${exDone ? '<i data-lucide="check" class="w-4 h-4"></i>' : i + 1}</span>
-                    <span class="flex-1 min-w-0">
-                        <span class="flex items-start justify-between gap-2"><span class="ex-name text-[16px] font-black text-white leading-tight">${esc(ex.name)}</span><span class="shrink-0 text-[13px] font-black text-white" dir="ltr">${esc(ex.sets)} × ${esc(ex.reps)}</span></span>
-                        <span class="block text-[11px] font-bold text-slate-400 mt-0.5">${esc(tm(ex.muscle))} · ${lastTxt}</span>
-                        ${(() => { const sg = suggestionFor(hA, ex, easy); return sg ? `<span class="block mt-2">${suggestionChip(sg, timed)}</span>` : ''; })()}
-                    </span>
-                </button>`;
-            }).join('');
+                const done = fin[i], timed = isTimed(ex.reps), last = getLastSession(hA, true), sg = suggestionFor(hA, ex, easy);
+                const lastTxt = last ? `<span dir="ltr">${fmtW(last.w)} × ${last.sets.join(' · ')}${timed ? 's' : ''}</span>` : '';
+                // line 2 shows today's target; last time moves into the open card so weights aren't listed twice
+                const sub = sg ? suggestionText(sg, timed) : last ? `${t('Last:')} ${lastTxt}` : `<span class="text-slate-500">${t('First time')}</span>`;
+                const isRun = running && (S.exIdx === i || S.exIdx == null);
+                return `<div id="ex-card-${i}" class="glass-card ex-card ${openI === i ? 'is-open' : ''} ${done ? 'border border-[#22c55e]/30' : ''}">
+                    <button onclick="window.appActions.toggleExCard(${i})" class="w-full flex items-center gap-2.5 text-start tap-feedback" aria-expanded="${openI === i}">
+                        <span class="w-[26px] h-[26px] shrink-0 rounded-full flex items-center justify-center text-[12px] font-black ${done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'}">${done ? '<i data-lucide="check" class="w-3.5 h-3.5"></i>' : i + 1}</span>
+                        <span class="flex-1 min-w-0">
+                            <span class="flex items-center gap-1.5">${isRun ? '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>' : ''}<span class="ex-name text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span></span>
+                            <span class="block text-[11px] font-bold text-slate-400 mt-0.5 truncate">${esc(tm(ex.muscle))} · ${sub}</span>
+                        </span>
+                        <span class="shrink-0 text-[13px] font-black text-white" dir="ltr">${esc(ex.sets)} × ${esc(ex.reps)}</span>
+                        <i data-lucide="chevron-down" class="ex-chev w-4 h-4 text-slate-500 shrink-0"></i>
+                    </button>
+                    <div class="ex-drawer"><div>
+                        ${sg && last ? `<div class="ex-last text-[11px] font-bold text-slate-400">${t('Last:')} <span class="text-white">${lastTxt}</span></div>` : ''}
+                        <div class="ex-actions flex gap-2">
+                            <button onclick="window.appActions.startWorkout(${day.id}, null, ${i})" class="flex-1 py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-1.5 shadow-[0_0_18px_rgba(212,175,55,0.3)]"><i data-lucide="play" class="w-4 h-4 fill-current"></i>${isRun ? t('Continue') : done ? t('Log more sets') : t('Start')}</button>
+                            <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="history" class="w-4 h-4"></i>${t('History')}</button>
+                        </div>
+                    </div></div>
+                </div>`;
+            }).join('') + `</div>`;
         }
         document.getElementById('workout-container').innerHTML = `<div class="${enterClass()}">${html}</div>`;
         if (window.lucide) window.lucide.createIcons();
@@ -1643,6 +1720,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 Object.keys(all).forEach(k => { if (k < cutoff) delete all[k]; });
                 writeItem(READY_KEY, JSON.stringify(all));
                 window.appState.ciDraft = null;
+                window.appState.ciOpen = false;
                 const r = getReadinessToday();
                 window.appActions.showToast(t(r.level === 'low' ? 'Easy day: targets adjusted' : r.level === 'high' ? 'Push day: go get it!' : 'Check-in saved'), 'success');
             }
@@ -1654,7 +1732,18 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             delete all[dateKey()];
             writeItem(READY_KEY, JSON.stringify(all));
             window.appState.ciSkipped = null;
+            window.appState.ciOpen = true;
             renderWorkout();
+        },
+        toggleCheckIn: () => { window.appState.ciOpen = !window.appState.ciOpen; renderWorkout(); },
+        // Open one exercise card on Today (Start + History); tapping it again closes it. Only one is open at a time
+        toggleExCard: i => {
+            const o = window.appState.openEx, close = !!o && o.w === currentWeekId && o.d === activeDay && o.i === i;
+            window.appState.openEx = close ? null : { w: currentWeekId, d: activeDay, i };
+            document.querySelectorAll('#workout-container .ex-card').forEach(c => {
+                const on = !close && c.id === `ex-card-${i}`, b = c.querySelector('[aria-expanded]');
+                c.classList.toggle('is-open', on); if (b) b.setAttribute('aria-expanded', String(on));
+            });
         },
         setLanguage: v => {
             if (v !== 'ar' && v !== 'en') return;
@@ -1673,7 +1762,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if ((to.exercises || []).length || to.isRest) window.appActions.showConfirm(t('Replace {day}?', { day: t('Day {n}', { n: to.id }) }), t('Its current exercises will be replaced.'), doCopy, true);
             else doCopy();
         },
-        skipCheckIn: () => { window.appState.ciSkipped = dateKey(); renderWorkout(); },
+        skipCheckIn: () => { window.appState.ciSkipped = dateKey(); window.appState.ciOpen = false; renderWorkout(); },
         refreshUI: () => renderWorkout(),
         openHistoryModal: (k, title) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=title; const hw=document.getElementById('history-howto'); if(hw) hw.href=`https://www.youtube.com/results?search_query=${encodeURIComponent(title+' exercise form')}`; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); pushBack('history', () => window.appActions.closeHistoryModal()); },
         closeHistoryModal: () => { popBack('history'); const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{if(o.classList.contains('opacity-0')){o.classList.add('hidden');o.classList.remove('flex');}},300); },
@@ -1688,20 +1777,23 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         restoreIfEmpty: (k, v) => { if(v.trim()===''){const h=StorageManager.getHistory()[k]||[]; if(h.length){loggedWeights[k]=h[h.length-1].w; StorageManager.set(loggedWeights); renderWorkout();}} },
         // ---------- Workout session: the whole day on one screen ----------
         // restore = a saved unfinished workout to bring back (minimized)
-        startWorkout: (dayId = activeDay, restore = null) => {
+        // exIdx = one exercise of the day (from its card on Today); null = the whole day
+        startWorkout: (dayId = activeDay, restore = null, exIdx = null) => {
             const S0 = window.appState.sess;
             if (S0 && !restore) {
-                if (S0.dayId === dayId && (!S0.weekId || S0.weekId === currentWeekId)) return window.appActions.expandSession();
-                if (sessionHasData()) return window.appActions.showConfirm(t('Discard current session?'), t('Unsaved sets for {name} will be lost.', { name: t(S0.title) }), () => { window.appActions.discardSession(); window.appActions.startWorkout(dayId); }, true);
+                if (S0.dayId === dayId && (!S0.weekId || S0.weekId === currentWeekId) && (S0.exIdx == null || S0.exIdx === exIdx)) return window.appActions.expandSession();
+                if (sessionHasData()) return window.appActions.showConfirm(t('Discard current session?'), t('Unsaved sets for {name} will be lost.', { name: t(S0.title) }), () => { window.appActions.discardSession(); window.appActions.startWorkout(dayId, null, exIdx); }, true);
                 window.appActions.discardSession();
             }
             const day = getActiveSchedule().find(x => x.id === dayId);
             if (!day || day.isRest || !day.exercises.length) return;
+            if (exIdx != null && !day.exercises[exIdx]) return;
             const history = StorageManager.getHistory();
             const easy = dayId === getTodayId() && (getReadinessToday() || {}).level === 'low';
             const S = window.appState.sess = restore ? { ...restore } : {
-                dayId, title: day.title, startedAt: Date.now(), weekId: currentWeekId, showRpe: StorageManager.getShowRpe(),
+                dayId, title: exIdx != null ? day.exercises[exIdx].name : day.title, exIdx, startedAt: Date.now(), weekId: currentWeekId, showRpe: StorageManager.getShowRpe(),
                 exercises: day.exercises.map((ex, i) => {
+                    if (exIdx != null && i !== exIdx) return null;
                     const k = getExKey(currentWeekId, dayId, i, ex.name), hA = history[k] || [];
                     const sg = suggestionFor(hA, ex, easy), last = getLastSession(hA);
                     // Pre-filled weight: suggestion, else what you typed before, else last session
@@ -1709,7 +1801,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     const pw = sg ? (sg.w > 0 ? String(sg.w) : '') : typed > 0 ? String(typed) : last && last.w > 0 ? String(last.w) : '';
                     return { k, name: ex.name, muscle: ex.muscle, sets: Math.max(1, parseInt(ex.sets) || 1), repsStr: ex.reps, timed: isTimed(ex.reps),
                         offset: setsThisWeekForDay(hA, dayId), pw, pr: sg ? sg.r : parseRange(ex.reps).minR, sg };
-                })
+                }).filter(Boolean)
             };
             delete S.rows;
             window.appActions.renderSession(restore ? restore.rows : null);
@@ -1976,7 +2068,24 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             });
             StorageManager.setHistory(h); StorageManager.set(loggedWeights);
             if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
-            const title = S.title;
+            const title = S.title, day = S.exIdx != null && wkId === currentWeekId && getActiveSchedule().find(d => d.id === S.dayId);
+            // One exercise from Today: a short message and the next exercise opens, unless that was the last one of the day
+            if (day) {
+                const fin = exercisesFinished(day, h), n = day.exercises.length;
+                const next = [...Array(n).keys()].map(o => (S.exIdx + 1 + o) % n).find(i => !fin[i]);
+                if (next !== undefined) {
+                    window.appState.openEx = { w: currentWeekId, d: day.id, i: next };
+                    window.appActions.discardSession();
+                    renderNav();
+                    window.appActions.showToast(t('{name} saved · {n} sets', { name: title, n: sets }) + (prs.length ? ` · ${t('New record')} 🏆` : ''), 'success');
+                    setTimeout(() => { const c = document.getElementById(`ex-card-${next}`); if (c && activeDay === day.id) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 350);
+                    return;
+                }
+                window.appState.openEx = null;
+                window.appActions.discardSession();
+                renderNav();
+                return window.appActions.showSummary(daySummary(day, h));
+            }
             window.appActions.discardSession();
             renderNav();
             window.appActions.showSummary({ title, duration, sets, volume, prs });
@@ -3024,8 +3133,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }, delay);
     };
     const todayHints = () => {
-        hint('today-start', '#workout-container button[onclick*="startWorkout"]', t('Tap here to start. Your weights from last time are already filled in.'));
-        if (hintSeen('today-start')) hint('today-days', '#nav-container', t('Tap a day to see or train another day of your plan.'));
+        hint('today-ex', '#workout-container .ex-card', t('Tap an exercise to start it or see its history. Your weights from last time are already filled in.'));
+        if (hintSeen('today-ex')) hint('today-days', '#nav-container', t('Tap a day, or swipe left or right, to see another day of your plan.'));
     };
 
     Object.assign(window.appActions, {
@@ -3086,6 +3195,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     enableSwipeDown(document.getElementById('history-modal-box'), () => window.appActions.closeHistoryModal());
     enableSwipeDown(document.getElementById('programs-box'), () => window.appActions.closePrograms());
     enableSwipeDown(document.getElementById('active-workout-box'), () => window.appActions.minimizeSession());
+    enableDaySwipe(document.getElementById('workout-container'));
     // An unfinished Log/Focus session (e.g. the phone closed the app during rest) comes back minimized
     (() => {
         const dr = readJSON(SESSION_KEY, null);
