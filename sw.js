@@ -6,12 +6,13 @@
 // - Outside files (Google font): use the saved copy, refresh it in the background.
 //
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
-const CACHE = 'apex-lift-v10';
+const CACHE = 'apex-lift-v11';
 const APP_FILES = [
     './',
     'index.html',
     'style.css',
     'tailwind.css',
+    'library.js',
     'app.js',
     'manifest.webmanifest',
     'vendor/lucide-1.49.0.min.js',

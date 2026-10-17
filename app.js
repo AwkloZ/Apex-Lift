@@ -301,6 +301,12 @@
         "Backup saved to your account": "تم حفظ النسخة في حسابك",
         "Backups are blocked by the Firebase rules. Publish the new firestore.rules.": "النسخ الاحتياطية محظورة بقواعد Firebase. انشر ملف firestore.rules الجديد.",
         "Before restore": "قبل الاسترجاع",
+        "Before coach update": "قبل تحديث المدرب",
+        "Message from your coach": "رسالة من مدربك",
+        "New routine from your coach: {name}": "جدول جديد من مدربك: {name}",
+        "Your coach updated your routine": "حدّث مدربك جدولك",
+        "Your coach sent you a message": "أرسل لك مدربك رسالة",
+        "Dismiss": "إخفاء",
         "Continue": "متابعة",
         "Could not load backups. Check your connection.": "تعذر تحميل النسخ. تحقق من الاتصال.",
         "Could not restore. Check your connection.": "تعذر الاسترجاع. تحقق من الاتصال.",
@@ -457,33 +463,8 @@
     };
     const fmtDayMonth = d => new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { day: 'numeric', month: 'short', calendar: 'gregory', numberingSystem: 'latn' }).format(d);
 
-    // 📦 1. MINIFIED DATA (Cleaned Dictionary & Standardized Presets)
-    const muscleOptions=["Abductors","Abs","Adductors","Back","Biceps","Calves","Chest","Forearms","Front Delts","Glutes","Hamstrings","Lats","Lower Back","Lower Chest","Neck","Quads","Rear Delts","Shoulders","Side Delts","Traps","Triceps","Upper Chest"];
-    
-    const exerciseDictionary={
-        "Abs":["Ab Wheel Rollout", "Bicycle Crunch", "Cable Crunch", "Cable Side Bend", "Cable Woodchopper", "Captain's Chair Leg Raise", "Crunch", "Dead Bug", "Decline Crunch", "Decline Sit-up", "Dragon Flag", "Dumbbell Side Bend", "Flutter Kick", "Hanging Knee Raise", "Hanging Leg Raise", "Hanging Windshield Wiper", "Hollow Body Hold", "L-Sit", "Landmine Rotation", "Leg Raise", "Machine Crunch", "Mountain Climber", "Oblique Crunch", "Pallof Press", "Plank", "Reverse Crunch", "Russian Twist", "Side Plank", "Sit-up", "Stomach Vacuum", "Toe Touch", "V-up", "Weighted Plank"],
-        "Abductors":["Banded Lateral Walk", "Cable Hip Abduction", "Clamshell", "Fire Hydrant", "Machine Hip Abduction", "Seated Hip Abduction", "Side-Lying Leg Raise", "Standing Leg Raise"],
-        "Adductors":["Cable Hip Adduction", "Copenhagen Plank", "Cossack Squat", "Machine Hip Adduction", "Seated Hip Adduction", "Side Lunge"],
-        "Back":["Barbell Row", "Cable Low Row", "Chest-Supported Row", "Chest-Supported T-Bar Row", "Deadlift", "Dumbbell Row", "Helms Row", "High Row Machine", "Incline Dumbbell Row", "Inverted Row", "Iso-Lateral Row", "Kroc Row", "Landmine Row", "Lat Pulldown", "Low Row Machine", "Machine Row", "Meadows Row", "Pendlay Row", "Pull-up", "Rack Pull", "Renegade Row", "Seal Row", "Seated Cable Row", "Single-Arm Cable Row", "Single-Arm Machine Row", "Smith Machine Row", "Snatch-Grip Deadlift", "T-Bar Row", "Trap Bar Deadlift", "Underhand Barbell Row", "V-Bar Pulldown", "Wide-Grip Seated Cable Row", "Yates Row"],
-        "Biceps":["21s", "Alternating Dumbbell Curl", "Barbell Curl", "Bayesian Curl", "Cable Curl", "Cable Hammer Curl", "Cable Rope Curl", "Concentration Curl", "Cross-Body Hammer Curl", "Drag Curl", "Dumbbell Curl", "Dumbbell Preacher Curl", "EZ Bar Curl", "Hammer Curl", "High Cable Curl", "Incline Dumbbell Curl", "Incline Hammer Curl", "Machine Bicep Curl", "Machine Preacher Curl", "Overhead Cable Curl", "Preacher Curl", "Reverse Curl", "Seated Dumbbell Curl", "Single-Arm Cable Curl", "Spider Curl", "Waiter Curl", "Zottman Curl"],
-        "Calves":["Calf Press on Leg Press", "Donkey Calf Raise", "Dumbbell Calf Raise", "Hack Squat Calf Raise", "Machine Calf Press", "Seated Calf Raise", "Single Leg Calf Raise", "Smith Machine Calf Raise", "Standing Calf Raise", "Tibialis Raise"],
-        "Chest":["Archer Push-up", "Bench Press", "Cable Chest Press", "Cable Crossover", "Cable Fly", "Deficit Push-up", "Dumbbell Bench Press", "Dumbbell Floor Press", "Dumbbell Fly", "Dumbbell Pullover", "Dumbbell Squeeze Press", "Floor Press", "Guillotine Press", "Hex Press", "Iso-Lateral Chest Press", "Landmine Press", "Larsen Press", "Machine Chest Press", "Machine Fly", "Paused Bench Press", "Pec Deck Fly", "Push-up", "Seated Cable Fly", "Single-Arm Cable Fly", "Smith Machine Bench Press", "Spoto Press", "Svend Press", "Weighted Push-up", "Wide-Grip Bench Press"],
-        "Forearms":["Behind the Back Wrist Curl", "Cable Wrist Curl", "Dead Hang", "Dumbbell Wrist Curl", "Farmers Walk", "Hand Gripper", "Plate Pinch", "Reverse Barbell Curl", "Reverse Dumbbell Curl", "Wrist Curl", "Wrist Extension", "Wrist Roller"],
-        "Front Delts":["Arnold Press", "Barbell Front Raise", "Cable Front Raise", "Dumbbell Front Raise", "Dumbbell Shoulder Press", "Landmine Press", "Military Press", "Overhead Press", "Plate Front Raise", "Seated Barbell Press", "Smith Machine Shoulder Press"],
-        "Glutes":["B-Stance Hip Thrust", "Banded Glute Bridge", "Barbell Glute Bridge", "Bulgarian Split Squat", "Cable Glute Kickback", "Cable Pull-Through", "Curtsy Lunge", "Deficit Reverse Lunge", "Donkey Kick", "Frog Pump", "Glute Bridge", "Glute Drive Machine", "Glute Kickback", "Hip Thrust", "Hip Thrust Machine", "Kas Glute Bridge", "Kettlebell Swing", "Lunge", "Machine Glute Kickback", "Reverse Hyperextension", "Reverse Lunge", "Single Leg Glute Bridge", "Single Leg Hip Thrust", "Smith Machine Hip Thrust", "Step-up", "Walking Lunge"],
-        "Hamstrings":["Deficit Romanian Deadlift", "Dumbbell Romanian Deadlift", "Glute-Ham Raise", "Good Morning", "Hamstring Curl", "Kettlebell Swing", "Lying Leg Curl", "Nordic Hamstring Curl", "Romanian Deadlift", "Seated Leg Curl", "Single Leg Romanian Deadlift", "Sliding Leg Curl", "Stability Ball Leg Curl", "Standing Leg Curl", "Stiff-Legged Deadlift", "Sumo Deadlift"],
-        "Lats":["Assisted Chin-up", "Assisted Pull-up", "Cable Pullover", "Chin-up", "Close-Grip Lat Pulldown", "Dumbbell Pullover", "Iso-Lateral Pulldown", "Lat Pulldown", "Machine Pullover", "Neutral Grip Pull-up", "Neutral Grip Pulldown", "Pull-up", "Reverse Grip Lat Pulldown", "Single-Arm Cable Pulldown", "Straight Arm Pulldown", "Weighted Pull-up", "Wide-Grip Lat Pulldown", "Wide-Grip Pull-up"],
-        "Lower Back":["Back Extension", "Bird Dog", "Deadlift", "Deficit Deadlift", "Good Morning", "Hyperextension", "Jefferson Curl", "Rack Pull", "Reverse Hyperextension", "Romanian Deadlift", "Sumo Deadlift", "Superman"],
-        "Lower Chest":["Cable Crossover", "Chest Dip", "Decline Bench Press", "Decline Dumbbell Fly", "Decline Dumbbell Press", "Decline Machine Press", "Decline Push-up", "Decline Smith Machine Press", "High-to-Low Cable Fly", "Weighted Dip"],
-        "Neck":["Neck Curl", "Neck Extension", "Neck Lateral Flexion", "Shrug"],
-        "Quads":["Belt Squat", "Box Jump", "Box Squat", "Bulgarian Split Squat", "Cyclist Squat", "Front Squat", "Goblet Squat", "Hack Squat", "Hack Squat Machine", "Heel-Elevated Squat", "Leg Extension", "Leg Press", "Lunge", "Paused Squat", "Pendulum Squat", "Pistol Squat", "Reverse Nordic", "Safety Bar Squat", "Single Leg Extension", "Single Leg Press", "Sissy Squat", "Smith Machine Squat", "Spanish Squat", "Split Squat", "Squat", "Step-up", "Sumo Squat", "Trap Bar Deadlift", "V-Squat", "Walking Lunge", "Wall Sit", "Zercher Squat"],
-        "Rear Delts":["Band Pull-Apart", "Cable Rear Delt Fly", "Dumbbell Rear Delt Row", "Facepull", "Lying Rear Delt Fly", "Machine Reverse Fly", "Rear Delt Fly", "Reverse Pec Deck", "Rope Facepull", "Single-Arm Cable Rear Delt Fly"],
-        "Shoulders":["Arnold Press", "Behind-the-Neck Press", "Bradford Press", "Cable Lateral Raise", "Cuban Press", "Dumbbell Shoulder Press", "Landmine Press", "Lateral Raise", "Machine Shoulder Press", "Military Press", "Overhead Press", "Push Press", "Seated Dumbbell Press", "Single-Arm Dumbbell Press", "Smith Machine Shoulder Press", "Upright Row", "Z Press"],
-        "Side Delts":["Cable Lateral Raise", "Cable Upright Row", "Cable Y-Raise", "Dumbbell Lateral Raise", "Egyptian Lateral Raise", "Lean-Away Lateral Raise", "Lu Raise", "Machine Lateral Raise", "Seated Dumbbell Lateral Raise", "Single-Arm Cable Lateral Raise", "Upright Row"],
-        "Traps":["Barbell Shrug", "Behind-the-Back Barbell Shrug", "Cable Shrug", "Dumbbell Shrug", "Farmers Walk", "Hex Bar Shrug", "Kelso Shrug", "Machine Shrug", "Shrug", "Smith Machine Shrug", "Snatch Grip Shrug", "Upright Row"],
-        "Triceps":["Assisted Dip", "Bench Dip", "Cable Overhead Tricep Extension", "Cable Tricep Kickback", "Close-Grip Bench Press", "Close-Grip Push-up", "Cross-Body Cable Extension", "Diamond Push-up", "Dumbbell Kickback", "Dumbbell Skull Crusher", "Dumbbell Tricep Extension", "French Press", "JM Press", "Katana Extension", "Machine Dip", "Machine Tricep Extension", "Overhead Tricep Extension", "Reverse-Grip Pushdown", "Single-Arm Cable Pushdown", "Single-Arm Tricep Extension", "Skull Crusher", "Tate Press", "Tricep Dip", "Tricep Extension", "Tricep Pushdown", "Tricep Rope Pushdown", "V-Bar Tricep Pushdown"],
-        "Upper Chest":["Incline Bench Press", "Incline Cable Fly", "Incline Dumbbell Fly", "Incline Dumbbell Press", "Incline Machine Press", "Incline Push-up", "Incline Smith Machine Press", "Landmine Press", "Low-Incline Dumbbell Press", "Low-to-High Cable Fly", "Reverse-Grip Bench Press"]
-    };    
+    // 📦 1. DATA: muscles, exercises and programs come from library.js (shared with the admin coach builder)
+    const { muscleOptions, exerciseDictionary, WORKOUTS, PROGRAMS } = window.APEX_LIB;
     // Automatically removes any duplicates caused by overlapping categories
     const exerciseOptions=[...new Set(Object.values(exerciseDictionary).flat())].sort();
     
@@ -531,10 +512,6 @@
         {id:7,day:"FRI",title:"Complete Rest",isRest:true,recoveryType:"complete",exercises:[]}
     ];
 
-    // 📋 PROGRAMS: workout days [title, [[exercise, muscle, sets, reps], ...]] and weekly programs.
-    // week = 7 slots from the first day of your week ('R' = rest, 'A' = active rest).
-    const WORKOUTS = {"push": ["Push", [["Bench Press", "Chest", "4", "6 - 8"], ["Incline Dumbbell Press", "Upper Chest", "3", "8 - 10"], ["Overhead Press", "Shoulders", "3", "6 - 8"], ["Cable Lateral Raise", "Side Delts", "3", "12 - 15"], ["Tricep Rope Pushdown", "Triceps", "3", "10 - 12"], ["Overhead Tricep Extension", "Triceps", "3", "10 - 12"]]], "pull": ["Pull", [["Pull-up", "Lats", "3", "6 - 10"], ["Barbell Row", "Back", "3", "6 - 8"], ["Lat Pulldown", "Lats", "3", "10 - 12"], ["Facepull", "Rear Delts", "3", "12 - 15"], ["Barbell Curl", "Biceps", "3", "8 - 10"], ["Hammer Curl", "Biceps", "3", "10 - 12"]]], "legs": ["Legs", [["Squat", "Quads", "4", "6 - 8"], ["Romanian Deadlift", "Hamstrings", "3", "8 - 10"], ["Leg Press", "Quads", "3", "10 - 12"], ["Lying Leg Curl", "Hamstrings", "3", "10 - 12"], ["Standing Calf Raise", "Calves", "4", "10 - 15"], ["Hanging Leg Raise", "Abs", "3", "10 - 15"]]], "upper": ["Upper Body", [["Bench Press", "Chest", "4", "6 - 8"], ["Barbell Row", "Back", "4", "6 - 8"], ["Overhead Press", "Shoulders", "3", "8 - 10"], ["Lat Pulldown", "Lats", "3", "10 - 12"], ["Dumbbell Lateral Raise", "Side Delts", "3", "12 - 15"], ["EZ Bar Curl", "Biceps", "2", "10 - 12"], ["Tricep Pushdown", "Triceps", "2", "10 - 12"]]], "lower": ["Lower Body", [["Squat", "Quads", "4", "6 - 8"], ["Romanian Deadlift", "Hamstrings", "3", "8 - 10"], ["Leg Press", "Quads", "3", "10 - 12"], ["Seated Leg Curl", "Hamstrings", "3", "10 - 12"], ["Standing Calf Raise", "Calves", "4", "10 - 15"], ["Cable Crunch", "Abs", "3", "12 - 15"]]], "upow": ["Upper Power", [["Bench Press", "Chest", "4", "3 - 5"], ["Barbell Row", "Back", "4", "3 - 5"], ["Overhead Press", "Shoulders", "3", "5 - 8"], ["Weighted Pull-up", "Lats", "3", "5 - 8"], ["Barbell Curl", "Biceps", "3", "6 - 8"], ["Skull Crusher", "Triceps", "3", "6 - 8"]]], "lpow": ["Lower Power", [["Squat", "Quads", "4", "3 - 5"], ["Deadlift", "Back", "3", "3 - 5"], ["Leg Press", "Quads", "3", "8 - 10"], ["Lying Leg Curl", "Hamstrings", "3", "6 - 8"], ["Standing Calf Raise", "Calves", "4", "6 - 10"]]], "uhyp": ["Upper Hypertrophy", [["Incline Dumbbell Press", "Upper Chest", "4", "8 - 12"], ["Seated Cable Row", "Back", "4", "8 - 12"], ["Dumbbell Shoulder Press", "Shoulders", "3", "10 - 12"], ["Cable Crossover", "Chest", "3", "12 - 15"], ["Lat Pulldown", "Lats", "3", "10 - 12"], ["Incline Dumbbell Curl", "Biceps", "3", "10 - 12"], ["Tricep Rope Pushdown", "Triceps", "3", "10 - 12"]]], "lhyp": ["Lower Hypertrophy", [["Front Squat", "Quads", "3", "8 - 10"], ["Romanian Deadlift", "Hamstrings", "3", "8 - 10"], ["Bulgarian Split Squat", "Quads", "3", "10 - 12"], ["Leg Extension", "Quads", "3", "12 - 15"], ["Seated Leg Curl", "Hamstrings", "3", "12 - 15"], ["Seated Calf Raise", "Calves", "4", "12 - 15"]]], "chest": ["Chest", [["Bench Press", "Chest", "4", "6 - 8"], ["Incline Dumbbell Press", "Upper Chest", "3", "8 - 10"], ["Machine Chest Press", "Chest", "3", "10 - 12"], ["Cable Crossover", "Chest", "3", "12 - 15"], ["Chest Dip", "Lower Chest", "3", "8 - 12"]]], "back": ["Back", [["Deadlift", "Back", "3", "5"], ["Pull-up", "Lats", "3", "6 - 10"], ["Barbell Row", "Back", "3", "8 - 10"], ["Seated Cable Row", "Back", "3", "10 - 12"], ["Straight Arm Pulldown", "Lats", "3", "12 - 15"]]], "shoulders": ["Shoulders", [["Overhead Press", "Shoulders", "4", "6 - 8"], ["Dumbbell Lateral Raise", "Side Delts", "4", "12 - 15"], ["Rear Delt Fly", "Rear Delts", "3", "12 - 15"], ["Cable Lateral Raise", "Side Delts", "3", "12 - 15"], ["Dumbbell Shrug", "Traps", "3", "10 - 12"]]], "arms": ["Arms", [["Barbell Curl", "Biceps", "4", "8 - 10"], ["Close-Grip Bench Press", "Triceps", "4", "6 - 8"], ["Hammer Curl", "Biceps", "3", "10 - 12"], ["Overhead Tricep Extension", "Triceps", "3", "10 - 12"], ["Preacher Curl", "Biceps", "3", "10 - 12"], ["Tricep Pushdown", "Triceps", "3", "12 - 15"]]], "chback": ["Chest & Back", [["Bench Press", "Chest", "4", "6 - 8"], ["Pull-up", "Lats", "4", "6 - 10"], ["Incline Dumbbell Press", "Upper Chest", "3", "8 - 10"], ["Barbell Row", "Back", "3", "8 - 10"], ["Dumbbell Fly", "Chest", "3", "10 - 12"], ["Dumbbell Pullover", "Lats", "3", "10 - 12"]]], "sharms": ["Shoulders & Arms", [["Seated Barbell Press", "Front Delts", "4", "6 - 8"], ["Dumbbell Lateral Raise", "Side Delts", "3", "12 - 15"], ["Barbell Curl", "Biceps", "3", "8 - 10"], ["Close-Grip Bench Press", "Triceps", "3", "8 - 10"], ["Incline Dumbbell Curl", "Biceps", "3", "10 - 12"], ["Skull Crusher", "Triceps", "3", "10 - 12"]]], "fba": ["Full Body A", [["Squat", "Quads", "3", "6 - 8"], ["Bench Press", "Chest", "3", "6 - 8"], ["Barbell Row", "Back", "3", "8 - 10"], ["Dumbbell Lateral Raise", "Side Delts", "2", "12 - 15"], ["Hammer Curl", "Biceps", "2", "10 - 12"], ["Plank", "Abs", "3", "30 - 45s"]]], "fbb": ["Full Body B", [["Romanian Deadlift", "Hamstrings", "3", "8 - 10"], ["Overhead Press", "Shoulders", "3", "6 - 8"], ["Lat Pulldown", "Lats", "3", "10 - 12"], ["Leg Press", "Quads", "3", "10 - 12"], ["Tricep Pushdown", "Triceps", "2", "10 - 12"], ["Hanging Leg Raise", "Abs", "3", "10 - 15"]]], "s5a": ["Strength A", [["Squat", "Quads", "5", "5"], ["Bench Press", "Chest", "5", "5"], ["Barbell Row", "Back", "5", "5"]]], "s5b": ["Strength B", [["Squat", "Quads", "5", "5"], ["Overhead Press", "Shoulders", "5", "5"], ["Deadlift", "Back", "1", "5"]]], "gl_a": ["Glutes & Hamstrings", [["Hip Thrust", "Glutes", "4", "8 - 10"], ["Romanian Deadlift", "Hamstrings", "3", "8 - 10"], ["Bulgarian Split Squat", "Glutes", "3", "10 - 12"], ["Seated Leg Curl", "Hamstrings", "3", "12 - 15"], ["Machine Hip Abduction", "Abductors", "3", "15 - 20"]]], "gl_up": ["Upper Body", [["Lat Pulldown", "Lats", "3", "10 - 12"], ["Dumbbell Shoulder Press", "Shoulders", "3", "10 - 12"], ["Seated Cable Row", "Back", "3", "10 - 12"], ["Incline Dumbbell Press", "Upper Chest", "3", "10 - 12"], ["Dumbbell Lateral Raise", "Side Delts", "3", "12 - 15"], ["Tricep Rope Pushdown", "Triceps", "2", "12 - 15"]]], "gl_b": ["Quads & Glutes", [["Squat", "Quads", "4", "8 - 10"], ["Leg Press", "Quads", "3", "10 - 12"], ["Walking Lunge", "Glutes", "3", "10 - 12"], ["Leg Extension", "Quads", "3", "12 - 15"], ["Standing Calf Raise", "Calves", "3", "12 - 15"]]], "gl_c": ["Glutes", [["Hip Thrust", "Glutes", "3", "12 - 15"], ["Cable Glute Kickback", "Glutes", "3", "12 - 15"], ["Step-up", "Glutes", "3", "10 - 12"], ["Cable Pull-Through", "Glutes", "3", "12 - 15"], ["Machine Hip Abduction", "Abductors", "3", "15 - 20"], ["Plank", "Abs", "3", "30 - 45s"]]], "db_a": ["Upper Body", [["Dumbbell Bench Press", "Chest", "4", "8 - 10"], ["Dumbbell Row", "Back", "4", "8 - 10"], ["Dumbbell Shoulder Press", "Shoulders", "3", "10 - 12"], ["Dumbbell Lateral Raise", "Side Delts", "3", "12 - 15"], ["Dumbbell Curl", "Biceps", "3", "10 - 12"], ["Dumbbell Tricep Extension", "Triceps", "3", "10 - 12"]]], "db_b": ["Lower Body", [["Goblet Squat", "Quads", "4", "10 - 12"], ["Dumbbell Romanian Deadlift", "Hamstrings", "3", "10 - 12"], ["Bulgarian Split Squat", "Quads", "3", "10 - 12"], ["Dumbbell Calf Raise", "Calves", "4", "12 - 15"], ["Plank", "Abs", "3", "30 - 45s"]]], "db_c": ["Full Body", [["Incline Dumbbell Press", "Upper Chest", "3", "8 - 10"], ["Dumbbell Pullover", "Lats", "3", "10 - 12"], ["Walking Lunge", "Glutes", "3", "10 - 12"], ["Hammer Curl", "Biceps", "3", "10 - 12"], ["Push-up", "Chest", "3", "10 - 15"], ["Russian Twist", "Abs", "3", "12 - 15"]]]};
-    const PROGRAMS = [{"id": "ppl6", "name": "Push / Pull / Legs", "days": 6, "goals": ["muscle", "fat"], "eq": "gym", "desc": "Each muscle twice a week. The classic for building muscle.", "week": ["push", "pull", "legs", "push", "pull", "legs", "R"]}, {"id": "ppl3", "name": "Push / Pull / Legs (3 days)", "days": 3, "goals": ["muscle"], "eq": "gym", "desc": "The same split once a week, with a rest day between sessions.", "week": ["push", "R", "pull", "R", "legs", "R", "R"]}, {"id": "ul4", "name": "Upper / Lower", "days": 4, "goals": ["muscle", "fat", "strength"], "eq": "gym", "desc": "Upper and lower body twice a week. Balanced and easy to fit in.", "week": ["upper", "lower", "R", "upper", "lower", "A", "R"]}, {"id": "phul", "name": "PHUL (Power + Hypertrophy)", "days": 4, "goals": ["strength", "muscle"], "eq": "gym", "desc": "Two heavy days for strength and two volume days for size.", "week": ["upow", "lpow", "R", "uhyp", "lhyp", "A", "R"]}, {"id": "hybrid5", "name": "Upper / Lower + Push / Pull / Legs", "days": 5, "goals": ["muscle", "fat"], "eq": "gym", "desc": "Five days: upper and lower, then push, pull and legs.", "week": ["upper", "lower", "R", "push", "pull", "legs", "R"]}, {"id": "bro5", "name": "Bro Split", "days": 5, "goals": ["muscle"], "eq": "gym", "desc": "One muscle group per day: chest, back, shoulders, arms and legs.", "week": ["chest", "back", "shoulders", "arms", "legs", "R", "R"]}, {"id": "arnold6", "name": "Arnold Split", "days": 6, "goals": ["muscle"], "eq": "gym", "desc": "Chest & back, shoulders & arms, legs. Twice a week, high volume.", "week": ["chback", "sharms", "legs", "chback", "sharms", "legs", "R"]}, {"id": "fb3", "name": "Full Body", "days": 3, "goals": ["fat", "muscle"], "eq": "gym", "desc": "The whole body every session. Great with a busy schedule.", "week": ["fba", "R", "fbb", "R", "fba", "A", "R"]}, {"id": "s5x5", "name": "5×5 Strength", "days": 3, "goals": ["strength"], "eq": "gym", "desc": "Few big lifts, heavy weights, 5 sets of 5. Built for strength.", "week": ["s5a", "R", "s5b", "R", "s5a", "R", "R"]}, {"id": "glutes4", "name": "Glutes & Legs Focus", "days": 4, "goals": ["muscle", "fat"], "eq": "gym", "desc": "Extra work for glutes and legs, plus one upper body day.", "week": ["gl_a", "gl_up", "R", "gl_b", "gl_c", "R", "R"]}, {"id": "db3", "name": "Dumbbells Only", "days": 3, "goals": ["muscle", "fat", "strength"], "eq": "db", "desc": "Only dumbbells needed. Good for home or a small gym.", "week": ["db_a", "R", "db_b", "R", "db_c", "A", "R"]}];
 
     // 🛡️ DATA VALIDATION (used for saved data and imported backup files)
     const DAY_NAMES = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
@@ -685,7 +662,7 @@
     const getResets = () => { const v = readJSON(RESET_KEY, {}); return isObj(v) ? v : {}; };
     const setResets = d => { try { localStorage.setItem(RESET_KEY, JSON.stringify(d)); } catch (e) {} };
     // Terms of Use & Privacy Policy: which version the user agreed to, and when
-    const TERMS_VERSION = '2026-10.2';
+    const TERMS_VERSION = '2026-10.3';
     const AGREE_KEY = 'workoutAgreed_rakan_final';
     const getAgree = () => { const v = readJSON(AGREE_KEY, null); return isObj(v) && v.v === TERMS_VERSION ? v : null; };
     const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
@@ -756,10 +733,40 @@
         return { ...base, type: 'build', tW: w, tR: Math.min(low + 1, maxR) };
     };
 
+    // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
+    const APP_VERSION = '11';
+    // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
+    const SETUP_KEY = 'workoutSetup_rakan_final';
+
+    // 🧑‍🏫 COACH: the last routine and note the coach sent from the admin page (see applyCoach in the cloud module)
+    const COACH_KEY = 'workoutCoach_rakan_final';
+    const getCoach = () => { const v = readJSON(COACH_KEY, null); return isObj(v) ? v : null; };
+    const coachCardHTML = () => {
+        const c = getCoach();
+        if (!c || c.hidden || (!c.note && !c.routine)) return '';
+        return `<div class="glass-card p-4 mb-4 border border-[#d4af37]/25">
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0"><i data-lucide="message-circle" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="text-[12px] font-black uppercase tracking-widest text-white truncate">${t('Message from your coach')}</span></div>
+                <button onclick="window.appActions.dismissCoach()" class="text-slate-500 hover:text-white p-2 bg-white/5 rounded-lg tap-feedback shrink-0" aria-label="${esc(t('Dismiss'))}"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            ${c.routine ? `<div class="text-[11px] font-black text-[#d4af37] mt-2">${esc(t('New routine from your coach: {name}', { name: c.routine }))}</div>` : ''}
+            ${c.note ? `<p class="text-[12px] font-bold text-slate-300 leading-snug mt-2" style="white-space:pre-wrap">${esc(c.note)}</p>` : ''}
+        </div>`;
+    };
+
     // 🔋 DAILY CHECK-IN (readiness). Each answer scores 0-2; total 0-6.
     const READY_KEY = 'workoutReadiness_rakan_final';
     const dateKey = (t = Date.now()) => { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
     const getReadinessAll = () => { const v = readJSON(READY_KEY, {}); return isObj(v) ? v : {}; };
+    // check-ins from the cloud: only real dates and answers 0-2, last 60 days
+    const sanitizeReadiness = raw => {
+        const out = {}, cutoff = dateKey(Date.now() - 60 * 86400000);
+        if (isObj(raw)) Object.keys(raw).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k) && k >= cutoff).forEach(k => {
+            const r = raw[k];
+            if (isObj(r) && [r.sleep, r.soreness, r.energy].every(x => x === 0 || x === 1 || x === 2)) out[k] = { sleep: r.sleep, soreness: r.soreness, energy: r.energy };
+        });
+        return out;
+    };
     const getReadinessToday = () => {
         const r = getReadinessAll()[dateKey()];
         if (!isObj(r) || ![r.sleep, r.soreness, r.energy].every(x => x === 0 || x === 1 || x === 2)) return null;
@@ -1534,6 +1541,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), history = StorageManager.getHistory();
         const isT = activeDay === getTodayId(), S = window.appState.sess;
         let html = `<div class="px-1 mb-2 text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}</div>`;
+        html += coachCardHTML();
         if (day.isRest) {
             html += `<div class="glass-card p-10 text-center border-dashed border-[#d4af37]/20"><div class="text-[#d4af37] flex justify-center mb-4"><i data-lucide="${day.recoveryType==='active'?'footprints':'moon'}" class="w-12 h-12 ${day.recoveryType==='active'?'animate-walk':'animate-pulse-glow'}"></i></div><h3 class="font-black text-xl mb-1">${day.recoveryType==='active'?t('Active Rest'):t('Complete Rest')}</h3><p class="text-[12px] font-bold text-slate-400">${t('Recover well. See you next session.')}</p></div>`;
             // Point to the next training day so a rest day is never a dead end
@@ -2446,6 +2454,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         renderWizard: () => {
             const W = window.appState.wiz, key = W.steps[W.step];
+            // how far the setup questions got (for the admin page), until they are finished
+            try { const sv = localStorage.getItem(SETUP_KEY); if (!sv || sv.startsWith('left:')) localStorage.setItem(SETUP_KEY, 'left:' + key); } catch (e) {}
             const opt = (val, title, sub, icon, cur) => `<button onclick="window.appActions.wizChoose(${jsArg(key)}, ${jsArg(val)})" class="w-full flex items-center gap-4 p-4 mb-3 rounded-2xl border text-start tap-feedback ${cur === val ? 'bg-[#d4af37]/15 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
                 ${icon ? `<span class="w-11 h-11 shrink-0 rounded-xl bg-black/40 flex items-center justify-center text-[#d4af37]"><i data-lucide="${icon}" class="w-5 h-5"></i></span>` : ''}
                 <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${title}</span>${sub ? `<span class="block text-[12px] font-bold text-slate-400 mt-0.5">${sub}</span>` : ''}</span>
@@ -2514,6 +2524,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (!sure && !W.firstRun && mode !== 'skip' && appData.weeks.length >= 5)
                 return window.appActions.showConfirm(t('Replace current routine?'), t('You have 5 routines (the most). The current one will be replaced; your history is kept.'), () => window.appActions.wizFinish(mode, true), true);
             W.done = true;
+            try { localStorage.setItem(SETUP_KEY, mode); } catch (e) {}
             writeItem(PROFILE_KEY, JSON.stringify({ goal: W.goal, days: W.days, exp: W.exp, eq: W.eq }));
             StorageManager.setOnboard();
             popBack('wizard');
@@ -2583,7 +2594,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     };
     const FB_DIR = 'vendor/firebase-12.19.0/';
     const CLOUD_KEY = 'workoutCloud_rakan_final', CLOUD_LASTUID = 'workoutCloudLastUid_rakan_final', LOCAL_UPDATED_KEY = 'workoutLocalUpdated_rakan_final';
-    const MAIN_KEYS = new Set([BODY_KEY, StorageManager.PLAN_KEY, StorageManager.ACTIVE_WEEK, StorageManager.START_KEY, StorageManager.REST_KEY, StorageManager.RPE_KEY, StorageManager.KEY, CUSTOM_KEY, PROFILE_KEY]);
+    const MAIN_KEYS = new Set([BODY_KEY, StorageManager.PLAN_KEY, StorageManager.ACTIVE_WEEK, StorageManager.START_KEY, StorageManager.REST_KEY, StorageManager.RPE_KEY, StorageManager.KEY, CUSTOM_KEY, PROFILE_KEY, READY_KEY]);
     const Cloud = { err: '', status: 'off', user: null, auth: null, db: null, unsub: [], sent: {}, timer: null, flushing: false, again: false, applying: false, lastSync: 0, loading: null };
     const getCloudFlag = () => { const v = readJSON(CLOUD_KEY, null); return isObj(v) ? v : null; };
     const loadScript = src => new Promise((ok, fail) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = () => fail(new Error('Could not load ' + src)); document.head.appendChild(el); });
@@ -2614,13 +2625,35 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const collectMain = () => JSON.parse(JSON.stringify({
         plan: appData, activeWeek: currentWeekId, startDay: StorageManager.getStartDay(), rest: StorageManager.getRestSeconds(),
         showRpe: StorageManager.getShowRpe(), weights: StorageManager.get(), custom: getCustomEx(), profile: getProfile(), terms: getAgree(),
-        body: getBody(), account: accountSummary()
+        body: getBody(), account: accountSummary(), readiness: sanitizeReadiness(getReadinessAll()), activity: activitySummary()
     }));
-    // name, email, sign-up date and last active day (changes at most once a day, so it doesn't cause extra uploads)
+    // name, email, sign-up date, last active day, language, app version, phone type and how setup ended
+    // (changes at most once a day, so it doesn't cause extra uploads)
     const accountSummary = () => {
         if (!Cloud.user) return null;
         const f = getCloudFlag() || {};
-        return { name: (Cloud.user.displayName || f.name || '').slice(0, 100), email: (Cloud.user.email || f.email || '').slice(0, 200), createdAt: Number(f.since) || Date.now(), lastSeen: dateKey() };
+        return { name: (Cloud.user.displayName || f.name || '').slice(0, 100), email: (Cloud.user.email || f.email || '').slice(0, 200), createdAt: Number(f.since) || Date.now(), lastSeen: dateKey(),
+            lang: LANG, appVersion: APP_VERSION, platform: platformName(), installed: isInstalled(), setup: (localStorage.getItem(SETUP_KEY) || '').slice(0, 40) };
+    };
+    const platformName = () => {
+        const ua = navigator.userAgent || '';
+        if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ios';
+        if (/Android/.test(ua)) return 'android';
+        return 'desktop';
+    };
+    const isInstalled = () => { try { return navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches; } catch (e) { return false; } };
+    // A short summary of the training (workout days, exercises, most-done exercises), so the admin page
+    // can show activity and retention by reading one document per user instead of every workout.
+    const activitySummary = () => {
+        const h = StorageManager.getHistory(), days = new Set(), count = {}; let last = 0;
+        Object.keys(h).forEach(k => {
+            const list = Array.isArray(h[k]) ? h[k] : [], seen = new Set();
+            list.forEach(l => { const tt = logTime(l); if (isNaN(tt)) return; const dk = dateKey(tt); days.add(dk); seen.add(dk); if (tt > last) last = tt; });
+            if (seen.size && !k.startsWith('temp_')) count[k] = seen.size;
+        });
+        const names = exerciseNames();
+        const top = Object.keys(count).sort((a, b) => count[b] - count[a]).slice(0, 10).map(k => ({ n: keyToName(k, names).slice(0, 80), c: count[k] }));
+        return { n: days.size, ex: Object.keys(count).length, last, days: [...days].sort().slice(-180), top };
     };
     // Put cloud routines + settings onto this phone
     const applyMain = m => {
@@ -2639,6 +2672,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             setCustomEx(sanitizeCustomEx(m.custom));
             if (isObj(m.profile)) { const pr = {}; ['goal', 'days', 'exp', 'eq'].forEach(k => { if (typeof m.profile[k] === 'string' && m.profile[k].length <= 20) pr[k] = m.profile[k]; }); writeItem(PROFILE_KEY, JSON.stringify(pr)); }
             if (isObj(m.body)) setBody(m.body);
+            if (isObj(m.readiness)) writeItem(READY_KEY, JSON.stringify({ ...sanitizeReadiness(getReadinessAll()), ...sanitizeReadiness(m.readiness) }));
             if (isObj(m.account) && Number(m.account.createdAt) > 0) { const f = getCloudFlag(); if (f && f.uid && !f.since) writeItem(CLOUD_KEY, JSON.stringify({ ...f, since: Number(m.account.createdAt) })); }
             if (isObj(m.terms) && m.terms.v === TERMS_VERSION && !getAgree()) { try { localStorage.setItem(AGREE_KEY, JSON.stringify(m.terms)); } catch (e) {} }
             localStorage.setItem(LOCAL_UPDATED_KEY, String(m.updatedAt || Date.now()));
@@ -2660,6 +2694,47 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const unionDel = (a, b) => [...new Set([...(a || []), ...(b || [])])].slice(-200);
     const safeDecode = id => { try { const k = decodeURIComponent(id); return safeKey(k) ? k : null; } catch (e) { return null; } };
     const histPath = (uid, k) => `users/${uid}/history/${encodeURIComponent(k)}`;
+    const coachPath = uid => `users/${uid}/coach/plan`;
+
+    // 🧑‍🏫 COACH PLAN: the coach writes users/{uid}/coach/plan from the admin page:
+    //   { mode: 'add' | 'replace' | 'note', routine: {id, name, schedule}, targetId, note, coach, sentAt, appliedAt }
+    // The phone puts the routine into the plan (a backup is made first when a routine is replaced), makes it the
+    // active one, then sets appliedAt so it isn't applied twice. The normal sync then takes it to the user's other phones.
+    const applyCoach = async (uid, c) => {
+        const sentAt = Number(c.sentAt) || 0;
+        if (!sentAt || Number(c.appliedAt) >= sentAt || !Cloud.user || Cloud.user.uid !== uid) return;
+        const ack = () => Cloud.db.doc(coachPath(uid)).update({ appliedAt: sentAt }).catch(e => console.warn('Coach plan: could not confirm', e));
+        const mine = getCoach();
+        if (mine && Number(mine.sentAt) >= sentAt) return ack(); // already applied on this phone
+        // never change the plan in the middle of a workout: try again a bit later
+        if (window.appState.sess) { clearTimeout(Cloud.coachTimer); Cloud.coachTimer = setTimeout(() => applyCoach(uid, c), 60000); return; }
+        if (Cloud.coachBusy) return; Cloud.coachBusy = true;
+        try {
+            let routine = '';
+            if (c.mode !== 'note') {
+                const clean = sanitizePlan({ weeks: [c.routine] });
+                if (!clean) return;
+                const wk = clean.weeks[0];
+                const target = (c.mode === 'replace' && appData.weeks.find(w => w.id === c.targetId)) || appData.weeks.find(w => w.id === wk.id)
+                    || (appData.weeks.length >= 5 ? appData.weeks.find(w => w.id === currentWeekId) : null);
+                // a routine is about to be replaced: keep a copy so it can be restored
+                if (target) { try { await cloudBackup('before-coach'); } catch (e) { console.warn('Backup before coach update failed', e); } }
+                if (target) { target.name = wk.name; target.schedule = wk.schedule; }
+                else appData.weeks.push(wk);
+                currentWeekId = (target || wk).id;
+                StorageManager.setPlan(appData); StorageManager.setActiveWeek(currentWeekId);
+                routine = wk.name;
+            }
+            writeItem(COACH_KEY, JSON.stringify({ sentAt, at: Date.now(), routine, note: cut(c.note, 1000), hidden: false }));
+            await ack();
+            refreshAfterCloud(); renderSidePanel();
+            window.appActions.showToast(t(c.mode === 'note' ? 'Your coach sent you a message' : 'Your coach updated your routine'), 'success');
+        } catch (e) { console.warn('Coach plan failed', e); }
+        finally { Cloud.coachBusy = false; }
+    };
+    Object.assign(window.appActions, {
+        dismissCoach: () => { const c = getCoach(); if (c) writeItem(COACH_KEY, JSON.stringify({ ...c, hidden: true })); renderWorkout(); }
+    });
 
     // First time on this phone: merge the phone's workouts with the cloud's, then keep both in step
     const cloudSignedIn = async user => {
@@ -2740,6 +2815,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (!snap.exists || snap.metadata.hasPendingWrites) return;
             const m = snap.data(), localU = Number(localStorage.getItem(LOCAL_UPDATED_KEY)) || 0;
             if ((m.updatedAt || 0) > localU) { applyMain(m); Cloud.sent.main = JSON.stringify(collectMain()); }
+        }, e => console.warn(e)));
+        Cloud.unsub.push(Cloud.db.doc(coachPath(uid)).onSnapshot(snap => {
+            if (snap.exists && !snap.metadata.hasPendingWrites) applyCoach(uid, snap.data() || {});
         }, e => console.warn(e)));
         Cloud.unsub.push(Cloud.db.collection(`users/${uid}/history`).onSnapshot(qs => {
             const h = StorageManager.getHistory(), del = getDeleted(), resets = getResets(); let changed = false, delChanged = false, behind = false;
@@ -2848,7 +2926,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 // every account backup (and its parts) goes too
                 const bs = await Cloud.db.collection(`users/${uid}/backups`).get();
                 bs.forEach(d => { const n = Number((d.data() || {}).parts) || 1; for (let i = 0; i < n; i++) paths.push(`users/${uid}/backups/${d.id}/parts/${i}`); paths.push(`users/${uid}/backups/${d.id}`); });
-                paths.push(`users/${uid}`);
+                paths.push(coachPath(uid), `users/${uid}`);
                 for (let i = 0; i < paths.length; i += 400) { const b = Cloud.db.batch(); paths.slice(i, i + 400).forEach(x => b.delete(Cloud.db.doc(x))); await b.commit(); }
                 try { await Cloud.auth.currentUser.delete(); }
                 catch (e) {
@@ -3059,7 +3137,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         refreshAfterCloud();
         Cloud.sent = {}; return cloudFlush();
     };
-    const kindLabel = k => k === 'auto' ? t('Automatic') : k === 'before-restore' ? t('Before restore') : t('Manual');
+    const kindLabel = k => k === 'auto' ? t('Automatic') : k === 'before-restore' ? t('Before restore') : k === 'before-coach' ? t('Before coach update') : t('Manual');
     const renderBackups = async () => {
         const list = document.getElementById('backups-list');
         list.innerHTML = `<div class="p-8 text-center text-[12px] font-bold text-slate-500">${t('Loading…')}</div>`;
@@ -3236,7 +3314,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // Coming back to the app on a new day: jump to today (unless a workout is open)
     let lastToday = getTodayId();
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState !== 'visible' || window.appState.sess) return;
+        if (document.visibilityState !== 'visible') return;
+        if (Cloud.user) scheduleFlush(2000); // a new day: the "last active" day is uploaded (nothing is sent if nothing changed)
+        if (window.appState.sess) return;
         const now = getTodayId();
         if (now !== lastToday) { lastToday = now; activeDay = now; renderNav(); renderWorkout(); }
     });
@@ -3244,4 +3324,4 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
         window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(err => console.warn('Offline mode unavailable:', err)));
     }
-})();
+})();

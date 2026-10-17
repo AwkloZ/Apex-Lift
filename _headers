@@ -33,3 +33,6 @@
 # always check for a new version of the app
 /sw.js
   Cache-Control: no-cache
+
+/admin-coach.js
+  X-Robots-Tag: noindex, nofollow
