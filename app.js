@@ -19,6 +19,21 @@
     const AR = {
         "Next workout": "التمرين القادم",
         "Change exercise": "تغيير التمرين",
+        "Change to {name}?": "التغيير إلى {name}؟",
+        "{old} will be replaced. Sets and reps stay the same.": "سيتم استبدال {old}. تبقى المجموعات والتكرارات كما هي.",
+        "Change": "تغيير",
+        "Delete exercise": "حذف التمرين",
+        "Program preview": "معاينة البرنامج",
+        "All programs": "كل البرامج",
+        "Level": "المستوى",
+        "Beginner": "مبتدئ",
+        "Intermediate": "متوسط",
+        "Advanced": "متقدم",
+        "Use this program": "استخدم هذا البرنامج",
+        "It replaces your current routine. Your history is kept.": "سيحل محل جدولك الحالي. سجلك محفوظ.",
+        "It is added as a new routine. Your current routine and history are kept.": "سيُضاف كجدول جديد. جدولك الحالي وسجلك محفوظان.",
+        "{n} training days": "{n} أيام تمرين",
+                "Day cleared": "تم مسح اليوم",
         "Change {name}": "تغيير {name}",
         "Changed to {name}": "تم التغيير إلى {name}",
         "Tap an exercise to edit it. Press and hold to drag it into a new order.": "اضغط على التمرين لتعديله. اضغط مطولًا واسحبه لتغيير الترتيب.",
@@ -777,7 +792,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '16';
+    const APP_VERSION = '17';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1728,7 +1743,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         if (typeof todayHints === 'function' && !day.isRest && day.exercises.length && !S) todayHints();
     };
 
-    // Contents of the "Edit exercise" pop-up (Plan tab), same look as the exercise pop-up on Today: sets, reps, change exercise and delete
+    // Contents of the "Edit exercise" pop-up (Plan tab), same look as the exercise pop-up on Today:
+    // change exercise on top, then sets and reps; delete is a small icon next to close so it isn't pressed by accident
     const exEditHTML = (i, ex) => {
         const sets = parseInt(ex.sets) || 0;
         const label = 'px-0.5 mb-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest';
@@ -1738,8 +1754,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                         <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(tm(ex.muscle))}</div>
                         <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(ex.name)}</h3>
                     </div>
+                    <button onclick="window.appActions.deleteEx(${i})" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-red-400/80 flex items-center justify-center tap-feedback" aria-label="${esc(t('Delete exercise'))}" title="${esc(t('Delete exercise'))}"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i></button>
                     <button onclick="window.appActions.closeExEdit()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
+                <button onclick="window.appActions.openPicker('replace', ${i})" class="w-full mt-4 py-3 rounded-2xl bg-white/5 text-white text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><i data-lucide="replace" class="w-4 h-4 text-[#d4af37]"></i>${esc(t('Change exercise'))}</button>
                 <div class="${label} mt-4">${esc(t('Sets'))}</div>
                 <div class="flex items-center gap-3 rounded-2xl bg-white/5 p-2" dir="ltr">
                     <button onclick="window.appActions.exEditSets(-1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="−">−</button>
@@ -1749,11 +1767,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 <div class="${label} mt-3">${esc(t(isTimed(ex.reps) ? 'Seconds per set' : 'Reps per set'))}</div>
                 <div class="grid grid-cols-4 gap-2 mb-2" dir="ltr">${REPS_PRESETS.map(r => `<button onclick="window.appActions.exEditReps(${jsArg(r)})" class="py-2.5 rounded-xl text-[12px] font-black tap-feedback ${ex.reps === r ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-white'}">${esc(fmtReps(r))}</button>`).join('')}</div>
                 <input type="text" value="${esc(ex.reps)}" onchange="window.appActions.exEditReps(this.value)" placeholder="${esc(t('Custom, e.g. 5 or 6 - 8'))}" class="w-full bg-white/5 border border-transparent rounded-2xl px-4 py-3 text-white font-bold outline-none focus:border-[#d4af37]" dir="ltr">
-                <div class="grid grid-cols-2 gap-2 mt-4">
-                    <button onclick="window.appActions.openPicker('replace', ${i})" class="py-3 rounded-2xl bg-white/5 text-white text-[11px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><i data-lucide="replace" class="w-4 h-4 text-[#d4af37]"></i>${esc(t('Change exercise'))}</button>
-                    <button onclick="window.appActions.deleteEx(${i})" class="py-3 rounded-2xl bg-red-500/10 text-red-400 text-[11px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><i data-lucide="trash-2" class="w-4 h-4"></i>${esc(t('Delete'))}</button>
-                </div>
-                <button onclick="window.appActions.closeExEdit()" class="w-full mt-3 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><i data-lucide="check" class="w-5 h-5"></i>${esc(t('Done'))}</button>
+                <button onclick="window.appActions.closeExEdit()" class="w-full mt-5 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><i data-lucide="check" class="w-5 h-5"></i>${esc(t('Done'))}</button>
             </div>`;
     };
     // Re-draws the open "Edit exercise" pop-up (after a change, or after the exercise was changed in the picker)
@@ -1842,8 +1856,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             c.appendChild(d); if(window.lucide) window.lucide.createIcons({root:d}); void d.offsetWidth; d.classList.remove('translate-y-full','opacity-0');
             setTimeout(()=>{if(c.contains(d)){d.classList.add('opacity-0','translate-y-full');setTimeout(()=>{if(c.contains(d))d.remove();},500);}}, action ? 5000 : 3500);
         },
-        showConfirm: (title, m, ok, dng=false) => {
+        showConfirm: (title, m, ok, dng=false, okLabel=null) => {
             const y = document.getElementById('confirm-yes-btn');
+            y.innerHTML = `<span>${esc(okLabel || t('Yes, Do it'))}</span>`;
             document.getElementById('confirm-title').innerText=title; document.getElementById('confirm-message').innerText=m;
             y.className=`flex-1 rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest shadow-lg tap-feedback ${dng?'text-white bg-red-500 shadow-red-500/20':'text-black bg-[#d4af37] shadow-[#d4af37]/20'}`;
             document.getElementById('confirm-icon').innerHTML=`<i data-lucide="${dng?'alert-octagon':'alert-triangle'}" class="w-6 h-6 ${dng?'text-red-500':'text-[#d4af37]'}"></i>`;
@@ -2300,14 +2315,16 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (s && !(parseInt(s) > 0)) return window.appActions.showToast(t("Enter Sets or Reps"), "error");
             if (s) s = String(Math.min(10, parseInt(s)));
             if (!s && !r) return window.appActions.showToast(t("Enter Sets or Reps"), "error");
-            const d = getActiveSchedule().find(x => x.id === activeDay);
+            const d = getActiveSchedule().find(x => x.id === activeDay), before = d.exercises.map(ex => ({ ex, sets: ex.sets, reps: ex.reps }));
             d.exercises.forEach(ex => {
                 if(s) ex.sets = s;
                 if(r) ex.reps = r;
             });
             StorageManager.setPlan(appData);
             renderWorkout();
-            window.appActions.showToast(t("Updated all exercises"), "success");
+            window.appActions.showToast(t("Updated all exercises"), "success", { label: t('Undo'), fn: () => {
+                before.forEach(b => { b.ex.sets = b.sets; b.ex.reps = b.reps; }); StorageManager.setPlan(appData); renderWorkout();
+            } });
         },
         // Settings → Week starts on (see setWeekStart)
         updateStartOfWeek: v => {
@@ -2390,11 +2407,18 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         pickerTap: (name, muscle) => {
             const P = window.appState.picker, d = getActiveSchedule().find(x => x.id === activeDay);
             if (P.mode === 'replace') {
-                // keep sets & reps, change the exercise
-                Object.assign(d.exercises[P.idx], { name, muscle });
-                StorageManager.setPlan(appData);
-                window.appActions.closePicker(); renderWorkout();
-                window.appActions.showToast(t('Changed to {name}', { name }), 'success');
+                // keep sets & reps, change the exercise (asks first, then Undo for a few seconds)
+                const ex = d.exercises[P.idx]; if (!ex || ex.name === name) return window.appActions.closePicker();
+                const old = { name: ex.name, muscle: ex.muscle };
+                window.appActions.showConfirm(t('Change to {name}?', { name }), t('{old} will be replaced. Sets and reps stay the same.', { old: old.name }), () => {
+                    Object.assign(ex, { name, muscle });
+                    StorageManager.setPlan(appData);
+                    window.appActions.closePicker(); renderWorkout();
+                    window.appActions.showToast(t('Changed to {name}', { name }), 'success', { label: t('Undo'), fn: () => {
+                        if (!d.exercises.includes(ex)) return;
+                        Object.assign(ex, old); StorageManager.setPlan(appData); renderWorkout();
+                    } });
+                }, false, t('Change'));
                 return;
             }
             const i = P.sel.findIndex(x => x.name === name && x.muscle === muscle);
@@ -2451,7 +2475,11 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             ex.reps = v.slice(0, 20);
             StorageManager.setPlan(appData); renderWorkout();
         },
-        clearDay: () => window.appActions.showConfirm(t("Clear Day"), t("Delete all exercises?"), () => { const d=getActiveSchedule().find(x=>x.id===activeDay); d.exercises=[]; d.title=""; StorageManager.setPlan(appData); renderWorkout(); }, true),
+        clearDay: () => window.appActions.showConfirm(t("Clear Day"), t("Delete all exercises?"), () => {
+            const d = getActiveSchedule().find(x => x.id === activeDay), old = { exercises: d.exercises, title: d.title };
+            d.exercises = []; d.title = ""; StorageManager.setPlan(appData); renderWorkout(); renderNav();
+            window.appActions.showToast(t('Day cleared'), 'error', { label: t('Undo'), fn: () => { Object.assign(d, old); StorageManager.setPlan(appData); renderWorkout(); renderNav(); } });
+        }, true),
         switchTab: tab => {
             if (tab === 'workout') tab = 'today'; if (tab === 'analytics') tab = 'progress';
             window.appState.inlineEdit = null; window.appState.currentView = tab;
@@ -2750,38 +2778,78 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             }
         },
         // Put a program into the app: as a new routine (keeps your current one) or replacing the current one
-        applyProgram: (id, { exp = (getProfile().exp || 'mid'), replace = false } = {}) => {
+        applyProgram: (id, { exp = (getProfile().exp || 'mid'), replace = false, undo = false } = {}) => {
             const prog = PROGRAMS.find(p => p.id === id); if (!prog) return;
             if (window.appState.programBusy === id) return; // double tap: add it only once
             window.appState.programBusy = id; setTimeout(() => { if (window.appState.programBusy === id) window.appState.programBusy = null; }, 1000);
+            const snap = { weeks: JSON.stringify(appData.weeks), weekId: currentWeekId, day: activeDay };
             const schedule = programSchedule(prog, exp);
             if (replace || appData.weeks.length >= 5) { const w = appData.weeks.find(x => x.id === currentWeekId); w.schedule = schedule; w.name = t(prog.name); }
             else { const wid = 'w_' + Date.now(); appData.weeks.push({ id: wid, name: t(prog.name), schedule }); currentWeekId = wid; StorageManager.setActiveWeek(wid); }
             StorageManager.setPlan(appData);
             activeDay = getTodayId();
             window.appActions.switchTab('today');
-            window.appActions.showToast(t('{name} is ready', { name: t(prog.name) }), 'success');
+            window.appActions.showToast(t('{name} is ready', { name: t(prog.name) }), 'success', undo ? { label: t('Undo'), fn: () => {
+                appData.weeks = JSON.parse(snap.weeks); currentWeekId = snap.weekId; activeDay = snap.day;
+                StorageManager.setPlan(appData); StorageManager.setActiveWeek(currentWeekId); window.appActions.switchTab('plan');
+            } } : null);
         },
-        // ---------- Program gallery (Plan → Programs) ----------
+        // ---------- Program gallery (Plan → Programs): list → preview page (every day and exercise) → use it ----------
         openPrograms: () => {
             window.appState.progPick = null;
             window.appActions.renderPrograms();
             openSheet('programs-overlay', 'programs-box');
             pushBack('programs', () => window.appActions.closePrograms());
         },
-        closePrograms: () => { popBack('programs'); closeSheet('programs-overlay', 'programs-box'); },
+        closePrograms: () => { popBack('programs'); popBack('progpreview'); closeSheet('programs-overlay', 'programs-box'); },
+        previewProgram: id => {
+            window.appState.progPick = id; window.appState.progExp = getProfile().exp || 'mid';
+            window.appActions.renderPrograms();
+            if (id) pushBack('progpreview', () => window.appActions.previewProgram(null)); else popBack('progpreview');
+        },
+        setProgramLevel: v => { window.appState.progExp = v; const top = document.getElementById('programs-list').scrollTop; window.appActions.renderPrograms(); document.getElementById('programs-list').scrollTop = top; },
         renderPrograms: () => {
-            const pick = window.appState.progPick, full = appData.weeks.length >= 5;
-            document.getElementById('programs-list').innerHTML = PROGRAMS.map(p => `<div class="mx-4 mb-3 p-4 rounded-2xl border ${pick === p.id ? 'bg-[#d4af37]/10 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
-                <button onclick="window.appState.progPick=${jsArg(p.id)};window.appActions.renderPrograms()" class="w-full text-start tap-feedback">
-                    <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[11px] font-black text-slate-400 shrink-0">${t('{n} days', { n: p.days })}${p.eq === 'db' ? ' · ' + t('Dumbbells only') : ''}</span></span>
-                    <span class="block text-[12px] font-bold text-slate-400 mt-1">${esc(t(p.desc))}</span>
-                </button>
-                ${pick === p.id ? programPreviewHTML(p) + `<button onclick="window.appActions.useProgram(${jsArg(p.id)})" class="w-full mt-3 py-3 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback">${full ? t('Replace current routine') : t('Add as a new routine')}</button>` : ''}
-            </div>`).join('') + `<p class="mx-6 mb-6 text-[11px] font-bold text-slate-500">${t('Your current routine and all your history are kept.')}</p>`;
+            const list = document.getElementById('programs-list'), pick = PROGRAMS.find(p => p.id === window.appState.progPick);
+            document.getElementById('programs-title').innerText = pick ? t('Program preview') : t('Programs');
+            if (!pick) {
+                list.innerHTML = PROGRAMS.map(p => `<button onclick="window.appActions.previewProgram(${jsArg(p.id)})" class="w-[calc(100%-2rem)] mx-4 mb-3 p-4 rounded-2xl border bg-white/5 border-white/10 text-start tap-feedback flex items-center gap-3">
+                    <span class="flex-1 min-w-0">
+                        <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[11px] font-black text-slate-400 shrink-0">${t('{n} days', { n: p.days })}${p.eq === 'db' ? ' · ' + t('Dumbbells only') : ''}</span></span>
+                        <span class="block text-[12px] font-bold text-slate-400 mt-1">${esc(t(p.desc))}</span>
+                        ${programPreviewHTML(p)}
+                    </span>
+                    <i data-lucide="${isAR ? 'chevron-left' : 'chevron-right'}" class="w-5 h-5 text-slate-500 shrink-0"></i>
+                </button>`).join('') + `<p class="mx-6 mb-6 text-[11px] font-bold text-slate-500">${t('Your current routine and all your history are kept.')}</p>`;
+            } else {
+                const exp = window.appState.progExp || 'mid', sched = programSchedule(pick, exp), full = appData.weeks.length >= 5;
+                const lvl = (v, l) => `<button onclick="window.appActions.setProgramLevel(${jsArg(v)})" class="flex-1 py-2 rounded-xl text-[12px] font-black tap-feedback ${exp === v ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300'}">${t(l)}</button>`;
+                const dayCard = d => d.isRest
+                    ? `<div class="glass-card ex-card flex items-center gap-3 opacity-70"><i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-5 h-5 text-slate-400 shrink-0"></i><span class="text-[11px] font-black text-slate-400 uppercase tracking-widest w-10 shrink-0">${esc(dayShort(d.day))}</span><span class="text-[14px] font-black text-slate-300">${t(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest')}</span></div>`
+                    : `<div class="glass-card ex-card">
+                        <div class="flex items-baseline justify-between gap-2 mb-2"><span class="min-w-0"><span class="block text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(dayLong(d.day))}</span><span class="block text-[17px] font-black text-white leading-tight">${esc(t(d.title))}</span></span><span class="text-[11px] font-bold text-slate-400 shrink-0">${t('{n} exercises', { n: d.exercises.length })}</span></div>
+                        ${d.exercises.map((ex, k) => `<div class="flex items-center gap-3 py-2 ${k ? 'border-t border-white/5' : ''}"><span class="w-6 text-center text-[12px] font-black text-slate-500 shrink-0">${k + 1}</span><span class="flex-1 min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(ex.name)}</span><span class="block text-[11px] font-bold text-slate-400 truncate">${esc(tm(ex.muscle))}</span></span><span class="ex-pill" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span></div>`).join('')}
+                    </div>`;
+                list.innerHTML = `<div class="px-4 pb-4">
+                    <button onclick="window.appActions.previewProgram(null)" class="flex items-center gap-1 mb-3 text-[12px] font-black text-slate-400 tap-feedback"><i data-lucide="${isAR ? 'chevron-right' : 'chevron-left'}" class="w-4 h-4"></i>${t('All programs')}</button>
+                    <h2 class="text-[24px] font-black text-white leading-tight">${esc(t(pick.name))}</h2>
+                    <p class="text-[13px] font-bold text-slate-400 mt-1">${esc(t(pick.desc))}</p>
+                    <div class="text-[12px] font-black text-slate-300 mt-2">${t('{n} training days', { n: pick.days })} · ${pick.eq === 'db' ? t('Dumbbells only') : t('Full gym')}</div>
+                    ${programPreviewHTML(pick)}
+                    <div class="mt-4 mb-1.5 px-0.5 text-[10px] font-black text-slate-500 uppercase tracking-widest">${t('Level')}</div>
+                    <div class="flex gap-2 mb-4">${lvl('new', 'Beginner')}${lvl('mid', 'Intermediate')}${lvl('adv', 'Advanced')}</div>
+                    <div class="space-y-2">${sched.map(dayCard).join('')}</div>
+                </div>
+                <div class="sticky bottom-0 bg-[#111] border-t border-white/10 px-4 pt-3" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
+                    <p class="text-[11px] font-bold text-slate-500 mb-2 text-center">${full ? t('It replaces your current routine. Your history is kept.') : t('It is added as a new routine. Your current routine and history are kept.')}</p>
+                    <button onclick="window.appActions.useProgram(${jsArg(pick.id)})" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><i data-lucide="check" class="w-5 h-5"></i>${t('Use this program')}</button>
+                </div>`;
+            }
+            list.scrollTop = 0;
+            if (window.lucide) window.lucide.createIcons({ root: list });
         },
         useProgram: id => {
-            const go = () => { window.appActions.closePrograms(); window.appActions.applyProgram(id, { replace: appData.weeks.length >= 5 }); };
+            const exp = window.appState.progExp || getProfile().exp || 'mid';
+            const go = () => { window.appActions.closePrograms(); window.appActions.applyProgram(id, { exp, replace: appData.weeks.length >= 5, undo: true }); };
             if (appData.weeks.length >= 5) window.appActions.showConfirm(t('Replace current routine?'), t('You have 5 routines (the most). The current one will be replaced; your history is kept.'), go, true);
             else go();
         }
