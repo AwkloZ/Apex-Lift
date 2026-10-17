@@ -1570,7 +1570,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                         ${sg && last ? `<div class="ex-last text-[11px] font-bold text-slate-400">${t('Last:')} <span class="text-white">${lastTxt}</span></div>` : ''}
                         <div class="ex-actions flex gap-2">
                             <button onclick="window.appActions.startWorkout(${day.id}, null, ${i})" class="flex-1 py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-1.5 shadow-[0_0_18px_rgba(212,175,55,0.3)]"><i data-lucide="play" class="w-4 h-4 fill-current"></i>${isRun ? t('Continue') : done ? t('Log more sets') : t('Start')}</button>
-                            <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="history" class="w-4 h-4"></i>${t('History')}</button>
+                            <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 shrink-0 rounded-xl bg-white/5 border border-white/10 text-slate-300 tap-feedback flex items-center justify-center" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-4 h-4"></i></button>
                         </div>
                     </div></div>
                 </div>`;
