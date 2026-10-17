@@ -64,7 +64,8 @@ service cloud.firestore {
         allow read: if isOwner(uid) || isAdmin();
         allow delete: if isOwner(uid) || isAdmin();
         allow create, update: if isAdmin() && docId == 'plan'
-          && fields().keys().hasOnly(['mode', 'routine', 'targetId', 'note', 'coach', 'sentAt', 'appliedAt'])
+          && fields().keys().hasOnly(['mode', 'routine', 'targetId', 'activate', 'note', 'coach', 'sentAt', 'appliedAt'])
+          && (!('activate' in fields()) || fields().activate is bool)
           && fields().mode in ['add', 'replace', 'note']
           && fields().sentAt is int && fields().appliedAt is int
           && fields().note is string && fields().note.size() <= 1000

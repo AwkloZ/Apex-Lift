@@ -56,7 +56,7 @@ window.ApexCoach = (() => {
 
     // ---------- open / close ----------
     const open = opts => {
-        S = { ...opts, templates: null, dirty: false, note: '' };
+        S = { ...opts, templates: null, dirty: false, note: '', activate: true };
         S.targetId = opts.mode === 'replace' && opts.routine ? String(opts.routine.id || '') : '';
         S.routine = opts.routine ? cleanRoutine(opts.routine) : blankRoutine();
         $('coach').classList.add('open');
@@ -79,23 +79,35 @@ window.ApexCoach = (() => {
     };
 
     // ---------- page ----------
+    // where the routine goes: a new routine next to theirs, or into one of their routines (S.targetId)
+    const destHTML = () => {
+        const c = S.client;
+        return `<div class="row" style="align-items:end">
+            <div style="flex:2;min-width:240px"><label class="lbl" for="cb-dest">Send to</label><select id="cb-dest" class="field">
+                <option value="" ${!S.targetId ? 'selected' : ''}>Add as a new routine (keep their ${c.routines.length} routine${c.routines.length === 1 ? '' : 's'})</option>
+                ${c.routines.map(w => `<option value="${esc(w.id)}" ${S.targetId === w.id ? 'selected' : ''}>Update their routine: ${esc(w.name)}${w.id === c.activeWeek ? ' (active)' : ''}</option>`).join('')}
+            </select></div>
+            <label class="check" style="padding-bottom:10px"><input type="checkbox" id="cb-active" ${S.activate ? 'checked' : ''}> Make it their active routine</label>
+        </div><div id="cb-mode" style="margin-top:10px">${modeText()}</div>`;
+    };
     const modeText = () => {
         const c = S.client, target = c.routines.find(w => w.id === S.targetId);
         if (S.mode === 'note') return `<div class="info">Sends only a message. It shows on the <b>Today</b> page of ${esc(c.name)}'s app.</div>`;
-        if (S.mode === 'replace' && target) return `<div class="info">Replaces their routine <b>"${esc(target.name)}"</b> and makes it the active one. Their app saves a backup of the old version first, and their workout history is kept.</div>`;
-        if (c.routines.length >= 5) return `<div class="warn">${esc(c.name)} already has 5 routines (the most). Sending a new one replaces their active routine. Their app saves a backup first.</div>`;
-        return `<div class="info">Adds a new routine to ${esc(c.name)}'s account and makes it the active one. Their other routines and history stay.</div>`;
+        const act = S.activate ? ' and makes it the active one' : '';
+        if (target) return `<div class="info">Updates their routine <b>"${esc(target.name)}"</b>${act}. Their app saves a backup of the old version first, and their workout history is kept.</div>`;
+        if (c.routines.length >= 5) return `<div class="warn">${esc(c.name)} already has 5 routines (the most the app allows), so a new one can't be added: it replaces their active routine. Their app saves a backup first. To keep all 5, choose "Update their routine" above instead.</div>`;
+        return `<div class="info">Adds a new routine next to ${esc(c.name)}'s ${c.routines.length} routine${c.routines.length === 1 ? '' : 's'}${act}. Their other routines and history stay.</div>`;
     };
     const render = () => {
         const isNote = S.mode === 'note';
         $('coach').innerHTML = `<div class="coach-bar"><div class="in">
-                <h2>${isNote ? 'Message' : S.mode === 'replace' ? 'Edit routine' : 'New routine'} · ${esc(S.client.name)}</h2>
+                <h2>${isNote ? 'Message' : 'Routine'} · ${esc(S.client.name)}</h2>
                 <button class="btn" id="cb-close">Cancel</button>
                 ${isNote ? '' : '<button class="btn" id="cb-tpl">Save as template</button>'}
                 <button class="btn gold" id="cb-send">Send to ${esc(S.client.name.split(' ')[0] || 'client')}</button>
             </div></div>
             <div class="coach-body">
-                ${modeText()}
+                ${isNote ? modeText() : destHTML()}
                 ${isNote ? '' : `<div class="row" style="margin-top:14px;align-items:end">
                     <div style="flex:2;min-width:220px"><label class="lbl" for="cb-name">Routine name</label><input id="cb-name" class="field" maxlength="60" value="${esc(S.routine.name)}"></div>
                     <div style="flex:2;min-width:220px"><label class="lbl" for="cb-from">Start from</label><select id="cb-from" class="field"></select></div>
@@ -118,6 +130,8 @@ window.ApexCoach = (() => {
             $('cb-name').oninput = e => { S.routine.name = e.target.value.slice(0, 60); S.dirty = true; };
             $('cb-from').onchange = e => startFrom(e.target.value);
             $('cb-deltpl').onclick = deleteTemplate;
+            $('cb-active').onchange = e => { S.activate = e.target.checked; $('cb-mode').innerHTML = modeText(); };
+            $('cb-dest').onchange = e => pickDest(e.target.value);
             renderStartFrom(); renderDays();
             const days = $('cb-days');
             days.addEventListener('input', onInput);
@@ -133,6 +147,14 @@ window.ApexCoach = (() => {
         sel.innerHTML = `<option value="">Choose…</option><option value="blank">Empty week</option><optgroup label="${esc(S.client.name)}'s routines">${own || '<option disabled>None</option>'}</optgroup><optgroup label="Programs">${progs}</optgroup><optgroup label="Your templates">${tpls}</optgroup>`;
         sel.value = S.from || '';
         $('cb-deltpl').hidden = !(S.from || '').startsWith('tpl:');
+    };
+    // choosing one of their routines loads it, so you add to what they already have
+    const pickDest = id => {
+        const w = S.client.routines.find(x => x.id === id);
+        if (w && S.dirty && !confirm(`Load "${w.name}" to edit it? The days you have built so far are replaced.`)) { $('cb-dest').value = S.targetId; return; }
+        S.targetId = w ? w.id : '';
+        if (w) { S.routine = cleanRoutine(w); S.from = ''; S.dirty = false; $('cb-name').value = S.routine.name; renderStartFrom(); renderDays(); }
+        $('cb-mode').innerHTML = modeText();
     };
     const startFrom = v => {
         if (!v) return;
@@ -239,10 +261,10 @@ window.ApexCoach = (() => {
         else {
             const r = finalRoutine(), p = problems(r);
             if (p.length && !confirm(`${p.join('\n')}\n\nSend anyway?`)) return;
-            const target = S.mode === 'replace' && S.client.routines.find(w => w.id === S.targetId);
+            const target = S.client.routines.find(w => w.id === S.targetId);
             // a new routine gets its own id, so sending it twice (or to two phones) never makes duplicates
             r.id = target ? target.id : `coach_${Date.now()}`;
-            doc = { mode: target ? 'replace' : 'add', targetId: target ? target.id : '', routine: r, note };
+            doc = { mode: target ? 'replace' : 'add', targetId: target ? target.id : '', routine: r, note, activate: S.activate };
         }
         const me = S.auth.currentUser;
         doc = { ...doc, coach: String((me && (me.displayName || me.email)) || 'Coach').slice(0, 100), sentAt: Date.now(), appliedAt: 0 };

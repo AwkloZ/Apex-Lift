@@ -32,8 +32,8 @@
         .stat b { display: block; font-size: 24px; color: #fff; font-weight: 900; }
         .stat span { color: var(--muted); font-size: 12px; font-weight: 700; }
         .tools { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
-        .tools input { flex: 1; min-width: 200px; background: #111113; border: 1px solid var(--line); color: #fff; border-radius: 10px; padding: 10px 12px; font: 600 14px inherit; font-family: inherit; outline: none; }
-        .tools input:focus { border-color: var(--gold); }
+        .tools input[type=search] { flex: 1; min-width: 200px; background: #111113; border: 1px solid var(--line); color: #fff; border-radius: 10px; padding: 10px 12px; font: 600 14px inherit; font-family: inherit; outline: none; }
+        .tools input[type=search]:focus { border-color: var(--gold); }
         .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
         table { width: 100%; border-collapse: collapse; min-width: 980px; }
         th, td { text-align: start; padding: 11px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
@@ -43,6 +43,7 @@
         tbody tr:hover { background: rgba(255,255,255,0.03); }
         td.name { color: #fff; font-weight: 800; }
         td.muted { color: var(--muted); }
+        span.muted { color: var(--muted); font-weight: 600; }
         .pill { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: rgba(34,197,94,.12); color: #22c55e; }
         .pill.off { background: rgba(255,255,255,.06); color: var(--muted); }
         .drawer { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; z-index: 20; }

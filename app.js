@@ -2815,7 +2815,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const coachPath = uid => `users/${uid}/coach/plan`;
 
     // 🧑‍🏫 COACH PLAN: the coach writes users/{uid}/coach/plan from the admin page:
-    //   { mode: 'add' | 'replace' | 'note', routine: {id, name, schedule}, targetId, note, coach, sentAt, appliedAt }
+    //   { mode: 'add' | 'replace' | 'note', routine: {id, name, schedule}, targetId, activate, note, coach, sentAt, appliedAt }
     // The phone puts the routine into the plan (a backup is made first when a routine is replaced), makes it the
     // active one, then sets appliedAt so it isn't applied twice. The normal sync then takes it to the user's other phones.
     const applyCoach = async (uid, c) => {
@@ -2839,7 +2839,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 if (target) { try { await cloudBackup('before-coach'); } catch (e) { console.warn('Backup before coach update failed', e); } }
                 if (target) { target.name = wk.name; target.schedule = wk.schedule; }
                 else appData.weeks.push(wk);
-                currentWeekId = (target || wk).id;
+                // activate: false = keep their current routine active (a full set of 5 always activates, since the active one was replaced)
+                if (c.activate !== false || !appData.weeks.some(w => w.id === currentWeekId)) currentWeekId = (target || wk).id;
                 StorageManager.setPlan(appData); StorageManager.setActiveWeek(currentWeekId);
                 routine = wk.name;
             }

@@ -1,6 +1,6 @@
 // Apex Lift admin page: users, insights and coaching.
 // Access is decided by firestore.rules (isAdmin). Anyone else who signs in here sees nothing but their own User UID.
-// Reading cost: one document per user (+ one small backup summary for users on app versions before 11).
+// Reading cost: one document per user (+ the workout history of users still on app versions before 11, which don't send a summary).
 // Workout history and backups are only read when you open a user or ask for the full workouts export.
 (() => {
     'use strict';
@@ -79,10 +79,10 @@
         u.lastActive = Math.max(lastSeen || 0, lastWorkout || 0, u.updatedAt || 0) || null;
         return u;
     };
+    // based on real workouts only (opening the app or changing settings doesn't count)
     const statusOf = u => {
-        if (u.workouts === 0) return 'none';
-        const t = u.lastWorkout || u.lastActive; if (!t) return u.workouts === null ? 'inactive' : 'none';
-        const d = (Date.now() - t) / DAY;
+        if (!u.workouts || !u.lastWorkout) return 'none';
+        const d = (Date.now() - u.lastWorkout) / DAY;
         return d <= 7 ? 'active' : d <= 30 ? 'risk' : 'inactive';
     };
     const isNew = u => u.joined && Date.now() - u.joined < 7 * DAY;
@@ -98,14 +98,23 @@
         users = []; qs.forEach(d => users.push(toUser(d)));
         users.forEach(finish);
         render();
-        // users on older app versions have no activity summary: read their newest backup's summary (one small document)
+        // users on older app versions send no activity summary: work it out from their workout history
+        // (only for them, and only until they open the updated app)
         const queue = users.filter(u => !u.hasActivity);
-        const worker = async () => { while (queue.length) { const u = queue.shift(); try { await loadBackupSummary(u); } catch (e) { console.warn(e); } finish(u); } };
+        const worker = async () => { while (queue.length) { const u = queue.shift(); try { summarize(u, await loadHistory(u)); } catch (e) { console.warn(e); } finish(u); } };
         if (queue.length) { await Promise.all([1, 2, 3, 4].map(worker)); render(); }
     };
-    const loadBackupSummary = async u => {
-        const bs = await db.collection(`users/${u.uid}/backups`).orderBy('createdAt', 'desc').limit(1).get();
-        bs.forEach(d => { const x = d.data() || {}; u.lastBackup = num(x.createdAt); if (u.workouts === null && num(x.workouts) !== null) { u.workouts = x.workouts; u.exercises = num(x.exercises); } });
+    // the same summary the app sends (activitySummary in app.js), worked out here from the history
+    const summarize = (u, h) => {
+        const days = new Set(), count = {}; let last = 0;
+        Object.keys(h).forEach(k => {
+            const seen = new Set();
+            h[k].forEach(l => { const t = logTime(l); if (isNaN(t)) return; const d = startOfDay(t); days.add(d); seen.add(d); if (t > last) last = t; });
+            if (seen.size && !k.startsWith('temp_')) count[k] = seen.size;
+        });
+        u.workoutDays = [...days].sort((a, b) => a - b); u.workouts = days.size; u.exercises = Object.keys(count).length; u.lastWorkout = last || null;
+        u.top = Object.keys(count).sort((a, b) => count[b] - count[a]).slice(0, 10).map(k => ({ n: exName(k), c: count[k] }));
+        u.lastActive = Math.max(u.lastActive || 0, last) || null; u.hasActivity = true; u.legacy = true;
     };
     // full workout history of one user (only when needed)
     const loadHistory = async u => {
@@ -163,6 +172,8 @@
         if (k === 'statusLabel') return `<span class="badge ${STATUS[u.status][1]}">${esc(v)}</span>${isNew(u) ? '<span class="badge b-new">New</span>' : ''}${u.client ? '<span class="badge b-client">Client</span>' : ''}`;
         if (k === 'joined' || k === 'lastActive' || k === 'lastWorkout') return esc(fmtDate(v));
         if (k === 'workouts') return v === null ? '<span class="muted">—</span>' : esc(v);
+        // users on app versions before 11 never uploaded their name and email: it arrives when they next open the app
+        if (k === 'name' && !v) return `<span class="muted" title="${esc(u.uid)}">Not shared yet · ${esc(u.uid.slice(0, 6))}</span>`;
         if (k === 'followUp') { const t = keyTs(v); return t ? `<span class="${t <= Date.now() ? 'err' : ''}">${esc(fmtDate(t))}</span>` : ''; }
         return esc(v === null || v === undefined ? '' : v);
     };
@@ -175,7 +186,7 @@
     const kpis = () => {
         const week = Date.now() - 7 * DAY, month = Date.now() - 30 * DAY, ages = users.map(u => u.age).filter(Boolean);
         const due = users.filter(u => (keyTs(u.followUp) || Infinity) <= Date.now()).length;
-        return [[users.length, 'Users'], [users.filter(u => (u.lastWorkout || u.lastActive) > week).length, 'Active last 7 days'], [users.filter(u => (u.lastWorkout || u.lastActive) > month).length, 'Active last 30 days'],
+        return [[users.length, 'Users'], [users.filter(u => u.lastWorkout > week).length, 'Trained last 7 days'], [users.filter(u => u.lastWorkout > month).length, 'Trained last 30 days'],
             [users.filter(isNew).length, 'New this week'], [users.reduce((s, u) => s + (u.workouts > 0 ? u.workouts : 0), 0), 'Workouts logged'], [users.filter(u => u.client).length, 'Coaching clients'],
             [due, 'Follow-ups due'], [ages.length ? Math.round(ages.reduce((a, b) => a + b, 0) / ages.length) : '—', 'Average age']]
             .map(([v, l]) => `<div class="stat"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join('');
@@ -195,6 +206,7 @@
                 <select id="fs" aria-label="Status">${st}</select><select id="fg" aria-label="Goal"><option value="">All goals</option>${goals}</select>
                 <label class="check"><input id="fc" type="checkbox" ${fClients ? 'checked' : ''}> Clients only</label>
                 <button id="csv" class="btn gold">Users (CSV)</button><button id="csvw" class="btn">All workouts (CSV)</button><button id="reload" class="btn">Refresh</button></div>
+            ${users.some(u => !u.name && !u.email) ? `<div class="info" style="margin-bottom:10px">${users.filter(u => !u.name && !u.email).length} users show "Not shared yet": their phones still run an older version of the app, which didn't send their name and email. These fill in by themselves the next time each of them opens the updated app.</div>` : ''}
             <div class="note" id="count" style="margin:0 0 8px"></div>
             <div class="tablewrap"><table><thead><tr>${COLS.map(([k, l]) => `<th data-k="${k}" class="${k === sortKey ? 'sorted' : ''}">${l}${k === sortKey ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('')}</tr></thead><tbody id="rows"></tbody></table></div>`;
         $('q').oninput = e => { query = e.target.value; renderRows(); };
@@ -218,6 +230,7 @@
     // ---------- insights ----------
     const renderInsights = () => {
         const withAct = users.filter(u => u.hasActivity), old = users.length - withAct.length, N = 12, wk = weekBuckets(N);
+        const legacy = users.filter(u => u.legacy).length;
         const signups = wk.map(b => ({ label: `${fmtShort(b.from)} – ${fmtShort(b.to - DAY)}`, short: fmtShort(b.from), v: users.filter(u => u.joined >= b.from && u.joined < b.to).length }));
         const activeW = wk.map(b => ({ label: `${fmtShort(b.from)} – ${fmtShort(b.to - DAY)}`, short: fmtShort(b.from), v: withAct.filter(u => u.workoutDays.some(t => t >= b.from && t < b.to)).length }));
         const workoutsW = wk.map(b => ({ label: `${fmtShort(b.from)} – ${fmtShort(b.to - DAY)}`, short: fmtShort(b.from), v: withAct.reduce((s, u) => s + u.workoutDays.filter(t => t >= b.from && t < b.to).length, 0) }));
@@ -239,7 +252,7 @@
         const avg = a => a.length ? (a.reduce((x, y) => x + y, 0) / a.length).toFixed(2) : '—';
         const card = (title, sub, body) => `<div class="card"><h3>${esc(title)}</h3>${sub ? `<p class="sub">${esc(sub)}</p>` : ''}${body}</div>`;
         const pctCell = v => v === null ? '<td class="c muted">—</td>' : `<td class="c" style="color:${v >= 50 ? '#4ade80' : v >= 25 ? '#fbbf24' : '#f87171'}">${v}%</td>`;
-        $('view').innerHTML = `${old ? `<div class="info" style="margin-bottom:12px">${old} of ${users.length} users are on an older app version, so they are left out of the activity charts until they next open the app.</div>` : ''}
+        $('view').innerHTML = `${old ? `<div class="info" style="margin-bottom:12px">Still loading the workouts of ${old} users… press Refresh in a moment.</div>` : ''}${legacy ? `<div class="info" style="margin-bottom:12px">${legacy} of ${users.length} users still run an older app version: their workouts are counted, but name, email, phone, language and check-ins arrive only once they open the updated app.</div>` : ''}
             <div class="grid2">
                 ${card('Sign-ups per week', 'Last 12 weeks', barChart(signups))}
                 ${card('Active users per week', 'Users who logged at least one workout', barChart(activeW))}
@@ -295,7 +308,7 @@
         const rd = Object.entries(u.readiness).filter(([k]) => (keyTs(k) || 0) >= Date.now() - 30 * DAY).map(([, r]) => r).filter(isObj);
         const rAvg = f => rd.length ? (rd.reduce((s, r) => s + (num(r[f]) || 0), 0) / rd.length).toFixed(1) : '';
         $('panel').dataset.uid = u.uid;
-        $('panel').innerHTML = `<div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div><h2>${esc(u.name || 'No name')}</h2><div class="note" style="margin:2px 0 0">${esc(u.email)}</div>
+        $('panel').innerHTML = `<div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div><h2>${esc(u.name || 'Name not shared yet')}</h2><div class="note" style="margin:2px 0 0">${esc(u.email || 'Their name and email arrive when they open the updated app.')}</div>
                 <div style="margin-top:8px"><span class="badge ${STATUS[u.status][1]}">${esc(u.statusLabel)}</span>${isNew(u) ? '<span class="badge b-new">New</span>' : ''}${u.client ? '<span class="badge b-client">Client</span>' : ''}</div></div><button class="btn" id="close">Close</button></div>
 
             <h3>Coaching</h3>
