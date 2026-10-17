@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
+    <script>try { if (localStorage.getItem('workoutTheme_rakan_final') === 'light') { document.documentElement.setAttribute('data-theme', 'light'); document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f3f3f0'); } } catch (e) {}</script>
     <title>Apex Lift</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -81,10 +82,9 @@
         </div>
     </div>
 
-    <!-- Exercise pop-up on Today: details, Start workout, History -->
-    <div id="ex-sheet-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExSheet()">
-        <div id="ex-sheet-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col transform translate-y-full transition-transform duration-300" style="padding-bottom: max(1.25rem, env(safe-area-inset-bottom));">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+    <!-- Exercise pop-up on Today (middle of the screen): details, Start workout, History -->
+    <div id="ex-sheet-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExSheet()">
+        <div id="ex-sheet-box" class="w-full max-w-md bg-[#111] rounded-3xl border border-white/10 pt-5 pb-5 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
             <div id="ex-sheet-content"></div>
         </div>
     </div>
@@ -128,9 +128,9 @@
                 </div>
                 <!-- one-hand: everything you tap is down here -->
                 <div class="flex gap-2">
+                <button id="aw-close-btn" onclick="window.appActions.closeActiveWorkout()" class="w-14 shrink-0 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center tap-feedback" aria-label="Cancel workout"><i data-lucide="x" class="w-6 h-6"></i></button>
                 <button id="aw-finish-btn" onclick="window.appActions.finishActiveWorkout()" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback shadow-[0_0_20px_rgba(212,175,55,0.35)]">Save</button>
                 <button id="aw-next-btn" onclick="window.appActions.finishActiveWorkout(true)" class="hidden flex-1 py-4 rounded-2xl bg-white/10 text-white text-[13px] font-black uppercase tracking-widest tap-feedback items-center justify-center gap-2"><span data-i18n="Save & next">Save & next</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
-                <button id="aw-close-btn" onclick="window.appActions.closeActiveWorkout()" class="w-14 shrink-0 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center tap-feedback" aria-label="Cancel workout"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
             </div>
         </div>
@@ -358,6 +358,14 @@
             <select id="setting-lang" onchange="window.appActions.setLanguage(this.value)" class="bg-transparent text-[#d4af37] outline-none font-black text-[12px] text-end appearance-none cursor-pointer">
                 <option value="en" class="bg-[#1a1a1a]">English</option>
                 <option value="ar" class="bg-[#1a1a1a]">العربية</option>
+            </select>
+        </label>
+
+        <label class="flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-white/5 active:bg-white/10 w-full text-start text-[11px] font-bold uppercase tracking-wider text-white transition-colors cursor-pointer border border-white/5">
+            <div class="flex items-start gap-3"><i data-lucide="sun-moon" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Theme">Theme</span></div>
+            <select id="setting-theme" onchange="window.appActions.setTheme(this.value)" class="bg-transparent text-[#d4af37] outline-none font-black text-[12px] text-end appearance-none cursor-pointer">
+                <option value="dark" class="bg-[#1a1a1a]" data-i18n="Dark">Dark</option>
+                <option value="light" class="bg-[#1a1a1a]" data-i18n="Light">Light</option>
             </select>
         </label>
 
