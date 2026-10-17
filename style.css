@@ -244,7 +244,8 @@ input.day-title-input { font-size: 26px !important; }
 .ex-card.is-part .ex-pill { background: rgba(212, 175, 55, 0.15); color: #d4af37; }
 .glass-card.ex-card.is-full { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.45); }
 .ex-card.is-full .ex-pill { background: #22c55e; color: #000; }
-.ex-pill-extra { margin-inline-start: 2px; padding: 1px 6px; border-radius: 999px; background: #d4af37; color: #000; font-size: 10px; }
+/* bonus sets sit next to the pill, outside it */
+.ex-pill-extra { flex-shrink: 0; font-size: 11px; font-weight: 900; padding: 5px 8px; border-radius: 999px; background: #d4af37; color: #000; }
 .ex-extra { font-size: 11px; font-weight: 900; padding: 2px 7px; border-radius: 999px; background: #d4af37; color: #000; vertical-align: 2px; }
 
 /* Exercise pop-up: "Done this week" bar, target box, last-time table */
