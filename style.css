@@ -198,14 +198,60 @@ input.day-title-input { font-size: 26px !important; }
 
 /* ===== Today ===== */
 /* Week strip: big day name, workout name under it (cut after 2 lines), small green tick when the day is done */
-.day-chip { position: relative; min-width: 0; padding: 9px 2px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.day-chip-name { font-size: 14px; font-weight: 900; line-height: 1; }
-.day-chip-wo { font-size: 9.5px; font-weight: 800; line-height: 1.15; min-height: 2.3em; max-width: 100%; padding: 0 2px; text-align: center; opacity: 0.75; overflow: hidden; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.day-chip-wo.is-rest { font-style: italic; opacity: 0.5; }
+.day-chip { position: relative; min-width: 0; padding: 12px 2px 11px; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.day-chip-name { font-size: 15px; font-weight: 900; line-height: 1; }
+.day-chip-wo { font-size: 10.5px; font-weight: 800; line-height: 1.15; min-height: 2.3em; max-width: 100%; padding: 0 2px; text-align: center; opacity: 0.75; overflow: hidden; overflow-wrap: break-word; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.day-chip-wo.is-rest { font-style: italic; opacity: 0.5; font-size: 9.5px; padding: 0; }
 .day-tick { position: absolute; top: -5px; right: -3px; width: 16px; height: 16px; border-radius: 50%; background: #22c55e; color: #000; display: flex; align-items: center; justify-content: center; }
-:root[lang="ar"] .day-chip-name { font-size: 12px; line-height: 1.2; }
+:root[lang="ar"] .day-chip-name { font-size: 13px; line-height: 1.2; }
 :root[lang="ar"] .day-chip-wo { line-height: 1.35; min-height: 2.7em; font-style: normal; }
 
 /* Day card and exercise cards: smaller and tighter than the other cards */
 .glass-card.today-card { border-radius: 24px; padding: 14px 16px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
-.glass-card.ex-card { border-radius: 20px; padding: 13px 12px; }
+.glass-card.ex-card { border-radius: 22px; padding: 17px 14px; }
+.ex-card .ex-name { font-size: 16.5px; }
+
+/* Workout: a done set is a green row (sets saved before are locked and a little dimmer) */
+.aw-row.is-done { background: rgba(34, 197, 94, 0.12); box-shadow: inset 0 0 0 1.5px rgba(34, 197, 94, 0.55); }
+.aw-row.is-logged input, .aw-row.is-logged select { opacity: 0.75; }
+
+/* ===== Light mode (Profile > Theme) =====
+   The app is drawn dark; in light mode the same classes are given light colours here.
+   Gold and green buttons keep their colours; gold and green text get darker so they read on white. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="light"], :root[data-theme="light"] body { background: #f3f3f0; }
+:root[data-theme="light"] body { background-image: radial-gradient(circle at 50% 0%, #ffffff 0%, #f3f3f0 70%); color: #111318; }
+:root[data-theme="light"] .glass-card { background: rgba(255, 255, 255, 0.92); border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(0, 0, 0, 0.04); }
+/* surfaces */
+:root[data-theme="light"] :is(.bg-\[\#111\], .bg-\[\#0f0f0f\], .bg-\[\#1a1a1a\], .bg-\[\#050505\], .bg-\[\#161616\], .bg-black) { background-color: #ffffff; }
+:root[data-theme="light"] .bg-\[\#161616\]\/95, :root[data-theme="light"] .bg-\[\#0b0b0b\]\/95 { background-color: rgba(255, 255, 255, 0.95); }
+:root[data-theme="light"] .bg-white\/5 { background-color: rgba(0, 0, 0, 0.04); }
+:root[data-theme="light"] :is(.bg-white\/10, .hover\:bg-white\/5:hover) { background-color: rgba(0, 0, 0, 0.07); }
+:root[data-theme="light"] :is(.bg-white\/15, .bg-white\/20, .hover\:bg-white\/10:hover) { background-color: rgba(0, 0, 0, 0.1); }
+:root[data-theme="light"] :is(.bg-black\/40, .bg-black\/50, .bg-black\/60) { background-color: rgba(0, 0, 0, 0.05); }
+:root[data-theme="light"] :is(.bg-black\/70, .bg-black\/80, .bg-black\/85) { background-color: rgba(20, 20, 25, 0.45); }
+/* borders */
+:root[data-theme="light"] .border-white\/5 { border-color: rgba(0, 0, 0, 0.06); }
+:root[data-theme="light"] .border-white\/10 { border-color: rgba(0, 0, 0, 0.1); }
+:root[data-theme="light"] :is(.border-white\/15, .border-white\/20) { border-color: rgba(0, 0, 0, 0.15); }
+/* text (white text on red or gradient buttons stays white) */
+:root[data-theme="light"] :is(.text-white, .hover\:text-white:hover):not(.bg-red-500):not([class*="from-"]) { color: #111318; }
+:root[data-theme="light"] .text-slate-200 { color: #1f2937; }
+:root[data-theme="light"] .text-slate-300 { color: #334155; }
+:root[data-theme="light"] .text-slate-400 { color: #556273; }
+:root[data-theme="light"] .text-slate-500 { color: #6b7686; }
+:root[data-theme="light"] .text-slate-600 { color: #98a1ad; }
+:root[data-theme="light"] .placeholder\:text-slate-600::placeholder { color: #a3abb6; }
+:root[data-theme="light"] .text-\[\#d4af37\] { color: #9a7810; }
+:root[data-theme="light"] .text-\[\#22c55e\] { color: #15803d; }
+:root[data-theme="light"] .text-black, :root[data-theme="light"] .bg-\[\#d4af37\] .text-black { color: #000; }
+/* inputs and the sets table */
+:root[data-theme="light"] input[type="number"] { background: rgba(0, 0, 0, 0.04); }
+:root[data-theme="light"] .aw-row.is-done { background: rgba(34, 197, 94, 0.14); box-shadow: inset 0 0 0 1.5px rgba(22, 163, 74, 0.6); }
+:root[data-theme="light"] .day-tick { box-shadow: 0 0 0 2px #f3f3f0; }
+:root[data-theme="light"] option { background: #ffffff; color: #111318; }
+:root[data-theme="light"] .ci-chip { filter: brightness(0.72) saturate(1.3); }
+/* progress charts */
+:root[data-theme="light"] svg line[stroke="#262626"] { stroke: #e5e7eb; }
+:root[data-theme="light"] svg text[fill="#e2e8f0"] { fill: #111318; }
+:root[data-theme="light"] svg circle[stroke="#111111"] { stroke: #ffffff; }

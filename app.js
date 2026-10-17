@@ -426,6 +426,9 @@
         "New record": "رقم قياسي جديد",
         "{name} saved · {n} sets": "تم حفظ {name} · {n} مجموعات",
         "Close": "إغلاق",
+        "Theme": "المظهر",
+        "Dark": "داكن",
+        "Light": "فاتح",
         "Sets × reps": "المجموعات × التكرار",
         "Today's target": "هدف اليوم",
         "Last time": "آخر مرة",
@@ -1018,13 +1021,11 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const body = sets.every(x => x.w === sets[0].w) ? `${fmtW(sets[0].w)} × ${sets.map(x => x.r + u).join(' · ')}` : sets.map(x => `${fmtW(x.w)} × ${x.r}${u}`).join(' · ');
         return { when: fmtDate(logTime(logs[logs.length - 1]), false), body };
     };
-    // ✓ at the end of a set row: only shows whether the set is done (it turns green when you type the reps)
-    const doneMarkCls = on => `h-11 rounded-lg flex items-center justify-center border ${on ? 'bg-[#22c55e] border-[#22c55e] text-black' : 'bg-white/5 border-white/10 text-slate-600'}`;
     const sessionRows = () => [...document.querySelectorAll('#aw-sets-container .aw-row')].map(r => {
         const i = r.dataset.i, val = id => ((document.getElementById(id) || {}).value || '').trim();
-        return { i, e: Number(r.dataset.e), w: val(`aw-w-${i}`), r: val(`aw-rep-${i}`), rpe: val(`aw-rpe-${i}`), done: r.dataset.done === '1' };
+        return { i, e: Number(r.dataset.e), w: val(`aw-w-${i}`), r: val(`aw-rep-${i}`), rpe: val(`aw-rpe-${i}`), done: r.dataset.done === '1', logged: r.dataset.logged === '1' };
     });
-    const sessionHasData = () => !!window.appState.sess && sessionRows().some(x => x.r !== '' || x.done);
+    const sessionHasData = () => !!window.appState.sess && sessionRows().some(x => !x.logged && (x.r !== '' || x.done));
     const saveSessionDraft = () => { const S = window.appState.sess; if (S) writeItem(SESSION_KEY, JSON.stringify({ ...S, rows: sessionRows() })); };
     const clearSessionDraft = () => { try { localStorage.removeItem(SESSION_KEY); } catch (e) {} };
 
@@ -1180,7 +1181,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const d = startOfDay(start + i * 86400000 + 3600000), info = days[d], future = d > today;
             const lvl = info ? (info.sets >= 20 ? 1 : info.sets >= 10 ? 0.7 : 0.4) : 0;
             const label = `${fmtDate(d, false)} · ${info ? t('{n} sets', { n: info.sets }) : t('Rest')}`;
-            cells += `<button onclick="document.getElementById('cal-info').textContent=${esc(JSON.stringify(label))}" class="aspect-square rounded-md tap-feedback ${d === today ? 'ring-2 ring-white/70' : ''} ${future ? 'opacity-30' : ''}" style="background:${info ? `rgba(212,175,55,${lvl})` : 'rgba(255,255,255,0.06)'}" aria-label="${esc(label)}" title="${esc(label)}"></button>`;
+            cells += `<button onclick="document.getElementById('cal-info').textContent=${esc(JSON.stringify(label))}" class="aspect-square rounded-md tap-feedback ${d === today ? 'ring-2 ring-white/70' : ''} ${future ? 'opacity-30' : ''}" style="background:${info ? `rgba(212,175,55,${lvl})` : 'rgba(128,128,128,0.14)'}" aria-label="${esc(label)}" title="${esc(label)}"></button>`;
         }
         html += `<div class="glass-card p-4 mb-4"><div class="text-[11px] font-black text-white uppercase tracking-widest mb-3">${t('Last 5 weeks')}</div>
             <div class="grid grid-cols-7 gap-1.5 mb-1.5">${DAY_NAMES.map((_, i) => `<div class="text-center text-[9px] font-black text-slate-500 truncate">${esc(dayShort(DAY_NAMES[(startIdx + i) % 7]))}</div>`).join('')}</div>
@@ -1434,7 +1435,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const r = getReadinessToday(), open = !!window.appState.ciOpen;
         if (!r && window.appState.ciSkipped === dateKey()) return '';
         const L = r ? READY[r.level] : null, c = L ? L.c : '#d4af37';
-        return `<button onclick="window.appActions.toggleCheckIn()" class="self-start inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-widest tap-feedback" style="color:${c};border-color:${c}55;background:${c}14" aria-expanded="${open}"><i data-lucide="${L ? L.i : 'activity'}" class="w-3.5 h-3.5"></i>${L ? `${t(L.t)} <span class="text-slate-500">• ${r.score}/6</span>` : t('How do you feel?')}<i data-lucide="chevron-${open ? 'up' : 'down'}" class="w-3 h-3 opacity-70"></i></button>`;
+        return `<button onclick="window.appActions.toggleCheckIn()" class="ci-chip self-start inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-widest tap-feedback" style="color:${c};border-color:${c}55;background:${c}14" aria-expanded="${open}"><i data-lucide="${L ? L.i : 'activity'}" class="w-3.5 h-3.5"></i>${L ? `${t(L.t)} <span class="text-slate-500">• ${r.score}/6</span>` : t('How do you feel?')}<i data-lucide="chevron-${open ? 'up' : 'down'}" class="w-3 h-3 opacity-70"></i></button>`;
     };
     // Daily check-in card (opened from the button in today's day card)
     const checkInHTML = () => {
@@ -1568,7 +1569,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             html += `<div class="space-y-2">` + day.exercises.map((ex, i) => {
                 const done = fin[i], isRun = running && (S.exIdx === i || S.exIdx == null);
                 return `<button id="ex-card-${i}" onclick="window.appActions.openExSheet(${i})" class="w-full glass-card ex-card flex items-center gap-2.5 text-start tap-feedback ${done ? 'border border-[#22c55e]/30' : ''}">
-                    <span class="w-[26px] h-[26px] shrink-0 rounded-full flex items-center justify-center text-[12px] font-black ${done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'}">${done ? '<i data-lucide="check" class="w-3.5 h-3.5"></i>' : i + 1}</span>
+                    <span class="w-[30px] h-[30px] shrink-0 rounded-full flex items-center justify-center text-[13px] font-black ${done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'}">${done ? '<i data-lucide="check" class="w-3.5 h-3.5"></i>' : i + 1}</span>
                     ${isRun ? '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>' : ''}
                     <span class="ex-name flex-1 min-w-0 text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span>
                     <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500 shrink-0"></i>
@@ -1762,10 +1763,18 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 <button onclick="window.appActions.closeExSheet(); window.appActions.startWorkout(${day.id}, null, ${i})" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : done ? t('Log more sets') : t('Start workout')}</button>
             </div>`;
             if (window.lucide) window.lucide.createIcons({ root: document.getElementById('ex-sheet-box') });
-            openSheet('ex-sheet-overlay', 'ex-sheet-box');
+            openModal('ex-sheet-overlay', 'ex-sheet-box');
             pushBack('exsheet', () => window.appActions.closeExSheet());
         },
-        closeExSheet: () => { popBack('exsheet'); closeSheet('ex-sheet-overlay', 'ex-sheet-box'); },
+        closeExSheet: () => { popBack('exsheet'); closeModal('ex-sheet-overlay', 'ex-sheet-box'); },
+        // Dark (default) or light look; remembered on this phone
+        setTheme: v => {
+            const light = v === 'light';
+            try { localStorage.setItem('workoutTheme_rakan_final', light ? 'light' : 'dark'); } catch (e) {}
+            if (light) document.documentElement.setAttribute('data-theme', 'light'); else document.documentElement.removeAttribute('data-theme');
+            const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', light ? '#f3f3f0' : '#000000');
+            const sel = document.getElementById('setting-theme'); if (sel) sel.value = light ? 'light' : 'dark';
+        },
         setLanguage: v => {
             if (v !== 'ar' && v !== 'en') return;
             writeItem(LANG_KEY, v);
@@ -1820,8 +1829,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     // Pre-filled weight: suggestion, else what you typed before, else last session
                     const typed = loggedWeights[k] !== undefined && String(loggedWeights[k]).trim() !== '' ? parseFloat(loggedWeights[k]) : 0;
                     const pw = sg ? (sg.w > 0 ? String(sg.w) : '') : typed > 0 ? String(typed) : last && last.w > 0 ? String(last.w) : '';
+                    const weekStart = getWeekStart().getTime();
+                    const logged = hA.filter(l => { const t = logTime(l); return !isNaN(t) && t >= weekStart && (!l.weekId || l.weekId === currentWeekId) && logDayId(l) === dayId; }).flatMap(logSetDetails);
                     return { k, name: ex.name, muscle: ex.muscle, sets: Math.max(1, parseInt(ex.sets) || 1), repsStr: ex.reps, timed: isTimed(ex.reps),
-                        offset: setsThisWeekForDay(hA, dayId), pw, pr: sg ? sg.r : parseRange(ex.reps).minR, sg };
+                        offset: setsThisWeekForDay(hA, dayId), logged, pw, pr: sg ? sg.r : parseRange(ex.reps).minR, sg };
                 }).filter(Boolean)
             };
             delete S.rows;
@@ -1839,14 +1850,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const S = window.appState.sess; if (!S) return;
             if (typeof S.showRpe !== 'boolean') S.showRpe = StorageManager.getShowRpe();
             const showRpe = S.showRpe;
-            S.cols = showRpe ? '28px minmax(0,1fr) minmax(0,1fr) 56px 40px' : '28px minmax(0,1fr) minmax(0,1fr) 40px';
+            S.cols = showRpe ? '28px minmax(0,1fr) minmax(0,1fr) 56px' : '28px minmax(0,1fr) minmax(0,1fr)';
             S.rowSeq = 0; // rows are numbered from 1 again every time the table is built
             // one exercise: the day's name on top (the exercise's own name is right below it)
             document.getElementById('aw-title').innerText = t(S.exIdx != null && S.dayTitle ? S.dayTitle : S.title);
             document.getElementById('aw-status-text').innerText = t('Workout');
             document.getElementById('aw-pulse-dot').className = 'w-2 h-2 rounded-full shrink-0 bg-red-500 animate-pulse';
             document.getElementById('aw-mini-name').innerText = t(S.title);
-            const head = ex => `<div class="grid items-center gap-1.5 px-2 pb-1.5 text-[9px] font-black text-slate-500 uppercase tracking-widest" dir="ltr" style="grid-template-columns:${S.cols}"><span class="text-center">#</span><span class="text-center">${t('KG')}</span><span class="text-center">${ex.timed ? t('SEC') : t('REPS')}</span>${showRpe ? '<span class="text-center">RPE</span>' : ''}<span class="text-center">✓</span></div>`;
+            const head = ex => `<div class="grid items-center gap-1.5 px-2 pb-1.5 text-[9px] font-black text-slate-500 uppercase tracking-widest" dir="ltr" style="grid-template-columns:${S.cols}"><span class="text-center">#</span><span class="text-center">${t('KG')}</span><span class="text-center">${ex.timed ? t('SEC') : t('REPS')}</span>${showRpe ? '<span class="text-center">RPE</span>' : ''}</div>`;
             document.getElementById('aw-sets-container').innerHTML = S.exercises.map((ex, e) => `
                 <section class="mb-6" id="aw-ex-${e}">
                     <div class="flex items-start justify-between gap-2 px-1 mb-2">
@@ -1861,13 +1872,15 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     <div id="aw-rows-${e}" class="space-y-1.5"></div>
                     <div id="aw-note-${e}" class="hidden px-2 py-2 text-[11px] font-black text-[#22c55e]"><i data-lucide="check" class="w-3.5 h-3.5 inline -mt-0.5"></i> ${t('Done this week')}</div>
                     <div class="flex gap-2 mt-2 px-1">
-                        <button onclick="window.appActions.addSetRow(${e})" class="flex-1 py-2 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-slate-300 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add set')}</button>
                         <button onclick="window.appActions.removeSetRow(${e})" class="py-2 px-4 rounded-xl bg-white/5 border border-white/10 text-slate-400 tap-feedback" aria-label="${esc(t('Remove set'))}"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                        <button onclick="window.appActions.addSetRow(${e})" class="flex-1 py-2 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-slate-300 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add set')}</button>
                     </div>
                 </section>`).join('');
             if (rows && rows.length) rows.forEach(r => { if (S.exercises[r.e]) window.appActions.addSetRow(r.e, r, true); });
             else S.exercises.forEach((ex, e) => {
-                const n = Math.max(0, ex.sets - ex.offset);
+                // sets you already did (green, can't be changed), then empty ones; "Log more sets" gets one new set
+                (ex.logged || []).forEach(x => window.appActions.addSetRow(e, { w: x.w > 0 ? String(x.w) : '', r: String(x.r), rpe: '', done: true, logged: true }, true));
+                const n = Math.max(0, ex.sets - ex.offset) || (S.exIdx != null ? 1 : 0);
                 for (let j = 0; j < n; j++) window.appActions.addSetRow(e, null, true);
             });
             S.exercises.forEach((ex, e) => { if (!document.querySelector(`#aw-rows-${e} .aw-row`)) document.getElementById(`aw-note-${e}`).classList.remove('hidden'); });
@@ -1890,25 +1903,31 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const S = window.appState.sess; if (!S || !S.exercises[e]) return;
             const ex = S.exercises[e], box = document.getElementById(`aw-rows-${e}`);
             const rowsNow = box.querySelectorAll('.aw-row');
-            if (!r) r = { w: '', r: '', rpe: '', done: false }; // every set starts empty: you type what you did
+            // set number: done sets are rows here too (older saved workouts didn't show them)
+            const n = rowsNow.length + 1 + (ex.logged ? 0 : ex.offset);
+            if (!r) {
+                // KG is filled in (the set above, else the same set last time); reps stay empty for you to type
+                const above = rowsNow.length ? (document.getElementById(`aw-w-${rowsNow[rowsNow.length - 1].dataset.i}`) || {}).value : '';
+                const prev = lastSessionSets(StorageManager.getHistory()[ex.k] || []), p = prev[n - 1] || prev[prev.length - 1];
+                r = { w: building ? (p && p.w > 0 ? String(p.w) : '') : (above || (p && p.w > 0 ? String(p.w) : '')), r: '', rpe: '', done: false };
+            }
             S.rowSeq = (S.rowSeq || 0) + 1;
-            const i = S.rowSeq, n = ex.offset + rowsNow.length + 1;
+            const i = S.rowSeq;
             const showRpe = S.showRpe;
             const inCls = 'w-full h-11 rounded-lg bg-black/50 border border-white/10 text-center text-[16px] font-black text-white outline-none focus:border-[#d4af37] placeholder:text-slate-600 placeholder:font-bold';
             box.insertAdjacentHTML('beforeend', `
-                <div class="aw-row grid items-center gap-1.5 px-2 py-1 rounded-xl transition-colors ${r.done ? 'bg-[#22c55e]/10' : ''}" data-i="${i}" data-e="${e}" data-done="${r.done ? 1 : 0}" id="aw-row-${i}" dir="ltr" style="grid-template-columns:${S.cols}">
+                <div class="aw-row grid items-center gap-1.5 px-2 py-1 rounded-xl transition-colors ${r.done ? 'is-done' : ''} ${r.logged ? 'is-logged' : ''}" data-i="${i}" data-e="${e}" data-done="${r.done ? 1 : 0}" ${r.logged ? 'data-logged="1"' : ''} id="aw-row-${i}" dir="ltr" style="grid-template-columns:${S.cols}">
                     <span class="w-7 h-7 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center" id="aw-num-${i}">${n}</span>
-                    <input id="aw-w-${i}" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.w)}" placeholder="${isBodyweight(ex.name) ? t('BW') : t('KG')}" oninput="window.appActions.numInput(this, true)" class="${inCls} text-[#d4af37]">
-                    <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" placeholder="${ex.timed ? t('SEC') : t('REPS')}" oninput="window.appActions.numInput(this, false)" onchange="window.appActions.repsChanged(${i})" class="${inCls}">
-                    ${showRpe ? `<select id="aw-rpe-${i}" onchange="window.appActions.sessionChanged()" class="${inCls} appearance-none text-[14px]"><option value="">–</option>${[6,7,8,9,10].map(x => `<option value="${x}" ${String(r.rpe) === String(x) ? 'selected' : ''}>${x}</option>`).join('')}</select>` : ''}
-                    <span id="aw-done-${i}" class="${doneMarkCls(r.done)}" aria-label="${esc(t('Done'))}"><i data-lucide="check" class="w-5 h-5"></i></span>
+                    <input id="aw-w-${i}" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.w)}" ${r.logged ? 'disabled' : ''} placeholder="${isBodyweight(ex.name) ? t('BW') : t('KG')}" oninput="window.appActions.numInput(this, true)" class="${inCls} text-[#d4af37]">
+                    <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" ${r.logged ? 'disabled' : ''} placeholder="${ex.timed ? t('SEC') : t('REPS')}" oninput="window.appActions.numInput(this, false)" onchange="window.appActions.repsChanged(${i})" class="${inCls}">
+                    ${showRpe ? `<select id="aw-rpe-${i}" ${r.logged ? 'disabled' : ''} onchange="window.appActions.sessionChanged()" class="${inCls} appearance-none text-[14px]"><option value="">–</option>${[6,7,8,9,10].map(x => `<option value="${x}" ${String(r.rpe) === String(x) ? 'selected' : ''}>${x}</option>`).join('')}</select>` : ''}
                 </div>`);
             document.getElementById(`aw-note-${e}`).classList.add('hidden');
             if (!building) { if (window.lucide) window.lucide.createIcons({ root: box }); window.appActions.updateSessionInfo(); saveSessionDraft(); }
         },
         removeSetRow: e => {
             const rows = document.querySelectorAll(`#aw-rows-${e} .aw-row`);
-            if (rows.length) { rows[rows.length - 1].remove(); if (rows.length === 1) document.getElementById(`aw-note-${e}`).classList.remove('hidden'); window.appActions.updateSessionInfo(); saveSessionDraft(); }
+            if (rows.length && rows[rows.length - 1].dataset.logged !== '1') { rows[rows.length - 1].remove(); if (rows.length === 1) document.getElementById(`aw-note-${e}`).classList.remove('hidden'); window.appActions.updateSessionInfo(); saveSessionDraft(); }
         },
         // Reps typed (keyboard Done or tapping elsewhere): the set turns green by itself; emptying it undoes that
         repsChanged: i => {
@@ -1929,17 +1948,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (!row || !inp) return;
             const setDone = on => {
                 row.dataset.done = on ? '1' : '0';
-                row.classList.toggle('bg-[#22c55e]/10', on);
-                const b = document.getElementById(`aw-done-${i}`), num = document.getElementById(`aw-num-${i}`);
-                if (b) b.className = doneMarkCls(on);
+                row.classList.toggle('is-done', on);
+                const num = document.getElementById(`aw-num-${i}`);
                 if (num) num.className = `w-7 h-7 rounded-full ${on ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center`;
             };
             if (row.dataset.done === '1') { setDone(false); window.appActions.updateSessionInfo(); saveSessionDraft(); return; }
             if (!(parseInt(inp.value) > 0)) return;
             setDone(true);
-            const btn = document.getElementById(`aw-done-${i}`);
-            [btn, row].forEach(el => { if (el) { el.classList.remove('pop', 'row-flash'); void el.offsetWidth; } });
-            if (btn) btn.classList.add('pop'); row.classList.add('row-flash');
+            row.classList.remove('row-flash'); void row.offsetWidth; row.classList.add('row-flash');
             if (navigator.vibrate) navigator.vibrate(30);
             window.appActions.updateSessionInfo();
             const next = [...document.querySelectorAll('#aw-sets-container .aw-row')].find(r => r.dataset.done !== '1');
@@ -2035,7 +2051,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         // Finish: save every filled set, then show the summary
         finishActiveWorkout: (confirmed = false) => {
             const S = window.appState.sess; if (!S) return;
-            const rows = sessionRows().filter(x => S.exercises[x.e]), filled = rows.filter(x => parseInt(x.r) > 0);
+            const rows = sessionRows().filter(x => S.exercises[x.e] && !x.logged), filled = rows.filter(x => parseInt(x.r) > 0); // sets saved before aren't saved again
             if (!filled.length) return window.appActions.showToast(t("Enter reps for at least 1 set"), "error");
             // a weighted exercise needs a KG (type 0 for bodyweight)
             const bad = filled.find(x => x.w === '' && !isBodyweight(S.exercises[x.e].name));
@@ -2081,7 +2097,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             StorageManager.setHistory(h); StorageManager.set(loggedWeights);
             if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
             const title = S.title, day = S.exIdx != null && wkId === currentWeekId && getActiveSchedule().find(d => d.id === S.dayId);
-            // One exercise from Today: a short message and the next exercise opens, unless that was the last one of the day
+            // One exercise from Today: a short message (you pick the next exercise yourself), unless that was the last one of the day
             if (day) {
                 const fin = exercisesFinished(day, h), n = day.exercises.length;
                 const next = [...Array(n).keys()].map(o => (S.exIdx + 1 + o) % n).find(i => !fin[i]);
@@ -2089,7 +2105,6 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     window.appActions.discardSession();
                     renderNav();
                     window.appActions.showToast(t('{name} saved · {n} sets', { name: title, n: sets }) + (prs.length ? ` · ${t('New record')} 🏆` : ''), 'success');
-                    setTimeout(() => { if (activeDay === day.id && window.appState.currentView === 'today' && !window.appState.sess) window.appActions.openExSheet(next); }, 450);
                     return;
                 }
                 window.appActions.discardSession();
@@ -3198,6 +3213,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
         document.querySelectorAll('#setting-start-day option').forEach(o => { o.textContent = tDay(o.value); });
         const ls = document.getElementById('setting-lang'); if (ls) ls.value = LANG;
+        const th = document.getElementById('setting-theme'); if (th) th.value = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
     };
     applyStaticLanguage();
     window.appActions.switchTab('today');
