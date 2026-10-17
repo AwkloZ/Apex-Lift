@@ -157,6 +157,20 @@
         </div>
     </div>
 
+    <!-- Plan: edit one exercise (slides up from the bottom, like the exercise history on Today) -->
+    <div id="exedit-overlay" class="sheet-overlay fixed inset-0 bg-black/80 backdrop-blur-md z-[200] hidden flex-col items-center justify-end opacity-0 transition-all duration-300" onclick="if(event.target===this)window.appActions.closeExEdit()">
+        <div id="exedit-box" class="glass-card w-full max-w-md max-h-[85dvh] rounded-t-3xl flex flex-col transform translate-y-full transition-transform duration-300 border border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
+            <div class="flex items-center justify-between gap-3 p-6 border-b border-white/10 bg-black/40 rounded-t-3xl shrink-0">
+                <div class="min-w-0">
+                    <h3 class="text-xl font-black text-white uppercase tracking-tighter"><span data-i18n="Edit exercise">Edit exercise</span></h3>
+                    <p id="exedit-title" class="ex-name text-[10px] font-bold text-[#d4af37] uppercase tracking-widest mt-1 truncate"></p>
+                </div>
+                <button onclick="window.appActions.closeExEdit()" class="p-2 bg-white/5 rounded-full text-slate-400 hover:text-white tap-feedback shrink-0"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="exedit-content" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain p-5" style="padding-bottom: max(1.25rem, env(safe-area-inset-bottom));"></div>
+        </div>
+    </div>
+
     <div id="smart-backup-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 px-6">
         <div id="smart-backup-box" class="glass-card p-6 w-full max-w-sm transform scale-95 transition-transform duration-300 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
             <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
@@ -291,16 +305,7 @@
 
             <!-- Plan tab: your routines (weeks) -->
             <section id="plan-routines" class="hidden mb-5">
-        <div class="mb-2">
-            <span class="text-[10px] font-black text-[#d4af37] uppercase tracking-[3px] opacity-80 mb-3 block"><span data-i18n="My routines">My routines</span></span>
-            <div id="weeks-container" class="space-y-3 mb-4"></div>
-           <button onclick="window.appActions.addWeek()" class="w-full glass-card py-3 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[11px] tap-feedback border-dashed border-[#d4af37]/40 bg-[#d4af37]/5 rounded-xl">
-                <i data-lucide="plus" class="w-4 h-4 shrink-0"></i>
-                <span class="pl-1"><span data-i18n="New routine">New routine</span></span>
-                <div class="w-2 h-4 shrink-0"></div>
-            </button>
-        </div>
-
+                <div id="weeks-container"></div>
             </section>
 
             <nav id="nav-container" class="grid grid-cols-7 gap-1.5 mb-6"></nav>
