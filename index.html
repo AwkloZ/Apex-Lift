@@ -171,6 +171,13 @@
         </div>
     </div>
 
+    <!-- Plan: sets & reps for the new exercise when changing one (above the exercise list, below the confirmation) -->
+    <div id="swapsetup-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[500] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSwapSetup()">
+        <div id="swapsetup-box" class="w-full max-w-md max-h-[88dvh] overflow-y-auto bg-[#111] rounded-3xl border border-white/10 pt-5 pb-5 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+            <div id="swapsetup-content"></div>
+        </div>
+    </div>
+
     <div id="smart-backup-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 px-6">
         <div id="smart-backup-box" class="glass-card p-6 w-full max-w-sm transform scale-95 transition-transform duration-300 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
             <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
