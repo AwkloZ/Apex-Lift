@@ -307,7 +307,7 @@
         "Restoring…": "جارٍ الاسترجاع…",
         "Tap a day, or swipe left or right, to see another day of your plan.": "اضغط على يوم، أو اسحب يمينًا أو يسارًا، لترى يومًا آخر من خطتك.",
         "Tap an exercise to change its sets and reps. Hold ⋮⋮ and drag to reorder.": "اضغط على التمرين لتغيير المجموعات والتكرارات. اضغط مطولًا على ⋮⋮ واسحب لإعادة الترتيب.",
-        "Tap an exercise to start it or see its history. Your weights from last time are already filled in.": "اضغط على تمرين لتبدأه أو لترى سجله. أوزانك من المرة السابقة مكتوبة مسبقًا.",
+        "Tap an exercise to see its details and start it.": "اضغط على تمرين لترى تفاصيله وتبدأه.",
         "Tap ⌄ to look at your plan. The workout keeps running at the bottom.": "اضغط ⌄ لمشاهدة خطتك، ويستمر التمرين في الأسفل.",
         "Terms of Use": "شروط الاستخدام",
         "Your account: sync, older backups and sign out are here.": "حسابك: المزامنة والنسخ السابقة وتسجيل الخروج هنا.",
@@ -425,6 +425,13 @@
         "How do you feel?": "كيف تشعر اليوم؟",
         "New record": "رقم قياسي جديد",
         "{name} saved · {n} sets": "تم حفظ {name} · {n} مجموعات",
+        "Close": "إغلاق",
+        "Sets × reps": "المجموعات × التكرار",
+        "Today's target": "هدف اليوم",
+        "Last time": "آخر مرة",
+        "Finish the workout or discard it with ✕ to leave.": "أنهِ التمرين أو ألغِه بزر ✕ للخروج.",
+        "Type the KG and reps you did. The set turns green by itself.": "اكتب الوزن والتكرار الذي أديته. تصبح المجموعة خضراء تلقائيًا.",
+        "Type the KG and reps you did: the set turns green by itself. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.": "اكتب الوزن والتكرار الذي أديته: تصبح المجموعة خضراء تلقائيًا. RPE (اختياري): 10 = لا تكرارات متبقية، 9 = تكرار واحد، 8 = تكراران.",
     };
     const t = (en, vars) => {
         let out = (isAR && Object.prototype.hasOwnProperty.call(AR, en) && AR[en]) || en;
@@ -931,6 +938,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         backStack.push({ id, fn });
         if (!backGuard) { try { history.pushState({ apexGuard: 1 }, ''); backGuard = true; } catch (e) {} }
     };
+    // Phone back button during a workout: the workout stays open (finish it or discard it with ✕ to leave)
+    const sessionBack = () => { backStack.push({ id: 'session', fn: sessionBack }); window.appActions.showToast(t('Finish the workout or discard it with ✕ to leave.'), 'error'); };
     const popBack = id => { const i = backStack.map(x => x.id).lastIndexOf(id); if (i >= 0) backStack.splice(i, 1); };
     window.addEventListener('popstate', () => {
         backGuard = false;
@@ -1002,6 +1011,15 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const day = startOfDay(logTime(logs[logs.length - 1]));
         return logs.filter(l => startOfDay(logTime(l)) === day).flatMap(logSetDetails);
     };
+    // Last session in one line: date + "60kg × 10 · 10 · 9" (the weight per set only when they differ)
+    const lastSessionText = (hA, timed) => {
+        const sets = lastSessionSets(hA); if (!sets.length) return null;
+        const logs = (hA || []).filter(l => !isNaN(logTime(l)) && !isToday(logTime(l))), u = timed ? 's' : '';
+        const body = sets.every(x => x.w === sets[0].w) ? `${fmtW(sets[0].w)} × ${sets.map(x => x.r + u).join(' · ')}` : sets.map(x => `${fmtW(x.w)} × ${x.r}${u}`).join(' · ');
+        return { when: fmtDate(logTime(logs[logs.length - 1]), false), body };
+    };
+    // ✓ at the end of a set row: only shows whether the set is done (it turns green when you type the reps)
+    const doneMarkCls = on => `h-11 rounded-lg flex items-center justify-center border ${on ? 'bg-[#22c55e] border-[#22c55e] text-black' : 'bg-white/5 border-white/10 text-slate-600'}`;
     const sessionRows = () => [...document.querySelectorAll('#aw-sets-container .aw-row')].map(r => {
         const i = r.dataset.i, val = id => ((document.getElementById(id) || {}).value || '').trim();
         return { i, e: Number(r.dataset.e), w: val(`aw-w-${i}`), r: val(`aw-rep-${i}`), rpe: val(`aw-rpe-${i}`), done: r.dataset.done === '1' };
@@ -1536,7 +1554,6 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const finished = (pr.planned > 0 && pr.done >= pr.planned) || fin.every(Boolean);
             const mins = Math.max(10, Math.round(pr.planned * 2.5 / 5) * 5);
             const running = S && S.dayId === day.id && (!S.weekId || S.weekId === currentWeekId);
-            const o = window.appState.openEx, openI = o && o.w === currentWeekId && o.d === day.id ? o.i : -1;
             html += `<div class="glass-card today-card ${finished ? 'border border-[#22c55e]/30' : ''}">
                 <div>
                     <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}${finished ? ` · <span class="text-[#22c55e]">${t('Done')}</span>` : ''}</div>
@@ -1548,32 +1565,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 ${isT && !finished ? checkInChip() : ''}
             </div>`;
             if (isT && !finished && window.appState.ciOpen) html += checkInHTML();
-            const easy = isT && (getReadinessToday() || {}).level === 'low';
             html += `<div class="space-y-2">` + day.exercises.map((ex, i) => {
-                const k = getExKey(currentWeekId, day.id, i, ex.name), hA = history[k] || [];
-                const done = fin[i], timed = isTimed(ex.reps), last = getLastSession(hA, true), sg = suggestionFor(hA, ex, easy);
-                const lastTxt = last ? `<span dir="ltr">${fmtW(last.w)} × ${last.sets.join(' · ')}${timed ? 's' : ''}</span>` : '';
-                // line 2 shows today's target; last time moves into the open card so weights aren't listed twice
-                const sub = sg ? suggestionText(sg, timed) : last ? `${t('Last:')} ${lastTxt}` : `<span class="text-slate-500">${t('First time')}</span>`;
-                const isRun = running && (S.exIdx === i || S.exIdx == null);
-                return `<div id="ex-card-${i}" class="glass-card ex-card ${openI === i ? 'is-open' : ''} ${done ? 'border border-[#22c55e]/30' : ''}">
-                    <button onclick="window.appActions.toggleExCard(${i})" class="w-full flex items-center gap-2.5 text-start tap-feedback" aria-expanded="${openI === i}">
-                        <span class="w-[26px] h-[26px] shrink-0 rounded-full flex items-center justify-center text-[12px] font-black ${done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'}">${done ? '<i data-lucide="check" class="w-3.5 h-3.5"></i>' : i + 1}</span>
-                        <span class="flex-1 min-w-0">
-                            <span class="flex items-center gap-1.5">${isRun ? '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>' : ''}<span class="ex-name text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span></span>
-                            <span class="block text-[11px] font-bold text-slate-400 mt-0.5 truncate">${esc(tm(ex.muscle))} · ${sub}</span>
-                        </span>
-                        <span class="shrink-0 text-[13px] font-black text-white" dir="ltr">${esc(ex.sets)} × ${esc(ex.reps)}</span>
-                        <i data-lucide="chevron-down" class="ex-chev w-4 h-4 text-slate-500 shrink-0"></i>
-                    </button>
-                    <div class="ex-drawer"><div>
-                        ${sg && last ? `<div class="ex-last text-[11px] font-bold text-slate-400">${t('Last:')} <span class="text-white">${lastTxt}</span></div>` : ''}
-                        <div class="ex-actions flex gap-2">
-                            <button onclick="window.appActions.startWorkout(${day.id}, null, ${i})" class="flex-1 py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-1.5 shadow-[0_0_18px_rgba(212,175,55,0.3)]"><i data-lucide="play" class="w-4 h-4 fill-current"></i>${isRun ? t('Continue') : done ? t('Log more sets') : t('Start')}</button>
-                            <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 shrink-0 rounded-xl bg-white/5 border border-white/10 text-slate-300 tap-feedback flex items-center justify-center" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-4 h-4"></i></button>
-                        </div>
-                    </div></div>
-                </div>`;
+                const done = fin[i], isRun = running && (S.exIdx === i || S.exIdx == null);
+                return `<button id="ex-card-${i}" onclick="window.appActions.openExSheet(${i})" class="w-full glass-card ex-card flex items-center gap-2.5 text-start tap-feedback ${done ? 'border border-[#22c55e]/30' : ''}">
+                    <span class="w-[26px] h-[26px] shrink-0 rounded-full flex items-center justify-center text-[12px] font-black ${done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'}">${done ? '<i data-lucide="check" class="w-3.5 h-3.5"></i>' : i + 1}</span>
+                    ${isRun ? '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>' : ''}
+                    <span class="ex-name flex-1 min-w-0 text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500 shrink-0"></i>
+                </button>`;
             }).join('') + `</div>`;
         }
         document.getElementById('workout-container').innerHTML = `<div class="${enterClass()}">${html}</div>`;
@@ -1736,15 +1735,37 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             renderWorkout();
         },
         toggleCheckIn: () => { window.appState.ciOpen = !window.appState.ciOpen; renderWorkout(); },
-        // Open one exercise card on Today (Start + History); tapping it again closes it. Only one is open at a time
-        toggleExCard: i => {
-            const o = window.appState.openEx, close = !!o && o.w === currentWeekId && o.d === activeDay && o.i === i;
-            window.appState.openEx = close ? null : { w: currentWeekId, d: activeDay, i };
-            document.querySelectorAll('#workout-container .ex-card').forEach(c => {
-                const on = !close && c.id === `ex-card-${i}`, b = c.querySelector('[aria-expanded]');
-                c.classList.toggle('is-open', on); if (b) b.setAttribute('aria-expanded', String(on));
-            });
+        // Exercise pop-up on Today: everything about the exercise, Start workout (this exercise only) and History
+        openExSheet: i => {
+            const day = getActiveSchedule().find(d => d.id === activeDay), ex = day && day.exercises[i]; if (!ex) return;
+            const history = StorageManager.getHistory(), k = getExKey(currentWeekId, day.id, i, ex.name), hA = history[k] || [];
+            const S = window.appState.sess, timed = isTimed(ex.reps), planned = parseInt(ex.sets) || 0, doneSets = setsThisWeekForDay(hA, day.id);
+            const easy = day.id === getTodayId() && (getReadinessToday() || {}).level === 'low', sg = suggestionFor(hA, ex, easy), last = lastSessionText(hA, timed);
+            const isRun = S && S.dayId === day.id && (!S.weekId || S.weekId === currentWeekId) && (S.exIdx === i || S.exIdx == null);
+            const done = exercisesFinished(day, history)[i];
+            const box = (label, value) => `<div class="rounded-2xl bg-white/5 border border-white/5 px-3.5 py-3 min-w-0"><div class="text-[10px] font-black text-slate-500 uppercase tracking-widest">${label}</div><div class="text-[15px] font-black text-white mt-1 truncate">${value}</div></div>`;
+            document.getElementById('ex-sheet-content').innerHTML = `<div class="px-5 pt-1">
+                <div class="flex items-start gap-2">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(tm(ex.muscle))}</div>
+                        <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(ex.name)}</h3>
+                    </div>
+                    <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
+                    <button onclick="window.appActions.closeExSheet()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                    ${box(t('Sets × reps'), `<span dir="ltr">${esc(ex.sets)} × ${esc(ex.reps)}</span>`)}
+                    ${box(t("Today's target"), sg ? suggestionText(sg, timed) : '<span class="text-slate-500">—</span>')}
+                </div>
+                <div class="mt-2">${box(last ? `${t('Last time')} · ${esc(last.when)}` : t('Last time'), last ? `<span dir="ltr">${last.body}</span>` : `<span class="text-slate-500">${t('First time')}</span>`)}</div>
+                ${doneSets > 0 ? `<div class="mt-3 text-[11px] font-black ${done ? 'text-[#22c55e]' : 'text-slate-400'}">${t('Done this week')}: <span dir="ltr">${Math.min(doneSets, planned || doneSets)} / ${planned}</span></div>` : ''}
+                <button onclick="window.appActions.closeExSheet(); window.appActions.startWorkout(${day.id}, null, ${i})" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : done ? t('Log more sets') : t('Start workout')}</button>
+            </div>`;
+            if (window.lucide) window.lucide.createIcons({ root: document.getElementById('ex-sheet-box') });
+            openSheet('ex-sheet-overlay', 'ex-sheet-box');
+            pushBack('exsheet', () => window.appActions.closeExSheet());
         },
+        closeExSheet: () => { popBack('exsheet'); closeSheet('ex-sheet-overlay', 'ex-sheet-box'); },
         setLanguage: v => {
             if (v !== 'ar' && v !== 'en') return;
             writeItem(LANG_KEY, v);
@@ -1791,7 +1812,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const history = StorageManager.getHistory();
             const easy = dayId === getTodayId() && (getReadinessToday() || {}).level === 'low';
             const S = window.appState.sess = restore ? { ...restore } : {
-                dayId, title: exIdx != null ? day.exercises[exIdx].name : day.title, exIdx, startedAt: Date.now(), weekId: currentWeekId, showRpe: StorageManager.getShowRpe(),
+                dayId, title: exIdx != null ? day.exercises[exIdx].name : day.title, dayTitle: day.title, exIdx, startedAt: Date.now(), weekId: currentWeekId, showRpe: StorageManager.getShowRpe(),
                 exercises: day.exercises.map((ex, i) => {
                     if (exIdx != null && i !== exIdx) return null;
                     const k = getExKey(currentWeekId, dayId, i, ex.name), hA = history[k] || [];
@@ -1809,11 +1830,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             window.appState.awTimer = setInterval(window.appActions.sessionTick, 250);
             window.appActions.sessionTick();
             keepAwake(true);
-            if (restore) window.appActions.showMini();
-            else {
-                openSheet('active-workout-overlay', 'active-workout-box'); pushBack('session', () => window.appActions.minimizeSession());
-                hint('sess-check', '[id^=aw-done-]', t('Did the set? Tap ✓. Change the KG or reps first if they were different.'), 800);
-            }
+            openSheet('active-workout-overlay', 'active-workout-box'); pushBack('session', sessionBack);
+            if (!restore) hint('sess-check', '[id^=aw-rep-]', t('Type the KG and reps you did. The set turns green by itself.'), 800);
             saveSessionDraft();
             renderWorkout();
         },
@@ -1821,13 +1839,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const S = window.appState.sess; if (!S) return;
             if (typeof S.showRpe !== 'boolean') S.showRpe = StorageManager.getShowRpe();
             const showRpe = S.showRpe;
-            S.cols = showRpe ? '28px minmax(0,1fr) 64px 56px 48px 42px' : '28px minmax(0,1fr) 72px 64px 44px';
+            S.cols = showRpe ? '28px minmax(0,1fr) minmax(0,1fr) 56px 40px' : '28px minmax(0,1fr) minmax(0,1fr) 40px';
             S.rowSeq = 0; // rows are numbered from 1 again every time the table is built
-            document.getElementById('aw-title').innerText = t(S.title);
+            // one exercise: the day's name on top (the exercise's own name is right below it)
+            document.getElementById('aw-title').innerText = t(S.exIdx != null && S.dayTitle ? S.dayTitle : S.title);
             document.getElementById('aw-status-text').innerText = t('Workout');
             document.getElementById('aw-pulse-dot').className = 'w-2 h-2 rounded-full shrink-0 bg-red-500 animate-pulse';
             document.getElementById('aw-mini-name').innerText = t(S.title);
-            const head = ex => `<div class="grid items-center gap-1.5 px-2 pb-1.5 text-[9px] font-black text-slate-500 uppercase tracking-widest" dir="ltr" style="grid-template-columns:${S.cols}"><span class="text-center">#</span><span>${t('Previous')}</span><span class="text-center">${t('KG')}</span><span class="text-center">${ex.timed ? t('SEC') : t('REPS')}</span>${showRpe ? '<span class="text-center">RPE</span>' : ''}<span class="text-center">✓</span></div>`;
+            const head = ex => `<div class="grid items-center gap-1.5 px-2 pb-1.5 text-[9px] font-black text-slate-500 uppercase tracking-widest" dir="ltr" style="grid-template-columns:${S.cols}"><span class="text-center">#</span><span class="text-center">${t('KG')}</span><span class="text-center">${ex.timed ? t('SEC') : t('REPS')}</span>${showRpe ? '<span class="text-center">RPE</span>' : ''}<span class="text-center">✓</span></div>`;
             document.getElementById('aw-sets-container').innerHTML = S.exercises.map((ex, e) => `
                 <section class="mb-6" id="aw-ex-${e}">
                     <div class="flex items-start justify-between gap-2 px-1 mb-2">
@@ -1837,6 +1856,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                         </div>
                         <span class="shrink-0">${suggestionChip(ex.sg, ex.timed)}</span>
                     </div>
+                    ${(() => { const last = lastSessionText(StorageManager.getHistory()[ex.k] || [], ex.timed); return `<div class="flex items-center gap-2 mx-1 mb-3 px-3 py-2.5 rounded-xl bg-white/5 border border-white/5 text-[12px] font-bold text-slate-400"><i data-lucide="history" class="w-4 h-4 shrink-0 text-slate-500"></i>${last ? `<span class="min-w-0">${t('Last time')} · ${esc(last.when)}<span class="block text-[14px] font-black text-white mt-0.5" dir="ltr">${last.body}</span></span>` : `<span>${t('First time')}</span>`}</div>`; })()}
                     ${head(ex)}
                     <div id="aw-rows-${e}" class="space-y-1.5"></div>
                     <div id="aw-note-${e}" class="hidden px-2 py-2 text-[11px] font-black text-[#22c55e]"><i data-lucide="check" class="w-3.5 h-3.5 inline -mt-0.5"></i> ${t('Done this week')}</div>
@@ -1862,29 +1882,26 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const all = document.querySelectorAll('#aw-sets-container .aw-row'), done = document.querySelectorAll('#aw-sets-container .aw-row[data-done="1"]');
             const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
             const old = document.getElementById('aw-progress-fill'), prevPct = old ? parseFloat(old.style.width) || 0 : pct;
-            document.getElementById('aw-info').innerHTML = `<div class="w-full"><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('{n} exercises', { n: S.exercises.length })}</span><span class="text-white" dir="ltr">${done.length} / ${all.length} ${t('sets')}</span></div><div class="w-full h-2 bg-black/60 rounded-full overflow-hidden"><div id="aw-progress-fill" class="bar-fill h-full bg-[#22c55e] rounded-full" style="width:${prevPct}%"></div></div></div>`;
+            document.getElementById('aw-info').innerHTML = `<div class="w-full"><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${S.exercises.length > 1 ? t('{n} exercises', { n: S.exercises.length }) : ''}</span><span class="text-white" dir="ltr">${done.length} / ${all.length} ${t('sets')}</span></div><div class="w-full h-2 bg-black/60 rounded-full overflow-hidden"><div id="aw-progress-fill" class="bar-fill h-full bg-[#22c55e] rounded-full" style="width:${prevPct}%"></div></div></div>`;
             const fill = document.getElementById('aw-progress-fill'); void fill.offsetWidth; fill.style.width = pct + '%';
         },
         // Adds one set row to exercise e
         addSetRow: (e, r = null, building = false) => {
             const S = window.appState.sess; if (!S || !S.exercises[e]) return;
             const ex = S.exercises[e], box = document.getElementById(`aw-rows-${e}`);
-            const prevSets = lastSessionSets(StorageManager.getHistory()[ex.k] || []);
             const rowsNow = box.querySelectorAll('.aw-row');
-            if (!r) { const lastW = rowsNow.length ? (document.getElementById(`aw-w-${rowsNow[rowsNow.length - 1].dataset.i}`) || {}).value : ex.pw; r = { w: lastW || '', r: '', rpe: '', done: false }; }
+            if (!r) r = { w: '', r: '', rpe: '', done: false }; // every set starts empty: you type what you did
             S.rowSeq = (S.rowSeq || 0) + 1;
-            const i = S.rowSeq, n = ex.offset + rowsNow.length + 1, prev = prevSets[n - 1];
-            const ph = ex.sg ? ex.pr : prev ? prev.r : ex.pr;
+            const i = S.rowSeq, n = ex.offset + rowsNow.length + 1;
             const showRpe = S.showRpe;
             const inCls = 'w-full h-11 rounded-lg bg-black/50 border border-white/10 text-center text-[16px] font-black text-white outline-none focus:border-[#d4af37] placeholder:text-slate-600 placeholder:font-bold';
             box.insertAdjacentHTML('beforeend', `
                 <div class="aw-row grid items-center gap-1.5 px-2 py-1 rounded-xl transition-colors ${r.done ? 'bg-[#22c55e]/10' : ''}" data-i="${i}" data-e="${e}" data-done="${r.done ? 1 : 0}" id="aw-row-${i}" dir="ltr" style="grid-template-columns:${S.cols}">
                     <span class="w-7 h-7 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center" id="aw-num-${i}">${n}</span>
-                    <button type="button" onclick="window.appActions.copyPrev(${i})" data-w="${prev ? prev.w : ''}" data-r="${prev ? prev.r : ''}" class="text-start text-[12px] font-bold text-slate-500 truncate tap-feedback">${prev ? `${prev.w > 0 ? prev.w : t('BW')} × ${prev.r}${ex.timed ? 's' : ''}${prev.rpe ? ` @${prev.rpe}` : ''}` : '—'}</button>
                     <input id="aw-w-${i}" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.w)}" placeholder="${isBodyweight(ex.name) ? t('BW') : t('KG')}" oninput="window.appActions.numInput(this, true)" class="${inCls} text-[#d4af37]">
-                    <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" placeholder="${ph}" oninput="window.appActions.numInput(this, false)" class="${inCls}">
+                    <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" placeholder="${ex.timed ? t('SEC') : t('REPS')}" oninput="window.appActions.numInput(this, false)" onchange="window.appActions.repsChanged(${i})" class="${inCls}">
                     ${showRpe ? `<select id="aw-rpe-${i}" onchange="window.appActions.sessionChanged()" class="${inCls} appearance-none text-[14px]"><option value="">–</option>${[6,7,8,9,10].map(x => `<option value="${x}" ${String(r.rpe) === String(x) ? 'selected' : ''}>${x}</option>`).join('')}</select>` : ''}
-                    <button type="button" id="aw-done-${i}" onclick="window.appActions.completeSet(${i})" class="h-11 rounded-lg flex items-center justify-center tap-feedback border ${r.done ? 'bg-[#22c55e] border-[#22c55e] text-black' : 'bg-white/5 border-white/10 text-slate-400'}" aria-label="${esc(t('Done'))}"><i data-lucide="check" class="w-5 h-5"></i></button>
+                    <span id="aw-done-${i}" class="${doneMarkCls(r.done)}" aria-label="${esc(t('Done'))}"><i data-lucide="check" class="w-5 h-5"></i></span>
                 </div>`);
             document.getElementById(`aw-note-${e}`).classList.add('hidden');
             if (!building) { if (window.lucide) window.lucide.createIcons({ root: box }); window.appActions.updateSessionInfo(); saveSessionDraft(); }
@@ -1893,11 +1910,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const rows = document.querySelectorAll(`#aw-rows-${e} .aw-row`);
             if (rows.length) { rows[rows.length - 1].remove(); if (rows.length === 1) document.getElementById(`aw-note-${e}`).classList.remove('hidden'); window.appActions.updateSessionInfo(); saveSessionDraft(); }
         },
-        copyPrev: i => {
-            const b = document.querySelector(`#aw-row-${i} button[data-w]`); if (!b || !b.dataset.r) return;
-            document.getElementById(`aw-w-${i}`).value = parseFloat(b.dataset.w) > 0 ? b.dataset.w : '';
-            document.getElementById(`aw-rep-${i}`).value = b.dataset.r;
-            saveSessionDraft();
+        // Reps typed (keyboard Done or tapping elsewhere): the set turns green by itself; emptying it undoes that
+        repsChanged: i => {
+            const row = document.getElementById(`aw-row-${i}`), ok = parseInt((document.getElementById(`aw-rep-${i}`) || {}).value) > 0;
+            if (row && ok !== (row.dataset.done === '1')) window.appActions.completeSet(i);
         },
         sessionChanged: () => saveSessionDraft(),
         // KG / reps boxes: Arabic digits (٤٫٥ or ٤،٥) become 4.5, anything that isn't a number is dropped
@@ -1907,7 +1923,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (v !== el.value) el.value = v;
             saveSessionDraft();
         },
-        // ✓ a set: fills reps from the target if empty, marks it done, starts the rest timer and scrolls to the next set
+        // Marks a set done (or not done again), starts the rest timer and scrolls to the next set
         completeSet: i => {
             const row = document.getElementById(`aw-row-${i}`), inp = document.getElementById(`aw-rep-${i}`);
             if (!row || !inp) return;
@@ -1915,14 +1931,11 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 row.dataset.done = on ? '1' : '0';
                 row.classList.toggle('bg-[#22c55e]/10', on);
                 const b = document.getElementById(`aw-done-${i}`), num = document.getElementById(`aw-num-${i}`);
-                if (b) b.className = `h-11 rounded-lg flex items-center justify-center tap-feedback border ${on ? 'bg-[#22c55e] border-[#22c55e] text-black' : 'bg-white/5 border-white/10 text-slate-400'}`;
+                if (b) b.className = doneMarkCls(on);
                 if (num) num.className = `w-7 h-7 rounded-full ${on ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center`;
             };
             if (row.dataset.done === '1') { setDone(false); window.appActions.updateSessionInfo(); saveSessionDraft(); return; }
-            if (!(parseInt(inp.value) > 0)) {
-                if (parseInt(inp.placeholder) > 0) inp.value = inp.placeholder;
-                else return window.appActions.showToast(t(window.appState.sess && window.appState.sess.exercises[Number(row.dataset.e)].timed ? "Enter seconds first" : "Enter reps first"), "error");
-            }
+            if (!(parseInt(inp.value) > 0)) return;
             setDone(true);
             const btn = document.getElementById(`aw-done-${i}`);
             [btn, row].forEach(el => { if (el) { el.classList.remove('pop', 'row-flash'); void el.offsetWidth; } });
@@ -1933,7 +1946,6 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (next) {
                 window.appActions.startRest(StorageManager.getRestSeconds());
                 hint('sess-rest', '#aw-rest', t('Rest timer: it starts by itself. Use −15 / +15 or Skip.'), 500);
-                if (hintSeen('sess-rest')) hint('sess-min', '#aw-min-btn', t('Tap ⌄ to look at your plan. The workout keeps running at the bottom.'), 500);
                 setTimeout(() => next.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
             }
             saveSessionDraft();
@@ -1999,7 +2011,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             m.classList.add('hidden'); m.classList.remove('flex');
             document.body.classList.remove('has-mini');
             openSheet('active-workout-overlay', 'active-workout-box');
-            pushBack('session', () => window.appActions.minimizeSession());
+            pushBack('session', sessionBack);
         },
         // Throw the workout away (nothing saved)
         discardSession: () => {
@@ -2074,14 +2086,12 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 const fin = exercisesFinished(day, h), n = day.exercises.length;
                 const next = [...Array(n).keys()].map(o => (S.exIdx + 1 + o) % n).find(i => !fin[i]);
                 if (next !== undefined) {
-                    window.appState.openEx = { w: currentWeekId, d: day.id, i: next };
                     window.appActions.discardSession();
                     renderNav();
                     window.appActions.showToast(t('{name} saved · {n} sets', { name: title, n: sets }) + (prs.length ? ` · ${t('New record')} 🏆` : ''), 'success');
-                    setTimeout(() => { const c = document.getElementById(`ex-card-${next}`); if (c && activeDay === day.id) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 350);
+                    setTimeout(() => { if (activeDay === day.id && window.appState.currentView === 'today' && !window.appState.sess) window.appActions.openExSheet(next); }, 450);
                     return;
                 }
-                window.appState.openEx = null;
                 window.appActions.discardSession();
                 renderNav();
                 return window.appActions.showSummary(daySummary(day, h));
@@ -3133,7 +3143,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }, delay);
     };
     const todayHints = () => {
-        hint('today-ex', '#workout-container .ex-card', t('Tap an exercise to start it or see its history. Your weights from last time are already filled in.'));
+        hint('today-ex', '#workout-container .ex-card', t('Tap an exercise to see its details and start it.'));
         if (hintSeen('today-ex')) hint('today-days', '#nav-container', t('Tap a day, or swipe left or right, to see another day of your plan.'));
     };
 
@@ -3194,7 +3204,6 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     enableSwipeDown(document.getElementById('picker-box'), () => window.appActions.closePicker());
     enableSwipeDown(document.getElementById('history-modal-box'), () => window.appActions.closeHistoryModal());
     enableSwipeDown(document.getElementById('programs-box'), () => window.appActions.closePrograms());
-    enableSwipeDown(document.getElementById('active-workout-box'), () => window.appActions.minimizeSession());
     enableDaySwipe(document.getElementById('workout-container'));
     // An unfinished Log/Focus session (e.g. the phone closed the app during rest) comes back minimized
     (() => {

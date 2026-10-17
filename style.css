@@ -208,14 +208,4 @@ input.day-title-input { font-size: 26px !important; }
 
 /* Day card and exercise cards: smaller and tighter than the other cards */
 .glass-card.today-card { border-radius: 24px; padding: 14px 16px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
-.glass-card.ex-card { border-radius: 20px; padding: 11px 12px; transition: border-color 0.2s; }
-.ex-card.is-open { border: 1px solid rgba(212, 175, 55, 0.55); }
-.ex-chev { transition: transform 0.2s; }
-.ex-card.is-open .ex-chev { transform: rotate(180deg); color: #d4af37; }
-/* Opened card: Start + History slide out under it (hidden ones can't be reached with Tab) */
-.ex-drawer { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.22s ease; }
-.ex-drawer > div { overflow: hidden; visibility: hidden; transition: visibility 0.22s; }
-.ex-card.is-open .ex-drawer { grid-template-rows: 1fr; }
-.ex-card.is-open .ex-drawer > div { visibility: visible; }
-.ex-last { margin: 10px 0 0 36px; }
-.ex-actions { margin: 10px 0 1px; }
+.glass-card.ex-card { border-radius: 20px; padding: 13px 12px; }
