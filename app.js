@@ -20,7 +20,9 @@
         "Next workout": "التمرين القادم",
         "Change exercise": "تغيير التمرين",
         "Change to {name}?": "التغيير إلى {name}؟",
-        "{old} will be replaced. Sets and reps stay the same.": "سيتم استبدال {old}. تبقى المجموعات والتكرارات كما هي.",
+        "{old} will be replaced with {sets} sets of {reps}.": "سيتم استبدال {old} بـ {sets} مجموعات × {reps}.",
+        "Sets and reps": "المجموعات والتكرارات",
+        "How many sets and reps for this exercise?": "كم مجموعة وتكرار لهذا التمرين؟",
         "Change": "تغيير",
         "Delete exercise": "حذف التمرين",
         "Program preview": "معاينة البرنامج",
@@ -792,7 +794,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '17';
+    const APP_VERSION = '18';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -2407,18 +2409,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         pickerTap: (name, muscle) => {
             const P = window.appState.picker, d = getActiveSchedule().find(x => x.id === activeDay);
             if (P.mode === 'replace') {
-                // keep sets & reps, change the exercise (asks first, then Undo for a few seconds)
+                // 1) choose sets & reps for the new exercise, 2) confirm, 3) Undo for a few seconds
                 const ex = d.exercises[P.idx]; if (!ex || ex.name === name) return window.appActions.closePicker();
-                const old = { name: ex.name, muscle: ex.muscle };
-                window.appActions.showConfirm(t('Change to {name}?', { name }), t('{old} will be replaced. Sets and reps stay the same.', { old: old.name }), () => {
-                    Object.assign(ex, { name, muscle });
-                    StorageManager.setPlan(appData);
-                    window.appActions.closePicker(); renderWorkout();
-                    window.appActions.showToast(t('Changed to {name}', { name }), 'success', { label: t('Undo'), fn: () => {
-                        if (!d.exercises.includes(ex)) return;
-                        Object.assign(ex, old); StorageManager.setPlan(appData); renderWorkout();
-                    } });
-                }, false, t('Change'));
+                const timedNew = TIMED_DEFAULT.includes(name), timedOld = isTimed(ex.reps);
+                const reps = timedNew && !timedOld ? '30 - 45s' : !timedNew && timedOld ? '10 - 12' : ex.reps;
+                window.appState.swapSetup = { idx: P.idx, name, muscle, sets: String(parseInt(ex.sets) || 3), reps };
+                window.appActions.renderSwapSetup();
+                openModal('swapsetup-overlay', 'swapsetup-box');
+                pushBack('swapsetup', () => window.appActions.closeSwapSetup());
                 return;
             }
             const i = P.sel.findIndex(x => x.name === name && x.muscle === muscle);
@@ -2426,6 +2424,51 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const top = document.getElementById('picker-list').scrollTop;
             window.appActions.renderPicker(false);
             document.getElementById('picker-list').scrollTop = top;
+        },
+        // ---------- Change exercise: sets & reps pop-up (after picking the new exercise, before the confirmation) ----------
+        renderSwapSetup: () => {
+            const W = window.appState.swapSetup; if (!W) return;
+            const label = 'px-0.5 mb-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest';
+            const c = document.getElementById('swapsetup-content');
+            c.innerHTML = `<div class="px-5 pt-1">
+                <div class="flex items-start gap-2">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(tm(W.muscle))}</div>
+                        <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(W.name)}</h3>
+                        <p class="text-[12px] font-bold text-slate-400 mt-1">${t('How many sets and reps for this exercise?')}</p>
+                    </div>
+                    <button onclick="window.appActions.closeSwapSetup()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <div class="${label} mt-4">${esc(t('Sets'))}</div>
+                <div class="flex items-center gap-3 rounded-2xl bg-white/5 p-2" dir="ltr">
+                    <button onclick="window.appActions.swapSetSets(-1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="−">−</button>
+                    <div class="flex-1 text-center text-[22px] font-black text-white tabular-nums">${esc(W.sets)}</div>
+                    <button onclick="window.appActions.swapSetSets(1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="+">+</button>
+                </div>
+                <div class="${label} mt-3">${esc(t(isTimed(W.reps) ? 'Seconds per set' : 'Reps per set'))}</div>
+                <div class="grid grid-cols-4 gap-2 mb-2" dir="ltr">${REPS_PRESETS.map(r => `<button onclick="window.appActions.swapSetReps(${jsArg(r)})" class="py-2.5 rounded-xl text-[12px] font-black tap-feedback ${W.reps === r ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-white'}">${esc(fmtReps(r))}</button>`).join('')}</div>
+                <input type="text" value="${esc(W.reps)}" onchange="window.appActions.swapSetReps(this.value)" placeholder="${esc(t('Custom, e.g. 5 or 6 - 8'))}" class="w-full bg-white/5 border border-transparent rounded-2xl px-4 py-3 text-white font-bold outline-none focus:border-[#d4af37]" dir="ltr">
+                <button onclick="window.appActions.swapSetupNext()" class="w-full mt-5 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button>
+            </div>`;
+            if (window.lucide) window.lucide.createIcons({ root: c });
+        },
+        closeSwapSetup: () => { popBack('swapsetup'); window.appState.swapSetup = null; closeModal('swapsetup-overlay', 'swapsetup-box'); },
+        swapSetSets: dlt => { const W = window.appState.swapSetup; if (!W) return; W.sets = String(Math.min(10, Math.max(1, (parseInt(W.sets) || 3) + dlt))); window.appActions.renderSwapSetup(); },
+        swapSetReps: v => { const W = window.appState.swapSetup; v = latinDigits(String(v)).trim(); if (!W || !v) return; W.reps = v.slice(0, 20); window.appActions.renderSwapSetup(); },
+        swapSetupNext: () => {
+            const W = window.appState.swapSetup; if (!W) return;
+            const d = getActiveSchedule().find(x => x.id === activeDay), ex = d && d.exercises[W.idx];
+            if (!ex) return window.appActions.closeSwapSetup();
+            const old = { name: ex.name, muscle: ex.muscle, sets: ex.sets, reps: ex.reps }, next = { name: W.name, muscle: W.muscle, sets: W.sets, reps: W.reps };
+            window.appActions.showConfirm(t('Change to {name}?', { name: next.name }), t('{old} will be replaced with {sets} sets of {reps}.', { old: old.name, sets: next.sets, reps: fmtReps(next.reps) + (isTimed(next.reps) && !/s$/i.test(next.reps.trim()) ? 's' : '') }), () => {
+                Object.assign(ex, next);
+                StorageManager.setPlan(appData);
+                window.appActions.closeSwapSetup(); window.appActions.closePicker(); renderWorkout();
+                window.appActions.showToast(t('Changed to {name}', { name: next.name }), 'success', { label: t('Undo'), fn: () => {
+                    if (!d.exercises.includes(ex)) return;
+                    Object.assign(ex, old); StorageManager.setPlan(appData); renderWorkout();
+                } });
+            }, false, t('Change'));
         },
         pickerConfirm: () => {
             const P = window.appState.picker, d = getActiveSchedule().find(x => x.id === activeDay);
@@ -3464,7 +3507,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const HINTS_KEY = 'workoutHints_rakan_final';
     let hintBox = null;
     const hintSeen = id => !!(readJSON(HINTS_KEY, {}) || {})[id];
-    const hintBlocked = () => welcomeOpen() || ['onboarding-overlay', 'custom-confirm-overlay', 'summary-overlay', 'picker-overlay', 'exedit-overlay'].some(id => { const o = document.getElementById(id); return o && o.classList.contains('flex'); });
+    const hintBlocked = () => welcomeOpen() || ['onboarding-overlay', 'custom-confirm-overlay', 'summary-overlay', 'picker-overlay', 'exedit-overlay', 'swapsetup-overlay'].some(id => { const o = document.getElementById(id); return o && o.classList.contains('flex'); });
     const closeHint = () => {
         if (!hintBox) return;
         const { el, target, id } = hintBox; hintBox = null;
