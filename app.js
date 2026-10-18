@@ -40,10 +40,10 @@
         "Add exercises to start training on this day.": "أضف تمارين لتبدأ التمرين في هذا اليوم.",
         "Tap a day to edit it": "اضغط على يوم لتعديله",
         "Editing your schedule": "تعديل جدولك",
-        "Changes here update your Today page": "التغييرات هنا تُحدّث صفحة اليوم",
+        "Changes here update your Plan page": "التغييرات هنا تُحدّث صفحة الخطة",
+        "Edit": "تعديل",
         "More": "المزيد",
         "More day tools": "أدوات اليوم الأخرى",
-        "Swap with another day": "تبديل مع يوم آخر",
         "Copy to another day": "نسخ إلى يوم آخر",
         "Same sets & reps for all": "نفس المجموعات والتكرارات للكل",
         "Clear this day": "مسح هذا اليوم",
@@ -823,7 +823,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '23';
+    const APP_VERSION = '24';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1155,7 +1155,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         // Plan is where the schedule is edited: a gold strip says so, so it isn't mistaken for Today
         document.getElementById('weeks-container').innerHTML = `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-[#d4af37]/15 border border-[#d4af37]/45">
             <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
-            <span class="flex-1 min-w-0"><span class="block text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${t('Editing your schedule')}</span><span class="block text-[11px] font-semibold text-slate-300 mt-px">${t('Changes here update your Today page')}</span></span>
+            <span class="flex-1 min-w-0"><span class="block text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${t('Editing your schedule')}</span><span class="block text-[11px] font-semibold text-slate-300 mt-px">${t('Changes here update your Plan page')}</span></span>
         </div>
         ${inDay ? '' : `<div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''}">
             <button onclick="window.appActions.toggleRoutines()" class="w-full p-4 flex items-center gap-3 text-start tap-feedback" aria-expanded="${open}">
@@ -1839,7 +1839,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
 
     // 🗓️ DAY EDITOR (Today ✏️ and Plan → a day): dashed gold day card with Day type and Same sets & reps for all,
     // a dashed underline on the day name (tap to rename), and gold-edged exercise cards with a ⋮⋮ grip (drag); tap a card to edit it
-    const planBackBar = () => `<button onclick="window.appActions.openPlanDay(null)" class="flex items-center gap-1 mb-3 px-1 text-[12px] font-black text-slate-300 tap-feedback"><i data-lucide="${isAR ? 'chevron-right' : 'chevron-left'}" class="w-4 h-4"></i>${t('This week')}</button>`;
+    const planBackBar = () => `<button onclick="window.appActions.openPlanDay(null)" class="flex items-center gap-3 mb-3 ps-0.5 pe-3 py-0.5 tap-feedback" aria-label="${esc(t('This week'))}"><span class="w-11 h-11 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white shrink-0"><i data-lucide="${isAR ? 'arrow-right' : 'arrow-left'}" class="w-6 h-6"></i></span><span class="text-[16px] font-black text-white">${t('This week')}</span></button>`;
     const renderPlanDay = (top = '') => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), S = window.appState;
         const planned = day.exercises.reduce((a, ex) => a + (parseInt(ex.sets) || 0), 0);
@@ -1930,12 +1930,11 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const ws = getWeekStart(), dateOf = id => new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() + id - 1);
         const grip = `<svg width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true"><circle cx="5" cy="4" r="1.8"/><circle cx="11" cy="4" r="1.8"/><circle cx="5" cy="10" r="1.8"/><circle cx="11" cy="10" r="1.8"/><circle cx="5" cy="16" r="1.8"/><circle cx="11" cy="16" r="1.8"/></svg>`;
         const dayOpts = id => schedule.filter(d => d.id !== id).map(d => `<option value="${d.id}">${esc(dayLong(d.day))}</option>`).join('');
-        // ⋯ on a row: copy / swap (the phone's own day list) and clear
+        // ⋮ on a row: copy (the phone's own day list) and clear; moving a day is done by dragging ⋮⋮
         const mItem = 'relative w-full flex items-center gap-2.5 px-3 py-3 rounded-xl text-start text-[13px] font-extrabold tap-feedback';
         const daySelect = (fn, id, label) => `<select onchange="if(this.value){window.appState.weekMenu=null;window.appActions.${fn}(${id}, parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10" aria-label="${esc(label)}"><option value="">${esc(label)}</option>${dayOpts(id)}</select>`;
         const menu = d => window.appState.weekMenu !== d.id ? '' : `<div class="absolute end-1 top-full mt-1 z-[61] w-[230px] p-1.5 rounded-2xl bg-[#111] border border-white/15 shadow-[0_20px_40px_rgba(0,0,0,0.7)]" role="menu">
                 <div class="${mItem} text-slate-200" role="menuitem">${daySelect('copyDayFrom', d.id, t('Copy to another day'))}<i data-lucide="copy" class="w-4 h-4 text-slate-400"></i>${t('Copy to another day')}</div>
-                <div class="${mItem} text-slate-200" role="menuitem">${daySelect('swapDayFrom', d.id, t('Swap with another day'))}<i data-lucide="arrow-up-down" class="w-4 h-4 text-slate-400"></i>${t('Swap with another day')}</div>
                 ${!d.isRest && (d.exercises || []).length ? `<button onclick="window.appState.weekMenu=null;window.appActions.clearDayFrom(${d.id})" class="${mItem} text-red-400" role="menuitem"><i data-lucide="trash-2" class="w-4 h-4"></i>${t('Clear this day')}</button>` : ''}
             </div>`;
         const row = d => {
@@ -2721,7 +2720,6 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             };
             setTimeout(() => document.addEventListener('pointerdown', away, true), 0);
         },
-        swapDayFrom: (fromId, toId) => { activeDay = fromId; window.appActions.swapDay(toId); },
         clearDayFrom: id => { activeDay = id; window.appActions.clearDay(); },
         toggleRoutines: () => { window.appState.routinesOpen = !window.appState.routinesOpen; renderSidePanel(); },
         renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=v||t('Unnamed'); StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=appData.weeks.find(x=>x.id===currentWeekId).name; },

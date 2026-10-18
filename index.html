@@ -414,11 +414,11 @@
         </div>
     </div>
 
-    <!-- Bottom tab bar -->
+    <!-- Bottom tab bar: Plan (the day you train, view "today"), Edit (the week editor, view "plan"), Progress, Profile -->
     <nav id="tab-bar" class="fixed bottom-0 inset-x-0 z-[150] bg-[#0b0b0b]/95 backdrop-blur-xl border-t border-white/10">
         <div class="max-w-2xl mx-auto grid grid-cols-4">
-            <button id="tabbtn-today" onclick="window.appActions.switchTab('today')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="dumbbell" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Today">Today</span></button>
-            <button id="tabbtn-plan" onclick="window.appActions.switchTab('plan')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="calendar-range" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Plan">Plan</span></button>
+            <button id="tabbtn-today" onclick="window.appActions.switchTab('today')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="dumbbell" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Plan">Plan</span></button>
+            <button id="tabbtn-plan" onclick="window.appActions.switchTab('plan')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="pencil-line" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Edit">Edit</span></button>
             <button id="tabbtn-progress" onclick="window.appActions.switchTab('progress')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="trending-up" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Progress">Progress</span></button>
             <button id="tabbtn-profile" onclick="window.appActions.switchTab('profile')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative"><i data-lucide="user" class="w-6 h-6"></i><span class="text-[10px] font-black" data-i18n="Profile">Profile</span><span id="backup-dot" class="hidden absolute top-1.5 left-1/2 ml-2 w-3 h-3 rounded-full bg-red-500 border-2 border-black pointer-events-none"></span></button>
         </div>
