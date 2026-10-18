@@ -352,7 +352,7 @@ input.day-title-input { font-size: 26px !important; }
 
 /* Plan tab = the editor: dashed gold day card, exercise cards with a ⋮⋮ grip */
 .glass-card.plan-card { border: 1.5px dashed rgba(212, 175, 55, 0.55); }
-.glass-card.plan-ex { border-radius: 22px; padding: 11px 12px 11px 4px; }
+.glass-card.plan-ex { border-radius: 22px; padding: 11px 12px 11px 4px; border: 1px solid rgba(212, 175, 55, 0.45); }
 .plan-ex .handle { cursor: grab; touch-action: none; -webkit-touch-callout: none; }
 .plan-ex .handle:active { cursor: grabbing; color: #d4af37; }
 /* where the card will land, and the card you hold */
@@ -363,4 +363,5 @@ input.day-title-input { font-size: 26px !important; }
 .plan-drag .plan-ex-n { background: #d4af37; color: #111; }
 .plan-chosen .tap-feedback:active { transform: none; opacity: 1; }
 :root[data-theme="light"] .glass-card.plan-card { border: 1.5px dashed rgba(180, 140, 20, 0.6); }
+:root[data-theme="light"] .glass-card.plan-ex { border-color: rgba(180, 140, 20, 0.5); }
 :root[data-theme="light"] .plan-drag { background: #ffffff !important; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18), 0 0 0 6px rgba(212, 175, 55, 0.15) !important; }

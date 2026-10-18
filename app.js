@@ -21,7 +21,6 @@
         "Change exercise": "تغيير التمرين",
         "Editing your schedule": "تعديل جدولك",
         "Changes here update your Today page": "التغييرات هنا تُحدّث صفحة اليوم",
-        "Routine": "الجدول",
         "More": "المزيد",
         "More day tools": "أدوات اليوم الأخرى",
         "Swap with another day": "تبديل مع يوم آخر",
@@ -806,7 +805,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '20';
+    const APP_VERSION = '21';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1140,10 +1139,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
             <span class="flex-1 min-w-0"><span class="block text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${t('Editing your schedule')}</span><span class="block text-[11px] font-semibold text-slate-300 mt-px">${t('Changes here update your Today page')}</span></span>
         </div>
-        <div class="glass-card rounded-2xl ${open ? 'border border-[#d4af37]/30' : ''}" style="border-radius:16px">
-            <button onclick="window.appActions.toggleRoutines()" class="w-full px-3.5 py-2.5 flex items-center gap-2.5 text-start tap-feedback" aria-expanded="${open}" aria-label="${esc(t('My routines'))}">
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest shrink-0">${t('Routine')}</span>
-                <span class="flex-1 min-w-0 text-[14px] font-black text-white truncate">${esc(t(active.name))}</span>
+        <div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''}">
+            <button onclick="window.appActions.toggleRoutines()" class="w-full p-4 flex items-center gap-3 text-start tap-feedback" aria-expanded="${open}">
+                <span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-range" class="w-5 h-5"></i></span>
+                <span class="flex-1 min-w-0"><span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">${t('My routines')}</span><span class="block text-[15px] font-black text-white truncate">${esc(t(active.name))}</span></span>
                 <span class="shrink-0 text-[11px] font-black text-slate-400" dir="ltr">${appData.weeks.length}</span>
                 <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}"></i>
             </button>
@@ -1807,7 +1806,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     };
 
     // 🗓️ PLAN: build the selected day. It looks like Today but marked as an editor: dashed gold day card,
-    // a pencil on the day name, and exercise cards with a ⋮⋮ grip (drag) and a sets × reps chip (tap to edit)
+    // a dashed underline on the day name (tap to rename), and gold-edged exercise cards with a ⋮⋮ grip (drag); tap a card to edit it
     const renderPlanDay = () => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), S = window.appState;
         const planned = day.exercises.reduce((a, ex) => a + (parseInt(ex.sets) || 0), 0);
@@ -1826,7 +1825,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             </div>`;
         let html = `<div class="glass-card today-card plan-card relative ${S.planMore ? 'z-20' : ''}"><div id="today-week" class="today-week">${weekNavHTML()}</div><div class="today-body">
             ${!day.isRest
-                ? `<div>${dayLabel}<label class="flex items-center gap-2 mt-0.5 border-b-[1.5px] border-dashed border-white/25 focus-within:border-solid focus-within:border-[#d4af37] transition-colors"><input type="text" value="${esc(day.title === 'New Day' ? '' : t(day.title))}" placeholder="${esc(t('Name this day'))}" onchange="window.appActions.updateDayTitle(this.value)" aria-label="${esc(t('Name this day'))}" class="day-title-input flex-1 min-w-0 bg-transparent text-[21px] font-black text-white placeholder:text-slate-600 outline-none leading-tight pb-1"><i data-lucide="pencil" class="w-4 h-4 text-[#d4af37] shrink-0"></i></label></div>
+                ? `<div>${dayLabel}<input type="text" value="${esc(day.title === 'New Day' ? '' : t(day.title))}" placeholder="${esc(t('Name this day'))}" onchange="window.appActions.updateDayTitle(this.value)" aria-label="${esc(t('Name this day'))}" class="day-title-input w-full mt-0.5 pb-1 bg-transparent border-b-[1.5px] border-dashed border-white/25 focus:border-solid focus:border-[#d4af37] text-[21px] font-black text-white placeholder:text-slate-600 outline-none leading-tight transition-colors"></div>
                    <div class="text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: day.exercises.length })} · ${t('{n} sets', { n: planned })}${planned ? ` · ${t('~{n} min', { n: mins })}` : ''}</div>`
                 : `<div>${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${esc(day.recoveryType === 'active' ? t('Active Rest') : t('Complete Rest'))}</h2></div>
                    <div class="text-[12px] font-bold text-slate-400">${t('Recover well. See you next session.')}</div>`}
@@ -1854,8 +1853,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     <button onclick="window.appActions.openExEdit(${i})" class="flex-1 min-w-0 flex items-center gap-2.5 text-start tap-feedback py-0.5">
                         <span class="plan-ex-n w-[26px] h-[26px] shrink-0 rounded-full bg-white/5 flex items-center justify-center text-[12px] font-black text-slate-300">${i + 1}</span>
                         <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span><span class="block text-[11.5px] font-bold mt-0.5 truncate text-slate-400">${esc(tm(ex.muscle))}</span></span>
-                        <span class="shrink-0 text-[11px] font-black px-2.5 py-1 rounded-full bg-[#d4af37]/15 text-[#d4af37]" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span>
-                        <i data-lucide="pencil" class="w-4 h-4 text-slate-500 shrink-0 me-1"></i>
+                        <span class="shrink-0 me-1 text-[11px] font-black px-2.5 py-1 rounded-full bg-[#d4af37]/15 text-[#d4af37]" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span>
                     </button>
                 </div>`).join('')}</div>`;
             html += `<button onclick="window.appActions.openPicker('add')" class="w-full p-4 mt-2.5 mb-10 rounded-[20px] flex items-center justify-center gap-2 text-[#d4af37] font-black uppercase tracking-widest text-[12px] tap-feedback border-[1.5px] border-dashed border-[#d4af37]/50 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button>`;
