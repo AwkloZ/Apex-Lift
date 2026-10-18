@@ -17,6 +17,39 @@
     })();
     const isAR = LANG === 'ar';
     const AR = {
+        "\"Low in plan\" means your routine has few sets for it: add some in the Edit tab.": "\"قليل في الخطة\" يعني أن روتينك فيه مجموعات قليلة لهذه العضلة: أضف المزيد من تبويب التعديل.",
+        "Also in Profile → About you.": "متوفر أيضًا في الملف الشخصي ← عنك.",
+        "Body": "الجسم",
+        "Compared with the same days last week.": "مقارنةً بنفس الأيام من الأسبوع الماضي.",
+        "Done / planned": "المنجز / المخطط",
+        "Dropping": "في تراجع",
+        "Heaviest weight": "أثقل وزن",
+        "Holding steady": "ثابت",
+        "Improving": "في تحسّن",
+        "Log today's weight": "سجّل وزن اليوم",
+        "Log your weight once a week, at the same time of day, to see how it changes.": "سجّل وزنك مرة في الأسبوع، في نفس الوقت من اليوم، لترى كيف يتغيّر.",
+        "Longest hold": "أطول ثبات",
+        "Low in plan": "قليل في الخطة",
+        "Most reps": "أكثر تكرارات",
+        "Muscle": "العضلة",
+        "No data last week": "لا توجد بيانات للأسبوع الماضي",
+        "No exercises match.": "لا توجد تمارين مطابقة.",
+        "Ready to add weight": "جاهز لزيادة الوزن",
+        "Save": "حفظ",
+        "Sets this week": "مجموعات هذا الأسبوع",
+        "Stronger (est. 1-rep max)": "أقوى (أقصى تكرار واحد تقديري)",
+        "Tap a bar to see that week.": "اضغط على عمود لترى ذلك الأسبوع.",
+        "Track your body weight": "تابع وزن جسمك",
+        "Update today's weight": "حدّث وزن اليوم",
+        "Week of {d}": "أسبوع {d}",
+        "Weeks in a row": "بدون انقطاع",
+        "Weight saved": "تم حفظ الوزن",
+        "Workouts": "التمارين المنجزة",
+        "Your week, every exercise, sets per muscle and your body weight are here.": "أسبوعك، وكل تمرين، والمجموعات لكل عضلة، ووزن جسمك — كلها هنا.",
+        "in 30 days": "خلال 30 يومًا",
+        "since you started": "منذ أن بدأت",
+        "vs last week": "عن الأسبوع الماضي",
+        "{n} planned": "{n} مخطط",
         "Next workout": "التمرين القادم",
         "Change exercise": "تغيير التمرين",
         "Custom": "مخصص",
@@ -823,7 +856,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '25';
+    const APP_VERSION = '26';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1199,6 +1232,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     };
 
     // 📈 PROGRESS HELPERS
+    // Muscle groups shared by the Edit tab (muscle balance) and the Progress tab (Volume), so both always agree.
+    // [group, muscles in it, fewest sets a week before it shows "Low"]
+    const BALANCE = [['Chest', ['Chest', 'Upper Chest', 'Lower Chest'], 8], ['Back', ['Back', 'Lats', 'Traps', 'Lower Back'], 8], ['Legs', ['Quads', 'Hamstrings', 'Glutes', 'Calves', 'Adductors', 'Abductors'], 8], ['Shoulders', ['Shoulders', 'Front Delts', 'Side Delts', 'Rear Delts'], 6], ['Arms', ['Biceps', 'Triceps', 'Forearms'], 6], ['Core', ['Abs'], 3]];
+    const groupOf = muscle => { const g = BALANCE.find(([, ms]) => ms.includes((muscle || '').trim())); return g ? g[0] : null; };
+    const DAY_MS = 86400000;
+    const round1 = x => Math.round(x * 10) / 10;
+    const fmtKg = v => v >= 10000 ? `${(v / 1000).toFixed(1)}K` : Math.round(v).toLocaleString('en-US');
     // Name of an exercise from its storage key (routines, built-in list, your own exercises)
     const exerciseNameMap = () => {
         const m = {};
@@ -1219,20 +1259,45 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }));
         return map;
     };
-    // One point per training day for an exercise: heaviest weight (or best reps/seconds for bodyweight)
+    // Estimated 1-rep max of one set (Epley); only sets of 12 reps or fewer are close enough to count
+    const e1rmOf = x => x.w > 0 && x.r > 0 && x.r <= 12 ? x.w * (1 + x.r / 30) : 0;
+    // One point per training day for an exercise: heaviest weight, most reps/seconds and best estimated 1-rep max
     const exerciseSessions = hA => {
         const byDay = {};
         (hA || []).forEach(l => { const t0 = logTime(l); if (isNaN(t0)) return; const d = startOfDay(t0); (byDay[d] = byDay[d] || []).push(...logSetDetails(l)); });
         return Object.keys(byDay).map(Number).sort((a, b) => a - b).map(d => {
             const sets = byDay[d], topW = Math.max(0, ...sets.map(x => x.w));
-            return { t: d, w: topW, r: Math.max(0, ...sets.map(x => x.r)), sets };
+            return { t: d, w: topW, r: Math.max(0, ...sets.map(x => x.r)), e1: Math.max(0, ...sets.map(e1rmOf)), sets };
         }).filter(x => x.sets.length);
     };
-    // Personal records: a session heavier than every session before it
+    // Personal records: a session that beats every session before it.
+    // With weight: heavier ('w'), or else a higher estimated 1-rep max ('e1', e.g. more reps with a heavy weight).
+    // Without weight: more reps, or a longer hold for timed exercises ('r').
     const recordsOf = hA => {
-        let best = 0; const out = [];
-        exerciseSessions(hA).forEach(s => { if (best > 0 && s.w > best) out.push({ t: s.t, w: s.w, plus: Math.round((s.w - best) * 10) / 10 }); best = Math.max(best, s.w); });
+        const timed = (hA || []).some(l => l.u === 's'), out = [];
+        let bw = 0, be = 0, br = 0;
+        exerciseSessions(hA).forEach(s => {
+            const e1 = timed ? 0 : s.e1;
+            if (s.w > 0) {
+                if (bw > 0 && s.w > bw) out.push({ t: s.t, type: 'w', v: s.w, plus: round1(s.w - bw), unit: 'kg' });
+                else if (be > 0 && Math.round(e1 - be) >= 1) out.push({ t: s.t, type: 'e1', v: Math.round(e1), plus: Math.round(e1 - be), unit: 'kg' });
+            } else if (!bw && br > 0 && s.r > br) out.push({ t: s.t, type: 'r', v: s.r, plus: s.r - br, unit: timed ? 's' : '' });
+            bw = Math.max(bw, s.w); be = Math.max(be, e1); br = Math.max(br, s.r);
+        });
         return out;
+    };
+    const RECORD_LABEL = { w: 'Heaviest weight', e1: 'Stronger (est. 1-rep max)', r: 'Most reps' };
+    // Up / same / down: your latest session against the one 3 sessions earlier (or the first, if fewer)
+    const trendOf = ses => {
+        if (ses.length < 2) return null;
+        const weighted = ses.some(s => s.w > 0), val = s => weighted ? (s.e1 || s.w) : s.r;
+        const a = val(ses[Math.max(0, ses.length - 4)]), b = val(ses[ses.length - 1]);
+        return b > a ? 'up' : b < a ? 'down' : 'same';
+    };
+    const TREND = {
+        up:   { i: 'trending-up',   c: 'text-[#22c55e]',  l: 'Improving' },
+        same: { i: 'minus',         c: 'text-slate-400',  l: 'Holding steady' },
+        down: { i: 'trending-down', c: 'text-orange-400', l: 'Dropping' }
     };
     const niceStep = raw => { const p = Math.pow(10, Math.floor(Math.log10(raw || 1))); const n = (raw || 1) / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p; };
     // Single-series line chart (inline SVG): 2px gold line, soft area, dots with a surface ring,
@@ -1267,6 +1332,30 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             <div class="chart-tip hidden absolute -top-2 px-2 py-1 rounded-lg bg-black border border-white/15 text-[11px] font-black text-white whitespace-nowrap pointer-events-none"></div>
         </div>`;
     };
+    // Weekly bar chart (inline SVG): one gold bar per week, this week full gold, older weeks softer.
+    // Only this week's value is written on the chart; tap a bar to see its week and value.
+    const barChartHTML = bars => {
+        const W = 320, H = 130, pl = 6, pr = 6, pt = 18, pb = 20, slot = (W - pl - pr) / bars.length, bw = Math.min(26, slot - 8);
+        const hi = Math.max(1, ...bars.map(b => b.v)), y = v => pt + (H - pt - pb) * (1 - v / hi);
+        let marks = '';
+        bars.forEach((b, i) => {
+            const cx = pl + slot * (i + 0.5), top = y(b.v), h = H - pb - top, last = i === bars.length - 1;
+            const rr = Math.min(4, h); // 4px rounded top, flat on the baseline
+            if (b.v > 0) marks += `<path d="M${cx - bw / 2},${H - pb} V${top + rr} q0,-${rr} ${rr},-${rr} h${bw - 2 * rr} q${rr},0 ${rr},${rr} V${H - pb} Z" fill="#d4af37" fill-opacity="${last ? 1 : 0.45}"/>`;
+            if (last) marks += `<text x="${cx}" y="${top - 5}" text-anchor="middle" font-size="10" fill="#e2e8f0" font-weight="900">${b.v}</text>`;
+            if (i === 0 || last) marks += `<text x="${cx}" y="${H - 5}" text-anchor="middle" font-size="9" fill="#64748b" font-weight="700">${esc(b.label)}</text>`;
+        });
+        const data = esc(JSON.stringify(bars.map((b, i) => ({ x: pl + slot * (i + 0.5), y: y(b.v), v: b.v, d: b.tip }))));
+        return `<div class="chart-wrap relative select-none" data-pts="${data}" data-unit="${esc(' ' + t('sets'))}" dir="ltr">
+            <svg viewBox="0 0 ${W} ${H}" class="w-full h-auto block touch-none" role="img" aria-label="${esc(t('Sets per week'))}">
+                <line x1="${pl}" x2="${W - pr}" y1="${H - pb}" y2="${H - pb}" stroke="#262626" stroke-width="1"/>
+                ${marks}
+                <line class="chart-cross" x1="0" x2="0" y1="${pt}" y2="${H - pb}" stroke="#94a3b8" stroke-width="1" visibility="hidden"/>
+                <circle class="chart-hot" r="0" visibility="hidden"/>
+            </svg>
+            <div class="chart-tip hidden absolute -top-2 px-2 py-1 rounded-lg bg-black border border-white/15 text-[11px] font-black text-white whitespace-nowrap pointer-events-none"></div>
+        </div>`;
+    };
     // Crosshair + tooltip for the charts inside an element
     const bindCharts = root => root.querySelectorAll('.chart-wrap').forEach(wrap => {
         const pts = JSON.parse(wrap.dataset.pts), unit = wrap.dataset.unit, svg = wrap.querySelector('svg');
@@ -1288,7 +1377,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const weighted = ses.some(s => s.w > 0), timed = (hA || []).some(l => l.u === 's');
         const all = ses.flatMap(s => s.sets);
         const best = weighted ? Math.max(...all.map(x => x.w)) : Math.max(...all.map(x => x.r));
-        const e1rm = weighted && !timed ? Math.max(0, ...all.filter(x => x.w > 0 && x.r <= 12).map(x => x.w * (1 + x.r / 30))) : 0;
+        const e1rm = weighted && !timed ? Math.max(0, ...all.map(e1rmOf)) : 0;
         const tile = (v, l) => `<div class="bg-white/5 rounded-xl py-2.5 text-center"><div class="text-[17px] font-black text-white" dir="ltr">${v}</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">${l}</div></div>`;
         const unit = weighted ? 'kg' : timed ? 's' : '';
         const pts = ses.slice(-12).map(s => ({ t: s.t, v: weighted ? s.w : s.r }));
@@ -1296,268 +1385,196 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             + (pts.length >= 2 ? `<div class="bg-white/5 rounded-2xl p-3 mb-4"><div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">${weighted ? t('Heaviest weight per session') : timed ? t('Longest set per session') : t('Most reps per session')}</div>${lineChartHTML(pts, unit)}</div>` : '');
     };
 
-    // Overview: this week, month, streak, kg; calendar of the last 5 weeks; recent records
+    // Shared pieces of the Progress tab
+    const pCard = (title, body, extra = '') => `<div class="glass-card p-4 mb-3 ${extra}">${title ? `<div class="text-[13px] font-black text-white mb-3">${title}</div>` : ''}${body}</div>`;
+    const pEmpty = (icon, title, text, extra = '') => `<div class="glass-card p-8 text-center"><div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="${icon}" class="w-6 h-6 text-[#d4af37]"></i></div><div class="text-[15px] font-black text-white mb-2">${title}</div><p class="text-[12px] text-slate-400 font-bold leading-relaxed">${text}</p>${extra}</div>`;
+    // "+12% vs last week" under a number (green up, orange down)
+    const changeHTML = (now, before) => {
+        if (!(before > 0)) return `<div class="text-[11px] font-bold text-slate-500 mt-1.5">${t('No data last week')}</div>`;
+        const pct = Math.round((now - before) / before * 100), c = pct > 0 ? TREND.up : pct < 0 ? TREND.down : TREND.same;
+        return `<div class="flex flex-wrap items-center gap-x-1 text-[11px] font-black mt-1.5 ${c.c}"><i data-lucide="${c.i}" class="w-3.5 h-3.5 shrink-0"></i><span dir="ltr">${pct > 0 ? '+' : ''}${pct}%</span><span class="text-slate-500 font-bold">${t('vs last week')}</span></div>`;
+    };
+
+    // Overview: this week against the same days last week, 8 weeks of sets, the 5-week calendar, recent records
     const progressOverviewHTML = history => {
         const days = workoutDays(history), dayKeys = Object.keys(days).map(Number);
-        if (!dayKeys.length) return `<div class="glass-card p-8 text-center"><div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="calendar-check" class="w-6 h-6 text-[#d4af37]"></i></div><div class="text-[15px] font-black text-white mb-2">${t('No workouts yet')}</div><p class="text-[12px] text-slate-400 font-bold">${t('Finish your first workout to see your progress here.')}</p></div>`;
-        const wk = getWeekStart().getTime(), now = new Date(), monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
-        const inWeek = dayKeys.filter(d => d >= wk), inMonth = dayKeys.filter(d => d >= monthStart);
-        const volWeek = inWeek.reduce((a, d) => a + days[d].volume, 0);
+        if (!dayKeys.length) return pEmpty('calendar-check', t('No workouts yet'), t('Finish your first workout to see your progress here.'));
+        const wkD = getWeekStart(), wk = wkD.getTime(), today = startOfDay(Date.now());
+        const weekAgo = n => new Date(wkD.getFullYear(), wkD.getMonth(), wkD.getDate() - 7 * n).getTime();
+        // last week only up to the same weekday as today, so a Tuesday is never compared with a whole week
+        const nowD = new Date(today), sameDayLastWeek = new Date(nowD.getFullYear(), nowD.getMonth(), nowD.getDate() - 7).getTime();
+        const sum = (from, to, f) => dayKeys.filter(d => d >= from && d <= to).reduce((a, d) => a + f(days[d]), 0);
+        const inWeek = dayKeys.filter(d => d >= wk);
+        const setsNow = sum(wk, today, x => x.sets), setsBefore = sum(weekAgo(1), sameDayLastWeek, x => x.sets);
+        const volNow = sum(wk, today, x => x.volume), volBefore = sum(weekAgo(1), sameDayLastWeek, x => x.volume);
+        const plannedDays = getActiveSchedule().filter(d => !d.isRest && (d.exercises || []).length).length;
         // streak: weeks in a row with at least one workout (this week counts once you've trained)
-        let streak = 0, ws = wk; if (!inWeek.length) ws -= 7 * 86400000;
-        while (dayKeys.some(d => d >= ws && d < ws + 7 * 86400000)) { streak++; ws -= 7 * 86400000; }
-        const tile = (v, l, icon) => `<div class="glass-card p-4"><div class="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1"><i data-lucide="${icon}" class="w-3.5 h-3.5 text-[#d4af37]"></i>${l}</div><div class="text-[26px] font-black text-white leading-none" dir="ltr">${v}</div></div>`;
-        let html = `<div class="grid grid-cols-2 gap-2.5 mb-4">${tile(inWeek.length, t('Workouts this week'), 'calendar-check')}${tile(inMonth.length, t('This month'), 'calendar')}${tile(streak, t('Week streak'), 'flame')}${tile(`${volWeek >= 10000 ? (volWeek / 1000).toFixed(1) + 'K' : Math.round(volWeek).toLocaleString('en-US')}`, t('kg lifted this week'), 'weight')}</div>`;
+        let streak = 0, n = inWeek.length ? 0 : 1;
+        while (dayKeys.some(d => d >= weekAgo(n) && d < weekAgo(n - 1))) { streak++; n++; }
+        const tile = (icon, label, value, sub) => `<div class="glass-card p-4 min-w-0"><div class="flex items-center gap-1.5 text-[11px] font-black text-slate-400 mb-1.5"><i data-lucide="${icon}" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="truncate">${label}</span></div><div class="text-[26px] font-black text-white leading-none" dir="ltr">${value}</div>${sub}</div>`;
+        const plain = s => `<div class="text-[11px] font-bold text-slate-500 mt-1.5 truncate">${s}</div>`;
+        let html = `<div class="text-[12px] font-black text-slate-400 mb-2 px-1">${t('This week')}</div>
+            <div class="grid grid-cols-2 gap-2.5 mb-3">
+                ${tile('calendar-check', t('Workouts'), plannedDays ? `${inWeek.length}<span class="text-[15px] text-slate-500"> / ${plannedDays}</span>` : inWeek.length, plain(plannedDays ? t('{n} planned', { n: plannedDays }) : '&nbsp;'))}
+                ${tile('flame', t('Week streak'), streak, plain(t('Weeks in a row')))}
+                ${tile('layers', t('Sets'), setsNow, changeHTML(setsNow, setsBefore))}
+                ${tile('weight', t('kg lifted'), fmtKg(volNow), changeHTML(volNow, volBefore))}
+            </div>
+            <p class="text-[11px] font-bold text-slate-500 mb-4 px-1">${t('Compared with the same days last week.')}</p>`;
+        // 8 weeks of sets
+        const bars = [];
+        for (let i = 7; i >= 0; i--) {
+            const from = weekAgo(i), to = weekAgo(i - 1) - 1, v = sum(from, to, x => x.sets);
+            bars.push({ v, label: i ? fmtDayMonth(new Date(from)) : t('This week'), tip: i ? t('Week of {d}', { d: fmtDayMonth(new Date(from)) }) : t('This week') });
+        }
+        html += pCard(t('Sets per week'), `${barChartHTML(bars)}<p class="text-[11px] font-bold text-slate-500 mt-2">${t('Tap a bar to see that week.')}</p>`);
         // calendar: 5 weeks, gold = trained (darker = more sets)
-        const start = wk - 4 * 7 * 86400000, today = startOfDay(Date.now());
-        const startIdx = DAY_NAMES.indexOf(StorageManager.getStartDay());
+        const start = weekAgo(4), startIdx = DAY_NAMES.indexOf(StorageManager.getStartDay());
         let cells = '';
         for (let i = 0; i < 35; i++) {
-            const d = startOfDay(start + i * 86400000 + 3600000), info = days[d], future = d > today;
+            const d = startOfDay(start + i * DAY_MS + 3600000), info = days[d], future = d > today;
             const lvl = info ? (info.sets >= 20 ? 1 : info.sets >= 10 ? 0.7 : 0.4) : 0;
             const label = `${fmtDate(d, false)} · ${info ? t('{n} sets', { n: info.sets }) : t('Rest')}`;
-            cells += `<button onclick="document.getElementById('cal-info').textContent=${esc(JSON.stringify(label))}" class="aspect-square rounded-md tap-feedback ${d === today ? 'ring-2 ring-white/70' : ''} ${future ? 'opacity-30' : ''}" style="background:${info ? `rgba(212,175,55,${lvl})` : 'rgba(128,128,128,0.14)'}" aria-label="${esc(label)}" title="${esc(label)}"></button>`;
+            cells += `<button onclick="document.getElementById('cal-info').textContent=${esc(JSON.stringify(label))}" class="aspect-square rounded-lg tap-feedback ${d === today ? 'ring-2 ring-white/70' : ''} ${future ? 'opacity-30' : ''}" style="background:${info ? `rgba(212,175,55,${lvl})` : 'rgba(128,128,128,0.14)'}" aria-label="${esc(label)}" title="${esc(label)}"></button>`;
         }
-        html += `<div class="glass-card p-4 mb-4"><div class="text-[11px] font-black text-white uppercase tracking-widest mb-3">${t('Last 5 weeks')}</div>
-            <div class="grid grid-cols-7 gap-1.5 mb-1.5">${DAY_NAMES.map((_, i) => `<div class="text-center text-[9px] font-black text-slate-500 truncate">${esc(dayShort(DAY_NAMES[(startIdx + i) % 7]))}</div>`).join('')}</div>
+        html += pCard(t('Last 5 weeks'), `<div class="grid grid-cols-7 gap-1.5 mb-1.5">${DAY_NAMES.map((_, i) => `<div class="text-center text-[10px] font-black text-slate-500 truncate">${esc(dayShort(DAY_NAMES[(startIdx + i) % 7]))}</div>`).join('')}</div>
             <div class="grid grid-cols-7 gap-1.5" dir="ltr">${cells}</div>
-            <div id="cal-info" class="text-[11px] font-bold text-slate-400 mt-3 min-h-[16px]">${t('Tap a day for details.')}</div></div>`;
+            <div id="cal-info" class="text-[12px] font-bold text-slate-400 mt-3 min-h-[16px]">${t('Tap a day for details.')}</div>`);
         // recent records
         const map = exerciseNameMap(), recs = [];
         Object.keys(history).forEach(k => recordsOf(history[k]).forEach(r => recs.push({ ...r, k })));
         recs.sort((a, b) => b.t - a.t);
-        const recent = recs.filter(r => r.t >= today - 30 * 86400000).slice(0, 6);
-        html += `<div class="glass-card p-4 mb-4"><div class="text-[11px] font-black text-white uppercase tracking-widest mb-2">🏆 ${t('Records (last 30 days)')}</div>${recent.length ? recent.map(r => `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(nameOfKey(r.k, map))})" class="w-full flex items-center justify-between gap-2 py-2.5 border-b border-white/5 last:border-0 text-start tap-feedback"><span class="min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(nameOfKey(r.k, map))}</span><span class="block text-[10px] font-bold text-slate-500">${esc(fmtDate(r.t, false))}</span></span><span class="text-[14px] font-black text-[#22c55e] shrink-0" dir="ltr">${r.w}kg <span class="text-[10px]">(+${r.plus})</span></span></button>`).join('') : `<p class="text-[12px] font-bold text-slate-500">${t('No new records yet. Add weight when the app says so and they will come.')}</p>`}</div>`;
+        const recent = recs.filter(r => r.t >= today - 30 * DAY_MS).slice(0, 6);
+        html += pCard(`🏆 ${t('Records (last 30 days)')}`, recent.length ? recent.map(r => `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(nameOfKey(r.k, map))})" class="w-full flex items-center justify-between gap-2 py-2.5 border-b border-white/5 last:border-0 text-start tap-feedback">
+                <span class="min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(nameOfKey(r.k, map))}</span><span class="block text-[11px] font-bold text-slate-500 truncate">${esc(r.type === 'r' && r.unit === 's' ? t('Longest hold') : t(RECORD_LABEL[r.type]))} · ${esc(fmtDate(r.t, false))}</span></span>
+                <span class="text-[14px] font-black text-[#22c55e] shrink-0" dir="ltr">${r.v}${r.unit} <span class="text-[11px]">(+${r.plus})</span></span></button>`).join('')
+            : `<p class="text-[12px] font-bold text-slate-500">${t('No new records yet. Add weight when the app says so and they will come.')}</p>`);
         return html;
     };
-    // Every exercise you have logged, most recent first
-    const progressExercisesHTML = history => {
-        const map = exerciseNameMap();
-        const rows = Object.keys(history).map(k => {
+
+    // Exercises: search, filter chips, and one row per exercise with its trend and what to do next time
+    const PEX_FILTERS = [['all', 'All'], ['up', 'Ready to add weight'], ...BALANCE.map(([g]) => [g, g])];
+    const progressExerciseRows = history => {
+        const map = exerciseNameMap(), plan = {};
+        getActiveSchedule().forEach(d => (d.exercises || []).forEach(ex => { const k = getExKey('', '', '', ex.name); if (!plan[k]) plan[k] = ex; }));
+        return Object.keys(history).map(k => {
             const ses = exerciseSessions(history[k]); if (!ses.length) return null;
-            const last = ses[ses.length - 1], weighted = ses.some(s => s.w > 0);
-            return { k, name: nameOfKey(k, map), muscle: (map[k] || {}).muscle || '', last: last.t, n: ses.length, best: weighted ? `${Math.max(...ses.map(s => s.w))}kg` : `${Math.max(...ses.map(s => s.r))}` };
+            const last = ses[ses.length - 1], weighted = ses.some(s => s.w > 0), timed = (history[k] || []).some(l => l.u === 's');
+            const muscle = (map[k] || {}).muscle || (plan[k] || {}).muscle || '';
+            // next time: the same rule as the workout cards, from your latest session (today included)
+            const sg = plan[k] ? suggestionFor(history[k], plan[k], false, false) : null;
+            return { k, name: nameOfKey(k, map), muscle, group: groupOf(muscle), last: last.t, n: ses.length, trend: trendOf(ses), sg, timed,
+                best: weighted ? `${Math.max(...ses.map(s => s.w))}kg` : `${Math.max(...ses.map(s => s.r))}${timed ? 's' : ''}` };
         }).filter(Boolean).sort((a, b) => b.last - a.last);
-        if (!rows.length) return progressOverviewHTML(history);
-        return rows.map(r => `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(r.name)})" class="w-full glass-card p-4 mb-2.5 flex items-center gap-3 text-start tap-feedback">
-            <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight">${esc(r.name)}</span><span class="block text-[11px] font-bold text-slate-400 mt-0.5">${esc(tm(r.muscle))}${r.muscle ? ' · ' : ''}${t('{n} sessions', { n: r.n })} · ${esc(fmtDate(r.last, false))}</span></span>
-            <span class="text-end shrink-0"><span class="block text-[9px] font-black text-slate-500 uppercase tracking-wider">${t('Best')}</span><span class="block text-[15px] font-black text-white" dir="ltr">${esc(r.best)}</span></span>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-600 shrink-0"></i></button>`).join('');
+    };
+    const progressExerciseListHTML = rows => {
+        const q = (window.appState.pexQ || '').trim().toLowerCase(), f = window.appState.pexF || 'all';
+        const shown = rows.filter(r => (!q || r.name.toLowerCase().includes(q) || tm(r.muscle).toLowerCase().includes(q))
+            && (f === 'all' || (f === 'up' ? r.sg && r.sg.type === 'up' : r.group === f)));
+        if (!shown.length) return `<div class="glass-card p-6 text-center text-[13px] font-bold text-slate-400">${t('No exercises match.')}</div>`;
+        return `<div class="text-[11px] font-bold text-slate-500 mb-2 px-1">${t('{n} exercises', { n: shown.length })}</div>` + shown.map(r => {
+            const tr = r.trend && TREND[r.trend];
+            return `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(r.name)})" class="w-full glass-card p-4 mb-2.5 flex items-center gap-3 text-start tap-feedback">
+                <span class="flex-1 min-w-0">
+                    <span class="ex-name block text-[15px] font-black text-white leading-tight">${esc(r.name)}</span>
+                    <span class="block text-[11px] font-bold text-slate-400 mt-0.5">${esc(tm(r.muscle))}${r.muscle ? ' · ' : ''}${t('{n} sessions', { n: r.n })} · ${esc(fmtDate(r.last, false))}</span>
+                    ${r.sg ? `<span class="block mt-2">${suggestionChip(r.sg, r.timed)}</span>` : ''}
+                </span>
+                <span class="text-end shrink-0">
+                    <span class="block text-[10px] font-black text-slate-500">${t('Best')}</span>
+                    <span class="block text-[15px] font-black text-white" dir="ltr">${esc(r.best)}</span>
+                    ${tr ? `<span class="flex items-center justify-end gap-1 text-[10px] font-black mt-0.5 ${tr.c}"><i data-lucide="${tr.i}" class="w-3.5 h-3.5"></i>${t(tr.l)}</span>` : ''}
+                </span>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-600 shrink-0"></i></button>`;
+        }).join('');
+    };
+    const progressExercisesHTML = history => {
+        const rows = progressExerciseRows(history);
+        if (!rows.length) return pEmpty('dumbbell', t('No exercises yet'), t('Finish your first workout to see your progress here.'));
+        const f = window.appState.pexF || 'all';
+        const chip = ([id, label]) => `<button onclick="window.appActions.progressFilter(${jsArg(id)})" class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[12px] font-black tap-feedback border ${f === id ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${id === 'up' ? '<i data-lucide="arrow-up-circle" class="w-3.5 h-3.5"></i>' : ''}${esc(t(label))}</button>`;
+        return `<div class="relative mb-3">
+                <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input id="pex-search" type="search" autocomplete="off" value="${esc(window.appState.pexQ || '')}" placeholder="${esc(t('Search exercises'))}" oninput="window.appActions.progressSearch(this.value)" class="w-full bg-white/5 border border-white/10 rounded-2xl ps-11 pe-4 py-3.5 text-[14px] font-bold text-white outline-none focus:border-[#d4af37]">
+            </div>
+            <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1 mb-3 -mx-1 px-1">${PEX_FILTERS.map(chip).join('')}</div>
+            <div id="pex-list">${progressExerciseListHTML(rows)}</div>`;
     };
 
+    // Volume: sets logged this week per muscle group against the sets in your plan (same groups as the Edit tab)
+    const progressVolumeHTML = history => {
+        const map = exerciseNameMap(), wk = getWeekStart().getTime(), g = {};
+        BALANCE.forEach(([name, , low]) => { g[name] = { done: 0, plan: 0, low }; });
+        getActiveSchedule().forEach(d => { if (!d.isRest) (d.exercises || []).forEach(ex => { const gr = groupOf(ex.muscle); if (gr) g[gr].plan += parseInt(ex.sets) || 0; }); });
+        Object.keys(history).forEach(k => {
+            const gr = groupOf((map[k] || {}).muscle); if (!gr) return;
+            (history[k] || []).forEach(l => { const t0 = logTime(l); if (!isNaN(t0) && t0 >= wk) g[gr].done += logSetDetails(l).length; });
+        });
+        if (!BALANCE.some(([n]) => g[n].plan || g[n].done)) return pEmpty('layers', t('No Volume Detected'), t('Build a routine with exercises to see your weekly workload goals.'));
+        const rows = BALANCE.map(([n]) => {
+            const x = g[n], pct = x.plan ? Math.min(100, Math.round(x.done / x.plan * 100)) : (x.done ? 100 : 0), full = x.plan && x.done >= x.plan, low = x.plan < x.low;
+            const status = full ? [t('Done'), 'text-[#22c55e] bg-[#22c55e]/10'] : low ? [t('Low in plan'), 'text-orange-400 bg-orange-400/10'] : null;
+            return `<div class="py-3 border-b border-white/5 last:border-0">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <span class="text-[14px] font-black text-white">${esc(t(n))}</span>
+                    <span class="flex items-center gap-2 shrink-0"><span class="text-[13px] font-black text-white" dir="ltr">${x.done} / ${x.plan}</span>${status ? `<span class="text-[10px] font-black px-2 py-1 rounded-md ${status[1]}">${status[0]}</span>` : ''}</span>
+                </div>
+                <div class="h-2 rounded-full bg-white/10 overflow-hidden" dir="ltr"><div class="bar-fill h-full rounded-full ${full ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pct}%"></div></div>
+            </div>`;
+        }).join('');
+        return pCard(t('Sets this week'), `<div class="flex justify-between text-[11px] font-bold text-slate-500 -mt-2 mb-1"><span>${t('Muscle')}</span><span>${t('Done / planned')}</span></div>${rows}<p class="text-[11px] font-bold text-slate-500 mt-3">${t('Aim for about 10–20 sets a week for each muscle.')} ${t('"Low in plan" means your routine has few sets for it: add some in the Edit tab.')}</p>`);
+    };
+
+    // Body: body weight over time (the same log as Profile → About you); log today's weight here too
+    const progressBodyHTML = () => {
+        const b = getBody(), log = b.log || [];
+        const form = `<div class="flex gap-2 mt-4"><input id="pb-weight" type="text" inputmode="decimal" autocomplete="off" placeholder="${esc(t('Weight (kg)'))}" class="flex-1 min-w-0 bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-white text-center font-black outline-none focus:border-[#d4af37]" dir="ltr" onkeydown="if(event.key==='Enter')window.appActions.progressLogWeight()"><button onclick="window.appActions.progressLogWeight()" class="shrink-0 px-5 rounded-2xl bg-[#d4af37] text-black text-[13px] font-black tap-feedback">${t('Save')}</button></div>`;
+        if (!log.length) return pEmpty('scale', t('Track your body weight'), t('Log your weight once a week, at the same time of day, to see how it changes.'), form);
+        const last = log[log.length - 1], monthAgo = Date.now() - 30 * DAY_MS;
+        const base = [...log].reverse().find(x => x.t <= monthAgo) || log[0], diff = round1(last.kg - base.kg);
+        const loggedToday = dateKey(last.t) === dateKey();
+        let html = `<div class="glass-card p-5 mb-3">
+            <div class="flex items-end justify-between gap-3">
+                <div><div class="text-[12px] font-black text-slate-400 mb-1">${t('Body weight')}</div><div class="text-[34px] font-black text-white leading-none" dir="ltr">${last.kg}<span class="text-[16px] text-slate-500"> kg</span></div><div class="text-[11px] font-bold text-slate-500 mt-1.5">${esc(fmtDate(last.t, false))}</div></div>
+                ${log.length >= 2 ? `<div class="text-end"><div class="text-[18px] font-black ${diff === 0 ? 'text-slate-300' : 'text-white'}" dir="ltr">${diff > 0 ? '+' : ''}${diff} kg</div><div class="text-[11px] font-bold text-slate-500">${base === log[0] && base.t > monthAgo ? t('since you started') : t('in 30 days')}</div></div>` : ''}
+            </div>
+            ${log.length >= 2 ? `<div class="mt-4">${lineChartHTML(log.slice(-20).map(x => ({ t: x.t, v: x.kg })), 'kg')}</div>` : ''}
+            <div class="text-[12px] font-black text-white mt-4">${loggedToday ? t("Update today's weight") : t("Log today's weight")}</div>
+            ${form.replace('mt-4', 'mt-2')}
+        </div>`;
+        html += pCard(t('History'), [...log].reverse().slice(0, 8).map((x, i, arr) => {
+            const prev = arr[i + 1], d = prev ? round1(x.kg - prev.kg) : null;
+            return `<div class="flex items-center justify-between py-2.5 border-b border-white/5 last:border-0"><span class="text-[13px] font-bold text-slate-300">${esc(fmtDate(x.t, false))}</span><span class="flex items-center gap-3" dir="ltr"><span class="text-[11px] font-bold text-slate-500">${d === null ? '' : `${d > 0 ? '+' : ''}${d}`}</span><span class="text-[14px] font-black text-white">${x.kg} kg</span></span></div>`;
+        }).join(''));
+        return html + `<p class="text-[11px] font-bold text-slate-500 px-1">${t('Also in Profile → About you.')}</p>`;
+    };
+
+    // Progress tab: four sections in one rounded switcher; the chosen one slides over and is remembered
+    const PTAB_KEY = 'workoutProgressTab_rakan_final';
+    const PTABS = [['overview', 'Overview', 'layout-dashboard'], ['exercises', 'Exercises', 'dumbbell'], ['volume', 'Volume', 'layers'], ['body', 'Body', 'scale']];
+    const currentPTab = () => {
+        if (!window.appState.aTab) { try { window.appState.aTab = localStorage.getItem(PTAB_KEY) || 'overview'; } catch (e) { window.appState.aTab = 'overview'; } }
+        if (!PTABS.some(([id]) => id === window.appState.aTab)) window.appState.aTab = 'overview';
+        return window.appState.aTab;
+    };
     const renderAnalytics = () => {
         const history = StorageManager.getHistory();
         const c = document.getElementById('workout-container');
-        
-        const activeTab = window.appState.aTab || 'overview';
-        
-        const pG = {
-            'CHEST': { l: 'Chest', s: 0, c: 0, ex: {} }, 'BACK': { l: 'Back', s: 0, c: 0, ex: {} },
-            'FDELTS': { l: 'Front Delts', s: 0, c: 0, ex: {} }, 'SDELTS': { l: 'Side Delts', s: 0, c: 0, ex: {} }, 'RDELTS': { l: 'Rear Delts', s: 0, c: 0, ex: {} },
-            'BICEPS': { l: 'Biceps', s: 0, c: 0, ex: {} }, 'TRICEPS': { l: 'Triceps', s: 0, c: 0, ex: {} },
-            'QUADS': { l: 'Quads', s: 0, c: 0, ex: {} }, 'HAMS': { l: 'Hamstrings', s: 0, c: 0, ex: {} }, 'CALVES': { l: 'Calves', s: 0, c: 0, ex: {} },
-            'GLUTES': { l: 'Glutes', s: 0, c: 0, ex: {} },
-            'ABS': { l: 'Abs & Core', s: 0, c: 0, ex: {} },
-            'FOREARMS': { l: 'Forearms', s: 0, c: 0, ex: {} }
-        };
-
-        let actionItems = {}; 
-        let processedExKeys = new Set();
-        const now = new Date();
-        now.setHours(0,0,0,0);
-        
-        getActiveSchedule().forEach(d => { if(!d.isRest && d.exercises) d.exercises.forEach((ex,i) => {
-            const k = getExKey(currentWeekId, d.id, i, ex.name);
-            const h = history[k] || [];
-            
-            // Same rule as the Workout tab (getProgression), based on your latest session
-            if (!actionItems[ex.name]) {
-                const prog = getProgression(getLastSession(h), ex.reps);
-                if (prog) actionItems[ex.name] = { muscle: ex.muscle, unit: unitOf(ex.reps), ...prog };
-            }
-
-            const rawSets = parseInt(ex.sets);
-            const s = isNaN(rawSets) ? 0 : rawSets; 
-            
-            let cSets = 0;
-            if (!processedExKeys.has(k)) {
-                processedExKeys.add(k);
-                h.forEach(log => {
-                    const t = logTime(log);
-                    if (isNaN(t)) return;
-                    const diff = Math.round((now - startOfDay(t)) / 86400000);
-                    const nSets = logSets(log).length;
-                    
-                    if(diff >= 0 && diff <= 6) cSets += nSets; // last 7 days
-                });
-            }
-
-            const safeMuscle = ex.muscle || 'Unknown';
-            const rm = safeMuscle.trim().toUpperCase(), n = ex.name||'Unknown';
-            let p = null;
-            if(rm.includes('CHEST')||rm==='PECS') p = 'CHEST';
-            else if(rm.includes('BACK')||rm==='LATS'||rm==='TRAPS') p = 'BACK';
-            else if(rm.includes('SIDE DELT')) p = 'SDELTS';
-            else if(rm.includes('FRONT DELT')||rm.includes('SHOULDER')) p = 'FDELTS';
-            else if(rm.includes('REAR DELT')) p = 'RDELTS';
-            else if(rm.includes('BICEP')) p = 'BICEPS';
-            else if(rm.includes('TRICEP')) p = 'TRICEPS';
-            else if(rm.includes('QUAD')) p = 'QUADS';
-            else if(rm.includes('HAMSTRING')||rm.includes('LEG CURL')||rm.includes('POST. CHAIN')) p = 'HAMS';
-            else if(rm.includes('CALF')||rm.includes('CALVES')) p = 'CALVES';
-            else if(rm.includes('GLUTE')||rm==='ABDUCTORS'||rm==='ADDUCTORS') p = 'GLUTES';
-            else if(rm==='ABS'||rm==='CORE'||rm==='OBLIQUES') p = 'ABS';
-            else if(rm.includes('FOREARM')) p = 'FOREARMS';
-            
-            if(p && pG[p]) { pG[p].s += s; pG[p].c += cSets; pG[p].ex[n] = (pG[p].ex[n]||0) + s; }
-        });});
-
-        let actionLevelUp = [], actionBuild = [], actionDeload = [];
-        Object.keys(actionItems).forEach(name => {
-            const item = { name, ...actionItems[name] };
-            if (item.type === 'up') actionLevelUp.push(item);
-            else if (item.type === 'build') actionBuild.push(item);
-            else if (item.type === 'down') actionDeload.push(item);
-        });
-
-        const createAccordionBar = (key, g) => {
-            const comp = isNaN(g.c) ? 0 : (g.c % 1 !== 0 ? g.c.toFixed(1) : g.c);
-            const plan = isNaN(g.s) ? 0 : (g.s % 1 !== 0 ? g.s.toFixed(1) : g.s);
-            const pct = plan > 0 ? Math.min((comp / plan) * 100, 100) : (comp > 0 ? 100 : 0);
-
-            const isDone = plan > 0 && comp >= plan;
-            const clr = isDone ? 'bg-[#22c55e]' : (comp > 0 ? 'bg-[#d4af37]' : 'bg-slate-500');
-
-            const exTags = Object.keys(g.ex).length > 0 ? `<div class="flex flex-wrap gap-2 mt-4">` + Object.keys(g.ex).map(eName => `<span class="bg-black/40 rounded-lg px-2 py-1.5 text-[10px] font-bold text-slate-300 flex items-center gap-1.5">${esc(eName)} <span class="text-white" dir="ltr">${g.ex[eName]}×</span></span>`).join('') + `</div>` : `<div class="text-[10px] text-slate-500 italic mt-3">${t('No exercises scheduled.')}</div>`;
-
-            return `<div class="mb-2 bg-white/5 rounded-2xl overflow-hidden transition-all duration-300 border border-white/5">
-                <button onclick="document.getElementById('det-${key}').classList.toggle('hidden'); document.getElementById('arr-${key}').classList.toggle('rotate-180')" class="w-full text-left p-4 tap-feedback outline-none flex justify-between items-center group">
-                    <div class="flex items-center gap-3 w-full">
-                        <div class="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center border border-white/5 shrink-0">
-                            <i data-lucide="activity" class="w-4 h-4 ${isDone ? 'text-[#22c55e]' : (comp > 0 ? 'text-[#d4af37]' : 'text-slate-500')}"></i>
-                        </div>
-                        <span class="text-[14px] font-black text-white tracking-wide">${esc(tm(g.l))}</span>
-                    </div>
-                    <div class="flex items-center gap-3 shrink-0">
-                        <div class="text-right">
-                            <div class="text-[12px] font-black ${comp > 0 ? 'text-white' : 'text-slate-500'} leading-none">${comp} <span class="text-[8px] text-slate-500">${t('LOGGED')}</span></div>
-                            <div class="text-[9px] font-bold text-slate-500 mt-1 leading-none">${t('OF {n} SETS', { n: plan })}</div>
-                        </div>
-                        <i id="arr-${key}" data-lucide="chevron-down" class="w-4 h-4 text-slate-500 transition-transform duration-300 group-hover:text-white"></i>
-                    </div>
-                </button>
-                <div id="det-${key}" class="hidden px-4 pb-4">
-                    <div class="flex justify-between items-end mb-2">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${t('Completion')}</span>
-                        <span class="text-[10px] font-black text-white">${Math.round(pct)}%</span>
-                    </div>
-                    <div class="w-full bg-black/40 h-2 rounded-full overflow-hidden border border-white/5">
-                        <div class="${clr} h-full rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(0,0,0,0.5)]" style="width: ${pct}%;"></div>
-                    </div>
-                    ${exTags}
-                </div>
-            </div>`;
-        };
-
-        const createActionItem = (item, type) => {
-            let badge = '', actionTxt = '';
-            const u = item.unit === 's' ? t('SEC') : t('REPS'), us = item.unit;
-            const wBadge = w => w > 0 ? `<span class="block text-[14px] leading-none mb-0.5">${w}</span><span class="text-[7px]">${t('KG')}</span>` : `<span class="block text-[14px] leading-none mb-0.5">${t('BW')}</span><span class="text-[7px]">&nbsp;</span>`;
-            if (type === 'up') {
-                badge = `<div class="bg-[#22c55e]/10 text-[#22c55e] py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-[#22c55e]/20 text-center shadow-sm w-[55px]">${wBadge(item.tW)}</div>`;
-                actionTxt = `<span class="text-[#22c55e] shrink-0 whitespace-nowrap"><i data-lucide="arrow-up" class="w-3 h-3 inline -mt-0.5"></i> ${t('Target:')} <span dir="ltr">${fmtW(item.tW)} × ${item.tR}${us}</span></span>`;
-            } else if (type === 'build') {
-                badge = `<div class="bg-[#3b82f6]/10 text-[#3b82f6] py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-[#3b82f6]/20 text-center shadow-sm w-[55px]"><span class="block text-[14px] leading-none mb-0.5">${item.tR}</span><span class="text-[7px]">${u}</span></div>`;
-                actionTxt = `<span class="text-[#3b82f6] shrink-0 whitespace-nowrap"><i data-lucide="refresh-cw" class="w-3 h-3 inline -mt-0.5"></i> ${t('Target:')} <span dir="ltr">${fmtW(item.tW)} × ${item.tR}${us}</span></span>`;
-            } else if (type === 'down') {
-                badge = `<div class="bg-red-500/10 text-red-400 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-red-500/20 text-center shadow-sm w-[55px]">${wBadge(item.tW)}</div>`;
-                actionTxt = `<span class="text-red-400 shrink-0 whitespace-nowrap"><i data-lucide="arrow-down" class="w-3 h-3 inline -mt-0.5"></i> ${t('Target:')} <span dir="ltr">${fmtW(item.tW)} × ${item.tR}${us}</span></span>`;
-            }
-
-            return `
-            <div class="flex items-center justify-between p-3 bg-white/5 border border-white/5 rounded-xl mb-2 last:mb-0 gap-2">
-                <div class="flex-1 min-w-0">
-                    <div class="ex-name text-[14px] font-black text-white leading-tight mb-1">${esc(item.name)}</div>
-                    <div class="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[9px] font-bold uppercase tracking-widest">
-                        <span class="text-slate-500">${esc(tm(item.muscle))}</span>
-                        <span class="w-1 h-1 rounded-full bg-slate-700 shrink-0"></span>
-                        ${actionTxt}
-                    </div>
-                </div>
-                <div class="shrink-0 flex items-center gap-3">
-                    <div class="text-right w-[60px]">
-                        <div class="text-[12px] font-black text-slate-300 truncate">${item.w > 0 ? `${item.w}<span class="text-[8px] text-slate-500">${t('KG')}</span>` : t('BW')}</div>
-                        <div class="text-[10px] font-bold text-slate-400 mt-0.5 truncate" title="${esc(item.sets.join(' / '))}">× ${esc(item.sets.join('/'))}${us}</div>
-                    </div>
-                    ${badge}
-                </div>
-            </div>`;
-        };
-
-        const renderActionSection = (arr, title, type, icon, colorHex) => {
-            if (arr.length === 0) return '';
-            return `
-            <div class="glass-card p-4 mb-4 relative overflow-hidden" style="-webkit-mask-image: -webkit-radial-gradient(white, black);">
-                <div class="absolute -right-4 -top-4 w-16 h-16 bg-[${colorHex}]/10 rounded-full blur-xl pointer-events-none"></div>
-                <div class="flex items-center gap-2 mb-4 pb-3 border-b border-white/5 relative z-10">
-                    <div class="w-7 h-7 rounded-lg bg-[${colorHex}]/10 flex items-center justify-center text-[${colorHex}] shadow-sm">
-                        <i data-lucide="${icon}" class="w-4 h-4"></i>
-                    </div>
-                    <span class="text-[13px] font-black uppercase tracking-widest text-white drop-shadow-md">${title}</span>
-                </div>
-                <div class="flex justify-between items-center px-1 mb-2 text-[8px] font-black text-slate-500 uppercase tracking-widest relative z-10">
-                    <span class="ps-1">${t('Exercise')}</span>
-                    <div class="flex gap-3">
-                        <span class="w-[60px] text-end">${t('Last Log')}</span>
-                        <span class="w-[55px] text-center">${t('Target')}</span>
-                    </div>
-                </div>
-                <div class="relative z-10">${arr.map(i => createActionItem(i, type)).join('')}</div>
-            </div>`;
-        };
-
-        const tabBtn = (id, label) => `<button onclick="window.appState.aTab='${id}';window.appActions.refreshUI()" class="flex-1 shrink-0 px-1 py-3 text-[11px] font-black uppercase tracking-widest border-b-2 transition-colors tap-feedback ${activeTab===id ? 'border-[#d4af37] text-[#d4af37]' : 'border-transparent text-slate-500 hover:text-white'}">${label}</button>`;
-        const tabsHTML = `<div class="flex gap-2 border-b border-white/5 mb-5 px-1 overflow-x-auto scrollbar-hide pb-1 shrink-0">${tabBtn('overview', t('Overview'))}${tabBtn('exercises', t('Exercises'))}${tabBtn('action', t('Targets'))}${tabBtn('hyper', t('Volume'))}</div>`;
-        let contentHTML = '';
-
-        if (activeTab === 'overview') contentHTML = progressOverviewHTML(history);
-        else if (activeTab === 'exercises') contentHTML = progressExercisesHTML(history);
-        else if (activeTab === 'action') {
-            const levelUpHTML = renderActionSection(actionLevelUp, t('Add weight'), 'up', 'arrow-up-circle', '#22c55e');
-            const buildHTML = renderActionSection(actionBuild, t('Add reps'), 'build', 'refresh-cw', '#3b82f6');
-            const deloadHTML = renderActionSection(actionDeload, t('Go lighter'), 'down', 'alert-triangle', '#ef4444');
-
-            contentHTML = (levelUpHTML || buildHTML || deloadHTML) ? `${levelUpHTML}${buildHTML}${deloadHTML}` : `
-                <div class="glass-card p-8 text-center border border-white/5">
-                    <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="activity" class="w-6 h-6 text-[#d4af37]"></i></div>
-                    <div class="text-[14px] font-black text-white uppercase tracking-wider mb-2">${t('Action Plan Empty')}</div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed font-medium">${t('Complete a workout and log your sets. The app will analyze your performance and generate smart weight recommendations here.')}</p>
-                </div>`;
-        } 
-        else if (activeTab === 'hyper') {
-            let activeKeys = Object.keys(pG).filter(k => pG[k].s > 0 || pG[k].c > 0);
-            activeKeys.sort((a,b) => pG[b].c - pG[a].c);
-            
-            contentHTML = `
-                <div class="glass-card p-4 sm:p-6 mb-4">
-                    <div class="flex items-center mb-6 pb-4 border-b border-white/5 pl-1">
-                        <i data-lucide="activity" class="w-4 h-4 text-[#d4af37] mr-2"></i>
-                        <span class="text-[14px] font-black uppercase tracking-[3px] text-white mt-0.5">${t('Workload Tracking')}</span>
-                    </div>
-                    <div class="flex flex-col">
-                        ${activeKeys.map(k => createAccordionBar(k, pG[k])).join('')}
-                    </div>
-                </div>
-                ${activeKeys.length === 0 ? `
-                <div class="glass-card p-8 text-center border border-white/5 mt-4">
-                    <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="layers" class="w-6 h-6 text-[#d4af37]"></i></div>
-                    <div class="text-[14px] font-black text-white uppercase tracking-wider mb-2">${t('No Volume Detected')}</div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed font-medium">${t('Build a routine with exercises to see your weekly workload goals.')}</p>
-                </div>` : ''}`;
-        }
-
-        c.innerHTML = `<div class="fade-in pb-10">${tabsHTML}${contentHTML}</div>`;
-        if (typeof hint === 'function') hint('progress-tabs', '#workout-container .scrollbar-hide', t('Your records, next targets and weekly volume per muscle are here.'));
+        const activeTab = currentPTab(), idx = PTABS.findIndex(([id]) => id === activeTab);
+        const prev = window.appState.aTabShown, from = PTABS.findIndex(([id]) => id === prev);
+        const seg = ([id, label, icon]) => `<button onclick="window.appActions.progressTab('${id}')" class="relative z-10 flex-1 min-w-0 flex flex-col items-center gap-1 py-2.5 rounded-[18px] tap-feedback transition-colors duration-300 ${activeTab === id ? 'text-black' : 'text-slate-400'}" aria-pressed="${activeTab === id}"><i data-lucide="${icon}" class="w-[18px] h-[18px]"></i><span class="text-[11px] font-black truncate max-w-full px-0.5">${esc(t(label))}</span></button>`;
+        const tabsHTML = `<div id="progress-tabs" class="p-seg relative flex mb-4" role="tablist"><span class="p-seg-pill" style="--i:${from >= 0 ? from : idx}"></span>${PTABS.map(seg).join('')}</div>`;
+        const contentHTML = activeTab === 'exercises' ? progressExercisesHTML(history)
+            : activeTab === 'volume' ? progressVolumeHTML(history)
+            : activeTab === 'body' ? progressBodyHTML()
+            : progressOverviewHTML(history);
+        // a different section pops in; a refresh of the same section stays still
+        c.innerHTML = `<div class="pb-10">${tabsHTML}<div class="${prev === activeTab ? '' : 'p-pop'}">${contentHTML}</div></div>`;
+        window.appState.aTabShown = activeTab;
+        const pill = c.querySelector('.p-seg-pill');
+        if (pill && from !== idx) requestAnimationFrame(() => requestAnimationFrame(() => pill.style.setProperty('--i', idx)));
+        bindCharts(c);
+        if (typeof hint === 'function') hint('progress-tabs', '#progress-tabs', t('Your week, every exercise, sets per muscle and your body weight are here.'));
         if (window.lucide) window.lucide.createIcons();
     };
     const READY = {
@@ -1604,9 +1621,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         </div>`;
     };
 
-    // What to lift today: from your last session (easy day keeps the weight and aims low)
-    const suggestionFor = (hA, ex, easy) => {
-        const prog = getProgression(getLastSession(hA, true), ex.reps);
+    // What to lift next: from your last session (easy day keeps the weight and aims low)
+    // skipToday: the workout cards plan today from your last session before today; Progress uses the latest one
+    const suggestionFor = (hA, ex, easy, skipToday = true) => {
+        const prog = getProgression(getLastSession(hA, skipToday), ex.reps);
         if (!prog) return null;
         // done with no extra weight (bodyweight, plank...): ask for more reps or seconds, never "add 2.5 kg"
         if (!(prog.w > 0) && prog.type === 'up') return { type: 'build', w: 0, r: prog.maxR + (isTimed(ex.reps) ? 5 : 1) };
@@ -1910,7 +1928,6 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // 🗓️ PLAN (whole week): one row per day (drag ⋮⋮ to move a day, tap to edit it), then the week's muscle balance.
     // The weekdays stay put on the left; dragging moves the workout to another weekday.
     const DAY_KEYS = ['title', 'isRest', 'recoveryType', 'savedTitle', 'exercises'];
-    const BALANCE = [['Chest', ['Chest', 'Upper Chest', 'Lower Chest'], 8], ['Back', ['Back', 'Lats', 'Traps', 'Lower Back'], 8], ['Legs', ['Quads', 'Hamstrings', 'Glutes', 'Calves', 'Adductors', 'Abductors'], 8], ['Shoulders', ['Shoulders', 'Front Delts', 'Side Delts', 'Rear Delts'], 6], ['Arms', ['Biceps', 'Triceps', 'Forearms'], 6], ['Core', ['Abs'], 3]];
     const muscleBalanceHTML = schedule => {
         const sets = BALANCE.map(([g, ms, low]) => ({ g, low, n: schedule.reduce((a, d) => a + (d.isRest ? 0 : (d.exercises || []).filter(ex => ms.includes(ex.muscle)).reduce((b, ex) => b + (parseInt(ex.sets) || 0), 0)), 0) }));
         if (!sets.some(x => x.n)) return '';
@@ -2100,6 +2117,18 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         skipCheckIn: () => { window.appState.ciSkipped = dateKey(); window.appState.ciOpen = false; renderWorkout(); },
         refreshUI: () => renderWorkout(),
+        // Progress tab: switch section (remembered), filter and search the exercise list, log body weight
+        progressTab: id => { window.appState.aTab = id; try { localStorage.setItem(PTAB_KEY, id); } catch (e) {} renderAnalytics(); window.scrollTo({ top: 0 }); },
+        progressFilter: id => { window.appState.pexF = id; renderAnalytics(); },
+        progressSearch: q => { window.appState.pexQ = q; const el = document.getElementById('pex-list'); if (!el) return; el.innerHTML = progressExerciseListHTML(progressExerciseRows(StorageManager.getHistory())); if (window.lucide) window.lucide.createIcons({ root: el }); },
+        progressLogWeight: () => {
+            const inp = document.getElementById('pb-weight'), v = inp ? latinDigits(inp.value).trim() : '';
+            const w = parseFloat(v.replace(/[\u066B\u060C,]/g, '.'));
+            if (!(w >= 25 && w <= 350)) { window.appActions.showToast(t('Please check this number.'), 'error'); return; }
+            window.appActions.setAbout('weightKg', v);
+            window.appActions.showToast(t('Weight saved'));
+            renderAnalytics();
+        },
         openHistoryModal: (k, title) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=title; const hw=document.getElementById('history-howto'); if(hw) hw.href=`https://www.youtube.com/results?search_query=${encodeURIComponent(title+' exercise form')}`; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); pushBack('history', () => window.appActions.closeHistoryModal()); },
         closeHistoryModal: () => { popBack('history'); const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{if(o.classList.contains('opacity-0')){o.classList.add('hidden');o.classList.remove('flex');}},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
