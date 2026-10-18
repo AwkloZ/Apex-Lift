@@ -106,6 +106,9 @@ input[type="number"] {
 /* A minimized Log/Focus session bar sits at the bottom: keep room for it */
 /* Room for the bottom tab bar (and the minimized workout bar above it) */
 .scrollable-content { padding-bottom: calc(110px + env(safe-area-inset-bottom)) !important; }
+/* no sideways drift or bounce of the whole screen while swiping (Plan and the day editor only scroll up and down) */
+.scrollable-content { overflow-x: hidden; overscroll-behavior: contain; }
+#plan-routines, .plan-scope { touch-action: pan-y; }
 #toast-container { bottom: calc(80px + env(safe-area-inset-bottom)) !important; }
 body.has-mini .scrollable-content { padding-bottom: calc(180px + env(safe-area-inset-bottom)) !important; }
 body.has-mini #toast-container { bottom: calc(150px + env(safe-area-inset-bottom)) !important; }
