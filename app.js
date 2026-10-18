@@ -856,7 +856,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '26';
+    const APP_VERSION = '27';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1497,7 +1497,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                 <input id="pex-search" type="search" autocomplete="off" value="${esc(window.appState.pexQ || '')}" placeholder="${esc(t('Search exercises'))}" oninput="window.appActions.progressSearch(this.value)" class="w-full bg-white/5 border border-white/10 rounded-2xl ps-11 pe-4 py-3.5 text-[14px] font-bold text-white outline-none focus:border-[#d4af37]">
             </div>
-            <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1 mb-3 -mx-1 px-1">${PEX_FILTERS.map(chip).join('')}</div>
+            <div id="pex-chips" class="flex gap-2 overflow-x-auto scrollbar-hide pb-1 mb-3 -mx-1 px-1">${PEX_FILTERS.map(chip).join('')}</div>
             <div id="pex-list">${progressExerciseListHTML(rows)}</div>`;
     };
 
@@ -2119,7 +2119,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         refreshUI: () => renderWorkout(),
         // Progress tab: switch section (remembered), filter and search the exercise list, log body weight
         progressTab: id => { window.appState.aTab = id; try { localStorage.setItem(PTAB_KEY, id); } catch (e) {} renderAnalytics(); window.scrollTo({ top: 0 }); },
-        progressFilter: id => { window.appState.pexF = id; renderAnalytics(); },
+        // the chip row keeps its scroll position after the list is redrawn
+        progressFilter: id => { const row = document.getElementById('pex-chips'), x = row ? row.scrollLeft : 0; window.appState.pexF = id; renderAnalytics(); const nr = document.getElementById('pex-chips'); if (nr) nr.scrollLeft = x; },
         progressSearch: q => { window.appState.pexQ = q; const el = document.getElementById('pex-list'); if (!el) return; el.innerHTML = progressExerciseListHTML(progressExerciseRows(StorageManager.getHistory())); if (window.lucide) window.lucide.createIcons({ root: el }); },
         progressLogWeight: () => {
             const inp = document.getElementById('pb-weight'), v = inp ? latinDigits(inp.value).trim() : '';
