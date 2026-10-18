@@ -353,6 +353,9 @@ input.day-title-input { font-size: 26px !important; }
 /* Plan tab = the editor: dashed gold day card, exercise cards with a ⋮⋮ grip */
 .glass-card.plan-card { border: 1.5px dashed rgba(212, 175, 55, 0.55); }
 .glass-card.plan-ex { border-radius: 22px; padding: 11px 12px 11px 4px; border: 1px solid rgba(212, 175, 55, 0.45); }
+.glass-card.plan-ex.plan-day { padding-top: 0; padding-bottom: 0; }
+.glass-card.plan-ex.plan-day.is-rest { border-color: rgba(255, 255, 255, 0.1); }
+:root[data-theme="light"] .glass-card.plan-ex.plan-day.is-rest { border-color: rgba(0, 0, 0, 0.08); }
 .plan-ex .handle { cursor: grab; touch-action: none; -webkit-touch-callout: none; }
 .plan-ex .handle:active { cursor: grabbing; color: #d4af37; }
 /* where the card will land, and the card you hold */

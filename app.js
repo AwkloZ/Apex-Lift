@@ -19,6 +19,24 @@
     const AR = {
         "Next workout": "التمرين القادم",
         "Change exercise": "تغيير التمرين",
+        "Editing this day": "تعديل هذا اليوم",
+        "Plan the whole week →": "خطط للأسبوع كاملًا ←",
+        "Edit this day": "تعديل هذا اليوم",
+        "This week": "هذا الأسبوع",
+        "Empty": "فارغ",
+        "Week order saved": "تم حفظ ترتيب الأسبوع",
+        "Muscle balance": "توازن العضلات",
+        "Sets per week": "مجموعات في الأسبوع",
+        "Aim for about 10–20 sets a week for each muscle.": "الهدف تقريبًا 10–20 مجموعة أسبوعيًا لكل عضلة.",
+        "Core": "البطن",
+        "Duplicate routine": "تكرار الجدول",
+        "{name} (copy)": "{name} (نسخة)",
+        "Routine duplicated": "تم تكرار الجدول",
+        "Copy this day to…": "نسخ هذا اليوم إلى…",
+        "Tap a day to edit it. Hold ⋮⋮ and drag to move it to another day.": "اضغط على يوم لتعديله. اضغط مطولًا على ⋮⋮ واسحبه لنقله إلى يوم آخر.",
+        "Tap ✏️ to change this day's exercises.": "اضغط ✏️ لتغيير تمارين هذا اليوم.",
+        "Add exercises to start training on this day.": "أضف تمارين لتبدأ التمرين في هذا اليوم.",
+        "Tap a day to edit it": "اضغط على يوم لتعديله",
         "Editing your schedule": "تعديل جدولك",
         "Changes here update your Today page": "التغييرات هنا تُحدّث صفحة اليوم",
         "More": "المزيد",
@@ -167,7 +185,6 @@
         "Strength B": "قوة B",
         "Upper Hypertrophy": "علوي تضخيم",
         "Upper Power": "علوي قوة",
-        "Add exercises to this day in the Plan tab.": "أضف تمارين لهذا اليوم من تبويب الخطة.",
         "Add reps": "زِد التكرارات",
         "Add weight": "زِد الوزن",
         "Add weight:": "زِد الوزن:",
@@ -805,7 +822,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '21';
+    const APP_VERSION = '22';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1062,7 +1079,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         if (!el) return;
         let x0 = null, y0 = 0, t0 = 0;
         el.addEventListener('touchstart', e => {
-            if (window.appState.currentView !== 'today' || e.touches.length > 1 || e.target.closest('input, select, textarea, .scrollbar-hide')) { x0 = null; return; }
+            if (window.appState.currentView !== 'today' || window.appState.todayEdit || e.touches.length > 1 || e.target.closest('input, select, textarea, .scrollbar-hide')) { x0 = null; return; }
             x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
         }, { passive: true });
         el.addEventListener('touchend', e => {
@@ -1132,14 +1149,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // 🎨 4. CORE UI RENDERING
     // Plan tab: your routines as one folding card (shows the active routine; tap to see and manage all of them)
     const renderSidePanel = () => {
-        const active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0], open = !!window.appState.routinesOpen;
-        const row = w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold uppercase tracking-wider w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[9px] font-black tracking-widest uppercase shrink-0">${t('Active')}</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[10px] font-bold tracking-widest uppercase tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">${t('Select')}</button>`}${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20" aria-label="${esc(t('Delete routine'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`;
+        const active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0], open = !!window.appState.routinesOpen, inDay = window.appState.planDay != null;
+        const row = w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold uppercase tracking-wider w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[9px] font-black tracking-widest uppercase shrink-0">${t('Active')}</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[10px] font-bold tracking-widest uppercase tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">${t('Select')}</button>`}<button onclick="window.appActions.duplicateWeek(${jsArg(w.id)})" class="text-slate-300 hover:text-white tap-feedback p-1 bg-white/5 rounded-lg shrink-0 border border-white/10" aria-label="${esc(t('Duplicate routine'))}" title="${esc(t('Duplicate routine'))}"><i data-lucide="copy" class="w-4 h-4"></i></button>${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20" aria-label="${esc(t('Delete routine'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`;
         // Plan is where the schedule is edited: a gold strip says so, so it isn't mistaken for Today
         document.getElementById('weeks-container').innerHTML = `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-[#d4af37]/15 border border-[#d4af37]/45">
             <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
             <span class="flex-1 min-w-0"><span class="block text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${t('Editing your schedule')}</span><span class="block text-[11px] font-semibold text-slate-300 mt-px">${t('Changes here update your Today page')}</span></span>
         </div>
-        <div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''}">
+        ${inDay ? '' : `<div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''}">
             <button onclick="window.appActions.toggleRoutines()" class="w-full p-4 flex items-center gap-3 text-start tap-feedback" aria-expanded="${open}">
                 <span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-range" class="w-5 h-5"></i></span>
                 <span class="flex-1 min-w-0"><span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">${t('My routines')}</span><span class="block text-[15px] font-black text-white truncate">${esc(t(active.name))}</span></span>
@@ -1149,7 +1166,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             ${open ? `<div class="px-4 pb-4 space-y-2.5">${appData.weeks.map(row).join('')}
                 <button onclick="window.appActions.addWeek()" class="w-full py-3 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[11px] tap-feedback border border-dashed border-[#d4af37]/40 bg-[#d4af37]/5 rounded-xl"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i>${t('New routine')}</button>
             </div>` : ''}
-        </div>`;
+        </div>`}`;
         document.getElementById('active-week-label').innerText = t(active.name);
         if(window.lucide) window.lucide.createIcons();
     };
@@ -1714,28 +1731,40 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const cls = { up: 'text-[#22c55e]', down: 'text-red-400', build: 'text-[#d4af37]', easy: 'text-slate-300' }[sg.type];
         return `<span class="font-black ${cls}" title="${esc(t(SUGG[sg.type].label))}" dir="ltr">${{ up: '↑ ', down: '↓ ' }[sg.type] || ''}${fmtW(sg.w)} × ${sg.r}${timed ? 's' : ''}</span>`;
     };
+    // Today's edit mode: a gold bar on top (Done / plan the whole week), then the same day editor as Plan
+    const todayEditBar = () => `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-[#d4af37]/15 border border-[#d4af37]/45">
+            <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
+            <span class="flex-1 min-w-0"><span class="block text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${t('Editing this day')}</span><button onclick="window.appActions.planWholeWeek()" class="block text-[11px] font-bold text-slate-300 underline underline-offset-2 tap-feedback">${t('Plan the whole week →')}</button></span>
+            <button id="today-edit-done" onclick="window.appActions.setTodayEdit(false)" class="shrink-0 h-9 px-4 rounded-full bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4"></i>${t('Done')}</button>
+        </div>`;
     const renderToday = () => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), history = StorageManager.getHistory();
         const isT = activeDay === getTodayId(), S = window.appState.sess;
+        if (window.appState.todayEdit && S) window.appState.todayEdit = false; // never edit the plan while a workout is running
+        if (window.appState.todayEdit) return renderPlanDay(todayEditBar());
+        const editBtn = S ? '' : `<button id="today-edit-btn" onclick="window.appActions.setTodayEdit(true)" class="w-9 h-9 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('Edit this day'))}" title="${esc(t('Edit this day'))}"><i data-lucide="pencil" class="w-4 h-4"></i></button>`;
         const weekTop = `<div id="today-week" class="today-week">${weekNavHTML()}</div>`;
         const dayLabel = `<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}</div>`;
         let html = '';
         if (day.isRest) {
-            html += `<div class="glass-card today-card">${weekTop}<div class="today-body is-row"><div class="flex-1 min-w-0">${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${day.recoveryType==='active'?t('Active Rest'):t('Complete Rest')}</h2><div class="text-[12px] font-bold text-slate-400 mt-1">${t('Recover well. See you next session.')}</div></div><i data-lucide="${day.recoveryType==='active'?'footprints':'moon'}" class="w-9 h-9 text-[#d4af37] shrink-0 ${day.recoveryType==='active'?'animate-walk':'animate-pulse-glow'}"></i></div></div>` + coachCardHTML();
+            html += `<div class="glass-card today-card">${weekTop}<div class="today-body is-row"><div class="flex-1 min-w-0">${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${day.recoveryType==='active'?t('Active Rest'):t('Complete Rest')}</h2><div class="text-[12px] font-bold text-slate-400 mt-1">${t('Recover well. See you next session.')}</div></div><i data-lucide="${day.recoveryType==='active'?'footprints':'moon'}" class="w-9 h-9 text-[#d4af37] shrink-0 ${day.recoveryType==='active'?'animate-walk':'animate-pulse-glow'}"></i>${editBtn}</div></div>` + coachCardHTML();
             // Point to the next training day so a rest day is never a dead end
             const nextDay = [1, 2, 3, 4, 5, 6].map(o => schedule.find(d => d.id === ((activeDay - 1 + o) % 7) + 1)).find(d => d && !d.isRest && d.exercises.length);
             if (nextDay) html += `<button onclick="window.appActions.setActiveDay(${nextDay.id})" class="w-full glass-card p-4 mt-3 flex items-center gap-3 text-start tap-feedback"><span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-clock" class="w-5 h-5"></i></span><span class="flex-1 min-w-0"><span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">${t('Next workout')}</span><span class="block text-[15px] font-black text-white truncate">${esc(dayLong(nextDay.day))} · ${esc(t(nextDay.title))}</span></span><i data-lucide="chevron-right" class="w-5 h-5 text-slate-500 shrink-0"></i></button>`;
         } else if (!day.exercises.length) {
-            html += `<div class="glass-card today-card">${weekTop}<div class="today-body">${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight -mt-1.5">${t('No exercises yet')}</h2><div class="text-[12px] font-bold text-slate-400">${t('Add exercises to this day in the Plan tab.')}</div><button onclick="window.appActions.switchTab('plan')" class="self-start px-5 py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback">${t('Plan this day')}</button></div></div>` + coachCardHTML();
+            html += `<div class="glass-card today-card">${weekTop}<div class="today-body"><div class="flex items-start gap-2"><div class="flex-1 min-w-0">${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${t('No exercises yet')}</h2></div>${editBtn}</div><div class="text-[12px] font-bold text-slate-400">${t('Add exercises to start training on this day.')}</div><button onclick="window.appActions.setTodayEdit(true)" class="self-start px-5 py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback">${t('Plan this day')}</button></div></div>` + coachCardHTML();
         } else {
             const pr = dayProgress(day, history), fin = exercisesFinished(day, history);
             const finished = (pr.planned > 0 && pr.done >= pr.planned) || fin.every(Boolean);
             const mins = Math.max(10, Math.round(pr.planned * 2.5 / 5) * 5);
             const running = S && S.dayId === day.id && (!S.weekId || S.weekId === currentWeekId);
             html += `<div class="glass-card today-card ${finished ? 'border border-[#22c55e]/30' : ''}">${weekTop}<div class="today-body">
-                <div>
-                    <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}${finished ? ` · <span class="text-[#22c55e]">${t('Done')}</span>` : ''}</div>
-                    <h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${esc(t(day.title))}</h2>
+                <div class="flex items-start gap-2">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}${finished ? ` · <span class="text-[#22c55e]">${t('Done')}</span>` : ''}</div>
+                        <h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${esc(t(day.title))}</h2>
+                    </div>
+                    ${editBtn}
                 </div>
                 <div class="text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: day.exercises.length })} · ${t('{n} sets', { n: pr.planned })} · ${t('~{n} min', { n: mins })}</div>
                 ${pr.done > 0 ? `<div><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('Done this week')}</span><span class="${finished ? 'text-[#22c55e]' : 'text-white'}" dir="ltr">${pr.done} / ${pr.planned}</span></div><div class="w-full h-1.5 bg-black/50 rounded-full overflow-hidden"><div class="bar-fill h-full rounded-full ${finished ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pr.pct}%"></div></div></div>` : ''}
@@ -1759,6 +1788,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         document.getElementById('workout-container').innerHTML = `<div class="${enterClass()}">${html}</div>`;
         if (window.lucide) window.lucide.createIcons();
         if (typeof todayHints === 'function' && !day.isRest && day.exercises.length && !S) todayHints();
+        if (typeof hint === 'function' && !S && hintSeen('today-days')) hint('today-edit', '#today-edit-btn', t("Tap ✏️ to change this day's exercises."));
     };
 
     // Contents of the "Edit exercise" pop-up (Plan tab), same look as the exercise pop-up on Today:
@@ -1801,13 +1831,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const renderWorkout = () => {
         const v = window.appState.currentView;
         if (v === 'today') renderToday();
-        else if (v === 'plan') renderPlanDay();
+        else if (v === 'plan') { if (window.appState.planDay == null) renderPlanWeek(); else renderPlanDay(planBackBar()); }
         else if (v === 'progress') renderAnalytics();
     };
 
     // 🗓️ PLAN: build the selected day. It looks like Today but marked as an editor: dashed gold day card,
     // a dashed underline on the day name (tap to rename), and gold-edged exercise cards with a ⋮⋮ grip (drag); tap a card to edit it
-    const renderPlanDay = () => {
+    const planBackBar = () => `<button onclick="window.appActions.openPlanDay(null)" class="flex items-center gap-1 mb-3 px-1 text-[12px] font-black text-slate-300 tap-feedback"><i data-lucide="${isAR ? 'chevron-right' : 'chevron-left'}" class="w-4 h-4"></i>${t('This week')}</button>`;
+    const renderPlanDay = (top = '') => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), S = window.appState;
         const planned = day.exercises.reduce((a, ex) => a + (parseInt(ex.sets) || 0), 0);
         const mins = Math.max(10, Math.round(planned * 2.5 / 5) * 5), hasEx = !day.isRest && day.exercises.length > 0;
@@ -1859,7 +1890,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             html += `<button onclick="window.appActions.openPicker('add')" class="w-full p-4 mt-2.5 mb-10 rounded-[20px] flex items-center justify-center gap-2 text-[#d4af37] font-black uppercase tracking-widest text-[12px] tap-feedback border-[1.5px] border-dashed border-[#d4af37]/50 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button>`;
         }
 
-        document.getElementById('workout-container').innerHTML = `<div class="${enterClass()}">${html}</div>`;
+        document.getElementById('workout-container').innerHTML = `<div class="${enterClass('edit')}">${top}${html}</div>`;
         if (window.appState.sortableInstance) { window.appState.sortableInstance.destroy(); window.appState.sortableInstance = null; }
         const listEl = document.getElementById('sortable-list');
         if (listEl && day.exercises.length > 1 && window.Sortable) {
@@ -1883,6 +1914,77 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             hint('plan-edit', '#sortable-list > div', t('Tap an exercise to edit it. Hold ⋮⋮ and drag to change the order.'));
             if (hintSeen('plan-edit')) hint('plan-add', '#workout-container button[onclick*="openPicker(\'add\')"]', t('Add more exercises from the full library here.'));
         }
+    };
+
+    // 🗓️ PLAN (whole week): one row per day (drag ⋮⋮ to move a day, tap to edit it), then the week's muscle balance.
+    // The weekdays stay put on the left; dragging moves the workout to another weekday.
+    const DAY_KEYS = ['title', 'isRest', 'recoveryType', 'savedTitle', 'exercises'];
+    const BALANCE = [['Chest', ['Chest', 'Upper Chest', 'Lower Chest'], 8], ['Back', ['Back', 'Lats', 'Traps', 'Lower Back'], 8], ['Legs', ['Quads', 'Hamstrings', 'Glutes', 'Calves', 'Adductors', 'Abductors'], 8], ['Shoulders', ['Shoulders', 'Front Delts', 'Side Delts', 'Rear Delts'], 6], ['Arms', ['Biceps', 'Triceps', 'Forearms'], 6], ['Core', ['Abs'], 3]];
+    const muscleBalanceHTML = schedule => {
+        const sets = BALANCE.map(([g, ms, low]) => ({ g, low, n: schedule.reduce((a, d) => a + (d.isRest ? 0 : (d.exercises || []).filter(ex => ms.includes(ex.muscle)).reduce((b, ex) => b + (parseInt(ex.sets) || 0), 0)), 0) }));
+        if (!sets.some(x => x.n)) return '';
+        const top = Math.max(20, ...sets.map(x => x.n));
+        return `<div class="glass-card p-4 mt-4">
+            <div class="flex items-baseline justify-between mb-3"><span class="text-[11px] font-black text-slate-400 uppercase tracking-widest">${t('Muscle balance')}</span><span class="text-[10px] font-bold text-slate-500">${t('Sets per week')}</span></div>
+            <div class="space-y-2.5">${sets.map(x => { const lo = x.n < x.low; return `<div class="flex items-center gap-3">
+                <span class="w-[74px] shrink-0 text-[12px] font-black ${lo ? 'text-orange-400' : 'text-slate-200'}">${esc(t(x.g))}</span>
+                <span class="flex-1 h-2 rounded-full bg-white/10 overflow-hidden" dir="ltr"><span class="block h-full rounded-full ${lo ? 'bg-orange-400' : 'bg-[#d4af37]'}" style="width:${Math.max(x.n ? 4 : 0, Math.round(x.n / top * 100))}%"></span></span>
+                <span class="w-[58px] shrink-0 text-end text-[12px] font-black ${lo ? 'text-orange-400' : 'text-white'}"><span dir="ltr">${x.n}</span>${lo ? ` · ${t('Low')}` : ''}</span>
+            </div>`; }).join('')}</div>
+            <p class="text-[11px] font-bold text-slate-500 mt-3">${t('Aim for about 10–20 sets a week for each muscle.')}</p>
+        </div>`;
+    };
+    const renderPlanWeek = () => {
+        const schedule = getActiveSchedule(), today = getTodayId();
+        const ws = getWeekStart(), dateOf = id => new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() + id - 1);
+        const grip = `<svg width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true"><circle cx="5" cy="4" r="1.8"/><circle cx="11" cy="4" r="1.8"/><circle cx="5" cy="10" r="1.8"/><circle cx="11" cy="10" r="1.8"/><circle cx="5" cy="16" r="1.8"/><circle cx="11" cy="16" r="1.8"/></svg>`;
+        const copyOpts = id => schedule.filter(d => d.id !== id).map(d => `<option value="${d.id}">${esc(dayLong(d.day))}</option>`).join('');
+        const row = d => {
+            const empty = !d.isRest && !(d.exercises || []).length, n = (d.exercises || []).reduce((a, ex) => a + (parseInt(ex.sets) || 0), 0);
+            const title = d.isRest ? t(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : empty ? t('Empty') : t(d.title);
+            const meta = d.isRest ? '' : empty ? `<span class="text-[#d4af37]">＋ ${t('Add exercises')}</span>` : `${t('{n} exercises', { n: d.exercises.length })} · ${t('{n} sets', { n })}`;
+            return `<div class="glass-card plan-ex plan-day ${d.isRest ? 'is-rest' : ''} h-[62px] flex items-center gap-1.5">
+                <span class="handle w-9 h-11 shrink-0 flex items-center justify-center text-slate-500" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>
+                <button onclick="window.appActions.openPlanDay(${d.id})" class="flex-1 min-w-0 h-full flex items-center gap-2.5 text-start tap-feedback" aria-label="${esc(dayLong(d.day) + ' · ' + title)}">
+                    ${d.isRest ? `<i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-4 h-4 text-slate-500 shrink-0"></i>` : empty ? '<span class="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>' : ''}
+                    <span class="flex-1 min-w-0"><span class="block text-[15px] font-black leading-tight truncate ${d.isRest || empty ? 'text-slate-400' : 'text-white'}">${esc(title)}</span>${meta ? `<span class="block text-[11.5px] font-bold text-slate-400 mt-0.5 truncate">${meta}</span>` : ''}</span>
+                </button>
+                ${d.isRest || empty ? '' : `<div class="relative w-9 h-11 shrink-0 flex items-center justify-center text-slate-400 tap-feedback"><select onchange="if(this.value){window.appActions.copyDayFrom(${d.id}, parseInt(this.value));this.value='';}" class="absolute inset-0 w-full h-full opacity-0 z-10" aria-label="${esc(t('Copy this day to…'))}"><option value="">${t('Copy this day to…')}</option>${copyOpts(d.id)}</select><i data-lucide="copy" class="w-4 h-4"></i></div>`}
+            </div>`;
+        };
+        let html = `<div class="flex items-center justify-between gap-2 px-1 mb-2.5">
+                <span class="min-w-0"><span class="block text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${t('This week')}</span><span class="block text-[11px] font-bold text-slate-400">${t('Tap a day to edit it')}</span></span>
+                <button onclick="window.appActions.openPrograms()" class="shrink-0 flex items-center gap-1.5 h-10 px-3.5 rounded-full border text-[11px] font-black bg-[#d4af37]/10 border-[#d4af37]/40 text-[#d4af37] tap-feedback"><i data-lucide="layout-list" class="w-4 h-4"></i>${t('Programs')}</button>
+            </div>
+            <div class="flex gap-2">
+                <div class="w-11 shrink-0 flex flex-col gap-2" aria-hidden="true">${schedule.map(d => `<div class="h-[62px] flex flex-col items-center justify-center rounded-2xl ${d.id === today ? 'bg-[#d4af37]/15 text-[#d4af37]' : 'text-slate-400'}"><span class="text-[10px] font-black uppercase">${esc(dayShort(d.day))}</span><span class="text-[16px] font-black leading-tight ${d.id === today ? '' : 'text-white'}">${dateOf(d.id).getDate()}</span></div>`).join('')}</div>
+                <div id="week-list" class="flex-1 min-w-0 flex flex-col gap-2">${schedule.map(row).join('')}</div>
+            </div>
+            ${muscleBalanceHTML(schedule)}
+            <div class="h-10"></div>`;
+        document.getElementById('workout-container').innerHTML = `<div class="${enterClass('week')}">${html}</div>`;
+        if (window.appState.sortableInstance) { window.appState.sortableInstance.destroy(); window.appState.sortableInstance = null; }
+        const listEl = document.getElementById('week-list');
+        if (listEl && window.Sortable) {
+            window.appState.sortableInstance = new Sortable(listEl, {
+                handle: '.handle', animation: 220, forceFallback: true, fallbackOnBody: true, fallbackTolerance: 3,
+                scroll: document.querySelector('.scrollable-content'), forceAutoScrollFallback: true, scrollSensitivity: 90, scrollSpeed: 18,
+                chosenClass: 'plan-chosen', ghostClass: 'plan-ghost', fallbackClass: 'plan-drag', dragClass: 'plan-drag',
+                onStart: () => { try { if (navigator.vibrate) navigator.vibrate(15); } catch (e) {} },
+                onEnd: evt => {
+                    if (evt.oldIndex === evt.newIndex) return;
+                    // the weekdays stay; the workouts move between them
+                    const take = () => schedule.map(d => { const o = {}; DAY_KEYS.forEach(k => { o[k] = d[k]; }); return o; });
+                    const before = take(), next = take();
+                    next.splice(evt.newIndex, 0, next.splice(evt.oldIndex, 1)[0]);
+                    schedule.forEach((d, i) => Object.assign(d, next[i]));
+                    StorageManager.setPlan(appData); renderNav(); renderWorkout();
+                    window.appActions.showToast(t('Week order saved'), 'success', { label: t('Undo'), fn: () => { schedule.forEach((d, i) => Object.assign(d, before[i])); StorageManager.setPlan(appData); renderNav(); renderWorkout(); } });
+                }
+            });
+        }
+        if (window.lucide) window.lucide.createIcons();
+        if (typeof hint === 'function') hint('plan-week', '#week-list > div', t('Tap a day to edit it. Hold ⋮⋮ and drag to move it to another day.'));
     };
 
     // ⚙️ 5. GLOBAL ACTIONS
@@ -2561,7 +2663,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }, true),
         switchTab: tab => {
             if (tab === 'workout') tab = 'today'; if (tab === 'analytics') tab = 'progress';
-            window.appState.inlineEdit = null; window.appState.planMore = false; window.appState.currentView = tab;
+            window.appState.inlineEdit = null; window.appState.planMore = false; window.appState.todayEdit = false; window.appState.planDay = null; popBack('planday'); window.appState.currentView = tab;
             const prevTab = document.querySelector('.tab-btn.text-\\[\\#d4af37\\]');
             ['today', 'plan', 'progress', 'profile'].forEach(v => { const b = document.getElementById('tabbtn-' + v); if (b) b.className = `tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative ${v === tab ? 'text-[#d4af37]' : 'text-slate-500'}`; });
             const ic = document.querySelector(`#tabbtn-${tab} svg`);
@@ -2578,6 +2680,30 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast(t("Up to 5 routines"),"error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:t('Routine {n}', { n: appData.weeks.length+1 }),schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
         deleteWeek: id => { if(appData.weeks.length<=1)return; window.appActions.showConfirm(t("Delete routine"),t("Delete this routine? Your history is kept."),()=>{appData.weeks=appData.weeks.filter(w=>w.id!==id); if(currentWeekId===id){currentWeekId=appData.weeks[0].id;StorageManager.setActiveWeek(currentWeekId);window.appActions.refreshUI();renderNav();} StorageManager.setPlan(appData); renderSidePanel(); },true); },
         // ⋯ More menu on the Plan day card; a tap anywhere outside it closes it
+        // Today: ✏️ turns the day into the editor (not while a workout runs); Done turns it back
+        setTodayEdit: on => {
+            if (on && window.appState.sess) return;
+            window.appState.todayEdit = !!on; window.appState.planMore = false; window.appState.sameAll = false;
+            renderWorkout();
+            const sc = document.querySelector('.scrollable-content'); if (sc) sc.scrollTop = 0;
+        },
+        planWholeWeek: () => { window.appState.todayEdit = false; window.appActions.switchTab('plan'); },
+        // Plan: null = the whole week, a day id = that day's editor
+        openPlanDay: id => {
+            window.appState.planDay = id; window.appState.planMore = false; window.appState.sameAll = false; window.appState.inlineEdit = null;
+            if (id != null) { activeDay = id; pushBack('planday', () => window.appActions.openPlanDay(null)); } else popBack('planday');
+            renderNav(); renderWorkout();
+            const sc = document.querySelector('.scrollable-content'); if (sc) sc.scrollTop = 0;
+        },
+        copyDayFrom: (fromId, toId) => { activeDay = fromId; window.appActions.copyDay(toId); },
+        // Copy a routine (e.g. a lighter "deload" week); history is shared, so nothing is lost
+        duplicateWeek: id => {
+            const w = appData.weeks.find(x => x.id === id); if (!w) return;
+            if (appData.weeks.length >= 5) return window.appActions.showToast(t('Up to 5 routines'), 'error');
+            appData.weeks.push({ id: 'w_' + Date.now(), name: t('{name} (copy)', { name: t(w.name) }).slice(0, 40), schedule: JSON.parse(JSON.stringify(w.schedule)) });
+            StorageManager.setPlan(appData); renderSidePanel();
+            window.appActions.showToast(t('Routine duplicated'), 'success');
+        },
         togglePlanMore: v => {
             const open = window.appState.planMore = v === undefined ? !window.appState.planMore : v;
             renderWorkout();
@@ -2596,8 +2722,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         toggleRoutines: () => { window.appState.routinesOpen = !window.appState.routinesOpen; renderSidePanel(); },
         renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=v||t('Unnamed'); StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=appData.weeks.find(x=>x.id===currentWeekId).name; },
-        switchWeek: id => { currentWeekId=id; StorageManager.setActiveWeek(id); activeDay=getTodayId(); window.appState.inlineEdit=null; renderNav(); renderWorkout(); },
-        setActiveDay: id => { window.appState.inlineEdit=null; window.appState.planMore=false; activeDay=id; renderNav(); renderWorkout(); },
+        switchWeek: id => { currentWeekId=id; StorageManager.setActiveWeek(id); activeDay=getTodayId(); window.appState.inlineEdit=null; window.appState.planDay=null; renderNav(); renderWorkout(); },
+        setActiveDay: id => { window.appState.inlineEdit=null; window.appState.planMore=false; if (window.appState.currentView==='today') window.appState.todayEdit=false; else if (window.appState.planDay!=null) window.appState.planDay=id; activeDay=id; renderNav(); renderWorkout(); },
         toggleRpe: v => { StorageManager.setShowRpe(v); window.appActions.showToast(t(v ? 'RPE column on' : 'RPE column off'), 'success'); },
         openBackupModal: () => { openModal('smart-backup-overlay','smart-backup-box'); pushBack('backup', () => window.appActions.closeBackupModal()); },
         closeBackupModal: () => { popBack('backup'); closeModal('smart-backup-overlay','smart-backup-box'); },
