@@ -1014,7 +1014,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '40';
+    const APP_VERSION = '41';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -4426,7 +4426,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     enableSwipeDown(document.getElementById('picker-box'), () => window.appActions.closePicker());
     enableSwipeDown(document.getElementById('history-modal-box'), () => window.appActions.closeHistoryModal());
     enableSwipeDown(document.getElementById('programs-box'), () => window.appActions.closePrograms());
-    enableDaySwipe(document.getElementById('workout-container'));
+    enableDaySwipe(document.querySelector('.scrollable-content')); // the whole Today screen, so rest days (one small card) swipe too
     // An unfinished Log/Focus session (e.g. the phone closed the app during rest) comes back minimized
     (() => {
         const dr = readJSON(SESSION_KEY, null);

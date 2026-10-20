@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <!-- No zooming: pinch is blocked (iPhone ignores user-scalable=0), double-tap zoom is off in the CSS (touch-action) -->
+    <script>document.addEventListener('gesturestart', function (e) { e.preventDefault(); }); document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });</script>
     <meta name="theme-color" content="#050505">
     <meta name="description" content="Apex Lift Privacy Policy">
     <title>Privacy Policy · Apex Lift</title>
@@ -74,7 +76,8 @@ footer nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 1
 @media (max-width: 520px) { h1 { font-size: 28px; } .toc { grid-template-columns: 1fr; } }
 @media (max-width: 360px) { .glance { grid-template-columns: 1fr; } }
 @media print { .bar, .top, .contact, footer nav { display: none; } body { background: #fff; color: #000; } .sec, .tile, .toc, .hero { border-color: #ccc; background: #fff; } .sec p, .sec li, .tile p { color: #222; } h1, .sec h2, .sec b, .tile b { color: #000; } }
-</style>
+        html, body, * { touch-action: pan-x pan-y; } /* no zooming */
+    </style>
 </head>
 <body>
   <header class="bar"><div class="bar-in">

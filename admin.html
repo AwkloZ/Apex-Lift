@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <!-- No zooming: pinch is blocked (iPhone ignores user-scalable=0), double-tap zoom is off in the CSS (touch-action) -->
+    <script>document.addEventListener('gesturestart', function (e) { e.preventDefault(); }); document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });</script>
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#050505">
     <title>Admin · Apex Lift</title>
@@ -148,6 +150,7 @@
             .tools { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .tools > * { min-width: 0 !important; width: 100%; }
             .tools #q, .tools #reload { grid-column: 1 / -1; } .tools .check { padding-inline-start: 4px; }
         }
+            html, body, * { touch-action: pan-x pan-y; } /* no zooming */
     </style>
 </head>
 <body>

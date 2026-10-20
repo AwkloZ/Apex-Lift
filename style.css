@@ -94,7 +94,8 @@ body {
 
 
 
-* { touch-action: manipulation; }
+/* scrolling only: no pinch zoom and no double-tap zoom anywhere in the app */
+html, body, * { touch-action: pan-x pan-y; }
 
 input[type="number"], input[type="text"], select {
     font-size: 16px !important;
