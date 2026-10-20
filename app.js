@@ -1065,7 +1065,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '48';
+    const APP_VERSION = '49';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -4625,10 +4625,11 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // Done on the page itself, so every screen, chart and toast is covered; stored data and typed boxes keep 0-9.
     // Routine codes (.code-big, .latin-num) stay in 0-9 so they can be read out and typed in.
     const AR_DIGITS = '٠١٢٣٤٥٦٧٨٩';
-    const toArDigits = str => str.replace(/(\d)\.(?=\d)/g, '$1٫').replace(/\d/g, d => AR_DIGITS[d]);
+    // also "60kg" → "60 كجم": units written in the code are translated where they are shown
+    const toArDigits = str => str.replace(/(\d)\s?kg\b/g, '$1 كجم').replace(/\bkg\b/g, 'كجم').replace(/(\d)\.(?=\d)/g, '$1٫').replace(/\d/g, d => AR_DIGITS[d]);
     const arDigitsIn = root => {
         if (!isAR || !root) return;
-        const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => /\d/.test(n.nodeValue) && !(n.parentElement && n.parentElement.closest('script, style, textarea, .code-big, .latin-num')) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT });
+        const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => /\d|\bkg\b/.test(n.nodeValue) && !(n.parentElement && n.parentElement.closest('script, style, textarea, .code-big, .latin-num')) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT });
         const list = []; while (w.nextNode()) list.push(w.currentNode);
         list.forEach(n => { n.nodeValue = toArDigits(n.nodeValue); });
     };

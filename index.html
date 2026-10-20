@@ -274,7 +274,7 @@
 
     <div class="scrollable-content p-6">
         <div class="w-full max-w-2xl mx-auto">
-            <header class="flex justify-between items-center safe-notch mb-5 px-1">
+            <header dir="ltr" class="flex justify-between items-center safe-notch mb-5 px-1">
                 <h1 dir="ltr" class="text-3xl font-black italic tracking-tighter uppercase leading-none text-white flex items-end gap-2 logo-mark">
                     APEX <span class="text-[#d4af37]">LIFT</span>
                 </h1>
@@ -397,7 +397,7 @@
     </div>
 
     <!-- Bottom tab bar: Today (the day you train, view "today"), Plan (the week editor, view "plan"), Progress, Profile -->
-    <nav id="tab-bar" class="fixed bottom-0 inset-x-0 z-[150] bg-[#0b0b0b]/95 backdrop-blur-xl border-t border-white/10">
+    <nav id="tab-bar" dir="ltr" class="fixed bottom-0 inset-x-0 z-[150] bg-[#0b0b0b]/95 backdrop-blur-xl border-t border-white/10">
         <div class="max-w-2xl mx-auto grid grid-cols-4">
             <button id="tabbtn-today" onclick="window.appActions.switchTab('today')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="dumbbell" class="w-6 h-6"></i><span class="text-[12px] font-bold" data-i18n="Today">Today</span></button>
             <button id="tabbtn-plan" onclick="window.appActions.switchTab('plan')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="calendar-days" class="w-6 h-6"></i><span class="text-[12px] font-bold" data-i18n="Plan">Plan</span></button>

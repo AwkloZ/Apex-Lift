@@ -67,7 +67,7 @@ const audit = smallOk => {
         try {
             localStorage.setItem('workoutLang_rakan_final', lang); localStorage.setItem('workoutTheme_rakan_final', theme);
             // About you filled in, so it doesn't cover the app after a reload
-            if (!localStorage.getItem('workoutBody_rakan_final')) localStorage.setItem('workoutBody_rakan_final', JSON.stringify({ birthYear: 1995, sex: 'male', heightCm: 178, weightKg: 80, locked: true }));
+            if (!localStorage.getItem('workoutBody_rakan_final')) localStorage.setItem('workoutBody_rakan_final', JSON.stringify({ birthYear: 1995, birthDate: '1995-05-20', sex: 'male', heightCm: 178, weightKg: 80, locked: true }));
         } catch (e) {}
     }, [LANG, THEME]);
     await page.goto(base + '/index.html');
@@ -79,7 +79,7 @@ const audit = smallOk => {
         for (const f of await page.evaluate(audit, SMALL_OK)) fails.push(`[${name}] ${f}`);
     };
     await shot('setup');
-    await page.evaluate(() => { const W = window.appState.wiz; Object.assign(W, { goal: 'muscle', days: 4, exp: 'mid', eq: 'gym' }); window.appActions.wizFinish('program'); });
+    await page.evaluate(() => { const W = window.appState.wiz; Object.assign(W, { goal: 'muscle', days: '4', exp: 'mid', eq: 'gym', session: '60' }); window.appActions.wizFinish('program'); });
     await page.waitForTimeout(4500); // let the "ready" message go
     await shot('today');
     for (const t of ['plan', 'progress', 'profile']) await shot(t, () => page.evaluate(t => window.appActions.switchTab(t), t));
