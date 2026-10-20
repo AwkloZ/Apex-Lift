@@ -44,7 +44,7 @@
     </div>
 
     <!-- Program gallery (Plan → Programs) -->
-    <!-- First launch: intro pages you swipe through, then sign in with Google (required to use the app) -->
+    <!-- First launch: intro pages you swipe through, then sign in with Google or email (required to use the app) -->
     <div id="welcome-overlay" class="fixed inset-0 z-[9990] bg-[#050505] hidden flex-col">
         <div class="flex items-center justify-between px-5 shrink-0" style="padding-top: calc(env(safe-area-inset-top) + 14px);">
             <div dir="ltr" class="text-xl font-black italic tracking-tighter uppercase text-white">APEX <span class="text-[#d4af37]">LIFT</span></div>
@@ -400,7 +400,7 @@
         </div>
     </div>
 
-    <!-- Google sign-in required: delete require-sign-in.js (or this line) to make sign-in optional -->
+    <!-- Sign-in (Google or email) required before using the app: delete require-sign-in.js (or this line) to make it optional -->
     <script src="require-sign-in.js"></script>
     <script src="library.js"></script>
     <script src="app.js"></script>

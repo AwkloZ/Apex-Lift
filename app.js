@@ -970,7 +970,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '29';
+    const APP_VERSION = '30';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -4013,8 +4013,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const hideWelcome = () => {
         const o = document.getElementById('welcome-overlay'); if (!welcomeOpen()) return;
         try { localStorage.setItem(INTRO_KEY, '1'); } catch (e) {}
-        o.classList.add('fade-out'); setTimeout(() => { o.classList.add('hidden'); o.classList.remove('flex', 'fade-out'); }, 350);
+        o.classList.add('fade-out'); setTimeout(() => { o.classList.add('hidden'); o.classList.remove('flex', 'fade-out'); uncoverApp(); }, 350);
     };
+    // require-sign-in.js covers the app until you are signed in: take the cover away
+    const uncoverApp = () => document.documentElement.classList.remove('apex-gate');
     document.getElementById('welcome-slides').addEventListener('scroll', e => {
         const el = e.currentTarget, i = Math.round(Math.abs(el.scrollLeft) / Math.max(1, el.clientWidth));
         if (i !== welcomeIdx) { welcomeIdx = Math.max(0, Math.min(W_SLIDES.length - 1, i)); updateWelcomeUI(); }
@@ -4263,7 +4265,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     setTimeout(() => {
         const introSeen = localStorage.getItem(INTRO_KEY) === '1';
         if (gateOn() && ((!isSignedIn() && (requireSignIn() || !introSeen)) || (isSignedIn() && !getAgree()))) showWelcome(introSeen || isSignedIn());
-        else window.appActions.initOnboarding();
+        else { uncoverApp(); window.appActions.initOnboarding(); }
     }, 300);
     // Coming back to the app on a new day: jump to today (unless a workout is open)
     let lastToday = getTodayId();
