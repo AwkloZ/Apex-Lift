@@ -213,11 +213,11 @@
                 <button onclick="window.appActions.closeBackupModal()" class="text-slate-400 hover:text-white tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             
-            <p class="text-[12px] font-bold text-slate-400 mb-5 leading-relaxed" data-i18n="One file with your routines, workout history and settings. Save it, send it to a friend, or give it to an AI assistant to review your training.">One file with your routines, workout history and settings. Save it, send it to a friend, or give it to an AI assistant to review your training.</p>
+            <p class="text-[12px] font-bold text-slate-400 mb-5 leading-relaxed" data-i18n="Your routines, workouts and settings in one file.">Your routines, workouts and settings in one file.</p>
 
             <button onclick="window.appActions.executeSmartBackup('file')" class="w-full rounded-xl py-3.5 text-[12px] font-extrabold text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center gap-2"><i data-lucide="share" class="w-4 h-4"></i><span data-i18n="Save or share file">Save or share file</span></button>
             <button onclick="window.appActions.executeSmartBackup('copy')" class="w-full mt-2 rounded-xl py-3.5 text-[12px] font-bold text-white bg-white/5 border border-white/10 tap-feedback flex items-center justify-center gap-2"><i data-lucide="copy" class="w-4 h-4"></i><span data-i18n="Copy as text">Copy as text</span></button>
-            <p class="text-[12px] font-bold text-slate-400 mt-3 leading-snug text-center" data-i18n="Copy as text: paste it into a chat with an AI assistant.">Copy as text: paste it into a chat with an AI assistant.</p>
+            <p class="text-[12px] font-bold text-slate-400 mt-3 leading-snug text-center" data-i18n="Copy the text to paste into an AI chat.">Copy the text to paste into an AI chat.</p>
         </div>
     </div>
     <!-- Exercise picker (slides up from the bottom) -->
@@ -265,7 +265,7 @@
             <section id="profile-view" class="hidden pb-6">
                 <div id="account-card" class="mb-3"></div>
                 <div id="profile-stats" class="mb-6"></div>
-                <div id="about-card" class="mb-6"></div>
+                <div id="about-card"></div>
 
                 <h3 class="pf-h" data-i18n="Workout">Workout</h3>
                 <div class="pf-group mb-6">
@@ -336,11 +336,6 @@
                     <button id="pf-backups" onclick="window.appActions.openBackups()" class="pf-row tap-feedback hidden">
                         <span class="pf-ic"><i data-lucide="history"></i></span>
                         <span class="pf-label"><span data-i18n="Account backups">Account backups</span><span class="pf-sub" data-i18n="Go back to an earlier copy">Go back to an earlier copy</span></span>
-                        <i data-lucide="chevron-right" class="pf-chev"></i>
-                    </button>
-                    <button onclick="window.appActions.startWizard(false)" class="pf-row tap-feedback">
-                        <span class="pf-ic"><i data-lucide="wand-2"></i></span>
-                        <span class="pf-label"><span data-i18n="Set up my program again">Set up my program again</span><span class="pf-sub" data-i18n="Find the program that fits you best">Find the program that fits you best</span></span>
                         <i data-lucide="chevron-right" class="pf-chev"></i>
                     </button>
                 </div>

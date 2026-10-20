@@ -18,7 +18,7 @@
     const isAR = LANG === 'ar';
     const AR = {
         "\"Low in plan\" means your routine has few sets for it: add some in the Plan tab.": "\"قليل في الخطة\" يعني أن روتينك فيه مجموعات قليلة لهذه العضلة: أضف المزيد من تبويب الخطة.",
-        "Also in Profile → About you.": "متوفر أيضًا في الملف الشخصي ← عنك.",
+        "Also in Profile → Your profile.": "متوفر أيضًا في حسابي ← ملفك.",
         "Body": "الجسم",
         "Compared with the same days last week.": "مقارنةً بنفس الأيام من الأسبوع الماضي.",
         "Done / planned": "المنجز / المخطط",
@@ -388,7 +388,7 @@
         "Back up now": "انسخ الآن",
         "Backup restored": "تم استرجاع النسخة",
         "Backup saved to your account": "تم حفظ النسخة في حسابك",
-        "Backups are blocked by the Firebase rules. Publish the new firestore.rules.": "النسخ الاحتياطية محظورة بقواعد Firebase. انشر ملف firestore.rules الجديد.",
+        "Backup isn't available right now. Try again later.": "النسخ الاحتياطي غير متاح حاليًا. حاول لاحقًا.",
         "Before restore": "قبل الاسترجاع",
         "Before coach update": "قبل تحديث المدرب",
         "Message from your coach": "رسالة من مدربك",
@@ -457,7 +457,7 @@
         "Synced · {time}": "تمت المزامنة · {time}",
         "Syncing…": "جارٍ المزامنة…",
         "This deletes your cloud backup and your account. The workouts on this phone stay.": "سيحذف هذا نسختك السحابية وحسابك. التمارين المحفوظة على هذا الجوال تبقى.",
-        "This website is not allowed in Firebase yet (Authentication → Settings → Authorized domains).": "هذا الموقع غير مسموح في Firebase بعد (Authentication ← Settings ← Authorized domains).",
+        "Sign-in isn't available on this site yet.": "تسجيل الدخول غير متاح على هذا الموقع حاليًا.",
         "Your workouts stay on this phone. Sign in again anytime to sync.": "تمارينك تبقى على هذا الجوال. سجّل الدخول مرة أخرى في أي وقت للمزامنة.",
         "Old:": "القديم:",
         "Overwrites current schedule": "يستبدل الجدول الحالي",
@@ -552,15 +552,14 @@
         "Account": "الحساب",
         "Add a routine by code": "أضف برنامجًا برمز",
         "Add to my routines": "أضف إلى برامجي",
-        "Answer the setup questions again": "أجب عن أسئلة الإعداد من جديد",
         "App": "التطبيق",
         "Back to the default routine. History is kept.": "العودة إلى البرنامج الافتراضي. يبقى سجلك محفوظًا.",
         "Choose what goes in the file. Save it, send it to a friend, or give it to an AI assistant to review your training.": "اختر ما يحتويه الملف. احفظه أو أرسله لصديق أو أعطه لمساعد ذكاء اصطناعي ليراجع تمرينك.",
         "Code copied": "تم نسخ الرمز",
         "Contact us": "تواصل معنا",
-        "Copied. Paste it into a chat with an AI assistant.": "تم النسخ. الصقه في محادثة مع مساعد ذكاء اصطناعي.",
+        "Copied": "تم النسخ",
         "Copy as text": "نسخ كنص",
-        "Copy as text: paste it into a chat with an AI assistant.": "نسخ كنص: الصقه في محادثة مع مساعد ذكاء اصطناعي.",
+        "Copy the text to paste into an AI chat.": "انسخ النص لتلصقه في محادثة ذكاء اصطناعي.",
         "Copy code": "نسخ الرمز",
         "Could not copy. Use Save or share file.": "تعذّر النسخ. استخدم حفظ أو مشاركة الملف.",
         "Could not copy. Use Share instead.": "تعذّر النسخ. استخدم المشاركة بدلًا من ذلك.",
@@ -578,14 +577,14 @@
         "Help & legal": "المساعدة والشروط",
         "How hard each set felt": "مدى صعوبة كل مجموعة",
         "Import data": "استيراد البيانات",
-        "Save a file or share it with an AI": "احفظ ملفًا أو شاركه مع ذكاء اصطناعي",
+        "Save or share a copy": "احفظ أو شارك نسخة",
         "Last export: today": "آخر تصدير: اليوم",
         "Last export: {n} days ago": "آخر تصدير: قبل {n} يوم",
         "Looking for the routine…": "جارٍ البحث عن البرنامج…",
         "Member since {date}": "عضو منذ {date}",
         "My training": "تمريني",
         "No routine found for this code. Check it and try again.": "لا يوجد برنامج بهذا الرمز. تأكد منه وحاول مرة أخرى.",
-        "Only the days and exercises are shared. Your workouts and personal details stay private.": "تتم مشاركة الأيام والتمارين فقط. تبقى تمارينك المسجّلة وبياناتك الشخصية خاصة.",
+        "Only the routine is shared. Your workouts and details stay private.": "تتم مشاركة الجدول فقط. تبقى تمارينك وبياناتك خاصة.",
         "Paste a code a friend gave you": "الصق رمزًا أعطاك إياه صديق",
         "Records": "الأرقام القياسية",
         "Reset routines": "إعادة ضبط البرامج",
@@ -601,7 +600,7 @@
         "Type or paste the code a friend gave you.": "اكتب أو الصق الرمز الذي أعطاك إياه صديقك.",
         "Used to suggest programs and sets.": "يُستخدم لاقتراح البرامج وعدد المجموعات.",
         "Where you train": "مكان التمرين",
-        "You have 5 routines, the most allowed. Delete one in Edit first.": "لديك 5 برامج وهو الحد الأقصى. احذف واحدًا من تبويب تعديل أولًا.",
+        "You have 5 routines, the maximum. Delete one in Plan first.": "لديك 5 جداول وهو الحد الأقصى. احذف واحدًا من الخطة أولًا.",
         "{a} workout days · {b} exercises": "{a} أيام تمرين · {b} تمارين",
         "3 to 5 years": "من 3 إلى 5 سنوات",
         "Back to sign in": "العودة لتسجيل الدخول",
@@ -609,55 +608,49 @@
         "Before import": "قبل الاستيراد",
         "Confirm your password": "أكّد كلمة المرور",
         "Continue with email": "المتابعة بالبريد الإلكتروني",
-        "Could not back up your data, so nothing was imported. Check your connection and try again.": "تعذّر نسخ بياناتك احتياطيًا، لذلك لم يتم استيراد أي شيء. تحقق من اتصالك وحاول مرة أخرى.",
+        "Backup failed, so nothing was imported. Check your connection.": "فشل النسخ الاحتياطي، لذلك لم يتم الاستيراد. تحقق من اتصالك.",
         "Create account": "إنشاء الحساب",
         "Create an account": "أنشئ حسابًا",
         "Create your account": "أنشئ حسابك",
         "Email": "البريد الإلكتروني",
         "Email or password is wrong.": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
         "Email sent. Check your inbox.": "تم الإرسال. تحقق من بريدك.",
-        "Email sign-in is not turned on yet. Please use Google for now.": "تسجيل الدخول بالبريد غير مفعّل بعد. استخدم Google حاليًا.",
-        "Enter your account's email. We'll send you a link to choose a new password.": "أدخل بريد حسابك وسنرسل لك رابطًا لاختيار كلمة مرور جديدة.",
+        "Email sign-in isn't available yet. Use Google for now.": "تسجيل الدخول بالبريد غير متاح حاليًا. استخدم Google.",
+        "Enter your email and we'll send you a reset link.": "أدخل بريدك وسنرسل لك رابط إعادة التعيين.",
         "Extra sets on the first three lifts": "مجموعات إضافية في أول ثلاثة تمارين",
-        "Find the program that fits you best": "اعثر على البرنامج الأنسب لك",
-        "For your safety, enter your password to delete your account.": "لحمايتك، أدخل كلمة المرور لحذف حسابك.",
+        "Enter your password to delete your account.": "أدخل كلمة المرور لحذف حسابك.",
         "Forgot password?": "نسيت كلمة المرور؟",
         "Have an account?": "لديك حساب؟",
         "I'm just starting": "أنا مبتدئ تمامًا",
-        "If this email has an account, a link to choose a new password is on its way. Check your inbox.": "إذا كان لهذا البريد حساب فسيصلك رابط لاختيار كلمة مرور جديدة. تحقق من بريدك.",
+        "If an account exists, we've sent a reset link. Check your inbox.": "إذا كان هناك حساب بهذا البريد فقد أرسلنا رابط إعادة التعيين. تحقق من بريدك.",
         "Import": "استيراد",
         "Import this file?": "استيراد هذا الملف؟",
-        "Imported. Your previous data is saved in Account backups.": "تم الاستيراد. بياناتك السابقة محفوظة في نسخ الحساب الاحتياطية.",
+        "Imported. Your old data is in Account backups.": "تم الاستيراد. بياناتك السابقة في نسخ الحساب الاحتياطية.",
         "More than 5 years": "أكثر من 5 سنوات",
-        "Needed to fit the app to you. Birth year, height and sex can't be changed later, so please check them.": "مطلوبة لتخصيص التطبيق لك. لا يمكن تغيير سنة الميلاد والطول والجنس لاحقًا، فتأكد منها.",
         "Never trained, or back after a long break": "لم أتمرن من قبل، أو عائد بعد انقطاع طويل",
         "New here?": "جديد هنا؟",
-        "One file with your routines, workout history and settings. Save it, send it to a friend, or give it to an AI assistant to review your training.": "ملف واحد فيه برامجك وسجل تمارينك وإعداداتك. احفظه أو أرسله لصديق أو أعطه لمساعد ذكاء اصطناعي ليراجع تمرينك.",
+        "Your routines, workouts and settings in one file.": "برامجك وتمارينك وإعداداتك في ملف واحد.",
         "Password": "كلمة المرور",
-        "Please confirm your email: open the link we sent you.": "أكّد بريدك الإلكتروني: افتح الرابط الذي أرسلناه لك.",
+        "Confirm your email. Check your inbox.": "أكّد بريدك الإلكتروني. تحقق من رسائلك.",
         "Please enter a valid email.": "أدخل بريدًا إلكترونيًا صحيحًا.",
         "Please enter your name.": "أدخل اسمك.",
         "Please enter your password.": "أدخل كلمة المرور.",
-        "Please fill in all fields.": "يرجى تعبئة جميع الحقول.",
         "Program & data": "البرنامج والبيانات",
         "Reset your password": "إعادة تعيين كلمة المرور",
         "Saved": "تم الحفظ",
         "Send again": "أعد الإرسال",
         "Send link": "إرسال الرابط",
-        "Send the link, or give the code to a friend: in Apex Lift they open Edit → My routines → Add a routine by code.": "أرسل الرابط أو أعطِ الرمز لصديقك: يفتح Apex Lift ← تعديل ← برامجي ← أضف برنامجًا برمز.",
+        "Share the link, or your friend can enter the code in Plan → My routines.": "شارك الرابط، أو يدخل صديقك الرمز من الخطة ← جداولي.",
         "Show password": "إظهار كلمة المرور",
         "Sign in": "تسجيل الدخول",
-        "Sign in first: your data is backed up to your account before an import.": "سجّل الدخول أولًا: تُنسخ بياناتك احتياطيًا في حسابك قبل الاستيراد.",
+        "Sign in to import. We back up your data first.": "سجّل الدخول للاستيراد. نحفظ نسخة من بياناتك أولًا.",
         "Sign in with email": "تسجيل الدخول بالبريد",
         "This account is turned off. Contact us.": "هذا الحساب موقوف. تواصل معنا.",
         "This can't be changed.": "لا يمكن تغيير هذا.",
         "This email already has an account. Sign in instead.": "لهذا البريد حساب بالفعل. سجّل الدخول بدلًا من ذلك.",
         "Too many tries. Wait a few minutes and try again.": "محاولات كثيرة. انتظر بضع دقائق وحاول مرة أخرى.",
-        "Update your weight anytime. Birth year, height and sex can't be changed; contact us if something is wrong.": "حدّث وزنك في أي وقت. لا يمكن تغيير سنة الميلاد والطول والجنس؛ تواصل معنا إذا كان هناك خطأ.",
-        "Used to tailor the app and to improve Apex Lift. Never sold or shared.": "تُستخدم لتخصيص التطبيق وتطوير Apex Lift، ولا تُباع ولا تُشارك أبدًا.",
-        "You can change any day and exercise later in Edit.": "يمكنك تغيير أي يوم أو تمرين لاحقًا من تبويب تعديل.",
         "Your name": "اسمك",
-        "Your routines and settings are replaced by the file's, and its workouts are added to yours. Your current data is saved to your account first.": "تُستبدل برامجك وإعداداتك بما في الملف، وتُضاف تمارينه المسجّلة إلى تمارينك. تُحفظ بياناتك الحالية في حسابك أولًا.",
+        "Routines and settings will be replaced and workouts added. We back up your current data first.": "ستُستبدل البرامج والإعدادات وتُضاف التمارين. نحفظ نسخة من بياناتك الحالية أولًا.",
         "Your workouts are saved to your account and kept in sync on all your phones.": "تُحفظ تمارينك في حسابك وتبقى متزامنة على كل أجهزتك.",
         "{n} exercises with history": "{n} تمارين لها سجل",
         "At least 8 characters": "8 أحرف على الأقل",
@@ -666,8 +659,60 @@
         "Your password needs at least 8 characters, a capital letter and a symbol.": "كلمة المرور يجب أن تكون 8 أحرف على الأقل وفيها حرف كبير ورمز.",
         "Use your email and a strong password.": "استخدم بريدك وكلمة مرور قوية.",
         "Before you continue": "قبل المتابعة",
-        "Please read and agree to our Terms of Use and Privacy Policy. They explain how Apex Lift works and how your data is kept safe.": "يرجى قراءة شروط الاستخدام وسياسة الخصوصية والموافقة عليها. توضّح كيف يعمل Apex Lift وكيف تُحفظ بياناتك بأمان.",
+        "Review the Terms of Use and Privacy Policy to continue.": "راجع شروط الاستخدام وسياسة الخصوصية للمتابعة.",
         "I agree, continue": "أوافق، متابعة",
+        "90+ min": "+90 دقيقة",
+        "90+ minutes": "+90 دقيقة",
+        "{n} min": "{n} دقيقة",
+        "{n} minutes": "{n} دقيقة",
+        "A friend": "صديق",
+        "Age": "العمر",
+        "Age, sex and height are set during setup. Contact us to correct them.": "العمر والجنس والطول تُحدَّد أثناء الإعداد. تواصل معنا لتصحيحها.",
+        "Answer again and get a matching program": "أجب من جديد واحصل على برنامج مناسب",
+        "Any injuries or pain?": "هل لديك إصابة أو ألم؟",
+        "Born {date}": "مواليد {date}",
+        "Check your date of birth.": "تحقق من تاريخ ميلادك.",
+        "Date of birth": "تاريخ الميلاد",
+        "Date of birth, sex and height can't be changed after setup.": "لا يمكن تغيير تاريخ الميلاد والجنس والطول بعد الإعداد.",
+        "Elbow or wrist": "الكوع أو الرسغ",
+        "Enter your date of birth.": "أدخل تاريخ ميلادك.",
+        "Enter your height in cm (100–250).": "أدخل طولك بالسنتيمتر (100–250).",
+        "Enter your weight in kg (25–350).": "أدخل وزنك بالكيلوغرام (25–350).",
+        "Equipment": "المعدات",
+        "Google search": "بحث Google",
+        "Height": "الطول",
+        "Height and weight": "الطول والوزن",
+        "Hip": "الورك",
+        "How did you hear about Apex Lift?": "كيف عرفت Apex Lift؟",
+        "How long is each workout?": "كم مدة التمرين الواحد؟",
+        "Injuries": "الإصابات",
+        "Instagram": "إنستغرام",
+        "Just starting": "مبتدئ",
+        "Knee": "الركبة",
+        "Locked": "مقفل",
+        "Lower back": "أسفل الظهر",
+        "None": "لا يوجد",
+        "Other": "أخرى",
+        "Pick all that apply.": "اختر كل ما ينطبق.",
+        "Pick at least one, or None.": "اختر واحدًا على الأقل، أو لا يوجد.",
+        "Profile updated": "تم تحديث الملف",
+        "Shoulder": "الكتف",
+        "Snapchat": "سناب شات",
+        "This has to match the birth year on your profile ({y}).": "يجب أن يطابق سنة الميلاد في ملفك ({y}).",
+        "TikTok": "تيك توك",
+        "Update training": "تحديث التمرين",
+        "Updated {date}": "آخر تحديث {date}",
+        "Used for your starting weights.": "يُستخدم لتحديد أوزانك في البداية.",
+        "Used to track your progress.": "يُستخدم لمتابعة تقدمك.",
+        "Weight": "الوزن",
+        "What's your sex?": "ما جنسك؟",
+        "When were you born?": "متى وُلدت؟",
+        "Workout length": "مدة التمرين",
+        "X (Twitter)": "X (تويتر)",
+        "You can change any day or exercise later in Plan.": "يمكنك تغيير أي يوم أو تمرين لاحقًا من الخطة.",
+        "YouTube": "يوتيوب",
+        "Your profile": "ملفك الشخصي",
+        "Your training": "تمرينك",
     };
     const t = (en, vars) => {
         let out = (isAR && Object.prototype.hasOwnProperty.call(AR, en) && AR[en]) || en;
@@ -907,7 +952,7 @@
     const getResets = () => { const v = readJSON(RESET_KEY, {}); return isObj(v) ? v : {}; };
     const setResets = d => { try { localStorage.setItem(RESET_KEY, JSON.stringify(d)); } catch (e) {} };
     // Terms of Use & Privacy Policy: which version the user agreed to, and when
-    const TERMS_VERSION = '2026-10.5';
+    const TERMS_VERSION = '2026-10.6';
     const AGREE_KEY = 'workoutAgreed_rakan_final';
     const getAgree = () => { const v = readJSON(AGREE_KEY, null); return isObj(v) && v.v === TERMS_VERSION ? v : null; };
     const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
@@ -979,7 +1024,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '38';
+    const APP_VERSION = '39';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1104,15 +1149,39 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // 'pro' = over 5 years: one set more on the first three lifts (never more than 5)
     const EXP_LEVELS = ['none', 'new', 'mid', 'adv', 'pro'];
     const PROFILE_KEY = 'workoutProfile_rakan_final';
-    const getProfile = () => { const v = readJSON(PROFILE_KEY, {}); return isObj(v) ? v : {}; };
-    // "About you" (needed in the setup): birth year, sex, height, body weight + a log of body weight over time.
-    // Once confirmed (locked), birth year, height and sex can't be changed; body weight can.
+    // Training answers from the setup: goal, days a week, experience, equipment, workout length (minutes),
+    // injuries (list) and how they heard about Apex Lift
+    const SESSION_OPTS = ['30', '45', '60', '90'];
+    const INJURY_OPTS = ['none', 'shoulder', 'back', 'knee', 'elbow', 'hip', 'other'];
+    const SOURCE_OPTS = ['instagram', 'tiktok', 'snapchat', 'x', 'youtube', 'friend', 'search', 'other'];
+    const sanitizeProfile = raw => {
+        const p = isObj(raw) ? raw : {}, out = {};
+        ['goal', 'days', 'exp', 'eq', 'session', 'source'].forEach(k => { if (typeof p[k] === 'string' && p[k] && p[k].length <= 20) out[k] = p[k]; });
+        if (Array.isArray(p.injuries)) { const list = INJURY_OPTS.filter(x => p.injuries.includes(x)); if (list.length) out.injuries = list.includes('none') ? ['none'] : list; }
+        return out;
+    };
+    const getProfile = () => sanitizeProfile(readJSON(PROFILE_KEY, {}));
+    const PROFILE_STEPS = ['sex', 'birth', 'body'], TRAINING_STEPS = ['goal', 'exp', 'days', 'session', 'eq', 'injury'];
+    const INJURY_LABEL = { none: 'None', shoulder: 'Shoulder', back: 'Lower back', knee: 'Knee', elbow: 'Elbow or wrist', hip: 'Hip', other: 'Other' };
+    const SOURCE_LABEL = { instagram: 'Instagram', tiktok: 'TikTok', snapchat: 'Snapchat', x: 'X (Twitter)', youtube: 'YouTube', friend: 'A friend', search: 'Google search', other: 'Other' };
+    // is this setup question answered already?
+    const setupAnswered = (k, b = getBody(), pr = getProfile()) => ({
+        sex: !!b.sex, birth: !!b.birthDate, body: !!(b.heightCm && b.weightKg),
+        goal: !!pr.goal, exp: EXP_LEVELS.includes(pr.exp), days: !!pr.days, session: SESSION_OPTS.includes(pr.session), eq: !!pr.eq,
+        injury: !!(pr.injuries && pr.injuries.length), source: SOURCE_OPTS.includes(pr.source)
+    })[k];
+    // the questions still to answer (asked once on the next visit after an update)
+    const setupMissing = () => { const b = getBody(), pr = getProfile(); return [...PROFILE_STEPS, ...TRAINING_STEPS, 'source'].filter(k => !setupAnswered(k, b, pr)); };
+    // Your profile (set in the setup): date of birth, sex, height, body weight + a log of body weight over time.
+    // After the setup (locked) date of birth, sex and height can't be changed; body weight can.
     const BODY_KEY = 'workoutBody_rakan_final';
     const MIN_AGE = 13;
     const thisYear = () => new Date().getFullYear();
     const sanitizeBody = raw => {
         const b = isObj(raw) ? raw : {}, out = {};
         const y = parseInt(latinDigits(b.birthYear)); if (y >= thisYear() - 100 && y <= thisYear() - 5) out.birthYear = y;
+        const bd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(b.birthDate || ''));
+        if (bd && +bd[1] >= thisYear() - 100 && +bd[1] <= thisYear() - 5 && +bd[2] >= 1 && +bd[2] <= 12 && +bd[3] >= 1 && +bd[3] <= 31) { out.birthDate = bd[0]; out.birthYear = +bd[1]; }
         if (['male', 'female', 'na'].includes(b.sex)) out.sex = b.sex;
         const h = parseFloat(latinDigits(b.heightCm)); if (h >= 100 && h <= 250) out.heightCm = Math.round(h);
         const w = parseFloat(latinDigits(b.weightKg)); if (w >= 25 && w <= 350) out.weightKg = Math.round(w * 10) / 10;
@@ -1123,9 +1192,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
     const getBody = () => sanitizeBody(readJSON(BODY_KEY, {}));
     const setBody = b => writeItem(BODY_KEY, JSON.stringify(sanitizeBody(b)));
-    const ageOf = b => b.birthYear ? thisYear() - b.birthYear : null;
-    const aboutComplete = b => !!(b.birthYear && b.heightCm && b.weightKg && b.sex);
-    const LOCKED_ABOUT = ['birthYear', 'heightCm', 'sex'];
+    // age in whole years (from the date of birth, or the birth year for older accounts)
+    const ageOf = b => {
+        if (b.birthDate) { const [y, m, d] = b.birthDate.split('-').map(Number), n = new Date(); return n.getFullYear() - y - ((n.getMonth() + 1 < m || (n.getMonth() + 1 === m && n.getDate() < d)) ? 1 : 0); }
+        return b.birthYear ? thisYear() - b.birthYear : null;
+    };
+    const LOCKED_ABOUT = ['birthYear', 'birthDate', 'heightCm', 'sex'];
     const programSchedule = (prog, exp) => {
         const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
         return prog.week.map((slot, i) => {
@@ -1671,7 +1743,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         return pCard(t('Sets this week'), `<div class="flex justify-between text-[12px] font-bold text-slate-400 -mt-2 mb-1"><span>${t('Muscle')}</span><span>${t('Done / planned')}</span></div>${rows}<p class="text-[12px] font-bold text-slate-400 mt-3">${t('Aim for about 10–20 sets a week for each muscle.')} ${t('"Low in plan" means your routine has few sets for it: add some in the Plan tab.')}</p>`);
     };
 
-    // Body: body weight over time (the same log as Profile → About you); log today's weight here too
+    // Body: body weight over time (the same log as Profile → Your profile); log today's weight here too
     const progressBodyHTML = () => {
         const b = getBody(), log = b.log || [];
         const form = `<div class="flex gap-2 mt-4"><input id="pb-weight" type="text" inputmode="decimal" autocomplete="off" placeholder="${esc(t('Weight (kg)'))}" class="flex-1 min-w-0 bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-white text-center font-black outline-none focus:border-[#d4af37]" dir="ltr" onkeydown="if(event.key==='Enter')window.appActions.progressLogWeight()"><button onclick="window.appActions.progressLogWeight()" class="shrink-0 px-5 rounded-2xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback">${t('Save')}</button></div>`;
@@ -1692,7 +1764,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const prev = arr[i + 1], d = prev ? round1(x.kg - prev.kg) : null;
             return `<div class="flex items-center justify-between py-2.5 border-b border-white/5 last:border-0"><span class="text-[13px] font-bold text-slate-300">${esc(fmtDate(x.t, false))}</span><span class="flex items-center gap-3" dir="ltr"><span class="text-[12px] font-bold text-slate-400">${d === null ? '' : `${d > 0 ? '+' : ''}${d}`}</span><span class="text-[14px] font-black text-white">${x.kg} kg</span></span></div>`;
         }).join(''));
-        return html + `<p class="text-[12px] font-bold text-slate-400 px-1">${t('Also in Profile → About you.')}</p>`;
+        return html + `<p class="text-[12px] font-bold text-slate-400 px-1">${t('Also in Profile → Your profile.')}</p>`;
     };
 
     // Progress tab: four sections in one rounded switcher; the chosen one slides over and is remembered
@@ -1809,45 +1881,37 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     }
 
 
-    // 🙋 ABOUT YOU form, used in the setup questions and in Profile
-    const youngHTML = ctx => `<p id="${ctx}-young" class="text-[12px] font-bold text-red-400">${t('Apex Lift is for ages {n} and up.', { n: MIN_AGE })}</p>`;
-    const aboutFormHTML = (ctx = 'about') => { // ctx keeps the ids unique (setup questions vs Profile)
-        const b = getBody(), age = ageOf(b), young = age !== null && age < MIN_AGE;
-        const inp = 'w-full bg-black/40 border border-white/10 rounded-xl px-3 py-3 text-white text-center font-black outline-none focus:border-[#d4af37]';
-        const sexBtn = (v, l) => `<button onclick="window.appActions.setAbout('sex', ${jsArg(v)})" role="radio" aria-checked="${b.sex === v}" class="flex-1 py-3 rounded-xl text-[12px] font-extrabold tap-feedback border ${b.sex === v ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-white border-white/10'}">${l}</button>`;
-        const field = (f, label, val, ph, mode) => `<label class="block"><span class="block text-[12px] font-bold text-slate-400 mb-1.5">${label}</span><input id="${ctx}-${f}" type="text" inputmode="${mode}" autocomplete="off" value="${val === undefined ? '' : esc(val)}" placeholder="${esc(ph)}" onchange="window.appActions.setAbout(${jsArg(f)}, this.value)" class="${inp}" dir="ltr"></label>`;
-        const sexLabel = { male: t('Male'), female: t('Female'), na: t('Prefer not to say') };
-        // confirmed: birth year, height and sex are shown, not edited; body weight stays editable
-        if (b.locked) {
-            const tile = (label, value) => `<div class="rounded-xl bg-white/5 border border-white/5 px-3 py-2.5 min-w-0"><span class="flex items-start gap-1 text-[12px] font-bold text-slate-400 leading-tight mb-1"><i data-lucide="lock" class="w-3 h-3 shrink-0 mt-px"></i><span>${label}</span></span><span class="block text-[15px] font-black text-white truncate">${value}</span></div>`;
-            return `<div class="space-y-4">
-                <div class="grid grid-cols-3 gap-2.5">
-                    ${tile(t('Birth year'), `<span dir="ltr">${esc(b.birthYear || '—')}</span>`)}
-                    ${tile(t('Height (cm)'), `<span dir="ltr">${esc(b.heightCm || '—')}</span>`)}
-                    ${tile(t('Sex'), esc(sexLabel[b.sex] || '—'))}
-                </div>
-                ${field('weightKg', t('Weight (kg)'), b.weightKg, '75', 'decimal')}
-                <p class="text-[12px] font-bold text-slate-400 leading-snug">${t("Update your weight anytime. Birth year, height and sex can't be changed; contact us if something is wrong.")}</p>
-            </div>`;
-        }
-        return `<div class="space-y-4">
-            <div class="grid grid-cols-3 gap-3">
-                ${field('birthYear', t('Birth year'), b.birthYear, String(thisYear() - 25), 'numeric')}
-                ${field('heightCm', t('Height (cm)'), b.heightCm, '175', 'numeric')}
-                ${field('weightKg', t('Weight (kg)'), b.weightKg, '75', 'decimal')}
-            </div>
-            <div id="${ctx}-young-slot">${young ? youngHTML(ctx) : ''}</div>
-            <div><span class="block text-[12px] font-bold text-slate-400 mb-1.5">${t('Sex')}</span>
-            <div class="flex gap-2" role="radiogroup">${sexBtn('male', t('Male'))}${sexBtn('female', t('Female'))}${sexBtn('na', t('Prefer not to say'))}</div></div>
-            <p class="text-[12px] font-bold text-slate-400 leading-snug">${t('Used to tailor the app and to improve Apex Lift. Never sold or shared.')}</p>
-        </div>`;
-    };
-    // Profile → About you, with a small body-weight chart
+    // 👤 PROFILE → Your profile and Your training: the setup answers. Age, sex and height are fixed after the setup;
+    // weight can be updated here (it is also logged in Progress → Body). Training answers change through Update training.
+    const GOAL_LABEL = { muscle: 'Build muscle', strength: 'Get stronger', fat: 'Lose fat' };
+    const EXP_LABEL = { none: 'Just starting', new: 'Less than 1 year', mid: '1 to 3 years', adv: '3 to 5 years', pro: 'More than 5 years' };
+    const EQ_LABEL = { gym: 'Full gym', db: 'Dumbbells only' };
     const renderAbout = () => {
         const el = document.getElementById('about-card'); if (!el) return;
-        el.innerHTML = `<div class="glass-card p-5 border border-white/10">
-            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="user-round" class="w-5 h-5"></i></span><div class="text-[16px] font-black text-white">${t('About you')}</div></div>
-            ${aboutFormHTML('pf')}<div id="pf-chart">${bodyChartHTML()}</div></div>`;
+        const b = getBody(), pr = getProfile(), age = ageOf(b), lock = '<i data-lucide="lock" class="pf-lock" aria-label="' + esc(t('Locked')) + '"></i>';
+        const row = (icon, label, value, sub = '', extra = '') => `<div class="pf-row"><span class="pf-ic"><i data-lucide="${icon}"></i></span><span class="pf-label">${label}${sub ? `<span class="pf-sub">${sub}</span>` : ''}</span><span class="pf-val">${value || '—'}</span>${extra}</div>`;
+        const born = b.birthDate ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric', numberingSystem: 'latn' }).format(new Date(b.birthDate + 'T12:00:00')) : b.birthYear ? String(b.birthYear) : '';
+        const sexL = { male: t('Male'), female: t('Female'), na: t('Prefer not to say') }[b.sex] || '';
+        const lastW = (b.log || []).slice(-1)[0];
+        el.innerHTML = `<h3 class="pf-h">${t('Your profile')}</h3>
+            <div class="pf-group">
+                ${row('cake', t('Age'), age !== null ? `<span class="num">${age}</span>` : '', born ? t('Born {date}', { date: esc(born) }) : '', lock)}
+                ${row('user-round', t('Sex'), esc(sexL), '', lock)}
+                ${row('ruler', t('Height'), b.heightCm ? `<span class="num" dir="ltr">${b.heightCm} cm</span>` : '', '', lock)}
+                <label class="pf-row"><span class="pf-ic"><i data-lucide="scale"></i></span><span class="pf-label">${t('Weight')}${lastW ? `<span class="pf-sub">${t('Updated {date}', { date: esc(fmtDayMonth(new Date(lastW.t))) })}</span>` : ''}</span>
+                    <span class="pf-weight" dir="ltr"><input id="pf-weightKg" type="text" inputmode="decimal" autocomplete="off" value="${b.weightKg === undefined ? '' : esc(b.weightKg)}" onchange="window.appActions.saveWeight(this.value)" class="num" aria-label="${esc(t('Weight (kg)'))}"><span>kg</span></span></label>
+            </div>
+            <p class="pf-note">${t('Age, sex and height are set during setup. Contact us to correct them.')}</p>
+            <h3 class="pf-h">${t('Your training')}</h3>
+            <div class="pf-group">
+                ${row('target', t('Goal'), esc(t(GOAL_LABEL[pr.goal] || '')))}
+                ${row('trending-up', t('Experience'), esc(t(EXP_LABEL[pr.exp] || '')))}
+                ${row('calendar-days', t('Days a week'), pr.days ? `<span class="num">${esc(pr.days)}</span>` : '')}
+                ${row('timer', t('Workout length'), pr.session ? esc(t(pr.session === '90' ? '90+ min' : '{n} min', { n: pr.session })) : '')}
+                ${row('building-2', t('Equipment'), esc(t(EQ_LABEL[pr.eq] || '')))}
+                ${row('bandage', t('Injuries'), esc((pr.injuries || []).map(x => t(INJURY_LABEL[x])).join(', ')))}
+                <button onclick="window.appActions.startWizard('training')" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="wand-2"></i></span><span class="pf-label">${t('Update training')}<span class="pf-sub">${t('Answer again and get a matching program')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
+            </div>`;
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
     // Profile: three numbers about your training (tap → Progress)
@@ -1860,27 +1924,6 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
     const renderProfile = () => { renderAccount(); renderProfileStats(); renderAbout(); updateBackupStatus(); };
-    const bodyChartHTML = () => {
-        const b = getBody(), log = b.log || [];
-        let chart = '';
-        if (log.length >= 2) {
-            const W = 300, H = 70, ks = log.map(x => x.kg), lo = Math.min(...ks), hi = Math.max(...ks), span = Math.max(1, hi - lo);
-            const pts = log.map((x, i) => `${(i / (log.length - 1) * W).toFixed(1)},${(H - 6 - (x.kg - lo) / span * (H - 12)).toFixed(1)}`).join(' ');
-            const diff = Math.round((ks[ks.length - 1] - ks[0]) * 10) / 10;
-            chart = `<div class="mt-4 rounded-xl bg-black/30 border border-white/5 p-3"><div class="flex justify-between text-[12px] font-bold mb-1"><span class="text-slate-400">${t('Body weight')}</span><span class="${diff <= 0 ? 'text-[#22c55e]' : 'text-[#d4af37]'}" dir="ltr">${diff > 0 ? '+' : ''}${diff} kg</span></div><svg viewBox="0 0 ${W} ${H}" class="w-full h-auto" dir="ltr"><polyline points="${pts}" fill="none" stroke="#d4af37" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>`;
-        }
-        return chart;
-    };
-    // after typing: refresh only the warning, the chart and the cleaned-up numbers (never the box you're typing in)
-    const refreshAbout = () => {
-        const b = getBody(), age = ageOf(b), young = age !== null && age < MIN_AGE;
-        ['about', 'pf'].forEach(ctx => {
-            const slot = document.getElementById(`${ctx}-young-slot`); if (slot) slot.innerHTML = young ? youngHTML(ctx) : '';
-            ['birthYear', 'heightCm', 'weightKg'].forEach(f => { const i = document.getElementById(`${ctx}-${f}`); if (i && i !== document.activeElement) i.value = b[f] === undefined ? '' : b[f]; });
-        });
-        const ch = document.getElementById('pf-chart'); if (ch) ch.innerHTML = bodyChartHTML();
-    };
-
     // 🏠 TODAY: the selected day: a small day card, then its exercises. Tap an exercise to open it: Start (that exercise only) and History
     // Cards slide in when you open a different tab or day, but not when the same screen just refreshes
     let lastAnimKey = '';
@@ -2865,6 +2908,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         }, true),
         switchTab: tab => {
             if (tab === 'workout') tab = 'today'; if (tab === 'analytics') tab = 'progress';
+            if (window.appState.currentView !== tab) dropHint();
             window.appState.inlineEdit = null; window.appState.weekMenu = null; window.appState.todayEdit = false; window.appState.planDay = null; popBack('planday'); window.appState.currentView = tab;
             const prevTab = document.querySelector('.tab-btn.text-\\[\\#d4af37\\]');
             ['today', 'plan', 'progress', 'profile'].forEach(v => { const b = document.getElementById('tabbtn-' + v); if (b) b.className = `tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative ${v === tab ? 'text-[#d4af37]' : 'text-slate-400'}`; });
@@ -2934,7 +2978,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const text = JSON.stringify(buildExport({ prog: true, sched: true, sett: true }), null, 2);
             const done = msg => { StorageManager.setBackupDate(); updateBackupStatus(); window.appActions.closeBackupModal(); setTimeout(() => window.appActions.showToast(msg, "success"), 300); };
             if (mode === 'copy') {
-                try { await navigator.clipboard.writeText(text); done(t('Copied. Paste it into a chat with an AI assistant.')); }
+                try { await navigator.clipboard.writeText(text); done(t('Copied')); }
                 catch (e) { window.appActions.showToast(t('Could not copy. Use Save or share file.'), 'error'); }
                 return;
             }
@@ -2976,19 +3020,19 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     if (!d.w && !d.p && !d.s && !Object.keys(d.h).length) throw new Error('Nothing usable in backup');
                 } catch (err) { return window.appActions.showToast(t("Invalid Backup file"), "error"); }
                 const found = [d.p ? t('{n} routines', { n: d.p.weeks.length }) : '', Object.keys(d.h).length ? t('{n} exercises with history', { n: Object.keys(d.h).length }) : ''].filter(Boolean).join(' · ');
-                window.appActions.showConfirm(t('Import this file?'), (found ? found + '\n\n' : '') + t("Your routines and settings are replaced by the file's, and its workouts are added to yours. Your current data is saved to your account first."),
+                window.appActions.showConfirm(t('Import this file?'), (found ? found + '\n\n' : '') + t("Routines and settings will be replaced and workouts added. We back up your current data first."),
                     () => window.appActions.runImport(d), false, t('Import'));
             };
             r.readAsText(f);
         },
         runImport: async d => {
-            if (!Cloud.user || !Cloud.db) return window.appActions.showToast(t('Sign in first: your data is backed up to your account before an import.'), 'error');
+            if (!Cloud.user || !Cloud.db) return window.appActions.showToast(t('Sign in to import. We back up your data first.'), 'error');
             if (window.appState.sess) return window.appActions.showToast(t('Finish your workout first.'), 'error');
             if (window.appState.importing) return; window.appState.importing = true;
             try {
                 window.appActions.showToast(t('Backing up your data…'), 'success');
                 try { await cloudBackup('before-import'); }
-                catch (e) { console.warn('Backup before import failed', e); return window.appActions.showToast(t('Could not back up your data, so nothing was imported. Check your connection and try again.'), 'error'); }
+                catch (e) { console.warn('Backup before import failed', e); return window.appActions.showToast(t('Backup failed, so nothing was imported. Check your connection.'), 'error'); }
                 // workouts: both lists together, in date order, without duplicates (and without records you deleted)
                 const w = StorageManager.get(), h = StorageManager.getHistory(), del = getDeleted();
                 Object.keys(d.h).forEach(k => { h[k] = mergeLogs(h[k], d.h[k], del[k]); const n = h[k][h[k].length - 1]; if (n) w[k] = n.w; });
@@ -3007,26 +3051,34 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 const sd = document.getElementById('setting-start-day'); if (sd) sd.value = StorageManager.getStartDay();
                 if (StorageManager.setPlan(appData) === false) return;
                 activeDay = getTodayId(); renderNav(); window.appActions.refreshUI();
-                window.appActions.showToast(t('Imported. Your previous data is saved in Account backups.'), 'success');
+                window.appActions.showToast(t('Imported. Your old data is in Account backups.'), 'success');
             } finally { window.appState.importing = false; }
         },
     restoreDefaults: () => { window.appActions.showConfirm(t("Reset app"),t("Your routines go back to the default. Your history is kept."),()=>{const aD=DAY_NAMES, sI=aD.indexOf('SAT'); const def=JSON.parse(JSON.stringify(defaultWorkoutData)); def.forEach((d,i)=>d.day=aD[(sI+i)%7]); appData={weeks:[{id:'w_default',name:t('Main Routine'),schedule:def}]}; currentWeekId='w_default'; StorageManager.setActiveWeek('w_default'); StorageManager.setPlan(appData); StorageManager.setStartDay('SAT'); document.getElementById('setting-start-day').value='SAT'; activeDay=getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Reset Complete"));},true); },
         // ---------- First-launch setup (also from Profile → Set up again) ----------
-        // First launch: the whole setup. Set up already but About you not confirmed yet (older versions): just that page.
+        // 🧭 SETUP, one question per screen, nothing can be skipped.
+        //   'first'    first launch: your profile (sex, date of birth, height and weight), then your training, then the program
+        //   'complete' set up before but some answers are missing (older versions): only those questions
+        //   'training' Profile → Update training: the training questions again and a new program (✕ closes, nothing changes)
         initOnboarding: () => {
-            if (!StorageManager.getOnboard()) window.appActions.startWizard(true);
-            else if (!getBody().locked) window.appActions.startWizard(true, true);
+            const W = window.appState.wiz;
+            if (W && !W.done && document.getElementById('onboarding-overlay').classList.contains('flex')) return; // already open
+            if (!StorageManager.getOnboard()) return window.appActions.startWizard('first');
+            if (setupMissing().length) window.appActions.startWizard('complete');
         },
-        // The setup can't be skipped: it ends with a program. From Profile it can be closed (✕) without changing anything.
-        startWizard: (firstRun = false, aboutOnly = false) => {
+        startWizard: (mode = 'training') => {
+            if (mode === true || mode === false) mode = mode ? 'first' : 'training'; // older calls
             let hasLang = false; try { hasLang = localStorage.getItem(LANG_KEY) !== null; } catch (e) {}
-            const pr = getProfile(), locked = !!getBody().locked;
-            const steps = aboutOnly ? ['about'] : [...(hasLang ? [] : ['lang']), 'goal', 'days', 'exp', 'eq', ...(locked ? [] : ['about']), 'start', 'result'];
-            window.appState.wiz = { firstRun, aboutOnly, steps, step: 0,
-                goal: pr.goal || null, days: pr.days || null, exp: EXP_LEVELS.includes(pr.exp) ? pr.exp : null, eq: pr.eq || null, showAll: false };
+            const pr = getProfile(), b = getBody();
+            const steps = mode === 'first' ? [...(hasLang ? [] : ['lang']), ...PROFILE_STEPS.filter(k => !(b.locked && setupAnswered(k))), ...TRAINING_STEPS, 'start', ...(pr.source ? [] : ['source']), 'result']
+                : mode === 'complete' ? setupMissing()
+                : [...TRAINING_STEPS, 'result'];
+            window.appState.wiz = { mode, firstRun: mode !== 'training', steps, step: 0, showAll: false,
+                goal: pr.goal || null, days: pr.days || null, exp: EXP_LEVELS.includes(pr.exp) ? pr.exp : null, eq: pr.eq || null,
+                session: pr.session || null, injuries: (pr.injuries || []).slice(), source: pr.source || null };
             window.appActions.renderWizard();
             openModal('onboarding-overlay', 'onboarding-box');
-            // phone Back: previous question; on the first question it closes (the very first setup stays open)
+            // phone Back: the previous question; on the first one it closes only when that's allowed
             const onBack = () => {
                 const W = window.appState.wiz;
                 if (W && W.step > 0) { window.appActions.wizBack(); pushBack('wizard', onBack); }
@@ -3036,80 +3088,120 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             pushBack('wizard', onBack);
         },
         renderWizard: () => {
-            const W = window.appState.wiz, key = W.steps[W.step];
-            // how far the setup questions got (for the admin page), until they are finished
+            const W = window.appState.wiz, key = W.steps[W.step], b = getBody();
+            // how far the setup got (for the admin page), until it is finished
             try { const sv = localStorage.getItem(SETUP_KEY); if (!sv || sv.startsWith('left:')) localStorage.setItem(SETUP_KEY, 'left:' + key); } catch (e) {}
             const opt = (val, title, sub, icon, cur) => `<button onclick="window.appActions.wizChoose(${jsArg(key)}, ${jsArg(val)})" class="w-full flex items-center gap-4 p-4 mb-3 rounded-2xl border text-start tap-feedback ${cur === val ? 'bg-[#d4af37]/15 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
                 ${icon ? `<span class="w-11 h-11 shrink-0 rounded-xl bg-black/40 flex items-center justify-center text-[#d4af37]"><i data-lucide="${icon}" class="w-5 h-5"></i></span>` : ''}
                 <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${title}</span>${sub ? `<span class="block text-[12px] font-bold text-slate-400 mt-0.5">${sub}</span>` : ''}</span>
                 <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600 shrink-0"></i></button>`;
-            const head = (title, sub) => `<h2 class="text-[26px] font-black text-white leading-tight mb-2">${title}</h2><p class="text-[13px] font-bold text-slate-400 mb-6">${sub}</p>`;
+            const part = PROFILE_STEPS.includes(key) ? t('Your profile') : TRAINING_STEPS.includes(key) || key === 'start' || key === 'source' ? t('Your training') : key === 'result' ? t('Your program') : '';
+            const head = (title, sub) => `${part ? `<div class="text-[12px] font-bold text-[#d4af37] mb-2">${part}</div>` : ''}<h2 class="text-[26px] font-black text-white leading-tight mb-2">${title}</h2>${sub ? `<p class="text-[13px] font-bold text-slate-400 mb-6">${sub}</p>` : '<div class="mb-6"></div>'}`;
+            const next = (id, label = t('Next')) => `<button id="${id}" onclick="window.appActions.wizChoose(${jsArg(key)}, 'next')" class="w-full mt-6 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${label}</button>`;
+            const lastLabel = W.step === W.steps.length - 1 && W.mode === 'complete' ? t('Done') : t('Next');
+            const big = 'w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 text-white text-[22px] font-black outline-none focus:border-[#d4af37] num';
+            const lockNote = `<p class="flex items-center gap-1.5 text-[12px] font-bold text-slate-400 mt-4"><i data-lucide="lock" class="w-3.5 h-3.5 shrink-0"></i>${t("Date of birth, sex and height can't be changed after setup.")}</p>`;
             let body = '';
             if (key === 'lang') body = `<div class="text-center mb-8 mt-6"><div class="text-4xl font-black italic tracking-tighter text-white logo-mark" dir="ltr">APEX <span class="text-[#d4af37]">LIFT</span></div></div>` + head('Choose your language · اختر لغتك', '') + opt('en', 'English', '', 'languages', LANG) + opt('ar', 'العربية', '', 'languages', LANG);
-            if (key === 'goal') body = head(t("What's your main goal?"), t('We use this to suggest a program. You can change it anytime.'))
+            if (key === 'sex') body = head(t("What's your sex?"), t('Used for your starting weights.')) + opt('male', t('Male'), '', 'user-round', b.sex) + opt('female', t('Female'), '', 'user-round', b.sex) + lockNote;
+            if (key === 'birth') {
+                const n = new Date(), iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                const max = iso(new Date(n.getFullYear() - MIN_AGE, n.getMonth(), n.getDate())), min = iso(new Date(n.getFullYear() - 100, 0, 1));
+                body = head(t('When were you born?'), t('Apex Lift is for ages {n} and up.', { n: MIN_AGE }))
+                    + `<input id="wiz-birth" type="date" min="${min}" max="${max}" value="${esc(b.birthDate || '')}" class="${big}" dir="ltr" aria-label="${esc(t('Date of birth'))}">` + lockNote + next('wiz-birth-next', lastLabel);
+            }
+            if (key === 'body') {
+                const hLocked = !!(b.locked && b.heightCm);
+                const unit = (id, label, val, u, mode, dis) => `<label class="block flex-1 min-w-0"><span class="block text-[12px] font-bold text-slate-400 mb-1.5">${label}</span>
+                    <span class="relative block"><input id="${id}" type="text" inputmode="${mode}" autocomplete="off" value="${val === undefined ? '' : esc(val)}" ${dis ? 'disabled' : ''} class="${big} pe-14 ${dis ? 'opacity-60' : ''}" dir="ltr">
+                    <span class="absolute inset-y-0 end-0 pe-4 flex items-center text-[14px] font-bold text-slate-400 pointer-events-none" dir="ltr">${u}</span></span></label>`;
+                body = head(t('Height and weight'), t('Used to track your progress.'))
+                    + `<div class="flex gap-3">${unit('wiz-height', t('Height'), b.heightCm, 'cm', 'numeric', hLocked)}${unit('wiz-weight', t('Weight'), b.weightKg, 'kg', 'decimal', false)}</div>` + lockNote + next('wiz-body-next', lastLabel);
+            }
+            if (key === 'goal') body = head(t("What's your main goal?"), '')
                 + opt('muscle', t('Build muscle'), t('Get bigger and more defined'), 'dumbbell', W.goal) + opt('strength', t('Get stronger'), t('Lift heavier on the big lifts'), 'trophy', W.goal) + opt('fat', t('Lose fat'), t('Stay strong while you lean out'), 'flame', W.goal);
+            if (key === 'exp') body = head(t('How long have you been training?'), '')
+                + opt('none', t("I'm just starting"), t('Never trained, or back after a long break'), 'sparkles', W.exp)
+                + opt('new', t('Less than 1 year'), '', 'sprout', W.exp) + opt('mid', t('1 to 3 years'), '', 'trending-up', W.exp)
+                + opt('adv', t('3 to 5 years'), '', 'flame', W.exp) + opt('pro', t('More than 5 years'), '', 'trophy', W.exp);
             if (key === 'days') body = head(t('How many days a week can you train?'), t('Pick what you can keep up every week.'))
                 + ['3', '4', '5', '6'].map(d => opt(d, t('{n} days', { n: d }), '', 'calendar-days', W.days)).join('');
-            if (key === 'exp') body = head(t('How long have you been training?'), t('This sets how many sets you start with.'))
-                + opt('none', t("I'm just starting"), t('Never trained, or back after a long break'), 'sparkles', W.exp)
-                + opt('new', t('Less than 1 year'), t('Fewer sets to start'), 'sprout', W.exp) + opt('mid', t('1 to 3 years'), t('Standard sets'), 'trending-up', W.exp)
-                + opt('adv', t('3 to 5 years'), t('Extra sets on the main lifts'), 'flame', W.exp) + opt('pro', t('More than 5 years'), t('Extra sets on the first three lifts'), 'trophy', W.exp);
+            if (key === 'session') body = head(t('How long is each workout?'), '')
+                + SESSION_OPTS.map(m => opt(m, t(m === '90' ? '90+ minutes' : '{n} minutes', { n: m }), '', 'timer', W.session)).join('');
             if (key === 'eq') body = head(t('Where do you train?'), '')
                 + opt('gym', t('Full gym'), t('Barbells, machines and cables'), 'building-2', W.eq) + opt('db', t('Dumbbells only'), t('Home or a small gym'), 'dumbbell', W.eq);
-            if (key === 'about') body = head(t('About you'), t("Needed to fit the app to you. Birth year, height and sex can't be changed later, so please check them.")) + aboutFormHTML()
-                + `<button id="wiz-about-next" onclick="window.appActions.wizChoose('about', 'done')" class="w-full mt-6 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Next')}</button>`;
-            if (key === 'start') body = head(t('Which day does your week start?'), t('Your week in the app starts on this day.'))
+            if (key === 'injury') body = head(t('Any injuries or pain?'), t('Pick all that apply.'))
+                + `<div class="flex flex-wrap gap-2.5" role="group">${INJURY_OPTS.map(x => { const on = W.injuries.includes(x); return `<button onclick="window.appActions.wizInjury(${jsArg(x)})" aria-pressed="${on}" class="min-h-[48px] px-4 rounded-2xl border text-[15px] font-bold tap-feedback ${on ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-white border-white/10'}">${esc(t(INJURY_LABEL[x]))}</button>`; }).join('')}</div>`
+                + next('wiz-injury-next', lastLabel);
+            if (key === 'start') body = head(t('Which day does your week start?'), '')
                 + ['SAT', 'SUN', 'MON'].map(d => opt(d, esc(dayLong(d)), '', 'calendar', StorageManager.getStartDay())).join('');
+            if (key === 'source') body = head(t('How did you hear about Apex Lift?'), '')
+                + SOURCE_OPTS.map(x => opt(x, esc(t(SOURCE_LABEL[x])), '', '', W.source)).join('');
             if (key === 'result') {
                 const rec = PROGRAMS.find(p => p.id === recommendProgram(W)), pick = PROGRAMS.find(p => p.id === (W.pick || rec.id));
                 const card = (p, isRec) => `<button onclick="window.appActions.wizPick(${jsArg(p.id)})" class="w-full text-start p-4 mb-3 rounded-2xl border tap-feedback ${pick.id === p.id ? 'bg-[#d4af37]/10 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
                     <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} days', { n: p.days })}</span></span>
                     ${isRec ? `<span class="inline-block mt-1 text-[12px] font-bold text-[#22c55e]">★ ${t('Recommended for you')}</span>` : ''}
                     <span class="block text-[12px] font-bold text-slate-400 mt-1">${esc(t(p.desc))}</span>${pick.id === p.id ? programPreviewHTML(p) : ''}</button>`;
-                const others = PROGRAMS.filter(p => p.id !== rec.id).sort((a, b) => (b.days === parseInt(W.days)) - (a.days === parseInt(W.days)));
+                const others = PROGRAMS.filter(p => p.id !== rec.id).sort((a, c) => (c.days === parseInt(W.days)) - (a.days === parseInt(W.days)));
                 body = head(t('Your program'), t('Tap a program to see its week.')) + card(rec, true)
                     + (W.showAll ? `<div class="text-[12px] font-bold text-slate-400 mt-5 mb-2">${t('Other programs')}</div>` + others.map(p => card(p, false)).join('')
                         : `<button onclick="window.appState.wiz.showAll=true;window.appActions.renderWizard()" class="w-full py-3 mb-3 rounded-xl bg-white/5 border border-white/10 text-[12px] font-bold text-slate-300 tap-feedback">${t('See all {n} programs', { n: PROGRAMS.length })}</button>`)
                     + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#050505]"><button onclick="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Start with this program')}</button>
-                       <p class="text-[12px] font-bold text-slate-400 text-center mt-2">${t('You can change any day and exercise later in Edit.')}</p></div>`;
+                       <p class="text-[12px] font-bold text-slate-400 text-center mt-2">${t('You can change any day or exercise later in Plan.')}</p></div>`;
             }
             const dots = W.steps.map((_, i) => `<span class="h-1.5 rounded-full transition-all ${i === W.step ? 'w-6 bg-[#d4af37]' : i < W.step ? 'w-3 bg-[#d4af37]/50' : 'w-3 bg-white/15'}"></span>`).join('');
             document.getElementById('onboarding-box').innerHTML = `
                 <div class="flex items-center justify-between py-4 shrink-0">
-                    <button onclick="window.appActions.wizBack()" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.step === 0 ? 'invisible' : ''}" aria-label="Back"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                    <div class="flex gap-1.5" dir="ltr">${dots}</div>
+                    <button onclick="window.appActions.wizBack()" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.step === 0 ? 'invisible' : ''}" aria-label="${esc(t('Back'))}"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                    <div class="flex gap-1.5 flex-wrap justify-center max-w-[70%]" dir="ltr">${dots}</div>
                     <button onclick="window.appActions.closeWizard()" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.firstRun ? 'invisible' : ''}" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <div class="flex-1 fade-in">${body}</div>`;
             if (window.lucide) window.lucide.createIcons({ root: document.getElementById('onboarding-box') });
             document.getElementById('onboarding-box').scrollTop = 0;
         },
-        wizChoose: (key, val) => {
+        wizInjury: x => {
             const W = window.appState.wiz;
-            if (key === 'about') {
-                // the typed numbers are saved when a box loses focus: save the one still being typed first
-                const f = document.activeElement; if (f && f.tagName === 'INPUT' && f.id && f.id.startsWith('about-')) f.blur();
-                const b = getBody(), a = ageOf(b);
-                if (!aboutComplete(b)) return window.appActions.showToast(t('Please fill in all fields.'), 'error');
-                if (a !== null && a < MIN_AGE) return window.appActions.showToast(t('Apex Lift is for ages {n} and up.', { n: MIN_AGE }), 'error');
-                setBody({ ...b, locked: true });
-                if (W.aboutOnly) { W.done = true; window.appActions.closeWizard(true); if (window.appState.currentView === 'profile') renderProfile(); return window.appActions.showToast(t('Saved'), 'success'); }
-            }
+            if (x === 'none') W.injuries = W.injuries.includes('none') ? [] : ['none'];
+            else { W.injuries = W.injuries.filter(y => y !== 'none'); W.injuries = W.injuries.includes(x) ? W.injuries.filter(y => y !== x) : [...W.injuries, x]; }
+            window.appActions.renderWizard();
+        },
+        wizChoose: (key, val) => {
+            const W = window.appState.wiz, err = m => window.appActions.showToast(m, 'error');
             if (key === 'lang') {
                 writeItem(LANG_KEY, val);
-                if (val !== LANG) return location.reload(); // the setup continues in the chosen language
-            } else if (key === 'start') {
+                if (val !== LANG) return location.reload(); // the setup starts again in the chosen language
+            } else if (key === 'sex') setBody({ ...getBody(), sex: val });
+            else if (key === 'birth') {
+                const v = (document.getElementById('wiz-birth') || {}).value || '', b = getBody();
+                if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return err(t('Enter your date of birth.'));
+                const age = ageOf({ birthDate: v });
+                if (age < MIN_AGE) return err(t('Apex Lift is for ages {n} and up.', { n: MIN_AGE }));
+                if (age > 100) return err(t('Check your date of birth.'));
+                if (b.locked && b.birthYear && +v.slice(0, 4) !== b.birthYear) return err(t('This has to match the birth year on your profile ({y}).', { y: b.birthYear }));
+                setBody({ ...b, birthDate: v });
+            } else if (key === 'body') {
+                const b = getBody(), num = id => parseFloat(latinDigits((document.getElementById(id) || {}).value || '').replace(/[٫،,]/g, '.'));
+                const h = b.locked && b.heightCm ? b.heightCm : num('wiz-height'), w = num('wiz-weight');
+                if (!(h >= 100 && h <= 250)) return err(t('Enter your height in cm (100–250).'));
+                if (!(w >= 25 && w <= 350)) return err(t('Enter your weight in kg (25–350).'));
+                const log = (b.log || []).filter(x => dateKey(x.t) !== dateKey()); log.push({ t: Date.now(), kg: w });
+                setBody({ ...b, heightCm: Math.round(h), weightKg: Math.round(w * 10) / 10, log });
+            } else if (key === 'injury') { if (!W.injuries.length) return err(t('Pick at least one, or None.')); }
+            else if (key === 'start') {
                 setWeekStart(val);
                 const sel = document.getElementById('setting-start-day'); if (sel) sel.value = val;
                 activeDay = getTodayId();
             } else W[key] = val;
             W.pick = null;
+            if (W.step >= W.steps.length - 1 && W.mode === 'complete') return window.appActions.wizFinish('complete');
             W.step = Math.min(W.step + 1, W.steps.length - 1);
             window.appActions.renderWizard();
         },
         wizBack: () => { const W = window.appState.wiz; if (W.step > 0) { W.step--; window.appActions.renderWizard(); } },
         wizPick: id => { window.appState.wiz.pick = id; window.appActions.renderWizard(); },
-        // ✕ (only when started from Profile): close, nothing changes. force = the About you page was just confirmed.
+        // ✕ (only for Update training): close, nothing changes. force = close a required setup (done, or another phone finished it)
         closeWizard: (force = false) => {
             const W = window.appState.wiz; if (!W || (W.firstRun && !force)) return;
             popBack('wizard'); closeModal('onboarding-overlay', 'onboarding-box', 300);
@@ -3117,13 +3209,26 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         // the setup always ends with the chosen program
         wizFinish: (mode, sure = false) => {
             const W = window.appState.wiz;
-            if (W.done || mode !== 'program') return; // double tap
+            if (W.done) return; // double tap
+            // the training answers are kept, and the profile is locked once it is complete
+            const saveAnswers = () => {
+                const keep = getProfile();
+                writeItem(PROFILE_KEY, JSON.stringify(sanitizeProfile({ ...keep, goal: W.goal, days: W.days, exp: W.exp, eq: W.eq, session: W.session, injuries: W.injuries, source: W.source || keep.source })));
+                const b = getBody(); if (PROFILE_STEPS.every(k => setupAnswered(k, b)) && !b.locked) setBody({ ...b, locked: true });
+            };
+            if (mode === 'complete') {
+                W.done = true; saveAnswers(); StorageManager.setOnboard();
+                window.appActions.closeWizard(true);
+                if (window.appState.currentView === 'profile') renderProfile();
+                return window.appActions.showToast(t('Profile updated'), 'success');
+            }
+            if (mode !== 'program') return;
             // already 5 routines: the current one would be replaced, so ask first
             if (!sure && !W.firstRun && appData.weeks.length >= 5)
                 return window.appActions.showConfirm(t('Replace current routine?'), t('You have 5 routines (the most). The current one will be replaced; your history is kept.'), () => window.appActions.wizFinish(mode, true), true);
             W.done = true;
             try { localStorage.setItem(SETUP_KEY, mode); } catch (e) {}
-            writeItem(PROFILE_KEY, JSON.stringify({ goal: W.goal, days: W.days, exp: W.exp, eq: W.eq }));
+            saveAnswers();
             StorageManager.setOnboard();
             popBack('wizard');
             closeModal('onboarding-overlay', 'onboarding-box', 300);
@@ -3240,7 +3345,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     })().catch(e => { Cloud.loading = null; throw e; }));
     const cloudErrorText = e => {
         const c = (e && e.code) || '';
-        if (c === 'auth/unauthorized-domain') return t('This website is not allowed in Firebase yet (Authentication → Settings → Authorized domains).');
+        if (c === 'auth/unauthorized-domain') return t('Sign-in isn\'t available on this site yet.');
         if (c === 'auth/network-request-failed' || /load/i.test((e && e.message) || '')) return t('No internet connection. Try again when online.');
         return t('Sign-in failed. Please try again.') + (c ? ` (${c})` : '');
     };
@@ -3286,7 +3391,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         if (!Cloud.user) return null;
         const f = getCloudFlag() || {};
         return { name: (Cloud.user.displayName || f.name || '').slice(0, 100), email: (Cloud.user.email || f.email || '').slice(0, 200), createdAt: Number(f.since) || Date.now(), lastSeen: dateKey(),
-            lang: LANG, appVersion: APP_VERSION, platform: platformName(), installed: isInstalled(), setup: (localStorage.getItem(SETUP_KEY) || '').slice(0, 40) };
+            lang: LANG, appVersion: APP_VERSION, platform: platformName(), installed: isInstalled(), setup: (localStorage.getItem(SETUP_KEY) || '').slice(0, 40),
+            signIn: (Cloud.user.providerData || []).some(p => p && p.providerId === 'google.com') ? 'google' : 'email', verified: Cloud.user.emailVerified === true,
+            tz: (() => { try { return (Intl.DateTimeFormat().resolvedOptions().timeZone || '').slice(0, 60); } catch (e) { return ''; } })(),
+            locale: String(navigator.language || '').slice(0, 20), screen: `${Math.round(screen.width)}x${Math.round(screen.height)}` };
     };
     const platformName = () => {
         const ua = navigator.userAgent || '';
@@ -3323,7 +3431,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             StorageManager.setShowRpe(m.showRpe === true);
             if (isObj(m.weights)) { loggedWeights = sanitizeValueMap(m.weights); StorageManager.set(loggedWeights); }
             setCustomEx(sanitizeCustomEx(m.custom));
-            if (isObj(m.profile)) { const pr = {}; ['goal', 'days', 'exp', 'eq'].forEach(k => { if (typeof m.profile[k] === 'string' && m.profile[k].length <= 20) pr[k] = m.profile[k]; }); writeItem(PROFILE_KEY, JSON.stringify(pr)); }
+            if (isObj(m.profile)) writeItem(PROFILE_KEY, JSON.stringify(sanitizeProfile(m.profile)));
             if (isObj(m.body)) setBody(m.body);
             if (isObj(m.readiness)) writeItem(READY_KEY, JSON.stringify({ ...sanitizeReadiness(getReadinessAll()), ...sanitizeReadiness(m.readiness) }));
             if (isObj(m.account) && Number(m.account.createdAt) > 0) { const f = getCloudFlag(); if (f && f.uid && !f.since) writeItem(CLOUD_KEY, JSON.stringify({ ...f, since: Number(m.account.createdAt) })); }
@@ -3338,8 +3446,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const rp = document.getElementById('setting-rpe'); if (rp) rp.checked = StorageManager.getShowRpe();
         renderNav(); renderWorkout();
         if (window.appState.currentView === 'profile') renderProfile();
-        // About you was confirmed on another phone: this phone doesn't need to ask
-        const W = window.appState.wiz; if (W && W.aboutOnly && !W.done && getBody().locked) { W.done = true; window.appActions.closeWizard(true); }
+        // the missing answers arrived from another phone: this phone doesn't need to ask them
+        const W = window.appState.wiz; if (W && W.mode === 'complete' && !W.done && !setupMissing().length) { W.done = true; window.appActions.closeWizard(true); }
     };
     // Combine two lists of logs without duplicates (same time, weight and reps = same log)
     const mergeLogs = (a, b, del) => {
@@ -3432,7 +3540,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             localStorage.setItem(CLOUD_LASTUID, uid);
             refreshAfterCloud();
             // this account already has a plan: no need for the setup questions
-            if (snap.exists || hs.size > 0) StorageManager.setOnboard();
+            // this account finished the setup on another phone (or has workouts): no need for the setup questions here
+            const sm = snap.exists ? snap.data() || {} : {}, setupDone = isObj(sm.account) && typeof sm.account.setup === 'string' && sm.account.setup && !sm.account.setup.startsWith('left:');
+            if ((isObj(sm.profile) && sm.profile.goal) || setupDone || hs.size > 0) StorageManager.setOnboard();
             if (fromWelcome) window.appActions.initOnboarding();
             await cloudFlush();
             cloudSubscribe(uid);
@@ -3583,7 +3693,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                         <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 max-w-full" title="${esc(Cloud.err)}"><span class="w-2 h-2 rounded-full shrink-0 ${st[0]}"></span><span class="text-[12px] font-bold text-slate-300 truncate">${esc(st[1])}</span></div>
                     </div>
                 </div>
-                ${isPasswordUser() && !Cloud.user.emailVerified ? `<div class="mt-4 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/25 px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold text-slate-300"><i data-lucide="mail-warning" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="flex-1 min-w-0">${t('Please confirm your email: open the link we sent you.')}</span><button onclick="window.appActions.resendVerify()" class="shrink-0 text-[12px] font-bold text-[#d4af37] tap-feedback">${t('Send again')}</button></div>` : ''}
+                ${isPasswordUser() && !Cloud.user.emailVerified ? `<div class="mt-4 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/25 px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold text-slate-300"><i data-lucide="mail-warning" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="flex-1 min-w-0">${t('Confirm your email. Check your inbox.')}</span><button onclick="window.appActions.resendVerify()" class="shrink-0 text-[12px] font-bold text-[#d4af37] tap-feedback">${t('Send again')}</button></div>` : ''}
                 ${since ? `<div class="mt-4 pt-3 border-t border-white/5 text-[12px] font-bold text-slate-400 flex items-center gap-1.5"><i data-lucide="badge-check" class="w-4 h-4 text-[#d4af37]"></i>${t('Member since {date}', { date: esc(since) })}</div>` : ''}</div>`;
         }
         if (window.lucide) window.lucide.createIcons({ root: el });
@@ -3672,7 +3782,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         if (c === 'auth/invalid-email' || c === 'auth/missing-email') return t('Please enter a valid email.');
         if (c === 'auth/weak-password' || c === 'auth/password-does-not-meet-requirements') return t('Your password needs at least 8 characters, a capital letter and a symbol.');
         if (c === 'auth/too-many-requests') return t('Too many tries. Wait a few minutes and try again.');
-        if (c === 'auth/operation-not-allowed') return t('Email sign-in is not turned on yet. Please use Google for now.');
+        if (c === 'auth/operation-not-allowed') return t('Email sign-in isn\'t available yet. Use Google for now.');
         if (c === 'auth/user-disabled') return t('This account is turned off. Contact us.');
         return cloudErrorText(e);
     };
@@ -3680,7 +3790,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const m = emailSt.mode, keep = id => { const el = document.getElementById(id); return el ? el.value : ''; };
         const email = keep('em-email') || (m === 'reauth' && Cloud.user ? Cloud.user.email || '' : ''), name = keep('em-name'), pass = m === 'up' ? keep('em-pass') : '';
         const title = { in: t('Sign in with email'), up: t('Create your account'), reset: t('Reset your password'), reauth: t('Confirm your password') }[m];
-        const sub = { in: '', up: t('Use your email and a strong password.'), reset: t("Enter your account's email. We'll send you a link to choose a new password."), reauth: t('For your safety, enter your password to delete your account.') }[m];
+        const sub = { in: '', up: t('Use your email and a strong password.'), reset: t("Enter your email and we'll send you a reset link."), reauth: t('Enter your password to delete your account.') }[m];
         const inp = 'w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-[#d4af37]';
         const lbl = (txt, html) => `<label class="block"><span class="block text-[12px] font-bold text-slate-400 mb-1.5">${txt}</span>${html}</label>`;
         const link = (fn, txt) => `<button type="button" onclick="${fn}" class="inline-flex items-center min-h-[40px] px-1 text-[13px] font-bold text-[#d4af37] tap-feedback">${txt}</button>`;
@@ -3745,11 +3855,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     cred.user.sendEmailVerification().catch(() => {});
                     // the name arrived after sign-in started: put it on the account card and in the next upload
                     const f = getCloudFlag(); if (f && f.uid === cred.user.uid) writeItem(CLOUD_KEY, JSON.stringify({ ...f, name: name.slice(0, 60) }));
-                    Cloud.sent.main = ''; scheduleFlush(500); renderAccount();
+                    // upload it now only if the first sync is done; otherwise that sync takes it (an early upload would look like an older account)
+                    Cloud.sent.main = ''; if (Cloud.unsub.length && !Cloud.starting) scheduleFlush(500); renderAccount();
                 } else if (m === 'reset') {
                     try { await Cloud.auth.sendPasswordResetEmail(email); } catch (e) { if (e.code !== 'auth/user-not-found') throw e; }
                     emailSt.busy = false; emailSt.mode = 'in';
-                    return renderEmail(t('If this email has an account, a link to choose a new password is on its way. Check your inbox.'), true);
+                    return renderEmail(t('If an account exists, we\'ve sent a reset link. Check your inbox.'), true);
                 } else if (m === 'reauth') {
                     await Cloud.auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(Cloud.auth.currentUser.email, pass));
                 }
@@ -3799,7 +3910,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const o = document.getElementById('code-overlay');
         if (!o.classList.contains('flex') || o.classList.contains('opacity-0')) { openSheet('code-overlay', 'code-box'); pushBack('code', () => window.appActions.closeCodeSheet()); }
     };
-    const shareBody = (w, code) => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Send the link, or give the code to a friend: in Apex Lift they open Edit → My routines → Add a routine by code.')}</p>
+    const shareBody = (w, code) => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Share the link, or your friend can enter the code in Plan → My routines.')}</p>
         <div class="rounded-2xl bg-black/40 border border-white/10 py-6 px-4 text-center mb-4">
             <div class="text-[12px] font-bold text-slate-400 mb-2 truncate">${esc(t(w.name))}</div>
             ${code ? `<div class="code-big" dir="ltr">${fmtCode(code)}</div>` : `<div class="flex items-center justify-center gap-2 h-[41px] text-[13px] font-bold text-slate-400"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>${t('Creating code…')}</div>`}
@@ -3808,7 +3919,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             <button onclick="window.appActions.copyCode(${jsArg(code)})" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="copy" class="w-4 h-4"></i>${t('Copy code')}</button>
             <button onclick="window.appActions.sendCode(${jsArg(code)}, ${jsArg(t(w.name))})" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-bold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="share" class="w-4 h-4"></i>${t('Share')}</button>
         </div>
-        <p class="text-[12px] font-bold text-slate-400 leading-snug flex gap-2"><i data-lucide="lock" class="w-4 h-4 shrink-0"></i><span>${t('Only the days and exercises are shared. Your workouts and personal details stay private.')}</span></p>`;
+        <p class="text-[12px] font-bold text-slate-400 leading-snug flex gap-2"><i data-lucide="lock" class="w-4 h-4 shrink-0"></i><span>${t('Only the routine is shared. Your workouts and details stay private.')}</span></p>`;
     const findBody = (code = '') => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Type or paste the code a friend gave you.')}</p>
         <input id="code-in" type="text" value="${esc(code ? fmtCode(code) : '')}" maxlength="12" placeholder="ABCD-EFGH" autocomplete="off" autocapitalize="characters" spellcheck="false" dir="ltr" class="code-input"
             oninput="window.appActions.codeTyped(this)" onkeydown="if(event.key==='Enter')window.appActions.codeFind()">
@@ -3821,7 +3932,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             <div class="text-[12px] font-bold text-slate-400 mb-3">${t('{a} workout days · {b} exercises', { a: work.length, b: exN })}</div>
             <div class="space-y-1.5">${wk.schedule.map(d => `<div class="flex items-center gap-3 text-[13px]"><span class="w-10 shrink-0 font-black text-slate-400">${esc(dayShort(d.day))}</span><span class="flex-1 min-w-0 truncate font-bold ${d.isRest ? 'text-slate-400' : 'text-white'}">${esc(t(d.isRest ? (d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : d.title))}</span>${d.isRest ? '' : `<span class="shrink-0 text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: d.exercises.length })}</span>`}</div>`).join('')}</div>
         </div>
-        ${full ? `<p class="text-[12px] font-bold text-red-400 mt-3">${t('You have 5 routines, the most allowed. Delete one in Edit first.')}</p>` : ''}
+        ${full ? `<p class="text-[12px] font-bold text-red-400 mt-3">${t('You have 5 routines, the maximum. Delete one in Plan first.')}</p>` : ''}
         <button onclick="window.appActions.codeAdd()" ${full ? 'disabled' : ''} class="w-full mt-3 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add to my routines')}</button>`;
     };
     // a ?r=CODE link: remember it, clean the address bar, and open it once you're signed in
@@ -4125,7 +4236,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (window.lucide) window.lucide.createIcons({ root: list });
         } catch (e) {
             console.warn(e);
-            list.innerHTML = `<div class="p-8 text-center text-[13px] font-bold text-red-400">${e && /permission/i.test(e.code || '') ? t('Backups are blocked by the Firebase rules. Publish the new firestore.rules.') : t('Could not load backups. Check your connection.')}</div>`;
+            list.innerHTML = `<div class="p-8 text-center text-[13px] font-bold text-red-400">${e && /permission/i.test(e.code || '') ? t('Backup isn\'t available right now. Try again later.') : t('Could not load backups. Check your connection.')}</div>`;
         }
     };
 
@@ -4141,6 +4252,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         if (target) target.classList.remove('hint-ring');
         el.classList.add('opacity-0'); setTimeout(() => el.remove(), 250);
     };
+    // another tab opened: take the tip away without marking it seen (it shows again next time on its own screen)
+    const dropHint = () => { if (!hintBox) return; const { el, target } = hintBox; hintBox = null; if (target) target.classList.remove('hint-ring'); el.remove(); };
     const hint = (id, sel, text, delay = 650) => {
         if (!gateOn() && !localStorage.getItem('workoutTestHints')) return; // automated tests: no hints unless asked
         if (hintSeen(id) || hintBox) return;
@@ -4188,7 +4301,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             box.innerHTML = `<div class="text-center" dir="${isAR ? 'rtl' : 'ltr'}">
                 <span class="w-14 h-14 mx-auto mb-4 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center"><i data-lucide="shield-check" class="w-7 h-7"></i></span>
                 <h3 id="agree-title" class="text-xl font-black text-white mb-2">${t('Before you continue')}</h3>
-                <p class="text-[13px] font-bold text-slate-400 leading-relaxed mb-5">${t('Please read and agree to our Terms of Use and Privacy Policy. They explain how Apex Lift works and how your data is kept safe.')}</p>
+                <p class="text-[13px] font-bold text-slate-400 leading-relaxed mb-5">${t('Review the Terms of Use and Privacy Policy to continue.')}</p>
                 <div class="space-y-2 mb-5 text-start">${link('terms.html', t('Terms of Use'))}${link('privacy.html', t('Privacy Policy'))}</div>
                 <button id="agree-yes" onclick="window.appActions.agreeYes()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-extrabold tap-feedback">${t('I agree, continue')}</button>
                 <button onclick="window.appActions.agreeNo()" class="w-full mt-2 py-3 text-[13px] font-bold text-slate-400 tap-feedback">${t('Cancel')}</button>
@@ -4204,23 +4317,17 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (next) next();
         },
         agreeNo: () => { window.appState.agreeNext = null; popBack('agree'); closeModal('agree-overlay', 'agree-box'); },
+        // body weight (Profile and Progress → Body); everything else in Your profile is set in the setup
+        saveWeight: v => { if (window.appActions.setAbout('weightKg', v)) { window.appActions.showToast(t('Weight saved'), 'success'); renderAbout(); } },
+        // only body weight can change after the setup; returns true when it was saved
         setAbout: (field, value) => {
-            const b = getBody(), v = latinDigits(value).trim();
-            if (b.locked && LOCKED_ABOUT.includes(field)) return window.appActions.showToast(t("This can't be changed."), 'error');
-            if (field === 'sex') b.sex = ['male', 'female', 'na'].includes(value) ? value : b.sex;
-            else if (field === 'birthYear') { const y = parseInt(v); if (!v) delete b.birthYear; else if (y >= thisYear() - 100 && y <= thisYear() - 5) b.birthYear = y; else window.appActions.showToast(t('Please check this number.'), 'error'); }
-            else if (field === 'heightCm') { const h = parseFloat(v); if (!v) delete b.heightCm; else if (h >= 100 && h <= 250) b.heightCm = h; else window.appActions.showToast(t('Please check this number.'), 'error'); }
-            else if (field === 'weightKg') {
-                const w = parseFloat(v.replace(/[\u066B\u060C,]/g, '.'));
-                if (!v) delete b.weightKg;
-                else if (w >= 25 && w <= 350) { b.weightKg = w; const log = (b.log || []).filter(x => dateKey(x.t) !== dateKey()); log.push({ t: Date.now(), kg: w }); b.log = log; }
-                else window.appActions.showToast(t('Please check this number.'), 'error');
-            }
+            if (field !== 'weightKg') { window.appActions.showToast(t("This can't be changed."), 'error'); return false; }
+            const b = getBody(), w = parseFloat(latinDigits(String(value)).trim().replace(/[\u066B\u060C,]/g, '.'));
+            if (!(w >= 25 && w <= 350)) { window.appActions.showToast(t('Enter your weight in kg (25–350).'), 'error'); if (window.appState.currentView === 'profile') renderAbout(); return false; }
+            b.weightKg = Math.round(w * 10) / 10;
+            b.log = [...(b.log || []).filter(x => dateKey(x.t) !== dateKey()), { t: Date.now(), kg: b.weightKg }];
             setBody(b);
-            if (field === 'sex') {
-                renderAbout();
-                const ob = document.getElementById('onboarding-overlay'); if (ob && ob.classList.contains('flex') && window.appState.wiz && window.appState.wiz.steps[window.appState.wiz.step] === 'about') window.appActions.renderWizard();
-            } else setTimeout(refreshAbout, 0);
+            return true;
         },
         welcomeLater: () => { if (requireSignIn() && !isSignedIn()) return; hideWelcome(); window.appActions.initOnboarding(); },
         welcomeContinue: () => {
@@ -4238,7 +4345,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const b = document.getElementById('backups-now'); if (b.disabled) return;
             b.disabled = true; b.classList.add('opacity-60');
             try { await cloudBackup('manual'); window.appActions.showToast(t('Backup saved to your account'), 'success'); renderBackups(); }
-            catch (e) { console.warn(e); window.appActions.showToast(e && /permission/i.test(e.code || '') ? t('Backups are blocked by the Firebase rules. Publish the new firestore.rules.') : t('Could not save the backup. Check your connection.'), 'error'); }
+            catch (e) { console.warn(e); window.appActions.showToast(e && /permission/i.test(e.code || '') ? t('Backup isn\'t available right now. Try again later.') : t('Could not save the backup. Check your connection.'), 'error'); }
             finally { b.disabled = false; b.classList.remove('opacity-60'); }
         },
         restoreBackup: (id, label) => window.appActions.showConfirm(t('Restore this backup?'), t('Your routines, settings and workouts go back to {date}, on all your phones. A copy of how things are now is saved first.', { date: label }), async () => {
@@ -4307,7 +4414,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const age = document.getElementById('backup-age');
         // signed in, everything is already kept in the account: the file is for sharing or for an AI
         const synced = !!(Cloud.user || getCloudFlag());
-        if (age) { age.textContent = synced ? t('Save a file or share it with an AI') : days < 1 ? t('Last export: today') : t('Last export: {n} days ago', { n: days }); age.classList.toggle('is-warn', old); }
+        if (age) { age.textContent = synced ? t('Save or share a copy') : days < 1 ? t('Last export: today') : t('Last export: {n} days ago', { n: days }); age.classList.toggle('is-warn', old); }
     };
     updateBackupStatus();
     renderAccount();

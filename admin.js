@@ -28,7 +28,23 @@
     const LABEL = {
         goal: { muscle: 'Build muscle', strength: 'Get stronger', fat: 'Lose fat' }, exp: { none: 'Just starting', new: '< 1 year', mid: '1–3 years', adv: '3–5 years', pro: '5+ years' }, eq: { gym: 'Full gym', db: 'Dumbbells' },
         sex: { male: 'Male', female: 'Female', na: '—' }, lang: { en: 'English', ar: 'Arabic' }, platform: { ios: 'iPhone / iPad', android: 'Android', desktop: 'Computer' },
-        setup: { program: 'Picked a program', own: 'Built their own', skip: 'Skipped' }
+        setup: { program: 'Picked a program', own: 'Built their own', skip: 'Skipped' },
+        session: { 30: '30 min', 45: '45 min', 60: '60 min', 90: '90+ min' },
+        injury: { none: 'None', shoulder: 'Shoulder', back: 'Lower back', knee: 'Knee', elbow: 'Elbow or wrist', hip: 'Hip', other: 'Other' },
+        source: { instagram: 'Instagram', tiktok: 'TikTok', snapchat: 'Snapchat', x: 'X (Twitter)', youtube: 'YouTube', friend: 'A friend', search: 'Google search', other: 'Other' },
+        signIn: { google: 'Google', email: 'Email' }
+    };
+    // country from the phone's time zone (no location is collected); unknown zones show the city part
+    const TZ_COUNTRY = { 'Asia/Riyadh': 'Saudi Arabia', 'Asia/Dubai': 'UAE', 'Asia/Kuwait': 'Kuwait', 'Asia/Qatar': 'Qatar', 'Asia/Bahrain': 'Bahrain', 'Asia/Muscat': 'Oman',
+        'Africa/Cairo': 'Egypt', 'Asia/Amman': 'Jordan', 'Asia/Baghdad': 'Iraq', 'Asia/Beirut': 'Lebanon', 'Asia/Damascus': 'Syria', 'Asia/Aden': 'Yemen', 'Africa/Casablanca': 'Morocco',
+        'Africa/Algiers': 'Algeria', 'Africa/Tunis': 'Tunisia', 'Africa/Khartoum': 'Sudan', 'Africa/Tripoli': 'Libya', 'Asia/Gaza': 'Palestine', 'Asia/Hebron': 'Palestine', 'Europe/Istanbul': 'Turkey',
+        'Europe/London': 'United Kingdom', 'Asia/Karachi': 'Pakistan', 'Asia/Kolkata': 'India', 'Asia/Calcutta': 'India', 'Asia/Manila': 'Philippines', 'Asia/Jakarta': 'Indonesia' };
+    const countryOf = tz => !tz ? '' : TZ_COUNTRY[tz] || (tz.startsWith('America/') ? 'Americas' : tz.startsWith('Europe/') ? 'Europe' : tz.split('/').pop().replace(/_/g, ' '));
+    // age from the date of birth (older accounts: the birth year)
+    const ageFrom = b => {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(b.birthDate || ''));
+        if (m) { const n = new Date(); return n.getFullYear() - +m[1] - ((n.getMonth() + 1 < +m[2] || (n.getMonth() + 1 === +m[2] && n.getDate() < +m[3])) ? 1 : 0); }
+        return num(b.birthYear) ? new Date().getFullYear() - b.birthYear : null;
     };
     const lab = (k, v) => (LABEL[k] && LABEL[k][v]) || '';
     const setupLabel = v => !v ? '' : v.startsWith('left:') ? `Left at "${v.slice(5)}"` : lab('setup', v) || v;
@@ -71,7 +87,11 @@
         const lastSeen = keyTs(a.lastSeen), lastWorkout = act ? num(act.last) : null;
         const u = {
             uid: d.id, raw: m, name: String(a.name || ''), email: String(a.email || ''),
-            age: num(b.birthYear) ? new Date().getFullYear() - b.birthYear : null, sex: lab('sex', b.sex), heightCm: num(b.heightCm), weightKg: num(b.weightKg),
+            age: ageFrom(b), birthDate: String(b.birthDate || (num(b.birthYear) ? b.birthYear : '')), sex: lab('sex', b.sex), heightCm: num(b.heightCm), weightKg: num(b.weightKg),
+            bmi: num(b.heightCm) && num(b.weightKg) ? Math.round(b.weightKg / Math.pow(b.heightCm / 100, 2) * 10) / 10 : null,
+            session: lab('session', pr.session), injuries: Array.isArray(pr.injuries) ? pr.injuries.map(x => lab('injury', x)).filter(Boolean) : [], source: lab('source', pr.source),
+            signIn: lab('signIn', a.signIn), verified: a.verified === true ? 'Yes' : a.verified === false ? 'No' : '', tz: String(a.tz || ''), country: countryOf(String(a.tz || '')),
+            locale: String(a.locale || ''), screen: String(a.screen || ''),
             goal: lab('goal', pr.goal), goalKey: String(pr.goal || ''), days: String(pr.days || ''), exp: lab('exp', pr.exp), eq: lab('eq', pr.eq),
             routine: String(active.name || ''), routines: plan.length, joined: num(a.createdAt), lastSeen, lastWorkout, updatedAt: num(m.updatedAt),
             lang: lab('lang', a.lang), platform: lab('platform', a.platform), installed: a.installed === true ? 'Yes' : a.installed === false ? 'No' : '',
@@ -192,7 +212,7 @@
     const countBy = (list, f) => { const m = {}; list.forEach(u => { const k = f(u); if (k) m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
 
     // ---------- page ----------
-    const COLS = [['name', 'Name'], ['email', 'Email'], ['statusLabel', 'Status'], ['goal', 'Goal'], ['days', 'Days/wk'], ['exp', 'Experience'], ['routine', 'Routine'], ['workouts', 'Workouts'], ['lastWorkout', 'Last workout'], ['visits', 'Visits'], ['lastActive', 'Last active'], ['joined', 'Joined'], ['age', 'Age'], ['sex', 'Sex'], ['platform', 'Phone'], ['lang', 'Language'], ['version', 'App'], ['followUp', 'Follow-up']];
+    const COLS = [['name', 'Name'], ['email', 'Email'], ['statusLabel', 'Status'], ['goal', 'Goal'], ['days', 'Days/wk'], ['exp', 'Experience'], ['source', 'Heard from'], ['country', 'Country'], ['routine', 'Routine'], ['workouts', 'Workouts'], ['lastWorkout', 'Last workout'], ['visits', 'Visits'], ['lastActive', 'Last active'], ['joined', 'Joined'], ['age', 'Age'], ['sex', 'Sex'], ['platform', 'Phone'], ['lang', 'Language'], ['version', 'App'], ['followUp', 'Follow-up']];
     const cell = (u, k) => {
         const v = u[k];
         if (k === 'statusLabel') return `${u.online ? '<span class="badge b-online">Online now</span>' : ''}<span class="badge ${STATUS[u.status][1]}">${esc(v)}</span>${isNew(u) ? '<span class="badge b-new">New</span>' : ''}${u.client ? '<span class="badge b-client">Client</span>' : ''}`;
@@ -303,7 +323,13 @@
                 ${card('Experience', '', hbars(countBy(users, u => u.exp), users.length))}
                 ${card('Days per week', '', hbars(countBy(users, u => u.days && `${u.days} days`), users.length))}
                 ${card('Equipment', '', hbars(countBy(users, u => u.eq), users.length))}
-                ${card('Age', 'Users who shared their birth year', hbars(countBy(users, ageBand), users.filter(u => u.age).length))}
+                ${card('Workout length', '', hbars(countBy(users, u => u.session), users.filter(u => u.session).length))}
+                ${card('Injuries', 'Users who reported each one (a user can report several)', hbars(Object.entries(users.reduce((m, u) => { u.injuries.forEach(x => { m[x] = (m[x] || 0) + 1; }); return m; }, {})).sort((a, b) => b[1] - a[1]), users.filter(u => u.injuries.length).length))}
+                ${card('How they heard about Apex Lift', '', hbars(countBy(users, u => u.source), users.filter(u => u.source).length))}
+                ${card('Country', 'From the phone time zone', hbars(countBy(users, u => u.country).slice(0, 12), users.filter(u => u.country).length))}
+                ${card('Sign-in method', '', hbars(countBy(users, u => u.signIn), users.filter(u => u.signIn).length))}
+                ${card('BMI', 'From height and weight', hbars(countBy(users, u => !u.bmi ? '' : u.bmi < 18.5 ? 'Under 18.5' : u.bmi < 25 ? '18.5–24.9' : u.bmi < 30 ? '25–29.9' : '30+'), users.filter(u => u.bmi).length))}
+                ${card('Age', '', hbars(countBy(users, ageBand), users.filter(u => u.age).length))}
                 ${card('Sex', '', hbars(countBy(users, u => u.sex), users.filter(u => u.sex).length))}
                 ${card('Phone', '', hbars(countBy(users, u => u.platform), users.filter(u => u.platform).length))}
                 ${card('Installed on home screen', '', hbars(countBy(users, u => u.installed), users.filter(u => u.installed).length))}
@@ -361,9 +387,9 @@
                 <div class="kv"><div><span>Visits</span><b>${esc(u.visits)}</b></div><div><span>Average visit (last ${u.recent.length})</span><b>${u.recent.length ? esc(fmtDur(u.recent.reduce((a, v) => a + (v.e - v.s), 0) / u.recent.length)) : '—'}</b></div></div>
                 <div class="list" style="margin-top:6px">${u.recent.slice(0, 10).map((v, i) => `<div><span>${esc(fmtDate(v.s))} · ${esc(fmtTime(v.s))}</span><span>${i === 0 && u.online ? '<span class="ok">Using the app now</span> · ' : ''}${esc(fmtDur(v.e - v.s))}</span></div>`).join('')}</div>`}
             <h3>Workouts per week</h3>${u.hasActivity ? barChart(wk, { h: 110 }) : '<p class="note">Shown once they open the updated app.</p>'}
-            <h3>About</h3><div class="kv">${kv('Age', u.age)}${kv('Sex', u.sex)}${kv('Height', u.heightCm && u.heightCm + ' cm')}${kv('Weight', u.weightKg && u.weightKg + ' kg')}${kv('Goal', u.goal)}${kv('Days per week', u.days)}${kv('Experience', u.exp)}${kv('Equipment', u.eq)}
+            <h3>About</h3><div class="kv">${kv('Age', u.age)}${kv('Date of birth', u.birthDate)}${kv('Sex', u.sex)}${kv('Height', u.heightCm && u.heightCm + ' cm')}${kv('Weight', u.weightKg && u.weightKg + ' kg')}${kv('BMI', u.bmi)}${kv('Workout length', u.session)}${kv('Injuries', u.injuries.join(', '))}${kv('Heard from', u.source)}${kv('Goal', u.goal)}${kv('Days per week', u.days)}${kv('Experience', u.exp)}${kv('Equipment', u.eq)}
                 ${kv('Workouts', u.workouts)}${kv('Exercises', u.exercises)}${kv('Last workout', u.lastWorkout && `${fmtDate(u.lastWorkout)} (${ago(u.lastWorkout)})`)}${kv('Last active', u.lastActive && `${fmtDate(u.lastActive)} (${ago(u.lastActive)})`)}
-                ${kv('Joined', fmtDate(u.joined))}${kv('Setup', u.setup)}${kv('Phone', u.platform)}${kv('Installed', u.installed)}${kv('Language', u.lang)}${kv('App version', u.version)}${kv('Terms version', u.terms)}
+                ${kv('Joined', fmtDate(u.joined))}${kv('Setup', u.setup)}${kv('Sign-in', u.signIn)}${kv('Email verified', u.verified)}${kv('Country', u.country)}${kv('Time zone', u.tz)}${kv('Device language', u.locale)}${kv('Screen', u.screen)}${kv('Phone', u.platform)}${kv('Installed', u.installed)}${kv('Language', u.lang)}${kv('App version', u.version)}${kv('Terms version', u.terms)}
                 ${kv('Check-ins (30 days)', rd.length ? `${rd.length} · sleep ${rAvg('sleep')} · soreness ${rAvg('soreness')} · energy ${rAvg('energy')}` : '')}</div>
             ${weights.length >= 2 ? `<h3>Body weight</h3>${lineChart(weights, { unit: 'kg' })}` : weights.length ? `<h3>Body weight</h3><div class="list"><div><span>${esc(fmtDate(weights[0].t))}</span><span>${esc(weights[0].v)} kg</span></div></div>` : ''}
             ${u.top.length ? `<h3>Most trained exercises</h3>${hbars(u.top.map(x => [String(x.n), num(x.c) || 0]))}` : ''}
@@ -451,10 +477,12 @@
     const csvCell = v => { let s = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return `"${s.replace(/"/g, '""')}"`; };
     const toCSV = rows => '﻿' + rows.map(r => r.map(csvCell).join(',')).join('\r\n'); // ﻿: Excel opens Arabic names correctly
     const downloadCSV = () => {
-        const head = ['Name', 'Email', 'Status', 'Client', 'Follow-up', 'Age', 'Sex', 'Height (cm)', 'Weight (kg)', 'Goal', 'Days per week', 'Experience', 'Equipment', 'Routine', 'Routines', 'Workouts', 'Exercises',
-            'Last workout', 'Visits', 'Last active', 'Joined', 'Setup', 'Phone', 'Installed', 'Language', 'App version', 'Terms version', 'User UID'];
-        const rows = filtered().map(u => [u.name, u.email, u.statusLabel, u.client ? 'Yes' : '', u.followUp, u.age, u.sex, u.heightCm, u.weightKg, u.goal, u.days, u.exp, u.eq, u.routine, u.routines, u.workouts, u.exercises,
-            iso(u.lastWorkout), u.visits, iso(u.lastActive), iso(u.joined), u.setup, u.platform, u.installed, u.lang, u.version, u.terms, u.uid]);
+        const head = ['Name', 'Email', 'Status', 'Client', 'Follow-up', 'Age', 'Date of birth', 'Sex', 'Height (cm)', 'Weight (kg)', 'BMI', 'Goal', 'Days per week', 'Experience', 'Workout length', 'Equipment', 'Injuries', 'Heard from',
+            'Routine', 'Routines', 'Workouts', 'Exercises', 'Last workout', 'Visits', 'Last active', 'Joined', 'Setup', 'Sign-in', 'Email verified', 'Country', 'Time zone', 'Device language', 'Screen',
+            'Phone', 'Installed', 'Language', 'App version', 'Terms version', 'User UID'];
+        const rows = filtered().map(u => [u.name, u.email, u.statusLabel, u.client ? 'Yes' : '', u.followUp, u.age, u.birthDate, u.sex, u.heightCm, u.weightKg, u.bmi, u.goal, u.days, u.exp, u.session, u.eq, u.injuries.join('; '), u.source,
+            u.routine, u.routines, u.workouts, u.exercises, iso(u.lastWorkout), u.visits, iso(u.lastActive), iso(u.joined), u.setup, u.signIn, u.verified, u.country, u.tz, u.locale, u.screen,
+            u.platform, u.installed, u.lang, u.version, u.terms, u.uid]);
         saveFile(`ApexLift_users_${iso(Date.now())}.csv`, toCSV([head, ...rows]), 'text/csv;charset=utf-8');
     };
     // one row per set, for the users in the current list (reads their full history)
