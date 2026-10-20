@@ -523,6 +523,7 @@
         "New record": "رقم قياسي جديد",
         "{name} saved · {n} sets": "تم حفظ {name} · {n} مجموعات",
         "Close": "إغلاق",
+        "How to do it (YouTube)": "طريقة الأداء (يوتيوب)",
         "Week of {range}": "أسبوع {range}",
         "{a} of {b} workouts done": "تم {a} من {b} تمارين",
         "Reps per set": "التكرار لكل مجموعة",
@@ -1032,7 +1033,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '43';
+    const APP_VERSION = '44';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -2339,6 +2340,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                         <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
                         <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(ex.name)}</h3>
                     </div>
+                    <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}" target="_blank" rel="noopener" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('How to do it (YouTube)'))}" title="${esc(t('How to do it (YouTube)'))}"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i></a>
                     <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
                     <button onclick="window.appActions.closeExSheet()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
