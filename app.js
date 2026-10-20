@@ -72,8 +72,6 @@
         "Tap ✏️ to change this day's exercises.": "اضغط ✏️ لتغيير تمارين هذا اليوم.",
         "Add exercises to start training on this day.": "أضف تمارين لتبدأ التمرين في هذا اليوم.",
         "Tap a day to edit it": "اضغط على يوم لتعديله",
-        "Editing your schedule": "تعديل جدولك",
-        "Changes here update your Today page": "التغييرات هنا تُحدّث صفحة اليوم",
         "Go to today's workout": "اذهب إلى تمرين اليوم",
         "Edit": "تعديل",
         "More": "المزيد",
@@ -486,7 +484,6 @@
         "Saves weights & history": "يحفظ الأوزان والسجل",
         "Scans for weights & history": "يبحث عن الأوزان والسجل",
         "Search exercises": "ابحث عن تمرين",
-        "Select": "اختيار",
         "Select at least one option!": "اختر خياراً واحداً على الأقل!",
         "Select exactly what you want to extract from this backup file.": "اختر ما تريد استعادته من ملف النسخة الاحتياطية.",
         "Select exactly what you want to include in this backup file.": "اختر ما تريد حفظه في ملف النسخة الاحتياطية.",
@@ -592,6 +589,8 @@
         "Save or share file": "حفظ أو مشاركة الملف",
         "Share": "مشاركة",
         "Share routine": "مشاركة البرنامج",
+        "Routine options": "خيارات البرنامج",
+        "Use this routine": "استخدم هذا البرنامج",
         "Sign in to use routine codes.": "سجّل الدخول لاستخدام رموز البرامج.",
         "Something went wrong. Please try again.": "حدث خطأ. حاول مرة أخرى.",
         "Try my \"{name}\" routine in Apex Lift. Code: {code}": "جرّب برنامجي \"{name}\" في Apex Lift. الرمز: {code}",
@@ -1043,7 +1042,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '45';
+    const APP_VERSION = '46';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1421,13 +1420,16 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // Plan tab: your routines as one folding card (shows the active routine; tap to see and manage all of them)
     const renderSidePanel = () => {
         const active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0], open = !!window.appState.routinesOpen, inDay = window.appState.planDay != null;
-        const row = w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[12px] font-bold shrink-0">${t('Active')}</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[12px] font-bold tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">${t('Select')}</button>`}<button onclick="window.appActions.shareWeek(${jsArg(w.id)})" class="text-[#d4af37] tap-feedback p-1 bg-[#d4af37]/10 rounded-lg shrink-0 border border-[#d4af37]/25" aria-label="${esc(t('Share routine'))}" title="${esc(t('Share routine'))}"><i data-lucide="share-2" class="w-4 h-4"></i></button><button onclick="window.appActions.duplicateWeek(${jsArg(w.id)})" class="text-slate-300 hover:text-white tap-feedback p-1 bg-white/5 rounded-lg shrink-0 border border-white/10" aria-label="${esc(t('Duplicate routine'))}" title="${esc(t('Duplicate routine'))}"><i data-lucide="copy" class="w-4 h-4"></i></button>${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20" aria-label="${esc(t('Delete routine'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`;
-        // Plan is where the schedule is edited: a gold strip says so, so it isn't mistaken for Today
-        document.getElementById('weeks-container').innerHTML = `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-white/5 border border-white/10">
-            <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
-            <span class="flex-1 min-w-0"><span class="block text-[13px] font-bold text-white">${t('Editing your schedule')}</span><span class="block text-[12px] font-semibold text-slate-300 mt-px">${t('Changes here update your Today page')}</span></span>
-        </div>
-        ${inDay ? '' : `<div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''}">
+        // each routine: its name (tap to rename) and one ⋮ button with Use / Share / Duplicate / Delete
+        const mItem = 'w-full flex items-center gap-2.5 px-3 py-3 rounded-xl text-start text-[13px] font-extrabold tap-feedback';
+        const rMenu = w => window.appState.routineMenu !== w.id ? '' : `<div class="absolute end-2 top-full mt-1 z-[61] w-[220px] p-1.5 rounded-2xl bg-[#111] border border-white/15 shadow-[0_20px_40px_rgba(0,0,0,0.7)]" role="menu">
+                ${w.id !== currentWeekId ? `<button onclick="window.appState.routineMenu=null;window.appActions.switchWeek(${jsArg(w.id)})" class="${mItem} text-white" role="menuitem"><i data-lucide="check-circle" class="w-4 h-4 text-[#22c55e]"></i>${t('Use this routine')}</button>` : ''}
+                <button onclick="window.appState.routineMenu=null;window.appActions.shareWeek(${jsArg(w.id)})" class="${mItem} text-slate-200" role="menuitem"><i data-lucide="share-2" class="w-4 h-4 text-[#d4af37]"></i>${t('Share routine')}</button>
+                <button onclick="window.appState.routineMenu=null;window.appActions.duplicateWeek(${jsArg(w.id)})" class="${mItem} text-slate-200" role="menuitem"><i data-lucide="copy" class="w-4 h-4 text-slate-400"></i>${t('Duplicate routine')}</button>
+                ${appData.weeks.length > 1 ? `<button onclick="window.appState.routineMenu=null;window.appActions.deleteWeek(${jsArg(w.id)})" class="${mItem} text-red-400" role="menuitem"><i data-lucide="trash-2" class="w-4 h-4"></i>${t('Delete routine')}</button>` : ''}
+            </div>`;
+        const row = w => { const on = window.appState.routineMenu === w.id; return `<div class="relative ${on ? 'z-20' : ''} flex items-center gap-3 bg-black/40 ps-3 pe-1 py-1.5 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold w-full outline-none py-1.5">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[12px] font-bold shrink-0">${t('Active')}</span>`:''}<button onclick="window.appActions.toggleRoutineMenu(${jsArg(w.id)})" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-lg tap-feedback ${on ? 'text-[#d4af37]' : 'text-slate-300'}" aria-haspopup="menu" aria-expanded="${on}" aria-label="${esc(t('Routine options') + ' · ' + w.name)}"><i data-lucide="ellipsis-vertical" class="w-[18px] h-[18px]"></i></button>${rMenu(w)}</div>`; };
+        document.getElementById('weeks-container').innerHTML = inDay ? '' : `<div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''} ${window.appState.routineMenu != null ? 'relative z-30' : ''}">
             <button onclick="window.appActions.toggleRoutines()" class="w-full p-4 flex items-center gap-3 text-start tap-feedback" aria-expanded="${open}">
                 <span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-range" class="w-5 h-5"></i></span>
                 <span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-slate-400">${t('My routines')}</span><span class="block text-[15px] font-black text-white truncate">${esc(t(active.name))}</span></span>
@@ -1438,7 +1440,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <button onclick="window.appActions.addWeek()" class="w-full py-3 flex items-center justify-center gap-2 text-[#d4af37] font-bold text-[12px] tap-feedback border border-dashed border-[#d4af37]/40 bg-[#d4af37]/5 rounded-xl"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i>${t('New routine')}</button>
                 <button onclick="window.appActions.openCodeSheet()" class="w-full py-3 flex items-center justify-center gap-2 text-slate-300 font-bold text-[12px] tap-feedback border border-white/10 bg-white/5 rounded-xl"><i data-lucide="ticket" class="w-4 h-4 shrink-0"></i>${t('Add a routine by code')}</button>
             </div>` : ''}
-        </div>`}`;
+        </div>`;
         document.getElementById('active-week-label').innerText = t(active.name);
         if(window.lucide) window.lucide.createIcons();
     };
@@ -3017,16 +3019,18 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             StorageManager.setPlan(appData); renderSidePanel();
             window.appActions.showToast(t('Routine duplicated'), 'success');
         },
-        // ⋯ options on a Plan week row; a tap anywhere outside closes it without pressing what is under it
-        toggleWeekMenu: id => {
-            const open = window.appState.weekMenu = window.appState.weekMenu === id ? null : id;
-            renderWorkout();
+        // ⋮ menus (a week row, a routine); a tap anywhere outside closes it without pressing what is under it
+        toggleWeekMenu: id => window.appActions.toggleMenu('weekMenu', id, renderWorkout),
+        toggleRoutineMenu: id => window.appActions.toggleMenu('routineMenu', id, renderSidePanel),
+        toggleMenu: (key, id, redraw) => {
+            const open = window.appState[key] = window.appState[key] === id ? null : id;
+            redraw();
             if (open == null) return;
             const away = e => {
                 if (e.target.closest('[role="menu"], [aria-haspopup="menu"]')) return;
                 document.removeEventListener('pointerdown', away, true);
-                if (window.appState.weekMenu == null) return;
-                window.appState.weekMenu = null; e.stopPropagation(); renderWorkout();
+                if (window.appState[key] == null) return;
+                window.appState[key] = null; e.stopPropagation(); redraw();
                 const eat = ev => { ev.stopPropagation(); ev.preventDefault(); };
                 document.addEventListener('click', eat, { capture: true, once: true });
                 setTimeout(() => document.removeEventListener('click', eat, true), 600);
