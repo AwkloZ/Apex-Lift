@@ -58,6 +58,30 @@
     </div>
 
     <!-- Account backups: dated copies kept in your Google account -->
+    <!-- Profile → Account (filled by app.js) -->
+    <div id="account-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeAccount()">
+        <div id="account-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[92dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="flex items-center justify-between px-5 pb-2 shrink-0">
+                <h3 class="text-lg font-black text-white" data-i18n="Account">Account</h3>
+                <button onclick="window.appActions.closeAccount()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="account-body" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+        </div>
+    </div>
+
+    <!-- Profile → Your training (filled by app.js) -->
+    <div id="training-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeTraining()">
+        <div id="training-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[92dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="flex items-center justify-between px-5 pb-2 shrink-0">
+                <h3 class="text-lg font-black text-white" data-i18n="Your training">Your training</h3>
+                <button onclick="window.appActions.closeTraining()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="training-body" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+        </div>
+    </div>
+
     <div id="backups-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeBackups()">
         <div id="backups-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[80dvh] transform translate-y-full transition-transform duration-300">
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
@@ -265,7 +289,6 @@
             <section id="profile-view" class="hidden pb-6">
                 <div id="account-card" class="mb-3"></div>
                 <div id="profile-stats" class="mb-6"></div>
-                <div id="about-card"></div>
 
                 <h3 class="pf-h" data-i18n="Workout">Workout</h3>
                 <div class="pf-group mb-6">
@@ -322,6 +345,11 @@
 
                 <h3 class="pf-h" data-i18n="Program & data">Program & data</h3>
                 <div class="pf-group mb-6">
+                    <button onclick="window.appActions.openTraining()" class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="target"></i></span>
+                        <span class="pf-label"><span data-i18n="Your training">Your training</span><span id="pf-training-sub" class="pf-sub"></span></span>
+                        <i data-lucide="chevron-right" class="pf-chev"></i>
+                    </button>
                     <button onclick="window.appActions.openBackupModal()" class="pf-row tap-feedback">
                         <span class="pf-ic"><i data-lucide="share"></i></span>
                         <span class="pf-label"><span data-i18n="Export data">Export data</span><span id="backup-age" class="pf-sub"></span></span>
@@ -333,10 +361,9 @@
                         <i data-lucide="chevron-right" class="pf-chev"></i>
                         <input type="file" class="hidden" accept=".json,application/json" onchange="window.appActions.importData(event)">
                     </label>
-                    <button id="pf-backups" onclick="window.appActions.openBackups()" class="pf-row tap-feedback hidden">
-                        <span class="pf-ic"><i data-lucide="history"></i></span>
-                        <span class="pf-label"><span data-i18n="Account backups">Account backups</span><span class="pf-sub" data-i18n="Go back to an earlier copy">Go back to an earlier copy</span></span>
-                        <i data-lucide="chevron-right" class="pf-chev"></i>
+                    <button onclick="window.appActions.restoreDefaults()" class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="rotate-ccw"></i></span>
+                        <span class="pf-label"><span data-i18n="Reset routines">Reset routines</span><span class="pf-sub" data-i18n="Back to the default routine. History is kept.">Back to the default routine. History is kept.</span></span>
                     </button>
                 </div>
 
@@ -356,21 +383,6 @@
                         <span class="pf-ic"><i data-lucide="file-text"></i></span><span class="pf-label" data-i18n="Terms of Use">Terms of Use</span>
                         <i data-lucide="arrow-up-right" class="pf-chev"></i>
                     </a>
-                </div>
-
-                <h3 class="pf-h" data-i18n="Account">Account</h3>
-                <div class="pf-group mb-6">
-                    <button id="pf-signout" onclick="window.appActions.cloudSignOut()" class="pf-row tap-feedback hidden">
-                        <span class="pf-ic"><i data-lucide="log-out"></i></span><span class="pf-label" data-i18n="Sign out">Sign out</span>
-                    </button>
-                    <button onclick="window.appActions.restoreDefaults()" class="pf-row tap-feedback">
-                        <span class="pf-ic"><i data-lucide="rotate-ccw"></i></span>
-                        <span class="pf-label"><span data-i18n="Reset routines">Reset routines</span><span class="pf-sub" data-i18n="Back to the default routine. History is kept.">Back to the default routine. History is kept.</span></span>
-                    </button>
-                    <button id="pf-delete" onclick="window.appActions.cloudDelete()" class="pf-row is-danger tap-feedback hidden">
-                        <span class="pf-ic"><i data-lucide="trash-2"></i></span>
-                        <span class="pf-label"><span data-i18n="Delete my account">Delete my account</span><span class="pf-sub" data-i18n="Deletes your cloud data and your account">Deletes your cloud data and your account</span></span>
-                    </button>
                 </div>
 
                 <p class="pf-foot"><span dir="ltr">Apex Lift · v<span id="app-version"></span></span><br><span data-i18n="Developed By">Developed By</span> <span class="text-[#d4af37]">Rakan Alharbi</span></p>

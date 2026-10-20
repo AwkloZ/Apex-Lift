@@ -32,6 +32,8 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 - When the app changes, bump `APP_VERSION` in `app.js` and `CACHE` in `sw.js` together (same number).
 - New data the app collects must be added to `privacy.html` (English and Arabic). For a meaningful change, bump `TERMS_VERSION` in `app.js` and the version chips in `privacy.html` and `terms.html`; users are then asked to agree again.
 - New Firestore fields or collections need matching rules in `firestore.rules`; the rules only accept known fields.
+- The setup only asks questions whose answers change the app for the user (program, sets, workout length, starting weight). Don't add questions just to collect data; collect that passively (device details, or the `?ref=` link source, e.g. `https://<site>/?ref=instagram`) and show it on the admin page.
+- Profile: the photo card opens Account (personal details and account actions); the setup answers are on the Your training page (read-only).
 - Everything must stay on the free plans (Firebase Spark, Netlify free): no Cloud Functions.
 
 ## Testing

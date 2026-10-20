@@ -265,6 +265,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, [role="button"]:foc
 .pf-weight { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--r-sm); background: var(--inset); border: 1px solid var(--line); }
 .pf-weight:focus-within { border-color: var(--gold); }
 .pf-weight input { width: 64px; background: transparent; color: var(--text); font-size: 20px; text-align: end; outline: none; }
+.pf-weight input.pf-name { width: 150px; font-size: 15px; font-weight: 700; font-family: var(--font-text); }
 .pf-weight span { font-size: 13px; font-weight: 700; color: var(--text-3); }
 .pf-note { margin: 8px 6px 24px; font-size: 12px; font-weight: 500; color: var(--text-3); line-height: 1.5; }
 .pf-foot { margin-top: 28px; text-align: center; font-size: 12px; font-weight: 600; color: var(--text-3); line-height: 1.8; }

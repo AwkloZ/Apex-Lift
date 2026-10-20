@@ -29,7 +29,7 @@ window.ApexCoach = (() => {
             const day = dayOrder(S.client.startDay)[i];
             if (slot === 'R' || slot === 'A') return restDay(i, day, slot === 'A');
             const [title, list] = WORKOUTS[slot];
-            return { id: i + 1, day, title, savedTitle: title, isRest: false, recoveryType: null, exercises: list.map(([name, muscle, sets, reps], j) => {
+            return { id: i + 1, day, title, savedTitle: title, isRest: false, recoveryType: null, exercises: list.slice(0, ({ 30: 4, 45: 5 })[S.client.session] || 99).map(([name, muscle, sets, reps], j) => { // shorter workouts: fewer exercises (same rule as the app)
                 let n = parseInt(sets);
                 if (S.client.exp === 'none') n = Math.max(2, n - 1);
                 if (S.client.exp === 'new' && j >= 2) n = Math.max(2, n - 1);

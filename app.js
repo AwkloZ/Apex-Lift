@@ -665,54 +665,44 @@
         "90+ minutes": "+90 دقيقة",
         "{n} min": "{n} دقيقة",
         "{n} minutes": "{n} دقيقة",
-        "A friend": "صديق",
         "Age": "العمر",
         "Age, sex and height are set during setup. Contact us to correct them.": "العمر والجنس والطول تُحدَّد أثناء الإعداد. تواصل معنا لتصحيحها.",
-        "Answer again and get a matching program": "أجب من جديد واحصل على برنامج مناسب",
-        "Any injuries or pain?": "هل لديك إصابة أو ألم؟",
         "Born {date}": "مواليد {date}",
         "Check your date of birth.": "تحقق من تاريخ ميلادك.",
         "Date of birth": "تاريخ الميلاد",
         "Date of birth, sex and height can't be changed after setup.": "لا يمكن تغيير تاريخ الميلاد والجنس والطول بعد الإعداد.",
-        "Elbow or wrist": "الكوع أو الرسغ",
         "Enter your date of birth.": "أدخل تاريخ ميلادك.",
         "Enter your height in cm (100–250).": "أدخل طولك بالسنتيمتر (100–250).",
         "Enter your weight in kg (25–350).": "أدخل وزنك بالكيلوغرام (25–350).",
         "Equipment": "المعدات",
-        "Google search": "بحث Google",
         "Height": "الطول",
         "Height and weight": "الطول والوزن",
-        "Hip": "الورك",
-        "How did you hear about Apex Lift?": "كيف عرفت Apex Lift؟",
         "How long is each workout?": "كم مدة التمرين الواحد؟",
-        "Injuries": "الإصابات",
-        "Instagram": "إنستغرام",
         "Just starting": "مبتدئ",
-        "Knee": "الركبة",
         "Locked": "مقفل",
-        "Lower back": "أسفل الظهر",
-        "None": "لا يوجد",
         "Other": "أخرى",
-        "Pick all that apply.": "اختر كل ما ينطبق.",
-        "Pick at least one, or None.": "اختر واحدًا على الأقل، أو لا يوجد.",
         "Profile updated": "تم تحديث الملف",
-        "Shoulder": "الكتف",
-        "Snapchat": "سناب شات",
         "This has to match the birth year on your profile ({y}).": "يجب أن يطابق سنة الميلاد في ملفك ({y}).",
-        "TikTok": "تيك توك",
-        "Update training": "تحديث التمرين",
         "Updated {date}": "آخر تحديث {date}",
-        "Used for your starting weights.": "يُستخدم لتحديد أوزانك في البداية.",
-        "Used to track your progress.": "يُستخدم لمتابعة تقدمك.",
         "Weight": "الوزن",
         "What's your sex?": "ما جنسك؟",
         "When were you born?": "متى وُلدت؟",
         "Workout length": "مدة التمرين",
-        "X (Twitter)": "X (تويتر)",
         "You can change any day or exercise later in Plan.": "يمكنك تغيير أي يوم أو تمرين لاحقًا من الخطة.",
-        "YouTube": "يوتيوب",
         "Your profile": "ملفك الشخصي",
         "Your training": "تمرينك",
+        "Active routine": "الجدول الحالي",
+        "Add another ready-made program": "أضف برنامجًا جاهزًا آخر",
+        "Browse programs": "تصفح البرامج",
+        "Email not confirmed": "البريد غير مؤكَّد",
+        "Helps pick the right program for you.": "يساعد في اختيار البرنامج المناسب لك.",
+        "Name": "الاسم",
+        "Personal details": "البيانات الشخصية",
+        "Send confirmation email": "أرسل رسالة التأكيد",
+        "Shorter workouts get fewer exercises a day.": "التمارين الأقصر فيها تمارين أقل في اليوم.",
+        "Signed in with": "تسجيل الدخول عبر",
+        "Starts your body weight chart and BMI in Progress.": "يبدأ به مخطط وزنك ومؤشر كتلة الجسم في التقدّم.",
+        "Your answers from setup. Your program was built from them.": "إجاباتك في الإعداد. بُني برنامجك عليها.",
     };
     const t = (en, vars) => {
         let out = (isAR && Object.prototype.hasOwnProperty.call(AR, en) && AR[en]) || en;
@@ -952,7 +942,7 @@
     const getResets = () => { const v = readJSON(RESET_KEY, {}); return isObj(v) ? v : {}; };
     const setResets = d => { try { localStorage.setItem(RESET_KEY, JSON.stringify(d)); } catch (e) {} };
     // Terms of Use & Privacy Policy: which version the user agreed to, and when
-    const TERMS_VERSION = '2026-10.6';
+    const TERMS_VERSION = '2026-10.7';
     const AGREE_KEY = 'workoutAgreed_rakan_final';
     const getAgree = () => { const v = readJSON(AGREE_KEY, null); return isObj(v) && v.v === TERMS_VERSION ? v : null; };
     const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
@@ -1024,7 +1014,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '39';
+    const APP_VERSION = '40';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1149,29 +1139,31 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // 'pro' = over 5 years: one set more on the first three lifts (never more than 5)
     const EXP_LEVELS = ['none', 'new', 'mid', 'adv', 'pro'];
     const PROFILE_KEY = 'workoutProfile_rakan_final';
-    // Training answers from the setup: goal, days a week, experience, equipment, workout length (minutes),
-    // injuries (list) and how they heard about Apex Lift
+    // Training answers from the setup. Each one changes the program: goal, days a week, experience, equipment
+    // and workout length (minutes: shorter workouts get fewer exercises a day)
     const SESSION_OPTS = ['30', '45', '60', '90'];
-    const INJURY_OPTS = ['none', 'shoulder', 'back', 'knee', 'elbow', 'hip', 'other'];
-    const SOURCE_OPTS = ['instagram', 'tiktok', 'snapchat', 'x', 'youtube', 'friend', 'search', 'other'];
     const sanitizeProfile = raw => {
         const p = isObj(raw) ? raw : {}, out = {};
-        ['goal', 'days', 'exp', 'eq', 'session', 'source'].forEach(k => { if (typeof p[k] === 'string' && p[k] && p[k].length <= 20) out[k] = p[k]; });
-        if (Array.isArray(p.injuries)) { const list = INJURY_OPTS.filter(x => p.injuries.includes(x)); if (list.length) out.injuries = list.includes('none') ? ['none'] : list; }
+        ['goal', 'days', 'exp', 'eq', 'session'].forEach(k => { if (typeof p[k] === 'string' && p[k] && p[k].length <= 20) out[k] = p[k]; });
         return out;
     };
+    // Where a new user came from: the link they opened (?ref=instagram or utm_source=...), or "friend" for a routine-code
+    // link. Read once, on the first visit, and kept on this phone until it goes up with the account.
+    const REF_KEY = 'workoutRef_rakan_final';
+    try {
+        const q = new URLSearchParams(location.search), ref = (q.get('ref') || q.get('utm_source') || (q.get('r') ? 'friend' : '')).toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 30);
+        if (ref && !localStorage.getItem(REF_KEY)) localStorage.setItem(REF_KEY, ref);
+        if (q.has('ref') || q.has('utm_source')) { ['ref', 'utm_source', 'utm_medium', 'utm_campaign'].forEach(k => q.delete(k)); history.replaceState(history.state, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); }
+    } catch (e) {}
     const getProfile = () => sanitizeProfile(readJSON(PROFILE_KEY, {}));
-    const PROFILE_STEPS = ['sex', 'birth', 'body'], TRAINING_STEPS = ['goal', 'exp', 'days', 'session', 'eq', 'injury'];
-    const INJURY_LABEL = { none: 'None', shoulder: 'Shoulder', back: 'Lower back', knee: 'Knee', elbow: 'Elbow or wrist', hip: 'Hip', other: 'Other' };
-    const SOURCE_LABEL = { instagram: 'Instagram', tiktok: 'TikTok', snapchat: 'Snapchat', x: 'X (Twitter)', youtube: 'YouTube', friend: 'A friend', search: 'Google search', other: 'Other' };
+    const PROFILE_STEPS = ['sex', 'birth', 'body'], TRAINING_STEPS = ['goal', 'exp', 'days', 'session', 'eq'];
     // is this setup question answered already?
     const setupAnswered = (k, b = getBody(), pr = getProfile()) => ({
         sex: !!b.sex, birth: !!b.birthDate, body: !!(b.heightCm && b.weightKg),
-        goal: !!pr.goal, exp: EXP_LEVELS.includes(pr.exp), days: !!pr.days, session: SESSION_OPTS.includes(pr.session), eq: !!pr.eq,
-        injury: !!(pr.injuries && pr.injuries.length), source: SOURCE_OPTS.includes(pr.source)
+        goal: !!pr.goal, exp: EXP_LEVELS.includes(pr.exp), days: !!pr.days, session: SESSION_OPTS.includes(pr.session), eq: !!pr.eq
     })[k];
     // the questions still to answer (asked once on the next visit after an update)
-    const setupMissing = () => { const b = getBody(), pr = getProfile(); return [...PROFILE_STEPS, ...TRAINING_STEPS, 'source'].filter(k => !setupAnswered(k, b, pr)); };
+    const setupMissing = () => { const b = getBody(), pr = getProfile(); return [...PROFILE_STEPS, ...TRAINING_STEPS].filter(k => !setupAnswered(k, b, pr)); };
     // Your profile (set in the setup): date of birth, sex, height, body weight + a log of body weight over time.
     // After the setup (locked) date of birth, sex and height can't be changed; body weight can.
     const BODY_KEY = 'workoutBody_rakan_final';
@@ -1198,14 +1190,16 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         return b.birthYear ? thisYear() - b.birthYear : null;
     };
     const LOCKED_ABOUT = ['birthYear', 'birthDate', 'heightCm', 'sex'];
-    const programSchedule = (prog, exp) => {
-        const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
+    // session (workout length in minutes): 30 → at most 4 exercises a day, 45 → 5, 60 or more → the whole day
+    const SESSION_CAP = { 30: 4, 45: 5 };
+    const programSchedule = (prog, exp, session = getProfile().session) => {
+        const start = DAY_NAMES.indexOf(StorageManager.getStartDay()), cap = SESSION_CAP[session] || 99;
         return prog.week.map((slot, i) => {
             const base = { id: i + 1, day: DAY_NAMES[(start + i) % 7], savedTitle: '' };
             if (slot === 'R') return { ...base, title: 'Complete Rest', isRest: true, recoveryType: 'complete', exercises: [] };
             if (slot === 'A') return { ...base, title: 'Active Rest', isRest: true, recoveryType: 'active', exercises: [] };
             const [title, list] = WORKOUTS[slot];
-            return { ...base, title, savedTitle: title, isRest: false, recoveryType: null, exercises: list.map(([name, muscle, sets, reps], j) => {
+            return { ...base, title, savedTitle: title, isRest: false, recoveryType: null, exercises: list.slice(0, cap).map(([name, muscle, sets, reps], j) => {
                 let n = parseInt(sets);
                 if (exp === 'none') n = Math.max(2, n - 1);
                 if (exp === 'new' && j >= 2) n = Math.max(2, n - 1);
@@ -1221,6 +1215,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const d = parseInt(a.days) || 4;
         // just starting: simple programs, at most 4 days, so the body can get used to training
         if (a.exp === 'none') return a.goal === 'strength' ? 's5x5' : d <= 3 ? 'fb3' : 'ul4';
+        // women training 4 days for muscle or fat loss: the glutes and legs program
+        if (a.sex === 'female' && d === 4 && (a.goal === 'muscle' || a.goal === 'fat')) return 'glutes4';
         // over 5 years: programs with more volume
         if (a.exp === 'pro') {
             if (a.goal === 'strength') return d <= 3 ? 's5x5' : 'phul';
@@ -1753,7 +1749,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const loggedToday = dateKey(last.t) === dateKey();
         let html = `<div class="glass-card p-5 mb-3">
             <div class="flex items-end justify-between gap-3">
-                <div><div class="text-[12px] font-bold text-slate-400 mb-1">${t('Body weight')}</div><div class="text-[34px] font-black text-white leading-none num" dir="ltr">${last.kg}<span class="text-[16px] text-slate-400"> kg</span></div><div class="text-[12px] font-bold text-slate-400 mt-1.5">${esc(fmtDate(last.t, false))}</div></div>
+                <div><div class="text-[12px] font-bold text-slate-400 mb-1">${t('Body weight')}</div><div class="text-[34px] font-black text-white leading-none num" dir="ltr">${last.kg}<span class="text-[16px] text-slate-400"> kg</span></div><div class="text-[12px] font-bold text-slate-400 mt-1.5">${esc(fmtDate(last.t, false))}${b.heightCm ? ` · BMI <span class="num text-[14px] text-slate-200" dir="ltr">${round1(last.kg / Math.pow(b.heightCm / 100, 2))}</span>` : ''}</div></div>
                 ${log.length >= 2 ? `<div class="text-end"><div class="text-[18px] font-black num ${diff === 0 ? 'text-slate-300' : 'text-white'}" dir="ltr">${diff > 0 ? '+' : ''}${diff} kg</div><div class="text-[12px] font-bold text-slate-400">${base === log[0] && base.t > monthAgo ? t('since you started') : t('in 30 days')}</div></div>` : ''}
             </div>
             ${log.length >= 2 ? `<div class="mt-4">${lineChartHTML(log.slice(-20).map(x => ({ t: x.t, v: x.kg })), 'kg')}</div>` : ''}
@@ -1881,39 +1877,78 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     }
 
 
-    // 👤 PROFILE → Your profile and Your training: the setup answers. Age, sex and height are fixed after the setup;
-    // weight can be updated here (it is also logged in Progress → Body). Training answers change through Update training.
+    // 👤 PROFILE. Tapping your photo opens Account: your personal details (age, sex and height are fixed after the setup;
+    // name and weight can change) and everything about the account (sign-in, backups, sign out, delete).
+    // Your training (Profile → Program & data) shows the setup answers the program was built from (they are set in the setup only).
     const GOAL_LABEL = { muscle: 'Build muscle', strength: 'Get stronger', fat: 'Lose fat' };
     const EXP_LABEL = { none: 'Just starting', new: 'Less than 1 year', mid: '1 to 3 years', adv: '3 to 5 years', pro: 'More than 5 years' };
     const EQ_LABEL = { gym: 'Full gym', db: 'Dumbbells only' };
-    const renderAbout = () => {
-        const el = document.getElementById('about-card'); if (!el) return;
-        const b = getBody(), pr = getProfile(), age = ageOf(b), lock = '<i data-lucide="lock" class="pf-lock" aria-label="' + esc(t('Locked')) + '"></i>';
-        const row = (icon, label, value, sub = '', extra = '') => `<div class="pf-row"><span class="pf-ic"><i data-lucide="${icon}"></i></span><span class="pf-label">${label}${sub ? `<span class="pf-sub">${sub}</span>` : ''}</span><span class="pf-val">${value || '—'}</span>${extra}</div>`;
+    const sessionLabel = v => v ? t(v === '90' ? '90+ min' : '{n} min', { n: v }) : '';
+    const pfRow = (icon, label, value, sub = '', extra = '') => `<div class="pf-row"><span class="pf-ic"><i data-lucide="${icon}"></i></span><span class="pf-label">${label}${sub ? `<span class="pf-sub">${sub}</span>` : ''}</span><span class="pf-val">${value || '—'}</span>${extra}</div>`;
+    const avatarHTML = (u, size) => {
+        const name = u.displayName || u.name || '', photo = u.photoURL || u.photo || '';
+        return photo ? `<img src="${esc(photo)}" alt="" referrerpolicy="no-referrer" class="${size} rounded-full object-cover shrink-0">`
+            : `<span class="${size} rounded-full bg-[#d4af37] text-black font-black flex items-center justify-center shrink-0">${esc((name || u.email || '?').charAt(0).toUpperCase())}</span>`;
+    };
+    const renderAccountSheet = () => {
+        const el = document.getElementById('account-body'); if (!el || !Cloud.user) return;
+        const u = Cloud.user, flag = getCloudFlag() || {}, b = getBody(), age = ageOf(b), lock = `<i data-lucide="lock" class="pf-lock" aria-label="${esc(t('Locked'))}"></i>`;
+        const since = Number(flag.since) > 0 ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { month: 'long', year: 'numeric', numberingSystem: 'latn' }).format(Number(flag.since)) : '';
         const born = b.birthDate ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric', numberingSystem: 'latn' }).format(new Date(b.birthDate + 'T12:00:00')) : b.birthYear ? String(b.birthYear) : '';
         const sexL = { male: t('Male'), female: t('Female'), na: t('Prefer not to say') }[b.sex] || '';
-        const lastW = (b.log || []).slice(-1)[0];
-        el.innerHTML = `<h3 class="pf-h">${t('Your profile')}</h3>
+        const lastW = (b.log || []).slice(-1)[0], google = !isPasswordUser();
+        const field = (id, val, mode, onchange, label, unit = '') => `<span class="pf-weight" ${unit ? 'dir="ltr"' : ''}><input id="${id}" type="text" inputmode="${mode}" autocomplete="off" value="${esc(val)}" onchange="${onchange}" class="${unit ? 'num' : 'pf-name'}" aria-label="${esc(label)}">${unit ? `<span>${unit}</span>` : ''}</span>`;
+        el.innerHTML = `<div class="flex flex-col items-center text-center pt-1 pb-6">
+                ${avatarHTML(u, 'w-20 h-20 text-[30px]')}
+                <div class="text-[20px] font-black text-white mt-3 max-w-full truncate">${esc(u.displayName || u.email || '')}</div>
+                <div class="text-[13px] font-bold text-slate-400 max-w-full truncate" dir="ltr">${esc(u.email || '')}</div>
+                ${since ? `<div class="text-[12px] font-bold text-slate-400 mt-1">${t('Member since {date}', { date: esc(since) })}</div>` : ''}
+            </div>
+            <h3 class="pf-h">${t('Personal details')}</h3>
             <div class="pf-group">
-                ${row('cake', t('Age'), age !== null ? `<span class="num">${age}</span>` : '', born ? t('Born {date}', { date: esc(born) }) : '', lock)}
-                ${row('user-round', t('Sex'), esc(sexL), '', lock)}
-                ${row('ruler', t('Height'), b.heightCm ? `<span class="num" dir="ltr">${b.heightCm} cm</span>` : '', '', lock)}
-                <label class="pf-row"><span class="pf-ic"><i data-lucide="scale"></i></span><span class="pf-label">${t('Weight')}${lastW ? `<span class="pf-sub">${t('Updated {date}', { date: esc(fmtDayMonth(new Date(lastW.t))) })}</span>` : ''}</span>
-                    <span class="pf-weight" dir="ltr"><input id="pf-weightKg" type="text" inputmode="decimal" autocomplete="off" value="${b.weightKg === undefined ? '' : esc(b.weightKg)}" onchange="window.appActions.saveWeight(this.value)" class="num" aria-label="${esc(t('Weight (kg)'))}"><span>kg</span></span></label>
+                <label class="pf-row"><span class="pf-ic"><i data-lucide="user-round"></i></span><span class="pf-label">${t('Name')}</span>${field('acc-name', u.displayName || '', 'text', 'window.appActions.saveName(this.value)', t('Name'))}</label>
+                ${pfRow('cake', t('Age'), age !== null ? `<span class="num">${age}</span>` : '', born ? t('Born {date}', { date: esc(born) }) : '', lock)}
+                ${pfRow('users', t('Sex'), esc(sexL), '', lock)}
+                ${pfRow('ruler', t('Height'), b.heightCm ? `<span class="num" dir="ltr">${b.heightCm} cm</span>` : '', '', lock)}
+                <label class="pf-row"><span class="pf-ic"><i data-lucide="scale"></i></span><span class="pf-label">${t('Weight')}${lastW ? `<span class="pf-sub">${t('Updated {date}', { date: esc(fmtDayMonth(new Date(lastW.t))) })}</span>` : ''}</span>${field('pf-weightKg', b.weightKg === undefined ? '' : b.weightKg, 'decimal', 'window.appActions.saveWeight(this.value)', t('Weight (kg)'), 'kg')}</label>
             </div>
             <p class="pf-note">${t('Age, sex and height are set during setup. Contact us to correct them.')}</p>
-            <h3 class="pf-h">${t('Your training')}</h3>
-            <div class="pf-group">
-                ${row('target', t('Goal'), esc(t(GOAL_LABEL[pr.goal] || '')))}
-                ${row('trending-up', t('Experience'), esc(t(EXP_LABEL[pr.exp] || '')))}
-                ${row('calendar-days', t('Days a week'), pr.days ? `<span class="num">${esc(pr.days)}</span>` : '')}
-                ${row('timer', t('Workout length'), pr.session ? esc(t(pr.session === '90' ? '90+ min' : '{n} min', { n: pr.session })) : '')}
-                ${row('building-2', t('Equipment'), esc(t(EQ_LABEL[pr.eq] || '')))}
-                ${row('bandage', t('Injuries'), esc((pr.injuries || []).map(x => t(INJURY_LABEL[x])).join(', ')))}
-                <button onclick="window.appActions.startWizard('training')" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="wand-2"></i></span><span class="pf-label">${t('Update training')}<span class="pf-sub">${t('Answer again and get a matching program')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
+            <h3 class="pf-h">${t('Account')}</h3>
+            <div class="pf-group mb-4">
+                ${pfRow(google ? 'log-in' : 'mail', t('Signed in with'), google ? 'Google' : t('Email'), !google && !u.emailVerified ? `<span class="text-[#f87171]">${t('Email not confirmed')}</span>` : '')}
+                ${!google && !u.emailVerified ? `<button onclick="window.appActions.resendVerify()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="mail-check"></i></span><span class="pf-label">${t('Send confirmation email')}</span><i data-lucide="chevron-right" class="pf-chev"></i></button>` : ''}
+                <button onclick="window.appActions.closeAccount(); setTimeout(window.appActions.openBackups, 320)" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="history"></i></span><span class="pf-label">${t('Account backups')}<span class="pf-sub">${t('Go back to an earlier copy')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
+                <button onclick="window.appActions.cloudSignOut()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="log-out"></i></span><span class="pf-label">${t('Sign out')}</span></button>
+                <button onclick="window.appActions.cloudDelete()" class="pf-row is-danger tap-feedback"><span class="pf-ic"><i data-lucide="trash-2"></i></span><span class="pf-label">${t('Delete my account')}<span class="pf-sub">${t('Deletes your cloud data and your account')}</span></span></button>
             </div>`;
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
+    const renderTrainingSheet = () => {
+        const el = document.getElementById('training-body'); if (!el) return;
+        const pr = getProfile(), active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0];
+        el.innerHTML = `<p class="text-[13px] font-bold text-slate-400 mb-4">${t('Your answers from setup. Your program was built from them.')}</p>
+            <div class="pf-group">
+                ${pfRow('target', t('Goal'), esc(t(GOAL_LABEL[pr.goal] || '')))}
+                ${pfRow('trending-up', t('Experience'), esc(t(EXP_LABEL[pr.exp] || '')))}
+                ${pfRow('calendar-days', t('Days a week'), pr.days ? `<span class="num">${esc(pr.days)}</span>` : '')}
+                ${pfRow('timer', t('Workout length'), esc(sessionLabel(pr.session)))}
+                ${pfRow('building-2', t('Equipment'), esc(t(EQ_LABEL[pr.eq] || '')))}
+            </div>
+            <div class="h-6"></div>
+            <h3 class="pf-h">${t('Your program')}</h3>
+            <div class="pf-group mb-4">
+                ${pfRow('calendar-range', t('Active routine'), esc(t(active.name)))}
+                <button onclick="window.appActions.closeTraining(); setTimeout(window.appActions.openPrograms, 320)" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="layout-list"></i></span><span class="pf-label">${t('Browse programs')}<span class="pf-sub">${t('Add another ready-made program')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
+            </div>`;
+        if (window.lucide) window.lucide.createIcons({ root: el });
+    };
+    // the Your training row: a one-line summary
+    const renderTrainingRow = () => {
+        const el = document.getElementById('pf-training-sub'); if (!el) return;
+        const pr = getProfile();
+        el.textContent = [t(GOAL_LABEL[pr.goal] || ''), pr.days ? t('{n} days', { n: pr.days }) : '', sessionLabel(pr.session)].filter(Boolean).join(' · ');
+    };
+    const sheetOpen = id => document.getElementById(id).classList.contains('flex') && !document.getElementById(id).classList.contains('opacity-0');
     // Profile: three numbers about your training (tap → Progress)
     const renderProfileStats = () => {
         const el = document.getElementById('profile-stats'); if (!el) return;
@@ -1923,7 +1958,11 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         el.innerHTML = `<div class="grid grid-cols-3 gap-2.5">${tile('calendar-check', dayKeys.length, t('Workouts'))}${tile('flame', weekStreak(dayKeys), t('Week streak'))}${tile('trophy', records, t('Records'))}</div>`;
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
-    const renderProfile = () => { renderAccount(); renderProfileStats(); renderAbout(); updateBackupStatus(); };
+    const renderProfile = () => {
+        renderAccount(); renderProfileStats(); renderTrainingRow(); updateBackupStatus();
+        if (sheetOpen('account-overlay')) renderAccountSheet();
+        if (sheetOpen('training-overlay')) renderTrainingSheet();
+    };
     // 🏠 TODAY: the selected day: a small day card, then its exercises. Tap an exercise to open it: Start (that exercise only) and History
     // Cards slide in when you open a different tab or day, but not when the same screen just refreshes
     let lastAnimKey = '';
@@ -3059,23 +3098,20 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         // 🧭 SETUP, one question per screen, nothing can be skipped.
         //   'first'    first launch: your profile (sex, date of birth, height and weight), then your training, then the program
         //   'complete' set up before but some answers are missing (older versions): only those questions
-        //   'training' Profile → Update training: the training questions again and a new program (✕ closes, nothing changes)
         initOnboarding: () => {
             const W = window.appState.wiz;
             if (W && !W.done && document.getElementById('onboarding-overlay').classList.contains('flex')) return; // already open
             if (!StorageManager.getOnboard()) return window.appActions.startWizard('first');
             if (setupMissing().length) window.appActions.startWizard('complete');
         },
-        startWizard: (mode = 'training') => {
-            if (mode === true || mode === false) mode = mode ? 'first' : 'training'; // older calls
+        startWizard: (mode = 'first') => {
             let hasLang = false; try { hasLang = localStorage.getItem(LANG_KEY) !== null; } catch (e) {}
             const pr = getProfile(), b = getBody();
-            const steps = mode === 'first' ? [...(hasLang ? [] : ['lang']), ...PROFILE_STEPS.filter(k => !(b.locked && setupAnswered(k))), ...TRAINING_STEPS, 'start', ...(pr.source ? [] : ['source']), 'result']
-                : mode === 'complete' ? setupMissing()
-                : [...TRAINING_STEPS, 'result'];
-            window.appState.wiz = { mode, firstRun: mode !== 'training', steps, step: 0, showAll: false,
+            const steps = mode === 'first' ? [...(hasLang ? [] : ['lang']), ...PROFILE_STEPS.filter(k => !(b.locked && setupAnswered(k))), ...TRAINING_STEPS, 'start', 'result']
+                : setupMissing();
+            window.appState.wiz = { mode, firstRun: true, steps, step: 0, showAll: false,
                 goal: pr.goal || null, days: pr.days || null, exp: EXP_LEVELS.includes(pr.exp) ? pr.exp : null, eq: pr.eq || null,
-                session: pr.session || null, injuries: (pr.injuries || []).slice(), source: pr.source || null };
+                session: pr.session || null };
             window.appActions.renderWizard();
             openModal('onboarding-overlay', 'onboarding-box');
             // phone Back: the previous question; on the first one it closes only when that's allowed
@@ -3095,7 +3131,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 ${icon ? `<span class="w-11 h-11 shrink-0 rounded-xl bg-black/40 flex items-center justify-center text-[#d4af37]"><i data-lucide="${icon}" class="w-5 h-5"></i></span>` : ''}
                 <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${title}</span>${sub ? `<span class="block text-[12px] font-bold text-slate-400 mt-0.5">${sub}</span>` : ''}</span>
                 <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600 shrink-0"></i></button>`;
-            const part = PROFILE_STEPS.includes(key) ? t('Your profile') : TRAINING_STEPS.includes(key) || key === 'start' || key === 'source' ? t('Your training') : key === 'result' ? t('Your program') : '';
+            const part = PROFILE_STEPS.includes(key) ? t('Your profile') : TRAINING_STEPS.includes(key) || key === 'start' ? t('Your training') : key === 'result' ? t('Your program') : '';
             const head = (title, sub) => `${part ? `<div class="text-[12px] font-bold text-[#d4af37] mb-2">${part}</div>` : ''}<h2 class="text-[26px] font-black text-white leading-tight mb-2">${title}</h2>${sub ? `<p class="text-[13px] font-bold text-slate-400 mb-6">${sub}</p>` : '<div class="mb-6"></div>'}`;
             const next = (id, label = t('Next')) => `<button id="${id}" onclick="window.appActions.wizChoose(${jsArg(key)}, 'next')" class="w-full mt-6 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${label}</button>`;
             const lastLabel = W.step === W.steps.length - 1 && W.mode === 'complete' ? t('Done') : t('Next');
@@ -3103,7 +3139,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const lockNote = `<p class="flex items-center gap-1.5 text-[12px] font-bold text-slate-400 mt-4"><i data-lucide="lock" class="w-3.5 h-3.5 shrink-0"></i>${t("Date of birth, sex and height can't be changed after setup.")}</p>`;
             let body = '';
             if (key === 'lang') body = `<div class="text-center mb-8 mt-6"><div class="text-4xl font-black italic tracking-tighter text-white logo-mark" dir="ltr">APEX <span class="text-[#d4af37]">LIFT</span></div></div>` + head('Choose your language · اختر لغتك', '') + opt('en', 'English', '', 'languages', LANG) + opt('ar', 'العربية', '', 'languages', LANG);
-            if (key === 'sex') body = head(t("What's your sex?"), t('Used for your starting weights.')) + opt('male', t('Male'), '', 'user-round', b.sex) + opt('female', t('Female'), '', 'user-round', b.sex) + lockNote;
+            if (key === 'sex') body = head(t("What's your sex?"), t('Helps pick the right program for you.')) + opt('male', t('Male'), '', 'user-round', b.sex) + opt('female', t('Female'), '', 'user-round', b.sex) + lockNote;
             if (key === 'birth') {
                 const n = new Date(), iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
                 const max = iso(new Date(n.getFullYear() - MIN_AGE, n.getMonth(), n.getDate())), min = iso(new Date(n.getFullYear() - 100, 0, 1));
@@ -3115,7 +3151,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 const unit = (id, label, val, u, mode, dis) => `<label class="block flex-1 min-w-0"><span class="block text-[12px] font-bold text-slate-400 mb-1.5">${label}</span>
                     <span class="relative block"><input id="${id}" type="text" inputmode="${mode}" autocomplete="off" value="${val === undefined ? '' : esc(val)}" ${dis ? 'disabled' : ''} class="${big} pe-14 ${dis ? 'opacity-60' : ''}" dir="ltr">
                     <span class="absolute inset-y-0 end-0 pe-4 flex items-center text-[14px] font-bold text-slate-400 pointer-events-none" dir="ltr">${u}</span></span></label>`;
-                body = head(t('Height and weight'), t('Used to track your progress.'))
+                body = head(t('Height and weight'), t('Starts your body weight chart and BMI in Progress.'))
                     + `<div class="flex gap-3">${unit('wiz-height', t('Height'), b.heightCm, 'cm', 'numeric', hLocked)}${unit('wiz-weight', t('Weight'), b.weightKg, 'kg', 'decimal', false)}</div>` + lockNote + next('wiz-body-next', lastLabel);
             }
             if (key === 'goal') body = head(t("What's your main goal?"), '')
@@ -3126,19 +3162,14 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 + opt('adv', t('3 to 5 years'), '', 'flame', W.exp) + opt('pro', t('More than 5 years'), '', 'trophy', W.exp);
             if (key === 'days') body = head(t('How many days a week can you train?'), t('Pick what you can keep up every week.'))
                 + ['3', '4', '5', '6'].map(d => opt(d, t('{n} days', { n: d }), '', 'calendar-days', W.days)).join('');
-            if (key === 'session') body = head(t('How long is each workout?'), '')
+            if (key === 'session') body = head(t('How long is each workout?'), t('Shorter workouts get fewer exercises a day.'))
                 + SESSION_OPTS.map(m => opt(m, t(m === '90' ? '90+ minutes' : '{n} minutes', { n: m }), '', 'timer', W.session)).join('');
             if (key === 'eq') body = head(t('Where do you train?'), '')
                 + opt('gym', t('Full gym'), t('Barbells, machines and cables'), 'building-2', W.eq) + opt('db', t('Dumbbells only'), t('Home or a small gym'), 'dumbbell', W.eq);
-            if (key === 'injury') body = head(t('Any injuries or pain?'), t('Pick all that apply.'))
-                + `<div class="flex flex-wrap gap-2.5" role="group">${INJURY_OPTS.map(x => { const on = W.injuries.includes(x); return `<button onclick="window.appActions.wizInjury(${jsArg(x)})" aria-pressed="${on}" class="min-h-[48px] px-4 rounded-2xl border text-[15px] font-bold tap-feedback ${on ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-white border-white/10'}">${esc(t(INJURY_LABEL[x]))}</button>`; }).join('')}</div>`
-                + next('wiz-injury-next', lastLabel);
             if (key === 'start') body = head(t('Which day does your week start?'), '')
                 + ['SAT', 'SUN', 'MON'].map(d => opt(d, esc(dayLong(d)), '', 'calendar', StorageManager.getStartDay())).join('');
-            if (key === 'source') body = head(t('How did you hear about Apex Lift?'), '')
-                + SOURCE_OPTS.map(x => opt(x, esc(t(SOURCE_LABEL[x])), '', '', W.source)).join('');
             if (key === 'result') {
-                const rec = PROGRAMS.find(p => p.id === recommendProgram(W)), pick = PROGRAMS.find(p => p.id === (W.pick || rec.id));
+                const rec = PROGRAMS.find(p => p.id === recommendProgram({ ...W, sex: getBody().sex })), pick = PROGRAMS.find(p => p.id === (W.pick || rec.id));
                 const card = (p, isRec) => `<button onclick="window.appActions.wizPick(${jsArg(p.id)})" class="w-full text-start p-4 mb-3 rounded-2xl border tap-feedback ${pick.id === p.id ? 'bg-[#d4af37]/10 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
                     <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} days', { n: p.days })}</span></span>
                     ${isRec ? `<span class="inline-block mt-1 text-[12px] font-bold text-[#22c55e]">★ ${t('Recommended for you')}</span>` : ''}
@@ -3161,12 +3192,6 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (window.lucide) window.lucide.createIcons({ root: document.getElementById('onboarding-box') });
             document.getElementById('onboarding-box').scrollTop = 0;
         },
-        wizInjury: x => {
-            const W = window.appState.wiz;
-            if (x === 'none') W.injuries = W.injuries.includes('none') ? [] : ['none'];
-            else { W.injuries = W.injuries.filter(y => y !== 'none'); W.injuries = W.injuries.includes(x) ? W.injuries.filter(y => y !== x) : [...W.injuries, x]; }
-            window.appActions.renderWizard();
-        },
         wizChoose: (key, val) => {
             const W = window.appState.wiz, err = m => window.appActions.showToast(m, 'error');
             if (key === 'lang') {
@@ -3188,8 +3213,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 if (!(w >= 25 && w <= 350)) return err(t('Enter your weight in kg (25–350).'));
                 const log = (b.log || []).filter(x => dateKey(x.t) !== dateKey()); log.push({ t: Date.now(), kg: w });
                 setBody({ ...b, heightCm: Math.round(h), weightKg: Math.round(w * 10) / 10, log });
-            } else if (key === 'injury') { if (!W.injuries.length) return err(t('Pick at least one, or None.')); }
-            else if (key === 'start') {
+            } else if (key === 'start') {
                 setWeekStart(val);
                 const sel = document.getElementById('setting-start-day'); if (sel) sel.value = val;
                 activeDay = getTodayId();
@@ -3213,7 +3237,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             // the training answers are kept, and the profile is locked once it is complete
             const saveAnswers = () => {
                 const keep = getProfile();
-                writeItem(PROFILE_KEY, JSON.stringify(sanitizeProfile({ ...keep, goal: W.goal, days: W.days, exp: W.exp, eq: W.eq, session: W.session, injuries: W.injuries, source: W.source || keep.source })));
+                writeItem(PROFILE_KEY, JSON.stringify(sanitizeProfile({ ...keep, goal: W.goal, days: W.days, exp: W.exp, eq: W.eq, session: W.session })));
                 const b = getBody(); if (PROFILE_STEPS.every(k => setupAnswered(k, b)) && !b.locked) setBody({ ...b, locked: true });
             };
             if (mode === 'complete') {
@@ -3232,7 +3256,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             StorageManager.setOnboard();
             popBack('wizard');
             closeModal('onboarding-overlay', 'onboarding-box', 300);
-            window.appActions.applyProgram(W.pick || recommendProgram(W), { exp: W.exp, replace: W.firstRun });
+            window.appActions.applyProgram(W.pick || recommendProgram({ ...W, sex: getBody().sex }), { exp: W.exp, replace: W.firstRun });
         },
         // Put a program into the app: as a new routine (keeps your current one) or replacing the current one
         applyProgram: (id, { exp = (getProfile().exp || 'mid'), replace = false, undo = false } = {}) => {
@@ -3394,7 +3418,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             lang: LANG, appVersion: APP_VERSION, platform: platformName(), installed: isInstalled(), setup: (localStorage.getItem(SETUP_KEY) || '').slice(0, 40),
             signIn: (Cloud.user.providerData || []).some(p => p && p.providerId === 'google.com') ? 'google' : 'email', verified: Cloud.user.emailVerified === true,
             tz: (() => { try { return (Intl.DateTimeFormat().resolvedOptions().timeZone || '').slice(0, 60); } catch (e) { return ''; } })(),
-            locale: String(navigator.language || '').slice(0, 20), screen: `${Math.round(screen.width)}x${Math.round(screen.height)}` };
+            locale: String(navigator.language || '').slice(0, 20), screen: `${Math.round(screen.width)}x${Math.round(screen.height)}`,
+            ref: (localStorage.getItem(REF_KEY) || '').slice(0, 30) };
     };
     const platformName = () => {
         const ua = navigator.userAgent || '';
@@ -3641,6 +3666,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
     const cloudSignedOut = () => {
         presenceStop(); cloudOk();
+        if (sheetOpen('account-overlay')) window.appActions.closeAccount(); // the account page belongs to the account that left
         Cloud.unsub.forEach(u => u()); Cloud.unsub = []; Cloud.user = null; Cloud.sent = {};
         const wasPending = (getCloudFlag() || {}).pending;
         try { localStorage.removeItem(CLOUD_KEY); } catch (e) {}
@@ -3669,8 +3695,6 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const renderAccount = () => {
         const el = document.getElementById('account-card'); if (!el) return;
         const flag = getCloudFlag(), u = Cloud.user || (flag && flag.uid ? flag : null);
-        ['pf-signout'].forEach(id => { const b = document.getElementById(id); if (b) b.classList.toggle('hidden', !u); });
-        ['pf-delete', 'pf-backups'].forEach(id => { const b = document.getElementById(id); if (b) b.classList.toggle('hidden', !Cloud.user); });
         if (!u) {
             el.innerHTML = `<div class="glass-card p-5 border border-white/10">
                 <div class="flex items-center gap-3 mb-3"><span class="w-11 h-11 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="cloud" class="w-6 h-6"></i></span>
@@ -3679,27 +3703,45 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <button onclick="window.appActions.openEmail('in')" class="w-full mt-2 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button></div>`;
         } else {
             const name = u.displayName || u.name || '', email = u.email || '', photo = u.photoURL || u.photo || '';
-            const since = flag && Number(flag.since) > 0 ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { month: 'long', year: 'numeric', numberingSystem: 'latn' }).format(Number(flag.since)) : '';
             // sync runs by itself: this only says how it is going
             const st = { off: ['bg-slate-500', t('Connecting…')], loading: ['bg-slate-500', t('Connecting…')], syncing: ['bg-[#d4af37] animate-pulse', t('Syncing…')],
                 synced: ['bg-[#22c55e]', t('Synced · {time}', { time: Cloud.lastSync ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(Cloud.lastSync) : '' })],
                 offline: ['bg-slate-400', t('Offline · will sync when online')], error: ['bg-red-500', t('Sync problem · trying again')] }[Cloud.status] || ['bg-slate-500', ''];
-            el.innerHTML = `<div class="glass-card p-5 border border-white/10">
-                <div class="flex items-center gap-4">
-                    ${photo ? `<img src="${esc(photo)}" alt="" referrerpolicy="no-referrer" class="w-16 h-16 rounded-full object-cover shrink-0 ring-2 ring-[#d4af37]/60 ring-offset-2 ring-offset-black">` : `<span class="w-16 h-16 rounded-full bg-[#d4af37] text-black text-[24px] font-black flex items-center justify-center shrink-0">${esc((name || email || '?').charAt(0).toUpperCase())}</span>`}
-                    <div class="min-w-0 flex-1">
-                        <div class="text-[19px] font-black text-white truncate leading-tight">${esc(name || email)}</div>
-                        ${name && email ? `<div class="text-[12px] font-bold text-slate-400 truncate mt-0.5">${esc(email)}</div>` : ''}
-                        <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 max-w-full" title="${esc(Cloud.err)}"><span class="w-2 h-2 rounded-full shrink-0 ${st[0]}"></span><span class="text-[12px] font-bold text-slate-300 truncate">${esc(st[1])}</span></div>
-                    </div>
-                </div>
-                ${isPasswordUser() && !Cloud.user.emailVerified ? `<div class="mt-4 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/25 px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold text-slate-300"><i data-lucide="mail-warning" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="flex-1 min-w-0">${t('Confirm your email. Check your inbox.')}</span><button onclick="window.appActions.resendVerify()" class="shrink-0 text-[12px] font-bold text-[#d4af37] tap-feedback">${t('Send again')}</button></div>` : ''}
-                ${since ? `<div class="mt-4 pt-3 border-t border-white/5 text-[12px] font-bold text-slate-400 flex items-center gap-1.5"><i data-lucide="badge-check" class="w-4 h-4 text-[#d4af37]"></i>${t('Member since {date}', { date: esc(since) })}</div>` : ''}</div>`;
+            // the whole card opens Account (personal details and account settings)
+            el.innerHTML = `<div class="glass-card border border-white/10">
+                <button onclick="window.appActions.openAccount()" ${Cloud.user ? '' : 'disabled'} class="w-full p-5 flex items-center gap-4 text-start tap-feedback" aria-label="${esc(t('Account'))}">
+                    ${avatarHTML(u, 'w-16 h-16 text-[24px]')}
+                    <span class="min-w-0 flex-1">
+                        <span class="block text-[19px] font-black text-white truncate leading-tight">${esc(name || email)}</span>
+                        ${name && email ? `<span class="block text-[12px] font-bold text-slate-400 truncate mt-0.5">${esc(email)}</span>` : ''}
+                        <span class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 max-w-full" title="${esc(Cloud.err)}"><span class="w-2 h-2 rounded-full shrink-0 ${st[0]}"></span><span class="text-[12px] font-bold text-slate-300 truncate">${esc(st[1])}</span></span>
+                    </span>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 shrink-0"></i>
+                </button></div>`;
         }
         if (window.lucide) window.lucide.createIcons({ root: el });
         if (typeof updateBackupStatus === 'function') updateBackupStatus();
         if (welcomeOpen()) updateWelcomeUI(); // "Signing in…" on the welcome page too
     };
+    // Profile → Account and Your training pages
+    Object.assign(window.appActions, {
+        openAccount: () => { if (!Cloud.user) return; renderAccountSheet(); openSheet('account-overlay', 'account-box'); pushBack('account', () => window.appActions.closeAccount()); },
+        closeAccount: () => { popBack('account'); closeSheet('account-overlay', 'account-box'); },
+        openTraining: () => { renderTrainingSheet(); openSheet('training-overlay', 'training-box'); pushBack('training', () => window.appActions.closeTraining()); },
+        closeTraining: () => { popBack('training'); closeSheet('training-overlay', 'training-box'); },
+        saveName: async v => {
+            const name = String(v || '').trim().slice(0, 60);
+            if (!Cloud.user) return;
+            if (!name) { window.appActions.showToast(t('Please enter your name.'), 'error'); return renderAccountSheet(); }
+            try {
+                await Cloud.user.updateProfile({ displayName: name });
+                const f = getCloudFlag(); if (f) writeItem(CLOUD_KEY, JSON.stringify({ ...f, name }));
+                Cloud.sent.main = ''; scheduleFlush(300);
+                renderAccount(); renderAccountSheet();
+                window.appActions.showToast(t('Saved'), 'success');
+            } catch (e) { window.appActions.showToast(authErrorText(e), 'error'); renderAccountSheet(); }
+        }
+    });
     Object.assign(window.appActions, {
         cloudSignIn: async () => {
             setCloudStatus('loading');
@@ -4318,12 +4360,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         },
         agreeNo: () => { window.appState.agreeNext = null; popBack('agree'); closeModal('agree-overlay', 'agree-box'); },
         // body weight (Profile and Progress → Body); everything else in Your profile is set in the setup
-        saveWeight: v => { if (window.appActions.setAbout('weightKg', v)) { window.appActions.showToast(t('Weight saved'), 'success'); renderAbout(); } },
+        saveWeight: v => { if (window.appActions.setAbout('weightKg', v)) { window.appActions.showToast(t('Weight saved'), 'success'); renderAccountSheet(); } },
         // only body weight can change after the setup; returns true when it was saved
         setAbout: (field, value) => {
             if (field !== 'weightKg') { window.appActions.showToast(t("This can't be changed."), 'error'); return false; }
             const b = getBody(), w = parseFloat(latinDigits(String(value)).trim().replace(/[\u066B\u060C,]/g, '.'));
-            if (!(w >= 25 && w <= 350)) { window.appActions.showToast(t('Enter your weight in kg (25–350).'), 'error'); if (window.appState.currentView === 'profile') renderAbout(); return false; }
+            if (!(w >= 25 && w <= 350)) { window.appActions.showToast(t('Enter your weight in kg (25–350).'), 'error'); renderAccountSheet(); return false; }
             b.weightKg = Math.round(w * 10) / 10;
             b.log = [...(b.log || []).filter(x => dateKey(x.t) !== dateKey()), { t: Date.now(), kg: b.weightKg }];
             setBody(b);
