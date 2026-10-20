@@ -6,12 +6,15 @@
 // - Outside files (Google font): use the saved copy, refresh it in the background.
 //
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
-const CACHE = 'apex-lift-v10';
+// (require-sign-in.js is left out on purpose: it can be deleted, and a missing file in APP_FILES would break the install.
+//  It is still saved for offline use the first time the app loads it.)
+const CACHE = 'apex-lift-v31';
 const APP_FILES = [
     './',
     'index.html',
     'style.css',
     'tailwind.css',
+    'library.js',
     'app.js',
     'manifest.webmanifest',
     'vendor/lucide-1.49.0.min.js',
@@ -48,6 +51,8 @@ self.addEventListener('activate', event => {
 });
 
 const saveCopy = (request, response) => {
+    // a file that was deleted from the site (like require-sign-in.js) must not keep working from the saved copy
+    if (response && response.status === 404) caches.open(CACHE).then(cache => cache.delete(request, { ignoreSearch: true }));
     if (response && (response.ok || response.type === 'opaque')) {
         const copy = response.clone();
         caches.open(CACHE).then(cache => cache.put(request, copy));

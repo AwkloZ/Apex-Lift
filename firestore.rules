@@ -1,7 +1,9 @@
 rules_version = '2';
 // Apex Lift security rules.
 // - Each signed-in user can read and change only their own data.
-// - The Apex Lift admin account (below) can READ all users' data, for support and app improvement. It can't change it.
+// - The Apex Lift admin account (below) can READ all users' data, for support and app improvement. It can't change it,
+//   except for the coach plan (users/{uid}/coach/plan): a routine and/or note the coach sends, which the user's app applies.
+// - Coach-only data (templates, private client notes, the admin activity log) can be read and written by the admin only.
 // - Only the data the app actually uses is accepted (known paths, known fields, size limits),
 //   so the database can't be filled with junk.
 // Paste this into Firebase console → Firestore Database → Rules → Publish.
@@ -25,7 +27,7 @@ service cloud.firestore {
       allow delete: if isOwner(uid);
       allow read: if isOwner(uid) || isAdmin();
       allow create, update: if isOwner(uid)
-        && fields().keys().hasOnly(['plan', 'activeWeek', 'startDay', 'rest', 'showRpe', 'weights', 'custom', 'profile', 'terms', 'body', 'account', 'updatedAt']);
+        && fields().keys().hasOnly(['plan', 'activeWeek', 'startDay', 'rest', 'showRpe', 'weights', 'custom', 'profile', 'terms', 'body', 'account', 'readiness', 'activity', 'updatedAt']);
 
       // workout history: one document per exercise
       match /history/{exercise} {
@@ -43,7 +45,7 @@ service cloud.firestore {
         allow read: if isOwner(uid) || isAdmin();
         allow create, update: if isOwner(uid)
           && fields().keys().hasOnly(['createdAt', 'kind', 'parts', 'workouts', 'exercises', 'routines', 'size'])
-          && fields().kind in ['auto', 'manual', 'before-restore']
+          && fields().kind in ['auto', 'manual', 'before-restore', 'before-import', 'before-coach']
           && fields().createdAt is int && fields().workouts is int && fields().exercises is int
           && fields().routines is int && fields().size is int
           && fields().parts is int && fields().parts >= 1 && fields().parts <= 30;
@@ -56,6 +58,84 @@ service cloud.firestore {
             && fields().d is string && fields().d.size() <= 400000;
         }
       }
+
+      // presence + visits: "using the app now" and the last 30 visits (written by the app while it is open)
+      match /presence/{docId} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow delete: if isOwner(uid);
+        allow create, update: if isOwner(uid) && docId == 'app'
+          && fields().keys().hasOnly(['at', 'off', 'visits', 'recent'])
+          && fields().at is int && fields().off is bool && fields().visits is int
+          && fields().recent is list && fields().recent.size() <= 30;
+      }
+
+      // coach plan: written by the admin, read by the user's app, which only marks it as applied (appliedAt)
+      match /coach/{docId} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow delete: if isOwner(uid) || isAdmin();
+        allow create, update: if isAdmin() && docId == 'plan'
+          && fields().keys().hasOnly(['mode', 'routine', 'targetId', 'activate', 'note', 'coach', 'sentAt', 'appliedAt'])
+          && (!('activate' in fields()) || fields().activate is bool)
+          && fields().mode in ['add', 'replace', 'note']
+          && fields().sentAt is int && fields().appliedAt is int
+          && fields().note is string && fields().note.size() <= 1000
+          && fields().coach is string && fields().coach.size() <= 100
+          && fields().targetId is string && fields().targetId.size() <= 60
+          && (fields().mode == 'note' || (fields().routine is map && fields().routine.schedule is list && fields().routine.schedule.size() == 7));
+        allow update: if isOwner(uid)
+          && fields().diff(resource.data).affectedKeys().hasOnly(['appliedAt'])
+          && fields().appliedAt is int;
+      }
+    }
+
+    // the admin page reads everyone's presence with one query (collection group)
+    match /{path=**}/presence/{docId} {
+      allow read: if isAdmin();
+    }
+
+    // routine codes: a routine someone shared with an 8-letter code (just the days and exercises, no workouts).
+    // Anyone signed in who knows the code can open it; codes can't be listed or browsed, except your own (to remove
+    // them when you delete your account). Only the person who shared it can delete it, and nobody can change it.
+    match /shared/{code} {
+      allow get: if request.auth != null;
+      allow list, delete: if request.auth != null && resource.data.by == request.auth.uid;
+      allow create: if request.auth != null && code.matches('^[A-HJ-NP-Z2-9]{8}$')
+        && fields().keys().hasOnly(['v', 'routine', 'by', 'createdAt'])
+        && fields().by == request.auth.uid
+        && fields().v is int && fields().createdAt is int
+        && fields().routine is map && fields().routine.keys().hasOnly(['name', 'schedule'])
+        && fields().routine.name is string && fields().routine.name.size() <= 60
+        && fields().routine.schedule is list && fields().routine.schedule.size() == 7;
+    }
+
+    // coach: saved routine templates (admin only)
+    match /coachTemplates/{id} {
+      allow read, delete: if isAdmin();
+      allow create, update: if isAdmin()
+        && fields().keys().hasOnly(['name', 'routine', 'updatedAt'])
+        && fields().name is string && fields().name.size() <= 60
+        && fields().routine is map && fields().updatedAt is int;
+    }
+
+    // coach: private notes about each client (admin only, never shown to the user)
+    match /clients/{uid} {
+      allow read, delete: if isAdmin();
+      allow create, update: if isAdmin()
+        && fields().keys().hasOnly(['client', 'notes', 'followUp', 'updatedAt'])
+        && fields().client is bool
+        && fields().notes is string && fields().notes.size() <= 5000
+        && fields().followUp is string && fields().followUp.size() <= 10
+        && fields().updatedAt is int;
+    }
+
+    // admin activity log: who opened, downloaded or coached which account, and when (can't be changed or deleted)
+    match /adminLog/{id} {
+      allow read: if isAdmin();
+      allow create: if isAdmin()
+        && fields().keys().hasOnly(['uid', 'action', 'at', 'by'])
+        && fields().uid is string && fields().uid.size() <= 128
+        && fields().action in ['view', 'download', 'backup', 'coach', 'notes']
+        && fields().at is int && fields().by is string;
     }
 
     // everything else is closed
