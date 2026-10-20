@@ -601,6 +601,20 @@
         "{a} workout days · {b} exercises": "{a} أيام تمرين · {b} تمارين",
         "3 to 5 years": "من 3 إلى 5 سنوات",
         "Back to sign in": "العودة لتسجيل الدخول",
+        "Confirm password": "تأكيد كلمة المرور",
+        "New password": "كلمة المرور الجديدة",
+        "Both passwords match": "كلمتا المرور متطابقتان",
+        "Passwords don't match.": "كلمتا المرور غير متطابقتين.",
+        "Please confirm your password.": "يرجى تأكيد كلمة المرور.",
+        "Choose a new password": "اختر كلمة مرور جديدة",
+        "Pick a strong password for your account.": "اختر كلمة مرور قوية لحسابك.",
+        "Save password": "حفظ كلمة المرور",
+        "Password changed. Sign in with your new password.": "تم تغيير كلمة المرور. سجّل الدخول بكلمة المرور الجديدة.",
+        "Password changed. You're signed in.": "تم تغيير كلمة المرور، وتم تسجيل دخولك.",
+        "Password changed.": "تم تغيير كلمة المرور.",
+        "This link has expired or was already used. Ask for a new one below.": "انتهت صلاحية هذا الرابط أو تم استخدامه من قبل. اطلب رابطًا جديدًا بالأسفل.",
+        "This link has expired or was already used.": "انتهت صلاحية هذا الرابط أو تم استخدامه من قبل.",
+        "Your email is confirmed.": "تم تأكيد بريدك الإلكتروني.",
         "Backing up your data…": "جارٍ نسخ بياناتك احتياطيًا…",
         "Before import": "قبل الاستيراد",
         "Confirm your password": "أكّد كلمة المرور",
@@ -1018,7 +1032,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '42';
+    const APP_VERSION = '43';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3672,11 +3686,11 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         presenceStop(); cloudOk();
         if (sheetOpen('account-overlay')) window.appActions.closeAccount(); // the account page belongs to the account that left
         Cloud.unsub.forEach(u => u()); Cloud.unsub = []; Cloud.user = null; Cloud.sent = {};
-        const wasPending = (getCloudFlag() || {}).pending;
+        const hadAccount = !!(getCloudFlag() || {}).uid; // not a sign-in still on its way, or Firebase loading early with nobody signed in
         try { localStorage.removeItem(CLOUD_KEY); } catch (e) {}
         setCloudStatus('off');
         // an account is needed to use the app: back to the sign-in page (workouts stay on the phone)
-        if (gateOn() && !wasPending && requireSignIn()) {
+        if (gateOn() && hadAccount && requireSignIn()) {
             // the setup questions (if open) belong to the account that just left: close them so the sign-in page is on top
             const W = window.appState.wiz; if (W && !W.done) { W.done = true; popBack('wizard'); closeModal('onboarding-overlay', 'onboarding-box', 300); }
             showWelcome(true);
@@ -3778,6 +3792,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             try { await loadFirebase(); } catch (e) { window.appActions.showToast(t('No internet connection. Try again when online.'), 'error'); return setCloudStatus('off'); }
             const provider = new firebase.auth.GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
+            // Installed on the home screen: Google's pop-up window can't report back to the app there, so the app waited
+            // forever and had to be restarted. Sign in on the full page instead (it comes back to the app when done).
+            if (isInstalled()) {
+                writeItem(CLOUD_KEY, JSON.stringify({ pending: true }));
+                try { return await Cloud.auth.signInWithRedirect(provider); }
+                catch (e) { try { localStorage.removeItem(CLOUD_KEY); } catch (x) {} window.appActions.showToast(cloudErrorText(e), 'error'); return setCloudStatus('off'); }
+            }
             try { await Cloud.auth.signInWithPopup(provider); }
             catch (e) {
                 // Home-screen apps and some browsers block pop-ups: use a full-page sign-in instead
@@ -3834,11 +3855,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
 
     // ✉️ EMAIL SIGN-IN: an account with an email and password (Firebase Authentication), next to Google.
     // Turned on once in Firebase: Authentication → Sign-in method → Email/Password.
-    // Modes: 'in' sign in, 'up' create an account, 'reset' forgot password, 'reauth' confirm the password (before deleting the account)
+    // Modes: 'in' sign in, 'up' create an account, 'reset' forgot password, 'reauth' confirm the password (before deleting the account),
+    // 'newpass' choose a new password (opened by the reset link in the email, see EMAIL LINKS below)
     const isPasswordUser = () => !!Cloud.user && (Cloud.user.providerData || []).some(p => p && p.providerId === 'password')
         && !(Cloud.user.providerData || []).some(p => p && p.providerId === 'google.com');
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const emailSt = { mode: 'in', busy: false, then: null };
+    const emailSt = { mode: 'in', busy: false, then: null, code: '', resetEmail: '' };
     // New accounts need a strong password: at least 8 characters, one capital letter and one symbol (any non-letter, non-number)
     const PASS_RULES = [
         ['At least 8 characters', p => p.length >= 8],
@@ -3846,7 +3868,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         ['One symbol, like ! @ # $ %', p => /[^\p{L}\p{N}\s]/u.test(p)]
     ];
     const passStrong = p => PASS_RULES.every(r => r[1](p));
-    const passRulesHTML = p => PASS_RULES.map(([l, ok]) => `<li class="flex items-center gap-2 ${ok(p) ? 'text-[#22c55e]' : 'text-slate-400'}"><i data-lucide="${ok(p) ? 'check-circle-2' : 'circle'}" class="w-4 h-4 shrink-0"></i>${t(l)}</li>`).join('');
+    // the rules, then "Both passwords match" for the second (confirm) box
+    const passRulesHTML = (p, p2) => [...PASS_RULES, ['Both passwords match', x => !!p2 && x === p2]].map(([l, ok]) => `<li class="flex items-center gap-2 ${ok(p) ? 'text-[#22c55e]' : 'text-slate-400'}"><i data-lucide="${ok(p) ? 'check-circle-2' : 'circle'}" class="w-4 h-4 shrink-0"></i>${t(l)}</li>`).join('');
     const authErrorText = e => {
         const c = (e && e.code) || '';
         if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-login-credentials'].includes(c)) return t('Email or password is wrong.');
@@ -3860,63 +3883,72 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
     const renderEmail = (msg = '', good = false) => {
         const m = emailSt.mode, keep = id => { const el = document.getElementById(id); return el ? el.value : ''; };
-        const email = keep('em-email') || (m === 'reauth' && Cloud.user ? Cloud.user.email || '' : ''), name = keep('em-name'), pass = m === 'up' ? keep('em-pass') : '';
-        const title = { in: t('Sign in with email'), up: t('Create your account'), reset: t('Reset your password'), reauth: t('Confirm your password') }[m];
-        const sub = { in: '', up: t('Use your email and a strong password.'), reset: t("Enter your email and we'll send you a reset link."), reauth: t('Enter your password to delete your account.') }[m];
+        const strong = m === 'up' || m === 'newpass'; // a new password: rules + confirm box
+        const email = m === 'newpass' ? emailSt.resetEmail : keep('em-email') || (m === 'reauth' && Cloud.user ? Cloud.user.email || '' : ''), name = keep('em-name');
+        const pass = strong ? keep('em-pass') : '', pass2 = strong ? keep('em-pass2') : '';
+        const title = { in: t('Sign in with email'), up: t('Create your account'), reset: t('Reset your password'), reauth: t('Confirm your password'), newpass: t('Choose a new password') }[m];
+        const sub = { in: '', up: t('Use your email and a strong password.'), reset: t("Enter your email and we'll send you a reset link."), reauth: t('Enter your password to delete your account.'), newpass: t('Pick a strong password for your account.') }[m];
         const inp = 'w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-[#d4af37]';
         const lbl = (txt, html) => `<label class="block"><span class="block text-[12px] font-bold text-slate-400 mb-1.5">${txt}</span>${html}</label>`;
         const link = (fn, txt) => `<button type="button" onclick="${fn}" class="inline-flex items-center min-h-[40px] px-1 text-[13px] font-bold text-[#d4af37] tap-feedback">${txt}</button>`;
-        const btn = { in: t('Sign in'), up: t('Create account'), reset: t('Send link'), reauth: t('Confirm') }[m];
+        const btn = { in: t('Sign in'), up: t('Create account'), reset: t('Send link'), reauth: t('Confirm'), newpass: t('Save password') }[m];
+        const eye = `<button type="button" onclick="document.querySelectorAll('#em-pass,#em-pass2').forEach(i=>i.type=i.type==='password'?'text':'password')" class="absolute inset-y-0 end-0 px-3.5 text-slate-400 tap-feedback" aria-label="${esc(t('Show password'))}"><i data-lucide="eye" class="w-5 h-5"></i></button>`;
         document.getElementById('email-body').innerHTML = `
             <div class="relative text-center pt-3 pb-1">
                 <button type="button" onclick="window.appActions.closeEmail()" class="absolute -top-1 -end-1 w-11 h-11 flex items-center justify-center bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
-                <span class="w-14 h-14 mx-auto mb-3 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center"><i data-lucide="${{ in: 'mail', up: 'user-plus', reset: 'key-round', reauth: 'shield-check' }[m]}" class="w-7 h-7"></i></span>
+                <span class="w-14 h-14 mx-auto mb-3 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center"><i data-lucide="${{ in: 'mail', up: 'user-plus', reset: 'key-round', reauth: 'shield-check', newpass: 'key-round' }[m]}" class="w-7 h-7"></i></span>
                 <h3 class="text-xl font-black text-white">${title}</h3>
             </div>
             ${sub ? `<p class="text-[13px] font-bold text-slate-400 text-center mt-1 mb-5 leading-snug">${sub}</p>` : '<div class="h-4"></div>'}
             <form onsubmit="event.preventDefault(); window.appActions.emailSubmit()" class="space-y-3" novalidate>
                 ${m === 'up' ? lbl(t('Your name'), `<input id="em-name" type="text" autocomplete="name" maxlength="60" value="${esc(name)}" class="${inp}" dir="auto">`) : ''}
-                ${m === 'reauth' ? `<div class="text-[13px] font-bold text-slate-300" dir="ltr">${esc(email)}</div>` : lbl(t('Email'), `<input id="em-email" type="email" inputmode="email" autocomplete="${m === 'up' ? 'email' : 'username'}" autocapitalize="off" spellcheck="false" maxlength="200" value="${esc(email)}" class="${inp}" dir="ltr">`)}
-                ${m === 'reset' ? '' : lbl(t('Password'), `<div class="relative"><input id="em-pass" type="password" autocomplete="${m === 'up' ? 'new-password' : 'current-password'}" maxlength="200" value="${esc(pass)}" ${m === 'up' ? 'oninput="window.appActions.passTyped(this.value)" aria-describedby="em-rules"' : ''} class="${inp} pe-12" dir="ltr">
-                    <button type="button" onclick="const i=document.getElementById('em-pass');i.type=i.type==='password'?'text':'password'" class="absolute inset-y-0 end-0 px-3.5 text-slate-400 tap-feedback" aria-label="${esc(t('Show password'))}"><i data-lucide="eye" class="w-5 h-5"></i></button></div>`)}
-                ${m === 'up' ? `<ul id="em-rules" class="space-y-1.5 text-[12px] font-bold">${passRulesHTML(pass)}</ul>` : ''}
+                ${m === 'reauth' || m === 'newpass' ? `<div class="text-[13px] font-bold text-slate-300" dir="ltr">${esc(email)}</div>` : lbl(t('Email'), `<input id="em-email" type="email" inputmode="email" autocomplete="${m === 'up' ? 'email' : 'username'}" autocapitalize="off" spellcheck="false" maxlength="200" value="${esc(email)}" class="${inp}" dir="ltr">`)}
+                ${m === 'reset' ? '' : lbl(t(m === 'newpass' ? 'New password' : 'Password'), `<div class="relative"><input id="em-pass" type="password" autocomplete="${strong ? 'new-password' : 'current-password'}" maxlength="200" value="${esc(pass)}" ${strong ? 'oninput="window.appActions.passTyped()" aria-describedby="em-rules"' : ''} class="${inp} pe-12" dir="ltr">${eye}</div>`)}
+                ${strong ? lbl(t('Confirm password'), `<input id="em-pass2" type="password" autocomplete="new-password" maxlength="200" value="${esc(pass2)}" oninput="window.appActions.passTyped()" aria-describedby="em-rules" class="${inp}" dir="ltr">`) : ''}
+                ${strong ? `<ul id="em-rules" class="space-y-1.5 text-[12px] font-bold">${passRulesHTML(pass, pass2)}</ul>` : ''}
                 <p id="em-msg" class="text-[12px] font-bold leading-snug ${good ? 'text-[#22c55e]' : 'text-red-400'} ${msg ? '' : 'hidden'}" role="alert">${esc(msg)}</p>
                 <button id="em-go" type="submit" ${emailSt.busy ? 'disabled' : ''} class="w-full py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2 disabled:opacity-60">${emailSt.busy ? '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>' : ''}${btn}</button>
             </form>
             <div class="flex flex-col items-center gap-3 mt-5 mb-2">
                 ${m === 'in' ? link("window.appActions.emailMode('reset')", t('Forgot password?')) + `<span class="text-[13px] font-bold text-slate-400">${t('New here?')} ${link("window.appActions.emailMode('up')", t('Create an account'))}</span>` : ''}
                 ${m === 'up' ? `<span class="text-[13px] font-bold text-slate-400">${t('Have an account?')} ${link("window.appActions.emailMode('in')", t('Sign in'))}</span>` : ''}
-                ${m === 'reset' ? link("window.appActions.emailMode('in')", t('Back to sign in')) : ''}
+                ${m === 'reset' || m === 'newpass' ? link("window.appActions.emailMode('in')", t('Back to sign in')) : ''}
             </div>`;
         if (window.lucide) window.lucide.createIcons({ root: document.getElementById('email-body') });
     };
     Object.assign(window.appActions, {
         openEmail: (mode = 'in', then = null) => {
-            if (mode !== 'reauth' && welcomeOpen() && !getAgree()) return window.appActions.needAgree(() => window.appActions.openEmail(mode, then));
+            if ((mode === 'in' || mode === 'up') && welcomeOpen() && !getAgree()) return window.appActions.needAgree(() => window.appActions.openEmail(mode, then));
             emailSt.mode = mode; emailSt.then = then; emailSt.busy = false;
             document.getElementById('email-body').innerHTML = '';
             renderEmail();
             const o = document.getElementById('email-overlay'); // closed, or still sliding away: open it (again)
             if (!o.classList.contains('flex') || o.classList.contains('opacity-0')) { openModal('email-overlay', 'email-box'); pushBack('email', () => window.appActions.closeEmail()); }
-            setTimeout(() => { const f = document.getElementById(mode === 'up' ? 'em-name' : mode === 'reauth' ? 'em-pass' : 'em-email'); if (f) f.focus(); }, 350);
+            setTimeout(() => { const f = document.getElementById(mode === 'up' ? 'em-name' : mode === 'reauth' || mode === 'newpass' ? 'em-pass' : 'em-email'); if (f) f.focus(); }, 350);
         },
         closeEmail: () => { popBack('email'); if (document.activeElement) document.activeElement.blur(); closeModal('email-overlay', 'email-box'); emailSt.then = null; },
         emailMode: mode => { emailSt.mode = mode; renderEmail(); },
-        // ticks each password rule while typing (new accounts)
-        passTyped: v => {
+        // ticks each password rule (and "Both passwords match") while typing a new password
+        passTyped: () => {
             const ul = document.getElementById('em-rules'); if (!ul) return;
-            ul.innerHTML = passRulesHTML(v); if (window.lucide) window.lucide.createIcons({ root: ul });
+            const v = id => (document.getElementById(id) || {}).value || '';
+            ul.innerHTML = passRulesHTML(v('em-pass'), v('em-pass2')); if (window.lucide) window.lucide.createIcons({ root: ul });
             const msg = document.getElementById('em-msg'); if (msg) msg.classList.add('hidden'); // an old error goes away while typing
         },
         emailSubmit: async () => {
             if (emailSt.busy) return;
             const m = emailSt.mode, val = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-            const email = val('em-email').toLowerCase(), pass = (document.getElementById('em-pass') || {}).value || '', name = val('em-name');
-            if (m !== 'reauth' && !EMAIL_RE.test(email)) return renderEmail(t('Please enter a valid email.'));
+            const email = m === 'newpass' ? emailSt.resetEmail : val('em-email').toLowerCase(), name = val('em-name');
+            const pass = (document.getElementById('em-pass') || {}).value || '', pass2 = (document.getElementById('em-pass2') || {}).value || '';
+            if (m !== 'reauth' && m !== 'newpass' && !EMAIL_RE.test(email)) return renderEmail(t('Please enter a valid email.'));
             if (m === 'up' && !name) return renderEmail(t('Please enter your name.'));
             if (m !== 'reset' && !pass) return renderEmail(t('Please enter your password.'));
-            if (m === 'up' && !passStrong(pass)) return renderEmail(t('Your password needs at least 8 characters, a capital letter and a symbol.'));
+            if ((m === 'up' || m === 'newpass') && !passStrong(pass)) return renderEmail(t('Your password needs at least 8 characters, a capital letter and a symbol.'));
+            if ((m === 'up' || m === 'newpass') && !pass2) return renderEmail(t('Please confirm your password.'));
+            if ((m === 'up' || m === 'newpass') && pass !== pass2) return renderEmail(t("Passwords don't match."));
             if (navigator.onLine === false) return renderEmail(t('No internet connection. Try again when online.'));
+            // signing in from a reset link on a phone that hasn't agreed to the Terms yet: agree first
+            if ((m === 'in' || m === 'up') && welcomeOpen() && !getAgree()) return window.appActions.needAgree(() => window.appActions.emailSubmit());
             emailSt.busy = true; renderEmail();
             try {
                 await loadFirebase();
@@ -3933,6 +3965,19 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     try { await Cloud.auth.sendPasswordResetEmail(email); } catch (e) { if (e.code !== 'auth/user-not-found') throw e; }
                     emailSt.busy = false; emailSt.mode = 'in';
                     return renderEmail(t('If an account exists, we\'ve sent a reset link. Check your inbox.'), true);
+                } else if (m === 'newpass') {
+                    await Cloud.auth.confirmPasswordReset(emailSt.code, pass);
+                    emailSt.code = '';
+                    // signed out on this phone (and the Terms already agreed): sign straight in with the new password
+                    if (Cloud.user || !getAgree()) {
+                        emailSt.busy = false; emailSt.mode = 'in';
+                        if (Cloud.user) { window.appActions.closeEmail(); return window.appActions.showToast(t('Password changed.'), 'success'); }
+                        renderEmail(t('Password changed. Sign in with your new password.'), true);
+                        const f = document.getElementById('em-email'); if (f) f.value = email;
+                        return;
+                    }
+                    await Cloud.auth.signInWithEmailAndPassword(email, pass);
+                    window.appActions.showToast(t("Password changed. You're signed in."), 'success');
                 } else if (m === 'reauth') {
                     await Cloud.auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(Cloud.auth.currentUser.email, pass));
                 }
@@ -3950,6 +3995,44 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             catch (e) { window.appActions.showToast(authErrorText(e), 'error'); }
         }
     });
+
+    // 🔑 EMAIL LINKS: the "reset your password" and "confirm your email" links in Firebase's emails open here, in the app,
+    // instead of Firebase's plain page. Set once in Firebase: Authentication → Templates → (pencil) → Customize action URL
+    // → https://apex-liftt.netlify.app/  (the link then arrives as ?mode=resetPassword&oobCode=...).
+    // Other kinds of links (like undoing an email change) still go to Firebase's own page.
+    const AUTH_LINK = (() => {
+        try {
+            const raw = location.search, q = new URLSearchParams(raw), mode = q.get('mode'), code = q.get('oobCode');
+            if (!mode || !code) return null;
+            ['mode', 'oobCode', 'apiKey', 'continueUrl', 'lang'].forEach(k => q.delete(k));
+            history.replaceState(history.state, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
+            return { mode, code, raw };
+        } catch (e) { return null; }
+    })();
+    const linkErrorText = e => ['auth/expired-action-code', 'auth/invalid-action-code'].includes((e && e.code) || '') ? t('This link has expired or was already used.') : authErrorText(e);
+    const openAuthLink = async () => {
+        const a = AUTH_LINK; if (!a || a.done) return; a.done = true;
+        if (a.mode !== 'resetPassword' && a.mode !== 'verifyEmail') return location.replace('https://apex-lift-52a18.firebaseapp.com/__/auth/action' + a.raw);
+        try { await loadFirebase(); } catch (e) { return window.appActions.showToast(t('No internet connection. Try again when online.'), 'error'); }
+        if (a.mode === 'verifyEmail') {
+            try {
+                await Cloud.auth.applyActionCode(a.code);
+                if (Cloud.auth.currentUser) { await Cloud.auth.currentUser.reload(); Cloud.sent.main = ''; scheduleFlush(500); }
+                renderAccount(); renderAccountSheet();
+                window.appActions.showToast(t('Your email is confirmed.'), 'success');
+            } catch (e) { window.appActions.showToast(linkErrorText(e), 'error'); }
+            return;
+        }
+        try {
+            emailSt.resetEmail = await Cloud.auth.verifyPasswordResetCode(a.code);
+            emailSt.code = a.code;
+            window.appActions.openEmail('newpass');
+        } catch (e) {
+            // an old or used link: ask for a new one right here
+            window.appActions.openEmail('reset');
+            renderEmail(e && ['auth/expired-action-code', 'auth/invalid-action-code'].includes(e.code) ? t('This link has expired or was already used. Ask for a new one below.') : linkErrorText(e));
+        }
+    };
 
 
 
@@ -4222,6 +4305,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const o = document.getElementById('welcome-overlay');
         if (!welcomeOpen()) { o.classList.remove('hidden'); o.classList.add('flex'); welcomeIdx = 0; renderWelcome(); }
         if (toLast) window.appActions.welcomeGo(W_SLIDES.length - 1, true);
+        // get the sign-in ready while the welcome pages are read: tapping Google then opens its window straight away
+        // (downloading it after the tap took seconds, and some phones then block or lose Google's window)
+        if (!Cloud.auth && navigator.onLine !== false) setTimeout(() => loadFirebase().catch(() => {}), 1500);
     };
     const hideWelcome = () => {
         const o = document.getElementById('welcome-overlay'); if (!welcomeOpen()) return;
@@ -4492,9 +4578,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     cloudKick();
     // First launch (or signed out): intro pages + sign-in. Signed in: straight to the app (setup questions if needed).
     setTimeout(() => {
-        const introSeen = localStorage.getItem(INTRO_KEY) === '1';
-        if (gateOn() && ((!isSignedIn() && (requireSignIn() || !introSeen)) || (isSignedIn() && !getAgree()))) showWelcome(introSeen || isSignedIn());
+        const introSeen = localStorage.getItem(INTRO_KEY) === '1', pending = !!(getCloudFlag() || {}).pending;
+        // back from Google's full-page sign-in: the sign-in page shows "Signing in…" until the account is loaded
+        if (pending && Cloud.status === 'off') setCloudStatus('loading');
+        if (gateOn() && ((!isSignedIn() && (requireSignIn() || !introSeen)) || (isSignedIn() && !getAgree()))) showWelcome(introSeen || isSignedIn() || pending);
         else { uncoverApp(); window.appActions.initOnboarding(); }
+        openAuthLink();
     }, 300);
     // Coming back to the app on a new day: jump to today (unless a workout is open)
     let lastToday = getTodayId();
