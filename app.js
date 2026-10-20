@@ -564,6 +564,8 @@
         "Experience": "الخبرة",
         "Export data": "تصدير البيانات",
         "Find routine": "ابحث عن البرنامج",
+        "Use another code": "استخدم رمزًا آخر",
+        "Routine found": "تم العثور على البرنامج",
         "Finish your workout first.": "أنهِ تمرينك أولًا.",
         "From an Apex Lift file": "من ملف Apex Lift",
         "Give this code to a friend. They open Apex Lift → Profile → Add a routine by code.": "أعطِ هذا الرمز لصديقك. يفتح Apex Lift ← حسابي ← أضف برنامجًا برمز.",
@@ -1042,7 +1044,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '46';
+    const APP_VERSION = '47';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -4128,6 +4130,11 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             oninput="window.appActions.codeTyped(this)" onkeydown="if(event.key==='Enter')window.appActions.codeFind()">
         <button id="code-find" onclick="window.appActions.codeFind()" class="w-full mt-3 py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="search" class="w-4 h-4"></i>${t('Find routine')}</button>
         <div id="code-result" class="mt-4"></div>`;
+    // After a code is found: the routine and Add only (the search is gone), with a small link back to it
+    const foundBody = (code, wk) => `<div class="flex items-center justify-between gap-2 mb-3">
+            <span class="flex items-center gap-2 text-[13px] font-bold text-[#22c55e]"><i data-lucide="check-circle" class="w-4 h-4"></i>${t('Routine found')} · <span class="text-slate-300" dir="ltr">${fmtCode(code)}</span></span>
+            <button onclick="window.appActions.openCodeSheet(${jsArg(code)})" class="shrink-0 text-[12px] font-bold text-slate-300 underline underline-offset-2 tap-feedback">${t('Use another code')}</button>
+        </div>${previewHTML(wk)}`;
     const previewHTML = wk => {
         const work = wk.schedule.filter(d => !d.isRest && d.exercises.length), exN = work.reduce((a, d) => a + d.exercises.length, 0), full = appData.weeks.length >= 5;
         return `<div class="glass-card p-4 border border-[#d4af37]/30 p-pop">
@@ -4164,8 +4171,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 if (!clean) { window.appState.codeFound = null; res.innerHTML = `<p class="text-[12px] font-bold text-red-400">${t('No routine found for this code. Check it and try again.')}</p>`; return; }
                 const wk = clean.weeks[0]; wk.schedule = alignToMyWeek(wk.schedule);
                 window.appState.codeFound = wk;
-                res.innerHTML = previewHTML(wk);
-                if (window.lucide) window.lucide.createIcons({ root: res });
+                codeSheet(t('Add a routine by code'), foundBody(code, wk));
             } catch (e) { console.warn('Routine code', e); res.innerHTML = `<p class="text-[12px] font-bold text-red-400">${esc(codeErr(e))}</p>`; }
             finally { if (btn) btn.disabled = false; }
         },
