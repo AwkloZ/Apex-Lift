@@ -445,7 +445,6 @@
         "Delete my account": "حذف حسابي",
         "Delete your account?": "حذف حسابك؟",
         "No internet connection. Try again when online.": "لا يوجد اتصال بالإنترنت. حاول مرة أخرى عند الاتصال.",
-        "Offline · will sync when online": "غير متصل · ستتم المزامنة عند الاتصال",
         "Privacy policy": "سياسة الخصوصية",
         "Sign in to keep your workouts safe in the cloud and use them on any phone.": "سجّل الدخول لحفظ تمارينك في السحابة واستخدامها على أي جوال.",
         "Sign out": "تسجيل الخروج",
@@ -453,8 +452,6 @@
         "Sign-in failed. Please try again.": "فشل تسجيل الدخول. حاول مرة أخرى.",
         "Signed out": "تم تسجيل الخروج",
         "Signing in…": "جارٍ تسجيل الدخول…",
-        "Sync problem · trying again": "مشكلة في المزامنة · جارٍ إعادة المحاولة",
-        "Synced · {time}": "تمت المزامنة · {time}",
         "Syncing…": "جارٍ المزامنة…",
         "This deletes your cloud backup and your account. The workouts on this phone stay.": "سيحذف هذا نسختك السحابية وحسابك. التمارين المحفوظة على هذا الجوال تبقى.",
         "Sign-in isn't available on this site yet.": "تسجيل الدخول غير متاح على هذا الموقع حاليًا.",
@@ -702,7 +699,14 @@
         "Shorter workouts get fewer exercises a day.": "التمارين الأقصر فيها تمارين أقل في اليوم.",
         "Signed in with": "تسجيل الدخول عبر",
         "Starts your body weight chart and BMI in Progress.": "يبدأ به مخطط وزنك ومؤشر كتلة الجسم في التقدّم.",
-        "Your answers from setup. Your program was built from them.": "إجاباتك في الإعداد. بُني برنامجك عليها.",
+        "Offline": "غير متصل",
+        "Sync problem": "مشكلة في المزامنة",
+        "Synced {time}": "تمت المزامنة {time}",
+        "Your program is built from these answers. Tap one to change it.": "برنامجك مبني على هذه الإجابات. اضغط على أي منها لتغييرها.",
+        "Get a matching program?": "هل تريد برنامجًا يناسب إجاباتك؟",
+        "Get program": "احصل على البرنامج",
+        "{name} fits your answers. You have 5 routines, so it replaces the current one. Your history is kept.": "{name} يناسب إجاباتك. لديك 5 جداول، لذلك سيحل محل الجدول الحالي. يبقى سجلك محفوظًا.",
+        "{name} fits your answers. It is added to your routines; your current one stays.": "{name} يناسب إجاباتك. سيُضاف إلى جداولك ويبقى الحالي كما هو.",
     };
     const t = (en, vars) => {
         let out = (isAR && Object.prototype.hasOwnProperty.call(AR, en) && AR[en]) || en;
@@ -1014,7 +1018,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '41';
+    const APP_VERSION = '42';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1896,8 +1900,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const since = Number(flag.since) > 0 ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { month: 'long', year: 'numeric', numberingSystem: 'latn' }).format(Number(flag.since)) : '';
         const born = b.birthDate ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric', numberingSystem: 'latn' }).format(new Date(b.birthDate + 'T12:00:00')) : b.birthYear ? String(b.birthYear) : '';
         const sexL = { male: t('Male'), female: t('Female'), na: t('Prefer not to say') }[b.sex] || '';
-        const lastW = (b.log || []).slice(-1)[0], google = !isPasswordUser();
-        const field = (id, val, mode, onchange, label, unit = '') => `<span class="pf-weight" ${unit ? 'dir="ltr"' : ''}><input id="${id}" type="text" inputmode="${mode}" autocomplete="off" value="${esc(val)}" onchange="${onchange}" class="${unit ? 'num' : 'pf-name'}" aria-label="${esc(label)}">${unit ? `<span>${unit}</span>` : ''}</span>`;
+        const google = !isPasswordUser();
         el.innerHTML = `<div class="flex flex-col items-center text-center pt-1 pb-6">
                 ${avatarHTML(u, 'w-20 h-20 text-[30px]')}
                 <div class="text-[20px] font-black text-white mt-3 max-w-full truncate">${esc(u.displayName || u.email || '')}</div>
@@ -1906,34 +1909,36 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             </div>
             <h3 class="pf-h">${t('Personal details')}</h3>
             <div class="pf-group">
-                <label class="pf-row"><span class="pf-ic"><i data-lucide="user-round"></i></span><span class="pf-label">${t('Name')}</span>${field('acc-name', u.displayName || '', 'text', 'window.appActions.saveName(this.value)', t('Name'))}</label>
+                <button onclick="window.appActions.editName()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="user-round"></i></span><span class="pf-label">${t('Name')}</span><span class="pf-val truncate">${esc(u.displayName || '—')}</span><i data-lucide="pencil" class="pf-chev"></i></button>
                 ${pfRow('cake', t('Age'), age !== null ? `<span class="num">${age}</span>` : '', born ? t('Born {date}', { date: esc(born) }) : '', lock)}
                 ${pfRow('users', t('Sex'), esc(sexL), '', lock)}
                 ${pfRow('ruler', t('Height'), b.heightCm ? `<span class="num" dir="ltr">${b.heightCm} cm</span>` : '', '', lock)}
-                <label class="pf-row"><span class="pf-ic"><i data-lucide="scale"></i></span><span class="pf-label">${t('Weight')}${lastW ? `<span class="pf-sub">${t('Updated {date}', { date: esc(fmtDayMonth(new Date(lastW.t))) })}</span>` : ''}</span>${field('pf-weightKg', b.weightKg === undefined ? '' : b.weightKg, 'decimal', 'window.appActions.saveWeight(this.value)', t('Weight (kg)'), 'kg')}</label>
             </div>
             <p class="pf-note">${t('Age, sex and height are set during setup. Contact us to correct them.')}</p>
             <h3 class="pf-h">${t('Account')}</h3>
             <div class="pf-group mb-4">
                 ${pfRow(google ? 'log-in' : 'mail', t('Signed in with'), google ? 'Google' : t('Email'), !google && !u.emailVerified ? `<span class="text-[#f87171]">${t('Email not confirmed')}</span>` : '')}
                 ${!google && !u.emailVerified ? `<button onclick="window.appActions.resendVerify()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="mail-check"></i></span><span class="pf-label">${t('Send confirmation email')}</span><i data-lucide="chevron-right" class="pf-chev"></i></button>` : ''}
-                <button onclick="window.appActions.closeAccount(); setTimeout(window.appActions.openBackups, 320)" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="history"></i></span><span class="pf-label">${t('Account backups')}<span class="pf-sub">${t('Go back to an earlier copy')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
+                <button onclick="window.appActions.openBackups()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="history"></i></span><span class="pf-label">${t('Account backups')}<span class="pf-sub">${t('Go back to an earlier copy')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
                 <button onclick="window.appActions.cloudSignOut()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="log-out"></i></span><span class="pf-label">${t('Sign out')}</span></button>
                 <button onclick="window.appActions.cloudDelete()" class="pf-row is-danger tap-feedback"><span class="pf-ic"><i data-lucide="trash-2"></i></span><span class="pf-label">${t('Delete my account')}<span class="pf-sub">${t('Deletes your cloud data and your account')}</span></span></button>
             </div>`;
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
+    // Your training: goal, days, workout length and equipment can be changed here; a change offers a matching program
+    const TRAINING_EDIT = {
+        goal: ['Goal', () => [['muscle', t('Build muscle')], ['strength', t('Get stronger')], ['fat', t('Lose fat')]]],
+        days: ['Days a week', () => ['3', '4', '5', '6'].map(d => [d, t('{n} days', { n: d })])],
+        session: ['Workout length', () => SESSION_OPTS.map(m => [m, sessionLabel(m)])],
+        eq: ['Equipment', () => [['gym', t('Full gym')], ['db', t('Dumbbells only')]]]
+    };
     const renderTrainingSheet = () => {
         const el = document.getElementById('training-body'); if (!el) return;
         const pr = getProfile(), active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0];
-        el.innerHTML = `<p class="text-[13px] font-bold text-slate-400 mb-4">${t('Your answers from setup. Your program was built from them.')}</p>
-            <div class="pf-group">
-                ${pfRow('target', t('Goal'), esc(t(GOAL_LABEL[pr.goal] || '')))}
-                ${pfRow('trending-up', t('Experience'), esc(t(EXP_LABEL[pr.exp] || '')))}
-                ${pfRow('calendar-days', t('Days a week'), pr.days ? `<span class="num">${esc(pr.days)}</span>` : '')}
-                ${pfRow('timer', t('Workout length'), esc(sessionLabel(pr.session)))}
-                ${pfRow('building-2', t('Equipment'), esc(t(EQ_LABEL[pr.eq] || '')))}
-            </div>
+        const value = { goal: t(GOAL_LABEL[pr.goal] || ''), days: pr.days ? t('{n} days', { n: pr.days }) : '', session: sessionLabel(pr.session), eq: t(EQ_LABEL[pr.eq] || '') };
+        const icon = { goal: 'target', days: 'calendar-days', session: 'timer', eq: 'building-2' };
+        el.innerHTML = `<p class="text-[13px] font-bold text-slate-400 mb-4">${t('Your program is built from these answers. Tap one to change it.')}</p>
+            <div class="pf-group">${Object.keys(TRAINING_EDIT).map(k => `<button onclick="window.appActions.editTraining(${jsArg(k)})" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="${icon[k]}"></i></span><span class="pf-label">${t(TRAINING_EDIT[k][0])}</span><span class="pf-val">${esc(value[k] || '—')}</span><i data-lucide="chevron-right" class="pf-chev"></i></button>`).join('')}</div>
             <div class="h-6"></div>
             <h3 class="pf-h">${t('Your program')}</h3>
             <div class="pf-group mb-4">
@@ -1942,6 +1947,14 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             </div>`;
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
+    // small centered window: a title, then a text box or a list of choices
+    const openEdit = html => {
+        const box = document.getElementById('edit-box'); box.innerHTML = html;
+        if (window.lucide) window.lucide.createIcons({ root: box });
+        const o = document.getElementById('edit-overlay');
+        if (!o.classList.contains('flex') || o.classList.contains('opacity-0')) { openModal('edit-overlay', 'edit-box'); pushBack('edit', () => window.appActions.closeEdit()); }
+    };
+    const editHead = title => `<div class="flex items-center justify-between mb-4"><h3 class="text-[18px] font-black text-white">${title}</h3><button onclick="window.appActions.closeEdit()" class="w-11 h-11 -me-2 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button></div>`;
     // the Your training row: a one-line summary
     const renderTrainingRow = () => {
         const el = document.getElementById('pf-training-sub'); if (!el) return;
@@ -1949,17 +1962,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         el.textContent = [t(GOAL_LABEL[pr.goal] || ''), pr.days ? t('{n} days', { n: pr.days }) : '', sessionLabel(pr.session)].filter(Boolean).join(' · ');
     };
     const sheetOpen = id => document.getElementById(id).classList.contains('flex') && !document.getElementById(id).classList.contains('opacity-0');
-    // Profile: three numbers about your training (tap → Progress)
-    const renderProfileStats = () => {
-        const el = document.getElementById('profile-stats'); if (!el) return;
-        const h = StorageManager.getHistory(), dayKeys = Object.keys(workoutDays(h)).map(Number);
-        const records = Object.keys(h).filter(k => !k.startsWith('temp_')).reduce((a, k) => a + recordsOf(h[k]).length, 0);
-        const tile = (icon, value, label) => `<button onclick="window.appActions.switchTab('progress')" class="glass-card p-3.5 text-start tap-feedback min-w-0"><i data-lucide="${icon}" class="w-4 h-4 text-[#d4af37] mb-2"></i><div class="text-[22px] font-black text-white leading-none num" dir="ltr">${value}</div><div class="text-[12px] font-bold text-slate-400 mt-1.5 leading-snug">${label}</div></button>`;
-        el.innerHTML = `<div class="grid grid-cols-3 gap-2.5">${tile('calendar-check', dayKeys.length, t('Workouts'))}${tile('flame', weekStreak(dayKeys), t('Week streak'))}${tile('trophy', records, t('Records'))}</div>`;
-        if (window.lucide) window.lucide.createIcons({ root: el });
-    };
     const renderProfile = () => {
-        renderAccount(); renderProfileStats(); renderTrainingRow(); updateBackupStatus();
+        renderAccount(); renderTrainingRow(); updateBackupStatus();
         if (sheetOpen('account-overlay')) renderAccountSheet();
         if (sheetOpen('training-overlay')) renderTrainingSheet();
     };
@@ -3705,18 +3709,18 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const name = u.displayName || u.name || '', email = u.email || '', photo = u.photoURL || u.photo || '';
             // sync runs by itself: this only says how it is going
             const st = { off: ['bg-slate-500', t('Connecting…')], loading: ['bg-slate-500', t('Connecting…')], syncing: ['bg-[#d4af37] animate-pulse', t('Syncing…')],
-                synced: ['bg-[#22c55e]', t('Synced · {time}', { time: Cloud.lastSync ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(Cloud.lastSync) : '' })],
-                offline: ['bg-slate-400', t('Offline · will sync when online')], error: ['bg-red-500', t('Sync problem · trying again')] }[Cloud.status] || ['bg-slate-500', ''];
+                synced: ['bg-[#22c55e]', t('Synced {time}', { time: Cloud.lastSync ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(Cloud.lastSync) : '' })],
+                offline: ['bg-slate-400', t('Offline')], error: ['bg-red-500', t('Sync problem')] }[Cloud.status] || ['bg-slate-500', ''];
             // the whole card opens Account (personal details and account settings)
             el.innerHTML = `<div class="glass-card border border-white/10">
-                <button onclick="window.appActions.openAccount()" ${Cloud.user ? '' : 'disabled'} class="w-full p-5 flex items-center gap-4 text-start tap-feedback" aria-label="${esc(t('Account'))}">
-                    ${avatarHTML(u, 'w-16 h-16 text-[24px]')}
+                <button onclick="window.appActions.openAccount()" ${Cloud.user ? '' : 'disabled'} class="w-full px-4 py-3.5 flex items-center gap-3 text-start tap-feedback" aria-label="${esc(t('Account'))}">
+                    ${avatarHTML(u, 'w-11 h-11 text-[18px]')}
                     <span class="min-w-0 flex-1">
-                        <span class="block text-[19px] font-black text-white truncate leading-tight">${esc(name || email)}</span>
+                        <span class="block text-[16px] font-black text-white truncate leading-tight">${esc(name || email)}</span>
                         ${name && email ? `<span class="block text-[12px] font-bold text-slate-400 truncate mt-0.5">${esc(email)}</span>` : ''}
-                        <span class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 max-w-full" title="${esc(Cloud.err)}"><span class="w-2 h-2 rounded-full shrink-0 ${st[0]}"></span><span class="text-[12px] font-bold text-slate-300 truncate">${esc(st[1])}</span></span>
                     </span>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 shrink-0"></i>
+                    <span class="shrink-0 flex items-center gap-1.5 text-[12px] font-bold text-slate-400" title="${esc(Cloud.err)}"><span class="w-1.5 h-1.5 rounded-full ${st[0]}"></span><span class="max-w-[110px] truncate">${esc(st[1])}</span></span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
                 </button></div>`;
         }
         if (window.lucide) window.lucide.createIcons({ root: el });
@@ -3729,10 +3733,36 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         closeAccount: () => { popBack('account'); closeSheet('account-overlay', 'account-box'); },
         openTraining: () => { renderTrainingSheet(); openSheet('training-overlay', 'training-box'); pushBack('training', () => window.appActions.closeTraining()); },
         closeTraining: () => { popBack('training'); closeSheet('training-overlay', 'training-box'); },
+        closeEdit: () => { popBack('edit'); if (document.activeElement) document.activeElement.blur(); closeModal('edit-overlay', 'edit-box'); },
+        editName: () => {
+            if (!Cloud.user) return;
+            openEdit(editHead(t('Name')) + `<form onsubmit="event.preventDefault(); window.appActions.saveName(document.getElementById('edit-name').value)">
+                <input id="edit-name" type="text" autocomplete="name" maxlength="60" value="${esc(Cloud.user.displayName || '')}" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-white/30" dir="auto" aria-label="${esc(t('Name'))}">
+                <button type="submit" class="w-full mt-4 py-4 rounded-xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Save')}</button></form>`);
+            setTimeout(() => { const i = document.getElementById('edit-name'); if (i) { i.focus(); i.select(); } }, 320);
+        },
+        editTraining: k => {
+            const row = TRAINING_EDIT[k]; if (!row) return;
+            const cur = getProfile()[k];
+            openEdit(editHead(t(row[0])) + `<div class="space-y-2">${row[1]().map(([v, l]) => `<button onclick="window.appActions.setTraining(${jsArg(k)}, ${jsArg(v)})" class="w-full min-h-[52px] px-4 rounded-xl border flex items-center justify-between text-start text-[15px] font-bold tap-feedback ${cur === v ? 'bg-[#d4af37]/15 border-[#d4af37] text-white' : 'bg-white/5 border-white/10 text-white'}">${esc(l)}${cur === v ? '<i data-lucide="check" class="w-5 h-5 text-[#d4af37]"></i>' : ''}</button>`).join('')}</div>`);
+        },
+        // a changed answer: saved, then a program that fits the new answers is offered (the current routine stays)
+        setTraining: (k, v) => {
+            const pr = getProfile(); window.appActions.closeEdit();
+            if (pr[k] === v) return;
+            writeItem(PROFILE_KEY, JSON.stringify(sanitizeProfile({ ...pr, [k]: v })));
+            renderTrainingSheet(); renderTrainingRow();
+            const np = getProfile(), rec = PROGRAMS.find(p => p.id === recommendProgram({ ...np, sex: getBody().sex }));
+            setTimeout(() => window.appActions.showConfirm(t('Get a matching program?'),
+                appData.weeks.length >= 5 ? t('{name} fits your answers. You have 5 routines, so it replaces the current one. Your history is kept.', { name: t(rec.name) })
+                    : t('{name} fits your answers. It is added to your routines; your current one stays.', { name: t(rec.name) }),
+                () => { window.appActions.closeTraining(); window.appActions.applyProgram(rec.id, { exp: np.exp || 'mid' }); }, false, t('Get program')), 320);
+        },
         saveName: async v => {
             const name = String(v || '').trim().slice(0, 60);
             if (!Cloud.user) return;
-            if (!name) { window.appActions.showToast(t('Please enter your name.'), 'error'); return renderAccountSheet(); }
+            if (!name) return window.appActions.showToast(t('Please enter your name.'), 'error');
+            window.appActions.closeEdit();
             try {
                 await Cloud.user.updateProfile({ displayName: name });
                 const f = getCloudFlag(); if (f) writeItem(CLOUD_KEY, JSON.stringify({ ...f, name }));
@@ -4360,7 +4390,6 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         },
         agreeNo: () => { window.appState.agreeNext = null; popBack('agree'); closeModal('agree-overlay', 'agree-box'); },
         // body weight (Profile and Progress → Body); everything else in Your profile is set in the setup
-        saveWeight: v => { if (window.appActions.setAbout('weightKg', v)) { window.appActions.showToast(t('Weight saved'), 'success'); renderAccountSheet(); } },
         // only body weight can change after the setup; returns true when it was saved
         setAbout: (field, value) => {
             if (field !== 'weightKg') { window.appActions.showToast(t("This can't be changed."), 'error'); return false; }

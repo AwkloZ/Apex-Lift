@@ -105,6 +105,11 @@
         </div>
     </div>
 
+    <!-- Small centered window for changing one value (name, goal, days...); filled by app.js. Above the Profile pages. -->
+    <div id="edit-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9993] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeEdit()">
+        <div id="edit-box" role="dialog" aria-modal="true" class="w-full max-w-sm bg-[#111] rounded-3xl border border-white/10 p-5 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]"></div>
+    </div>
+
     <!-- Terms of Use and Privacy Policy: asked after choosing Google or email (filled by app.js). Above the email card. -->
     <div id="agree-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9996] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div id="agree-box" role="dialog" aria-modal="true" aria-labelledby="agree-title" class="w-full max-w-sm bg-[#111] rounded-3xl border border-white/10 p-6 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]"></div>
@@ -289,8 +294,7 @@
 
             <!-- Profile: you (account + stats), About you, then the settings in grouped cards -->
             <section id="profile-view" class="hidden pb-6">
-                <div id="account-card" class="mb-3"></div>
-                <div id="profile-stats" class="mb-6"></div>
+                <div id="account-card" class="mb-6"></div>
 
                 <h3 class="pf-h" data-i18n="Workout">Workout</h3>
                 <div class="pf-group mb-6">
