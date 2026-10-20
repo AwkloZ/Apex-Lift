@@ -17,7 +17,7 @@
     })();
     const isAR = LANG === 'ar';
     const AR = {
-        "\"Low in plan\" means your routine has few sets for it: add some in the Edit tab.": "\"قليل في الخطة\" يعني أن روتينك فيه مجموعات قليلة لهذه العضلة: أضف المزيد من تبويب التعديل.",
+        "\"Low in plan\" means your routine has few sets for it: add some in the Plan tab.": "\"قليل في الخطة\" يعني أن روتينك فيه مجموعات قليلة لهذه العضلة: أضف المزيد من تبويب الخطة.",
         "Also in Profile → About you.": "متوفر أيضًا في الملف الشخصي ← عنك.",
         "Body": "الجسم",
         "Compared with the same days last week.": "مقارنةً بنفس الأيام من الأسبوع الماضي.",
@@ -73,7 +73,8 @@
         "Add exercises to start training on this day.": "أضف تمارين لتبدأ التمرين في هذا اليوم.",
         "Tap a day to edit it": "اضغط على يوم لتعديله",
         "Editing your schedule": "تعديل جدولك",
-        "Changes here update your Plan page": "التغييرات هنا تُحدّث صفحة الخطة",
+        "Changes here update your Today page": "التغييرات هنا تُحدّث صفحة اليوم",
+        "Go to today's workout": "اذهب إلى تمرين اليوم",
         "Edit": "تعديل",
         "More": "المزيد",
         "More day tools": "أدوات اليوم الأخرى",
@@ -977,7 +978,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '35';
+    const APP_VERSION = '36';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1326,7 +1327,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         // Plan is where the schedule is edited: a gold strip says so, so it isn't mistaken for Today
         document.getElementById('weeks-container').innerHTML = `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-white/5 border border-white/10">
             <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
-            <span class="flex-1 min-w-0"><span class="block text-[13px] font-bold text-white">${t('Editing your schedule')}</span><span class="block text-[12px] font-semibold text-slate-300 mt-px">${t('Changes here update your Plan page')}</span></span>
+            <span class="flex-1 min-w-0"><span class="block text-[13px] font-bold text-white">${t('Editing your schedule')}</span><span class="block text-[12px] font-semibold text-slate-300 mt-px">${t('Changes here update your Today page')}</span></span>
         </div>
         ${inDay ? '' : `<div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''}">
             <button onclick="window.appActions.toggleRoutines()" class="w-full p-4 flex items-center gap-3 text-start tap-feedback" aria-expanded="${open}">
@@ -1544,7 +1545,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // Overview: this week against the same days last week, 8 weeks of sets, the 5-week calendar, recent records
     const progressOverviewHTML = history => {
         const days = workoutDays(history), dayKeys = Object.keys(days).map(Number);
-        if (!dayKeys.length) return pEmpty('calendar-check', t('No workouts yet'), t('Finish your first workout to see your progress here.'));
+        if (!dayKeys.length) return pEmpty('calendar-check', t('No workouts yet'), t('Finish your first workout to see your progress here.'), `<button onclick="window.appActions.switchTab('today')" class="mt-5 h-12 px-5 rounded-2xl bg-[#d4af37] text-black text-[14px] font-extrabold tap-feedback inline-flex items-center gap-2"><i data-lucide="play" class="w-4 h-4 fill-current"></i>${t("Go to today's workout")}</button>`);
         const wkD = getWeekStart(), wk = wkD.getTime(), today = startOfDay(Date.now());
         const weekAgo = n => new Date(wkD.getFullYear(), wkD.getMonth(), wkD.getDate() - 7 * n).getTime();
         // last week only up to the same weekday as today, so a Tuesday is never compared with a whole week
@@ -1666,7 +1667,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <div class="h-2 rounded-full bg-white/10 overflow-hidden" dir="ltr"><div class="bar-fill h-full rounded-full ${full ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pct}%"></div></div>
             </div>`;
         }).join('');
-        return pCard(t('Sets this week'), `<div class="flex justify-between text-[12px] font-bold text-slate-400 -mt-2 mb-1"><span>${t('Muscle')}</span><span>${t('Done / planned')}</span></div>${rows}<p class="text-[12px] font-bold text-slate-400 mt-3">${t('Aim for about 10–20 sets a week for each muscle.')} ${t('"Low in plan" means your routine has few sets for it: add some in the Edit tab.')}</p>`);
+        return pCard(t('Sets this week'), `<div class="flex justify-between text-[12px] font-bold text-slate-400 -mt-2 mb-1"><span>${t('Muscle')}</span><span>${t('Done / planned')}</span></div>${rows}<p class="text-[12px] font-bold text-slate-400 mt-3">${t('Aim for about 10–20 sets a week for each muscle.')} ${t('"Low in plan" means your routine has few sets for it: add some in the Plan tab.')}</p>`);
     };
 
     // Body: body weight over time (the same log as Profile → About you); log today's weight here too
