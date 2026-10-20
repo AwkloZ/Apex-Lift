@@ -651,14 +651,17 @@
         "This email already has an account. Sign in instead.": "لهذا البريد حساب بالفعل. سجّل الدخول بدلًا من ذلك.",
         "Too many tries. Wait a few minutes and try again.": "محاولات كثيرة. انتظر بضع دقائق وحاول مرة أخرى.",
         "Update your weight anytime. Birth year, height and sex can't be changed; contact us if something is wrong.": "حدّث وزنك في أي وقت. لا يمكن تغيير سنة الميلاد والطول والجنس؛ تواصل معنا إذا كان هناك خطأ.",
-        "Use at least 8 characters for your password.": "استخدم 8 أحرف على الأقل لكلمة المرور.",
-        "Use your email and a password of at least 8 characters.": "استخدم بريدك وكلمة مرور من 8 أحرف على الأقل.",
         "Used to tailor the app and to improve Apex Lift. Never sold or shared.": "تُستخدم لتخصيص التطبيق وتطوير Apex Lift، ولا تُباع ولا تُشارك أبدًا.",
         "You can change any day and exercise later in Edit.": "يمكنك تغيير أي يوم أو تمرين لاحقًا من تبويب تعديل.",
         "Your name": "اسمك",
         "Your routines and settings are replaced by the file's, and its workouts are added to yours. Your current data is saved to your account first.": "تُستبدل برامجك وإعداداتك بما في الملف، وتُضاف تمارينه المسجّلة إلى تمارينك. تُحفظ بياناتك الحالية في حسابك أولًا.",
         "Your workouts are saved to your account and kept in sync on all your phones.": "تُحفظ تمارينك في حسابك وتبقى متزامنة على كل أجهزتك.",
         "{n} exercises with history": "{n} تمارين لها سجل",
+        "At least 8 characters": "8 أحرف على الأقل",
+        "One capital letter (A–Z)": "حرف كبير واحد على الأقل (A–Z)",
+        "One symbol, like ! @ # $ %": "رمز واحد على الأقل، مثل ! @ # $ %",
+        "Your password needs at least 8 characters, a capital letter and a symbol.": "كلمة المرور يجب أن تكون 8 أحرف على الأقل وفيها حرف كبير ورمز.",
+        "Use your email and a strong password.": "استخدم بريدك وكلمة مرور قوية.",
     };
     const t = (en, vars) => {
         let out = (isAR && Object.prototype.hasOwnProperty.call(AR, en) && AR[en]) || en;
@@ -970,7 +973,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '30';
+    const APP_VERSION = '31';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3645,12 +3648,20 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         && !(Cloud.user.providerData || []).some(p => p && p.providerId === 'google.com');
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const emailSt = { mode: 'in', busy: false, then: null };
+    // New accounts need a strong password: at least 8 characters, one capital letter and one symbol (any non-letter, non-number)
+    const PASS_RULES = [
+        ['At least 8 characters', p => p.length >= 8],
+        ['One capital letter (A–Z)', p => /\p{Lu}/u.test(p)],
+        ['One symbol, like ! @ # $ %', p => /[^\p{L}\p{N}\s]/u.test(p)]
+    ];
+    const passStrong = p => PASS_RULES.every(r => r[1](p));
+    const passRulesHTML = p => PASS_RULES.map(([l, ok]) => `<li class="flex items-center gap-2 ${ok(p) ? 'text-[#22c55e]' : 'text-slate-500'}"><i data-lucide="${ok(p) ? 'check-circle-2' : 'circle'}" class="w-4 h-4 shrink-0"></i>${t(l)}</li>`).join('');
     const authErrorText = e => {
         const c = (e && e.code) || '';
         if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-login-credentials'].includes(c)) return t('Email or password is wrong.');
         if (c === 'auth/email-already-in-use') return t('This email already has an account. Sign in instead.');
         if (c === 'auth/invalid-email' || c === 'auth/missing-email') return t('Please enter a valid email.');
-        if (c === 'auth/weak-password') return t('Use at least 8 characters for your password.');
+        if (c === 'auth/weak-password' || c === 'auth/password-does-not-meet-requirements') return t('Your password needs at least 8 characters, a capital letter and a symbol.');
         if (c === 'auth/too-many-requests') return t('Too many tries. Wait a few minutes and try again.');
         if (c === 'auth/operation-not-allowed') return t('Email sign-in is not turned on yet. Please use Google for now.');
         if (c === 'auth/user-disabled') return t('This account is turned off. Contact us.');
@@ -3658,9 +3669,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
     const renderEmail = (msg = '', good = false) => {
         const m = emailSt.mode, keep = id => { const el = document.getElementById(id); return el ? el.value : ''; };
-        const email = keep('em-email') || (m === 'reauth' && Cloud.user ? Cloud.user.email || '' : ''), name = keep('em-name');
+        const email = keep('em-email') || (m === 'reauth' && Cloud.user ? Cloud.user.email || '' : ''), name = keep('em-name'), pass = m === 'up' ? keep('em-pass') : '';
         const title = { in: t('Sign in with email'), up: t('Create your account'), reset: t('Reset your password'), reauth: t('Confirm your password') }[m];
-        const sub = { in: '', up: t('Use your email and a password of at least 8 characters.'), reset: t("Enter your account's email. We'll send you a link to choose a new password."), reauth: t('For your safety, enter your password to delete your account.') }[m];
+        const sub = { in: '', up: t('Use your email and a strong password.'), reset: t("Enter your account's email. We'll send you a link to choose a new password."), reauth: t('For your safety, enter your password to delete your account.') }[m];
         const inp = 'w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-[#d4af37]';
         const lbl = (txt, html) => `<label class="block"><span class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">${txt}</span>${html}</label>`;
         const link = (fn, txt) => `<button type="button" onclick="${fn}" class="text-[13px] font-black text-[#d4af37] tap-feedback">${txt}</button>`;
@@ -3672,8 +3683,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             <form onsubmit="event.preventDefault(); window.appActions.emailSubmit()" class="space-y-3" novalidate>
                 ${m === 'up' ? lbl(t('Your name'), `<input id="em-name" type="text" autocomplete="name" maxlength="60" value="${esc(name)}" class="${inp}" dir="auto">`) : ''}
                 ${m === 'reauth' ? `<div class="text-[13px] font-bold text-slate-300" dir="ltr">${esc(email)}</div>` : lbl(t('Email'), `<input id="em-email" type="email" inputmode="email" autocomplete="${m === 'up' ? 'email' : 'username'}" autocapitalize="off" spellcheck="false" maxlength="200" value="${esc(email)}" class="${inp}" dir="ltr">`)}
-                ${m === 'reset' ? '' : lbl(t('Password'), `<div class="relative"><input id="em-pass" type="password" autocomplete="${m === 'up' ? 'new-password' : 'current-password'}" maxlength="200" class="${inp} pe-12" dir="ltr">
+                ${m === 'reset' ? '' : lbl(t('Password'), `<div class="relative"><input id="em-pass" type="password" autocomplete="${m === 'up' ? 'new-password' : 'current-password'}" maxlength="200" value="${esc(pass)}" ${m === 'up' ? 'oninput="window.appActions.passTyped(this.value)" aria-describedby="em-rules"' : ''} class="${inp} pe-12" dir="ltr">
                     <button type="button" onclick="const i=document.getElementById('em-pass');i.type=i.type==='password'?'text':'password'" class="absolute inset-y-0 end-0 px-3.5 text-slate-400 tap-feedback" aria-label="${esc(t('Show password'))}"><i data-lucide="eye" class="w-5 h-5"></i></button></div>`)}
+                ${m === 'up' ? `<ul id="em-rules" class="space-y-1.5 text-[12px] font-bold">${passRulesHTML(pass)}</ul>` : ''}
                 <p id="em-msg" class="text-[12px] font-bold leading-snug ${good ? 'text-[#22c55e]' : 'text-red-400'} ${msg ? '' : 'hidden'}" role="alert">${esc(msg)}</p>
                 <button id="em-go" type="submit" ${emailSt.busy ? 'disabled' : ''} class="w-full py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 disabled:opacity-60">${emailSt.busy ? '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>' : ''}${btn}</button>
             </form>
@@ -3696,6 +3708,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         },
         closeEmail: () => { popBack('email'); closeSheet('email-overlay', 'email-box'); emailSt.then = null; },
         emailMode: mode => { emailSt.mode = mode; renderEmail(); },
+        // ticks each password rule while typing (new accounts)
+        passTyped: v => {
+            const ul = document.getElementById('em-rules'); if (!ul) return;
+            ul.innerHTML = passRulesHTML(v); if (window.lucide) window.lucide.createIcons({ root: ul });
+            const msg = document.getElementById('em-msg'); if (msg) msg.classList.add('hidden'); // an old error goes away while typing
+        },
         emailSubmit: async () => {
             if (emailSt.busy) return;
             const m = emailSt.mode, val = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
@@ -3703,7 +3721,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (m !== 'reauth' && !EMAIL_RE.test(email)) return renderEmail(t('Please enter a valid email.'));
             if (m === 'up' && !name) return renderEmail(t('Please enter your name.'));
             if (m !== 'reset' && !pass) return renderEmail(t('Please enter your password.'));
-            if (m === 'up' && pass.length < 8) return renderEmail(t('Use at least 8 characters for your password.'));
+            if (m === 'up' && !passStrong(pass)) return renderEmail(t('Your password needs at least 8 characters, a capital letter and a symbol.'));
             if (navigator.onLine === false) return renderEmail(t('No internet connection. Try again when online.'));
             emailSt.busy = true; renderEmail();
             try {
