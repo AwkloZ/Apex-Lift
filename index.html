@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <script>try { if (localStorage.getItem('workoutTheme_rakan_final') === 'light') { document.documentElement.setAttribute('data-theme', 'light'); document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f3f3f0'); } } catch (e) {}</script>
+    <script>try { const th = localStorage.getItem('workoutTheme_rakan_final'); if (th === 'light' || (th === 'system' && matchMedia('(prefers-color-scheme: light)').matches)) { document.documentElement.setAttribute('data-theme', 'light'); document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f3f3f0'); } } catch (e) {}</script>
     <title>Apex Lift</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -68,6 +68,18 @@
             <p class="px-5 pb-3 text-[12px] font-bold text-slate-400 leading-snug shrink-0" data-i18n="A copy of everything is saved in your account once a day. Restore one to go back to how things were.">A copy of everything is saved in your account once a day. Restore one to go back to how things were.</p>
             <div class="px-5 pb-3 shrink-0"><button id="backups-now" onclick="window.appActions.backupNow()" class="w-full py-3 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i><span data-i18n="Back up now">Back up now</span></button></div>
             <div id="backups-list" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain border-t border-white/5 pb-6" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+        </div>
+    </div>
+
+    <!-- Routine codes: share a routine with a code, or add one from a friend's code (filled by app.js) -->
+    <div id="code-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeCodeSheet()">
+        <div id="code-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[90dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="flex items-center justify-between px-5 pb-2 shrink-0">
+                <h3 id="code-title" class="text-lg font-black text-white"></h3>
+                <button onclick="window.appActions.closeCodeSheet()" class="p-2 bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="code-body" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
         </div>
     </div>
 
@@ -182,13 +194,13 @@
         <div id="smart-backup-box" class="glass-card p-6 w-full max-w-sm transform scale-95 transition-transform duration-300 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
             <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
                 <div class="flex items-center gap-3">
-                    <i data-lucide="upload-cloud" class="w-5 h-5 text-[#d4af37]"></i>
-                    <h3 class="text-lg font-black text-white uppercase tracking-tighter"><span data-i18n="Backup Manager">Backup Manager</span></h3>
+                    <i data-lucide="share" class="w-5 h-5 text-[#d4af37]"></i>
+                    <h3 class="text-lg font-black text-white" data-i18n="Export data">Export data</h3>
                 </div>
                 <button onclick="window.appActions.closeBackupModal()" class="text-slate-400 hover:text-white tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             
-            <p class="text-[11px] font-bold text-slate-400 mb-5 leading-relaxed"><span data-i18n="Select exactly what you want to include in this backup file.">Select exactly what you want to include in this backup file.</span></p>
+            <p class="text-[12px] font-bold text-slate-400 mb-5 leading-relaxed" data-i18n="Choose what goes in the file. Save it, send it to a friend, or give it to an AI assistant to review your training.">Choose what goes in the file. Save it, send it to a friend, or give it to an AI assistant to review your training.</p>
             
             <div class="space-y-3 mb-6">
                 <label class="flex items-center justify-between p-3.5 bg-black/40 rounded-xl border border-white/5 cursor-pointer tap-feedback">
@@ -216,7 +228,9 @@
                 </label>
             </div>
             
-            <button onclick="window.appActions.executeSmartBackup()" class="w-full rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)]"><i data-lucide="download" class="w-4 h-4 inline mr-1 -mt-0.5"></i> <span data-i18n="Export Selected Data">Export Selected Data</span></button>
+            <button onclick="window.appActions.executeSmartBackup('file')" class="w-full rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center gap-2"><i data-lucide="share" class="w-4 h-4"></i><span data-i18n="Save or share file">Save or share file</span></button>
+            <button onclick="window.appActions.executeSmartBackup('copy')" class="w-full mt-2 rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest text-white bg-white/5 border border-white/10 tap-feedback flex items-center justify-center gap-2"><i data-lucide="copy" class="w-4 h-4"></i><span data-i18n="Copy as text">Copy as text</span></button>
+            <p class="text-[11px] font-bold text-slate-500 mt-3 leading-snug text-center" data-i18n="Copy as text: paste it into a chat with an AI assistant.">Copy as text: paste it into a chat with an AI assistant.</p>
         </div>
     </div>
     <div id="smart-restore-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 px-6">
@@ -318,98 +332,130 @@
             <nav id="nav-container" class="mb-4"></nav>
             <main id="workout-container" class="space-y-4"></main>
 
-            <!-- Profile tab: settings, backup, contact -->
+            <!-- Profile: you (account + stats), About you, My training, then the settings in grouped cards -->
             <section id="profile-view" class="hidden pb-6">
-                <div id="account-card" class="mb-6"></div>
+                <div id="account-card" class="mb-3"></div>
+                <div id="profile-stats" class="mb-6"></div>
                 <div id="about-card" class="mb-6"></div>
-        <div class="h-px w-full bg-white/10 mt-6 mb-4"></div>
+                <div id="training-card" class="mb-6"></div>
 
-        <span class="text-[10px] font-black text-slate-500 uppercase tracking-[3px] opacity-80 mb-3 block"><span data-i18n="App Settings">App Settings</span></span>
-        
-        <label class="flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-white/5 active:bg-white/10 w-full text-left text-[11px] font-bold uppercase tracking-wider text-white transition-colors cursor-pointer border border-white/5 tap-feedback">
-            <div class="flex items-start gap-3"><i data-lucide="gauge" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Show RPE">Show RPE</span></div>
-            <div class="relative inline-block w-8 h-4 rounded-full bg-black border border-white/20">
-                <input type="checkbox" id="setting-rpe" onchange="window.appActions.toggleRpe(this.checked)" class="peer sr-only">
-                <div class="absolute w-4 h-4 bg-slate-500 rounded-full left-0 top-0 transition-all peer-checked:bg-[#d4af37] peer-checked:translate-x-full shadow-sm"></div>
-            </div>
-        </label>
+                <h3 class="pf-h" data-i18n="Workout">Workout</h3>
+                <div class="pf-group mb-6">
+                    <label class="pf-row">
+                        <span class="pf-ic"><i data-lucide="timer"></i></span><span class="pf-label" data-i18n="Rest Timer">Rest Timer</span>
+                        <select id="setting-rest" onchange="window.appActions.updateRest(this.value)" class="pf-select" dir="ltr">
+                            <option value="45">0:45</option>
+                            <option value="60">1:00</option>
+                            <option value="90">1:30</option>
+                            <option value="120">2:00</option>
+                            <option value="150">2:30</option>
+                            <option value="180">3:00</option>
+                            <option value="240">4:00</option>
+                            <option value="300">5:00</option>
+                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
+                    </label>
+                    <label class="pf-row">
+                        <span class="pf-ic"><i data-lucide="gauge"></i></span>
+                        <span class="pf-label"><span data-i18n="Show RPE">Show RPE</span><span class="pf-sub" data-i18n="How hard each set felt">How hard each set felt</span></span>
+                        <input type="checkbox" id="setting-rpe" role="switch" onchange="window.appActions.toggleRpe(this.checked)" class="pf-switch">
+                    </label>
+                    <label class="pf-row">
+                        <span class="pf-ic"><i data-lucide="calendar"></i></span><span class="pf-label" data-i18n="Week starts on">Week starts on</span>
+                        <select id="setting-start-day" onchange="window.appActions.updateStartOfWeek(this.value)" class="pf-select">
+                            <option value="SUN">SUN</option>
+                            <option value="MON">MON</option>
+                            <option value="TUE">TUE</option>
+                            <option value="WED">WED</option>
+                            <option value="THU">THU</option>
+                            <option value="FRI">FRI</option>
+                            <option value="SAT">SAT</option>
+                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
+                    </label>
+                </div>
 
-        <label class="flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-white/5 active:bg-white/10 w-full text-left text-[11px] font-bold uppercase tracking-wider text-white transition-colors cursor-pointer border border-white/5">
-            <div class="flex items-start gap-3"><i data-lucide="calendar" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Week starts on">Week starts on</span></div>
+                <h3 class="pf-h" data-i18n="App">App</h3>
+                <div class="pf-group mb-6">
+                    <label class="pf-row">
+                        <span class="pf-ic"><i data-lucide="languages"></i></span><span class="pf-label" data-i18n="Language">Language</span>
+                        <select id="setting-lang" onchange="window.appActions.setLanguage(this.value)" class="pf-select">
+                            <option value="en">English</option>
+                            <option value="ar">العربية</option>
+                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
+                    </label>
+                    <label class="pf-row">
+                        <span class="pf-ic"><i data-lucide="sun-moon"></i></span><span class="pf-label" data-i18n="Theme">Theme</span>
+                        <select id="setting-theme" onchange="window.appActions.setTheme(this.value)" class="pf-select">
+                            <option value="dark" data-i18n="Dark">Dark</option>
+                            <option value="light" data-i18n="Light">Light</option>
+                            <option value="system" data-i18n="Same as phone">Same as phone</option>
+                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
+                    </label>
+                </div>
 
-            <select id="setting-start-day" onchange="window.appActions.updateStartOfWeek(this.value)" class="bg-transparent text-[#d4af37] outline-none font-black text-[12px] text-right appearance-none cursor-pointer">
-                <option value="SUN" class="bg-[#1a1a1a]">SUN</option>
-                <option value="MON" class="bg-[#1a1a1a]">MON</option>
-                <option value="TUE" class="bg-[#1a1a1a]">TUE</option>
-                <option value="WED" class="bg-[#1a1a1a]">WED</option>
-                <option value="THU" class="bg-[#1a1a1a]">THU</option>
-                <option value="FRI" class="bg-[#1a1a1a]">FRI</option>
-                <option value="SAT" class="bg-[#1a1a1a]">SAT</option>
-            </select>
-        </label>
+                <h3 class="pf-h" data-i18n="Routines & data">Routines & data</h3>
+                <div class="pf-group mb-6">
+                    <button onclick="window.appActions.openCodeSheet()" class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="ticket"></i></span>
+                        <span class="pf-label"><span data-i18n="Add a routine by code">Add a routine by code</span><span class="pf-sub" data-i18n="Paste a code a friend gave you">Paste a code a friend gave you</span></span>
+                        <i data-lucide="chevron-right" class="pf-chev"></i>
+                    </button>
+                    <button onclick="window.appActions.openBackupModal()" class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="share"></i></span>
+                        <span class="pf-label"><span data-i18n="Export data">Export data</span><span id="backup-age" class="pf-sub"></span></span>
+                        <i data-lucide="chevron-right" class="pf-chev"></i>
+                    </button>
+                    <label class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="file-down"></i></span>
+                        <span class="pf-label"><span data-i18n="Import data">Import data</span><span class="pf-sub" data-i18n="From an Apex Lift file">From an Apex Lift file</span></span>
+                        <i data-lucide="chevron-right" class="pf-chev"></i>
+                        <input type="file" class="hidden" accept=".json,application/json" onchange="window.appActions.importData(event)">
+                    </label>
+                    <button id="pf-backups" onclick="window.appActions.openBackups()" class="pf-row tap-feedback hidden">
+                        <span class="pf-ic"><i data-lucide="history"></i></span>
+                        <span class="pf-label"><span data-i18n="Account backups">Account backups</span><span class="pf-sub" data-i18n="Go back to an earlier copy">Go back to an earlier copy</span></span>
+                        <i data-lucide="chevron-right" class="pf-chev"></i>
+                    </button>
+                    <button onclick="window.appActions.startWizard(false)" class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="wand-2"></i></span>
+                        <span class="pf-label"><span data-i18n="Set up my program again">Set up my program again</span><span class="pf-sub" data-i18n="Answer the setup questions again">Answer the setup questions again</span></span>
+                        <i data-lucide="chevron-right" class="pf-chev"></i>
+                    </button>
+                </div>
 
-        <label class="flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-white/5 active:bg-white/10 w-full text-left text-[11px] font-bold uppercase tracking-wider text-white transition-colors cursor-pointer border border-white/5">
-            <div class="flex items-start gap-3"><i data-lucide="timer" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Rest Timer">Rest Timer</span></div>
-            <select id="setting-rest" onchange="window.appActions.updateRest(this.value)" class="bg-transparent text-[#d4af37] outline-none font-black text-[12px] text-right appearance-none cursor-pointer">
-                <option value="60" class="bg-[#1a1a1a]">1:00</option>
-                <option value="90" class="bg-[#1a1a1a]">1:30</option>
-                <option value="120" class="bg-[#1a1a1a]">2:00</option>
-                <option value="180" class="bg-[#1a1a1a]">3:00</option>
-            </select>
-        </label>
+                <h3 class="pf-h" data-i18n="Help & legal">Help & legal</h3>
+                <div class="pf-group mb-6">
+                    <a href="https://www.instagram.com/rakanfitapp?igsh=MWZiN2t2ZWIyanV6dQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="pf-row tap-feedback">
+                        <!-- Instagram logo drawn directly (icon libraries no longer include brand logos) -->
+                        <span class="pf-ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></span>
+                        <span class="pf-label"><span data-i18n="Contact us">Contact us</span><span class="pf-sub">@rakanfitapp</span></span>
+                        <i data-lucide="arrow-up-right" class="pf-chev"></i>
+                    </a>
+                    <a href="privacy.html" target="_blank" rel="noopener" class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="shield-check"></i></span><span class="pf-label" data-i18n="Privacy Policy">Privacy Policy</span>
+                        <i data-lucide="arrow-up-right" class="pf-chev"></i>
+                    </a>
+                    <a href="terms.html" target="_blank" rel="noopener" class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="file-text"></i></span><span class="pf-label" data-i18n="Terms of Use">Terms of Use</span>
+                        <i data-lucide="arrow-up-right" class="pf-chev"></i>
+                    </a>
+                </div>
 
-        <label class="flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-white/5 active:bg-white/10 w-full text-start text-[11px] font-bold uppercase tracking-wider text-white transition-colors cursor-pointer border border-white/5">
-            <div class="flex items-start gap-3"><i data-lucide="languages" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Language">Language</span></div>
-            <select id="setting-lang" onchange="window.appActions.setLanguage(this.value)" class="bg-transparent text-[#d4af37] outline-none font-black text-[12px] text-end appearance-none cursor-pointer">
-                <option value="en" class="bg-[#1a1a1a]">English</option>
-                <option value="ar" class="bg-[#1a1a1a]">العربية</option>
-            </select>
-        </label>
+                <h3 class="pf-h" data-i18n="Account">Account</h3>
+                <div class="pf-group mb-6">
+                    <button id="pf-signout" onclick="window.appActions.cloudSignOut()" class="pf-row tap-feedback hidden">
+                        <span class="pf-ic"><i data-lucide="log-out"></i></span><span class="pf-label" data-i18n="Sign out">Sign out</span>
+                    </button>
+                    <button onclick="window.appActions.restoreDefaults()" class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="rotate-ccw"></i></span>
+                        <span class="pf-label"><span data-i18n="Reset routines">Reset routines</span><span class="pf-sub" data-i18n="Back to the default routine. History is kept.">Back to the default routine. History is kept.</span></span>
+                    </button>
+                    <button id="pf-delete" onclick="window.appActions.cloudDelete()" class="pf-row is-danger tap-feedback hidden">
+                        <span class="pf-ic"><i data-lucide="trash-2"></i></span>
+                        <span class="pf-label"><span data-i18n="Delete my account">Delete my account</span><span class="pf-sub" data-i18n="Deletes your cloud data and your account">Deletes your cloud data and your account</span></span>
+                    </button>
+                </div>
 
-        <label class="flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-white/5 active:bg-white/10 w-full text-start text-[11px] font-bold uppercase tracking-wider text-white transition-colors cursor-pointer border border-white/5">
-            <div class="flex items-start gap-3"><i data-lucide="sun-moon" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Theme">Theme</span></div>
-            <select id="setting-theme" onchange="window.appActions.setTheme(this.value)" class="bg-transparent text-[#d4af37] outline-none font-black text-[12px] text-end appearance-none cursor-pointer">
-                <option value="dark" class="bg-[#1a1a1a]" data-i18n="Dark">Dark</option>
-                <option value="light" class="bg-[#1a1a1a]" data-i18n="Light">Light</option>
-            </select>
-        </label>
-
-        <button onclick="window.appActions.startWizard(false)" class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl bg-white/5 active:bg-white/10 w-full text-left text-[11px] font-bold uppercase tracking-wider text-white transition-colors border border-white/5 tap-feedback">
-            <i data-lucide="wand-2" class="w-4 h-4 text-[#d4af37]"></i> <span data-i18n="Set up my program again">Set up my program again</span>
-        </button>
-
-        <div class="h-px w-full bg-white/10 mt-6 mb-4"></div>
-        
-        <span class="text-[10px] font-black text-slate-500 uppercase tracking-[3px] opacity-80 mb-3 block" data-i18n="Data & Backup">Data & Backup</span>
-
-        <button onclick="window.appActions.openBackupModal()" class="flex items-center justify-center gap-3 px-4 py-3.5 mb-2 rounded-xl bg-white/5 hover:bg-white/10 active:bg-white/10 w-full text-[11px] font-bold uppercase tracking-wider text-white transition-colors border border-white/5 tap-feedback">
-            <i data-lucide="upload-cloud" class="w-5 h-5 text-[#d4af37]"></i> <span data-i18n="Backup Data">Backup Data</span>
-        </button>
-        
-        <label class="flex items-center justify-center gap-3 px-4 py-3.5 mb-2 rounded-xl bg-white/5 hover:bg-white/10 active:bg-white/10 cursor-pointer text-[11px] font-bold uppercase tracking-wider text-white transition-colors border border-white/5 tap-feedback">
-            <i data-lucide="download-cloud" class="w-5 h-5 text-[#d4af37]"></i> <span data-i18n="Restore Data">Restore Data</span>
-            <input type="file" class="hidden" accept=".json" onchange="window.appActions.importData(event)">
-        </label>
-        <p id="backup-age" class="text-[10px] font-bold text-center mb-3 text-slate-500"></p>
-
-        <div class="h-px w-full bg-white/10 mt-6 mb-4"></div>
-        
-        <span class="text-[10px] font-black text-slate-500 uppercase tracking-[3px] opacity-80 mb-3 block"><span data-i18n="Contact Us">Contact Us</span></span>
-        
-        <a href="https://www.instagram.com/rakanfitapp?igsh=MWZiN2t2ZWIyanV6dQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] hover:opacity-90 active:scale-95 w-full text-[11px] font-bold uppercase tracking-wider text-white transition-all shadow-lg tap-feedback">
-            <!-- Instagram logo drawn directly (icon libraries no longer include brand logos) -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-            <span data-i18n="Official Instagram">Official Instagram</span>
-            <div class="w-4 h-4"></div>
-        </a>
-
-        <div class="h-px w-full bg-white/10 my-6"></div>
-
-        <button class="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 active:bg-red-500/20 w-full text-left text-[11px] font-bold uppercase tracking-wider text-red-400 transition-colors border border-red-500/20" onclick="window.appActions.restoreDefaults()">
-            <i data-lucide="refresh-ccw" class="w-4 h-4"></i> <span data-i18n="Reset app">Reset app</span>
-        </button>
-
-        <span class="text-[10px] font-black text-slate-500 uppercase tracking-[3px] opacity-80 mt-10 mb-2 block text-center"><span data-i18n="Developed By">Developed By</span> <span class="text-[#d4af37]">Rakan Alharbi</span></span>
+                <p class="pf-foot"><span dir="ltr">Apex Lift · v<span id="app-version"></span></span><br><span data-i18n="Developed By">Developed By</span> <span class="text-[#d4af37]">Rakan Alharbi</span></p>
             </section>
         </div>
     </div>

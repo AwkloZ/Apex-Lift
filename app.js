@@ -413,7 +413,6 @@
         "Tap an exercise to see its details and start it.": "اضغط على تمرين لترى تفاصيله وتبدأه.",
         "Tap ⌄ to look at your plan. The workout keeps running at the bottom.": "اضغط ⌄ لمشاهدة خطتك، ويستمر التمرين في الأسفل.",
         "Terms of Use": "شروط الاستخدام",
-        "Your account: sync, older backups and sign out are here.": "حسابك: المزامنة والنسخ السابقة وتسجيل الخروج هنا.",
         "Your records, next targets and weekly volume per muscle are here.": "أرقامك القياسية وأهدافك القادمة وحجم التمرين الأسبوعي لكل عضلة هنا.",
         "Your routines, settings and workouts go back to {date}, on all your phones. A copy of how things are now is saved first.": "ستعود برامجك وإعداداتك وتمارينك إلى {date} على جميع أجهزتك. تُحفظ نسخة من وضعك الحالي أولًا.",
         "{n} workouts": "{n} تمارين",
@@ -452,8 +451,7 @@
         "Sign-in failed. Please try again.": "فشل تسجيل الدخول. حاول مرة أخرى.",
         "Signed out": "تم تسجيل الخروج",
         "Signing in…": "جارٍ تسجيل الدخول…",
-        "Sync now": "زامن الآن",
-        "Sync problem · tap Sync now": "مشكلة في المزامنة · اضغط زامن الآن",
+        "Sync problem · trying again": "مشكلة في المزامنة · جارٍ إعادة المحاولة",
         "Synced · {time}": "تمت المزامنة · {time}",
         "Syncing…": "جارٍ المزامنة…",
         "This deletes your cloud backup and your account. The workouts on this phone stay.": "سيحذف هذا نسختك السحابية وحسابك. التمارين المحفوظة على هذا الجوال تبقى.",
@@ -547,6 +545,61 @@
         "Finish the workout or discard it with ✕ to leave.": "أنهِ التمرين أو ألغِه بزر ✕ للخروج.",
         "Type the KG and reps you did. The set turns green by itself.": "اكتب الوزن والتكرار الذي أديته. تصبح المجموعة خضراء تلقائيًا.",
         "Type the KG and reps you did: the set turns green by itself. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.": "اكتب الوزن والتكرار الذي أديته: تصبح المجموعة خضراء تلقائيًا. RPE (اختياري): 10 = لا تكرارات متبقية، 9 = تكرار واحد، 8 = تكراران.",
+        "A code has 8 letters and numbers, like ABCD-EFGH.": "الرمز مكوّن من 8 أحرف وأرقام، مثل ABCD-EFGH.",
+        "Account": "الحساب",
+        "Add a routine by code": "أضف برنامجًا برمز",
+        "Add to my routines": "أضف إلى برامجي",
+        "Answer the setup questions again": "أجب عن أسئلة الإعداد من جديد",
+        "App": "التطبيق",
+        "Back to the default routine. History is kept.": "العودة إلى البرنامج الافتراضي. يبقى سجلك محفوظًا.",
+        "Choose what goes in the file. Save it, send it to a friend, or give it to an AI assistant to review your training.": "اختر ما يحتويه الملف. احفظه أو أرسله لصديق أو أعطه لمساعد ذكاء اصطناعي ليراجع تمرينك.",
+        "Code copied": "تم نسخ الرمز",
+        "Contact us": "تواصل معنا",
+        "Copied. Paste it into a chat with an AI assistant.": "تم النسخ. الصقه في محادثة مع مساعد ذكاء اصطناعي.",
+        "Copy as text": "نسخ كنص",
+        "Copy as text: paste it into a chat with an AI assistant.": "نسخ كنص: الصقه في محادثة مع مساعد ذكاء اصطناعي.",
+        "Copy code": "نسخ الرمز",
+        "Could not copy. Use Save or share file.": "تعذّر النسخ. استخدم حفظ أو مشاركة الملف.",
+        "Could not copy. Use Share instead.": "تعذّر النسخ. استخدم المشاركة بدلًا من ذلك.",
+        "Creating code…": "جارٍ إنشاء الرمز…",
+        "Days a week": "أيام في الأسبوع",
+        "Deletes your cloud data and your account": "يحذف بياناتك السحابية وحسابك",
+        "Experience": "الخبرة",
+        "Export data": "تصدير البيانات",
+        "Find routine": "ابحث عن البرنامج",
+        "Finish your workout first.": "أنهِ تمرينك أولًا.",
+        "From an Apex Lift file": "من ملف Apex Lift",
+        "Give this code to a friend. They open Apex Lift → Profile → Add a routine by code.": "أعطِ هذا الرمز لصديقك. يفتح Apex Lift ← حسابي ← أضف برنامجًا برمز.",
+        "Go back to an earlier copy": "ارجع إلى نسخة سابقة",
+        "Goal": "الهدف",
+        "Help & legal": "المساعدة والشروط",
+        "How hard each set felt": "مدى صعوبة كل مجموعة",
+        "Import data": "استيراد البيانات",
+        "Save a file or share it with an AI": "احفظ ملفًا أو شاركه مع ذكاء اصطناعي",
+        "Last export: today": "آخر تصدير: اليوم",
+        "Last export: {n} days ago": "آخر تصدير: قبل {n} يوم",
+        "Looking for the routine…": "جارٍ البحث عن البرنامج…",
+        "Member since {date}": "عضو منذ {date}",
+        "My training": "تمريني",
+        "No routine found for this code. Check it and try again.": "لا يوجد برنامج بهذا الرمز. تأكد منه وحاول مرة أخرى.",
+        "Only the days and exercises are shared. Your workouts and personal details stay private.": "تتم مشاركة الأيام والتمارين فقط. تبقى تمارينك المسجّلة وبياناتك الشخصية خاصة.",
+        "Paste a code a friend gave you": "الصق رمزًا أعطاك إياه صديق",
+        "Records": "الأرقام القياسية",
+        "Reset routines": "إعادة ضبط البرامج",
+        "Routine added and set as active": "تمت إضافة البرنامج وتفعيله",
+        "Routines & data": "البرامج والبيانات",
+        "Same as phone": "مثل الجوال",
+        "Save or share file": "حفظ أو مشاركة الملف",
+        "Share": "مشاركة",
+        "Share routine": "مشاركة البرنامج",
+        "Sign in to use routine codes.": "سجّل الدخول لاستخدام رموز البرامج.",
+        "Something went wrong. Please try again.": "حدث خطأ. حاول مرة أخرى.",
+        "Try my \"{name}\" routine in Apex Lift. Code: {code}": "جرّب برنامجي \"{name}\" في Apex Lift. الرمز: {code}",
+        "Type or paste the code a friend gave you.": "اكتب أو الصق الرمز الذي أعطاك إياه صديقك.",
+        "Used to suggest programs and sets.": "يُستخدم لاقتراح البرامج وعدد المجموعات.",
+        "Where you train": "مكان التمرين",
+        "You have 5 routines, the most allowed. Delete one in Edit first.": "لديك 5 برامج وهو الحد الأقصى. احذف واحدًا من تبويب تعديل أولًا.",
+        "{a} workout days · {b} exercises": "{a} أيام تمرين · {b} تمارين",
     };
     const t = (en, vars) => {
         let out = (isAR && Object.prototype.hasOwnProperty.call(AR, en) && AR[en]) || en;
@@ -734,6 +787,8 @@
         }
     };
 
+    // Rest timer choices in seconds (Profile → Rest Timer)
+    const REST_CHOICES = [45, 60, 90, 120, 150, 180, 240, 300];
     const StorageManager = {
         KEY: 'workoutWeights_rakan_final', REPS_KEY: 'workoutReps_rakan_final', HIST_KEY: 'workoutHistory_rakan_final', PLAN_KEY: 'workoutPlan_rakan_final_v3', START_KEY: 'workoutStartDay_rakan_final', BACKUP_DATE: 'workoutLastBackup_rakan_final', ACTIVE_WEEK: 'workoutActiveWeek_rakan_final', AUTO_SYNC: 'workoutAutoSync_rakan_final', LAST_DAY: 'workoutLastDay_rakan_final', ONBOARD_KEY: 'workoutOnboard_rakan_final',
         get: () => { const v = readJSON(StorageManager.KEY, {}); return isObj(v) ? v : {}; }, set: d => writeItem(StorageManager.KEY, JSON.stringify(d)),
@@ -746,8 +801,8 @@
         RPE_KEY: 'workoutShowRpe_rakan_final',
         getShowRpe: () => localStorage.getItem(StorageManager.RPE_KEY) === 'true', setShowRpe: v => { localStorage.setItem(StorageManager.RPE_KEY, v ? 'true' : 'false'); cloudTouch(StorageManager.RPE_KEY); },
         REST_KEY: 'workoutRest_rakan_final',
-        getRestSeconds: () => { const v = parseInt(localStorage.getItem(StorageManager.REST_KEY)); return [60,90,120,180].includes(v) ? v : 90; },
-        setRestSeconds: v => { if ([60,90,120,180].includes(parseInt(v))) { localStorage.setItem(StorageManager.REST_KEY, String(parseInt(v))); cloudTouch(StorageManager.REST_KEY); } },
+        getRestSeconds: () => { const v = parseInt(localStorage.getItem(StorageManager.REST_KEY)); return REST_CHOICES.includes(v) ? v : 90; },
+        setRestSeconds: v => { if (REST_CHOICES.includes(parseInt(v))) { localStorage.setItem(StorageManager.REST_KEY, String(parseInt(v))); cloudTouch(StorageManager.REST_KEY); } },
         getOnboard: () => localStorage.getItem(StorageManager.ONBOARD_KEY) === 'true', setOnboard: () => localStorage.setItem(StorageManager.ONBOARD_KEY, 'true')
     };
 
@@ -856,7 +911,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '27';
+    const APP_VERSION = '28';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1184,7 +1239,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // Plan tab: your routines as one folding card (shows the active routine; tap to see and manage all of them)
     const renderSidePanel = () => {
         const active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0], open = !!window.appState.routinesOpen, inDay = window.appState.planDay != null;
-        const row = w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold uppercase tracking-wider w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[9px] font-black tracking-widest uppercase shrink-0">${t('Active')}</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[10px] font-bold tracking-widest uppercase tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">${t('Select')}</button>`}<button onclick="window.appActions.duplicateWeek(${jsArg(w.id)})" class="text-slate-300 hover:text-white tap-feedback p-1 bg-white/5 rounded-lg shrink-0 border border-white/10" aria-label="${esc(t('Duplicate routine'))}" title="${esc(t('Duplicate routine'))}"><i data-lucide="copy" class="w-4 h-4"></i></button>${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20" aria-label="${esc(t('Delete routine'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`;
+        const row = w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold uppercase tracking-wider w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[9px] font-black tracking-widest uppercase shrink-0">${t('Active')}</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[10px] font-bold tracking-widest uppercase tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">${t('Select')}</button>`}<button onclick="window.appActions.shareWeek(${jsArg(w.id)})" class="text-[#d4af37] tap-feedback p-1 bg-[#d4af37]/10 rounded-lg shrink-0 border border-[#d4af37]/25" aria-label="${esc(t('Share routine'))}" title="${esc(t('Share routine'))}"><i data-lucide="share-2" class="w-4 h-4"></i></button><button onclick="window.appActions.duplicateWeek(${jsArg(w.id)})" class="text-slate-300 hover:text-white tap-feedback p-1 bg-white/5 rounded-lg shrink-0 border border-white/10" aria-label="${esc(t('Duplicate routine'))}" title="${esc(t('Duplicate routine'))}"><i data-lucide="copy" class="w-4 h-4"></i></button>${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20" aria-label="${esc(t('Delete routine'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`;
         // Plan is where the schedule is edited: a gold strip says so, so it isn't mistaken for Today
         document.getElementById('weeks-container').innerHTML = `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-[#d4af37]/15 border border-[#d4af37]/45">
             <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
@@ -1199,6 +1254,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             </button>
             ${open ? `<div class="px-4 pb-4 space-y-2.5">${appData.weeks.map(row).join('')}
                 <button onclick="window.appActions.addWeek()" class="w-full py-3 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[11px] tap-feedback border border-dashed border-[#d4af37]/40 bg-[#d4af37]/5 rounded-xl"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i>${t('New routine')}</button>
+                <button onclick="window.appActions.openCodeSheet()" class="w-full py-3 flex items-center justify-center gap-2 text-slate-300 font-bold uppercase tracking-widest text-[11px] tap-feedback border border-white/10 bg-white/5 rounded-xl"><i data-lucide="ticket" class="w-4 h-4 shrink-0"></i>${t('Add a routine by code')}</button>
             </div>` : ''}
         </div>`}`;
         document.getElementById('active-week-label').innerText = t(active.name);
@@ -1258,6 +1314,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (l.u !== 's') m.volume += det.reduce((a, x) => a + x.w * x.r, 0);
         }));
         return map;
+    };
+    // Streak: weeks in a row with at least one workout (this week counts once you've trained)
+    const weekStreak = dayKeys => {
+        const wkD = getWeekStart(), weekAgo = n => new Date(wkD.getFullYear(), wkD.getMonth(), wkD.getDate() - 7 * n).getTime();
+        let streak = 0, n = dayKeys.some(d => d >= wkD.getTime()) ? 0 : 1;
+        while (dayKeys.some(d => d >= weekAgo(n) && d < weekAgo(n - 1))) { streak++; n++; }
+        return streak;
     };
     // Estimated 1-rep max of one set (Epley); only sets of 12 reps or fewer are close enough to count
     const e1rmOf = x => x.w > 0 && x.r > 0 && x.r <= 12 ? x.w * (1 + x.r / 30) : 0;
@@ -1408,9 +1471,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const setsNow = sum(wk, today, x => x.sets), setsBefore = sum(weekAgo(1), sameDayLastWeek, x => x.sets);
         const volNow = sum(wk, today, x => x.volume), volBefore = sum(weekAgo(1), sameDayLastWeek, x => x.volume);
         const plannedDays = getActiveSchedule().filter(d => !d.isRest && (d.exercises || []).length).length;
-        // streak: weeks in a row with at least one workout (this week counts once you've trained)
-        let streak = 0, n = inWeek.length ? 0 : 1;
-        while (dayKeys.some(d => d >= weekAgo(n) && d < weekAgo(n - 1))) { streak++; n++; }
+        const streak = weekStreak(dayKeys);
         const tile = (icon, label, value, sub) => `<div class="glass-card p-4 min-w-0"><div class="flex items-center gap-1.5 text-[11px] font-black text-slate-400 mb-1.5"><i data-lucide="${icon}" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="truncate">${label}</span></div><div class="text-[26px] font-black text-white leading-none" dir="ltr">${value}</div>${sub}</div>`;
         const plain = s => `<div class="text-[11px] font-bold text-slate-500 mt-1.5 truncate">${s}</div>`;
         let html = `<div class="text-[12px] font-black text-slate-400 mb-2 px-1">${t('This week')}</div>
@@ -1690,6 +1751,32 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             ${aboutFormHTML('pf')}<div id="pf-chart">${bodyChartHTML()}</div></div>`;
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
+    // Profile: three numbers about your training (tap → Progress)
+    const renderProfileStats = () => {
+        const el = document.getElementById('profile-stats'); if (!el) return;
+        const h = StorageManager.getHistory(), dayKeys = Object.keys(workoutDays(h)).map(Number);
+        const records = Object.keys(h).filter(k => !k.startsWith('temp_')).reduce((a, k) => a + recordsOf(h[k]).length, 0);
+        const tile = (icon, value, label) => `<button onclick="window.appActions.switchTab('progress')" class="glass-card p-3.5 text-start tap-feedback min-w-0"><i data-lucide="${icon}" class="w-4 h-4 text-[#d4af37] mb-2"></i><div class="text-[22px] font-black text-white leading-none" dir="ltr">${value}</div><div class="text-[11px] font-bold text-slate-400 mt-1.5 leading-snug">${label}</div></button>`;
+        el.innerHTML = `<div class="grid grid-cols-3 gap-2.5">${tile('calendar-check', dayKeys.length, t('Workouts'))}${tile('flame', weekStreak(dayKeys), t('Week streak'))}${tile('trophy', records, t('Records'))}</div>`;
+        if (window.lucide) window.lucide.createIcons({ root: el });
+    };
+    // Profile → My training: the setup answers (goal, days, experience, equipment), each one changed with a tap
+    const TRAINING = [
+        ['goal', 'Goal', [['muscle', 'Build muscle'], ['strength', 'Get stronger'], ['fat', 'Lose fat']]],
+        ['days', 'Days a week', [['3', '3'], ['4', '4'], ['5', '5'], ['6', '6']]],
+        ['exp', 'Experience', [['new', 'Less than 1 year'], ['mid', '1 to 3 years'], ['adv', 'More than 3 years']]],
+        ['eq', 'Where you train', [['gym', 'Full gym'], ['db', 'Dumbbells only']]]
+    ];
+    const renderTraining = () => {
+        const el = document.getElementById('training-card'); if (!el) return;
+        const pr = getProfile();
+        el.innerHTML = `<div class="glass-card p-5 border border-white/10">
+            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="target" class="w-5 h-5"></i></span><div class="min-w-0"><div class="text-[16px] font-black text-white">${t('My training')}</div><div class="text-[11px] font-bold text-slate-500">${t('Used to suggest programs and sets.')}</div></div></div>
+            <div class="space-y-4">${TRAINING.map(([k, label, opts]) => `<div><span class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">${t(label)}</span>
+                <div class="flex flex-wrap gap-2" role="radiogroup" aria-label="${esc(t(label))}">${opts.map(([v, l]) => `<button onclick="window.appActions.setTraining(${jsArg(k)}, ${jsArg(v)})" role="radio" aria-checked="${pr[k] === v}" class="pf-chip tap-feedback ${pr[k] === v ? 'is-on' : ''}">${esc(t(l))}</button>`).join('')}</div></div>`).join('')}</div></div>`;
+        if (window.lucide) window.lucide.createIcons({ root: el });
+    };
+    const renderProfile = () => { renderAccount(); renderProfileStats(); renderAbout(); renderTraining(); updateBackupStatus(); };
     const bodyChartHTML = () => {
         const b = getBody(), log = b.log || [];
         let chart = '';
@@ -2090,13 +2177,12 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             pushBack('exsheet', () => window.appActions.closeExSheet());
         },
         closeExSheet: () => { popBack('exsheet'); closeModal('ex-sheet-overlay', 'ex-sheet-box'); },
-        // Dark (default) or light look; remembered on this phone
+        // Dark (default), light, or the same as the phone ('system'); remembered on this phone
         setTheme: v => {
-            const light = v === 'light';
-            try { localStorage.setItem('workoutTheme_rakan_final', light ? 'light' : 'dark'); } catch (e) {}
-            if (light) document.documentElement.setAttribute('data-theme', 'light'); else document.documentElement.removeAttribute('data-theme');
-            const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', light ? '#f3f3f0' : '#000000');
-            const sel = document.getElementById('setting-theme'); if (sel) sel.value = light ? 'light' : 'dark';
+            v = ['light', 'system'].includes(v) ? v : 'dark';
+            try { localStorage.setItem('workoutTheme_rakan_final', v); } catch (e) {}
+            applyTheme();
+            const sel = document.getElementById('setting-theme'); if (sel) sel.value = v;
         },
         setLanguage: v => {
             if (v !== 'ar' && v !== 'en') return;
@@ -2322,7 +2408,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (bar) { bar.classList.add('hidden'); bar.classList.remove('flex'); }
             window.appActions.sessionTick();
         },
-        updateRest: v => { StorageManager.setRestSeconds(v); window.appActions.showToast(t('Rest timer: {v}s', { v }), 'success'); },
+        updateRest: v => { StorageManager.setRestSeconds(v); window.appActions.showToast(t('Rest timer: {v}s', { v: parseInt(v) }), 'success'); },
         // Runs 4× a second while a workout is open: clock, rest countdown and the minimized bar
         sessionTick: () => {
             const S = window.appState.sess; if (!S) return;
@@ -2708,8 +2794,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             document.getElementById('workout-container').classList.toggle('hidden', tab === 'profile');
             renderNav(); renderWorkout();
             const sc = document.querySelector('.scrollable-content'); if (sc) sc.scrollTop = 0;
-            if (tab === 'profile') renderAbout();
-            if (tab === 'profile' && Cloud.user) hint('profile-account', '#account-card', t('Your account: sync, older backups and sign out are here.'));
+            if (tab === 'profile') renderProfile();
         },
         addWeek: () => { if(appData.weeks.length>=5)return window.appActions.showToast(t("Up to 5 routines"),"error"); const aD=DAY_NAMES, sI=aD.indexOf(StorageManager.getStartDay()); let eS=[]; for(let i=1;i<=7;i++)eS.push({id:i,day:aD[(sI+i-1)%7],title:'New Day',isRest:false,recoveryType:null,exercises:[]}); appData.weeks.push({id:'w_'+Date.now(),name:t('Routine {n}', { n: appData.weeks.length+1 }),schedule:eS}); StorageManager.setPlan(appData); renderSidePanel(); },
         deleteWeek: id => { if(appData.weeks.length<=1)return; window.appActions.showConfirm(t("Delete routine"),t("Delete this routine? Your history is kept."),()=>{appData.weeks=appData.weeks.filter(w=>w.id!==id); if(currentWeekId===id){currentWeekId=appData.weeks[0].id;StorageManager.setActiveWeek(currentWeekId);window.appActions.refreshUI();renderNav();} StorageManager.setPlan(appData); renderSidePanel(); },true); },
@@ -2761,26 +2846,34 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         toggleRpe: v => { StorageManager.setShowRpe(v); window.appActions.showToast(t(v ? 'RPE column on' : 'RPE column off'), 'success'); },
         openBackupModal: () => { openModal('smart-backup-overlay','smart-backup-box'); pushBack('backup', () => window.appActions.closeBackupModal()); },
         closeBackupModal: () => { popBack('backup'); closeModal('smart-backup-overlay','smart-backup-box'); },
-        executeSmartBackup: () => {
+        // Export: the phone's share sheet (save to Files, send to a friend, or open in an AI app); "copy" puts the text on the clipboard
+        executeSmartBackup: async (mode = 'file') => {
             const doProg = document.getElementById('backup-opt-progress').checked;
             const doSched = document.getElementById('backup-opt-schedule').checked;
             const doSet = document.getElementById('backup-opt-settings').checked;
             if (!doProg && !doSched && !doSet) return window.appActions.showToast(t("Select at least one option!"), "error");
-            StorageManager.setBackupDate(); updateBackupStatus();
             // readable format (v2): easy to share with a friend or give to an AI; old files still import
-            const d = buildExport({ prog: doProg, sched: doSched, sett: doSet });
-            const a = document.createElement('a'); 
-            a.href = URL.createObjectURL(new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' })); 
-            const n = new Date();
-            const ms = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-            const dStr = `${ms[n.getMonth()]}${n.getDate()}`;
+            const text = JSON.stringify(buildExport({ prog: doProg, sched: doSched, sett: doSet }), null, 2);
+            const done = msg => { StorageManager.setBackupDate(); updateBackupStatus(); window.appActions.closeBackupModal(); setTimeout(() => window.appActions.showToast(msg, "success"), 300); };
+            if (mode === 'copy') {
+                try { await navigator.clipboard.writeText(text); done(t('Copied. Paste it into a chat with an AI assistant.')); }
+                catch (e) { window.appActions.showToast(t('Could not copy. Use Save or share file.'), 'error'); }
+                return;
+            }
+            const n = new Date(), ms = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], dStr = `${ms[n.getMonth()]}${n.getDate()}`;
             let fName = `ApexLift_Backup_${dStr}.json`;
             if (doProg && !doSched && !doSet) fName = `ApexLift_ProgressOnly_${dStr}.json`;
             else if (!doProg && doSched && !doSet) fName = `ApexLift_RoutineOnly_${dStr}.json`;
-            a.download = fName; 
-            a.click();
-            window.appActions.closeBackupModal();
-            setTimeout(() => window.appActions.showToast(t("Data Exported!"), "success"), 300);
+            const file = new File([text], fName, { type: 'application/json' });
+            if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
+                try { await navigator.share({ files: [file], title: 'Apex Lift' }); return done(t("Data Exported!")); }
+                catch (e) { if (e && e.name === 'AbortError') return; } // closed the share sheet: nothing to do
+            }
+            // no share sheet (computers, older phones): download the file
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(file); a.download = fName; a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+            done(t("Data Exported!"));
         },
         importData: e => {
             const f=e.target.files[0]; if(!f)return;
@@ -2798,7 +2891,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                         p: raw.p !== undefined ? sanitizePlan(raw.p) : null,
                         aw: toStr(raw.aw) || null,
                         s: DAY_NAMES.includes(raw.s) ? raw.s : null,
-                        rt: [60,90,120,180].includes(raw.rt) ? raw.rt : null,
+                        rt: REST_CHOICES.includes(raw.rt) ? raw.rt : null,
                         cx: sanitizeCustomEx(raw.cx)
                     };
                     if(raw.p !== undefined && !d.p) window.appActions.showToast(t("Routine in file is damaged: skipped"),"error");
@@ -3128,7 +3221,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const FB_DIR = 'vendor/firebase-12.19.0/';
     const CLOUD_KEY = 'workoutCloud_rakan_final', CLOUD_LASTUID = 'workoutCloudLastUid_rakan_final', LOCAL_UPDATED_KEY = 'workoutLocalUpdated_rakan_final';
     const MAIN_KEYS = new Set([BODY_KEY, StorageManager.PLAN_KEY, StorageManager.ACTIVE_WEEK, StorageManager.START_KEY, StorageManager.REST_KEY, StorageManager.RPE_KEY, StorageManager.KEY, CUSTOM_KEY, PROFILE_KEY, READY_KEY]);
-    const Cloud = { err: '', status: 'off', user: null, auth: null, db: null, unsub: [], sent: {}, timer: null, flushing: false, again: false, applying: false, lastSync: 0, loading: null };
+    const Cloud = { err: '', status: 'off', user: null, auth: null, db: null, unsub: [], sent: {}, timer: null, flushing: false, again: false, applying: false, lastSync: 0, loading: null, tries: 0, retryTimer: null, starting: false };
     const getCloudFlag = () => { const v = readJSON(CLOUD_KEY, null); return isObj(v) ? v : null; };
     const loadScript = src => new Promise((ok, fail) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = () => fail(new Error('Could not load ' + src)); document.head.appendChild(el); });
     // Firebase is only downloaded when someone uses sign-in, so the app stays fast for everyone else
@@ -3150,6 +3243,30 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     };
     const setCloudStatus = (st, e, step) => { Cloud.status = st; Cloud.err = st === 'error' ? [((e && e.code) || '').replace(/^firestore\//, ''), step].filter(Boolean).join(', ') : ''; renderAccount(); };
     const scheduleFlush = (ms = 1500) => { if (!Cloud.user) return; clearTimeout(Cloud.timer); Cloud.timer = setTimeout(cloudFlush, ms); };
+    // Sync looks after itself (there is no Sync button): after a failure it tries again by itself (5 s, 15 s, 1 min, then every 5 min),
+    // and coming back to the app or getting signal back checks that everything is running
+    const RETRY_MS = [5000, 15000, 60000, 300000];
+    const cloudRetry = () => {
+        clearTimeout(Cloud.retryTimer);
+        Cloud.retryTimer = setTimeout(cloudKick, RETRY_MS[Math.min(Cloud.tries, RETRY_MS.length - 1)]);
+        Cloud.tries++;
+    };
+    const cloudOk = () => { Cloud.tries = 0; clearTimeout(Cloud.retryTimer); };
+    // Firebase loaded → first merge done → live updates on → anything not uploaded yet goes up
+    const cloudKick = () => {
+        if (!getCloudFlag() || Cloud.starting) return;
+        if (!Cloud.auth) return loadFirebase().catch(() => { setCloudStatus('offline'); cloudRetry(); });
+        if (!Cloud.user) return; // Firebase is still checking who is signed in
+        if (!Cloud.unsub.length) return cloudSignedIn(Cloud.user);
+        if (Cloud.status === 'error') Cloud.sent = {}; // compare everything again
+        cloudFlush();
+    };
+    // After a while in the background the connection can be stale (phones pause web apps): reconnect so the
+    // live updates catch up with changes made on your other phones
+    const cloudResume = async stale => {
+        if (stale && Cloud.db && Cloud.unsub.length) { try { await Cloud.db.disableNetwork(); await Cloud.db.enableNetwork(); } catch (e) {} }
+        cloudKick();
+    };
     cloudTouch = key => {
         if (MAIN_KEYS.has(key)) { try { localStorage.setItem(LOCAL_UPDATED_KEY, String(Date.now())); } catch (e) {} }
         if (Cloud.user && !Cloud.applying && (MAIN_KEYS.has(key) || key === StorageManager.HIST_KEY)) scheduleFlush();
@@ -3216,7 +3333,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const sd = document.getElementById('setting-start-day'); if (sd) sd.value = StorageManager.getStartDay();
         const rs = document.getElementById('setting-rest'); if (rs) rs.value = String(StorageManager.getRestSeconds());
         const rp = document.getElementById('setting-rpe'); if (rp) rp.checked = StorageManager.getShowRpe();
-        renderNav(); renderWorkout(); renderAbout();
+        renderNav(); renderWorkout();
+        if (window.appState.currentView === 'profile') renderProfile();
     };
     // Combine two lists of logs without duplicates (same time, weight and reps = same log)
     const mergeLogs = (a, b, del) => {
@@ -3272,6 +3390,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
 
     // First time on this phone: merge the phone's workouts with the cloud's, then keep both in step
     const cloudSignedIn = async user => {
+        if (Cloud.starting) return; Cloud.starting = true;
         const prevUid = localStorage.getItem(CLOUD_LASTUID);
         Cloud.user = user;
         const oldFlag = getCloudFlag() || {};
@@ -3313,7 +3432,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             await cloudFlush();
             cloudSubscribe(uid);
             maybeAutoBackup();
-        } catch (e) { console.warn('Cloud sync failed', e); setCloudStatus('error', e, 'read'); if (fromWelcome) window.appActions.initOnboarding(); }
+            openPendingCode();
+        } catch (e) { console.warn('Cloud sync failed', e); setCloudStatus('error', e, 'read'); cloudRetry(); if (fromWelcome) window.appActions.initOnboarding(); }
+        finally { Cloud.starting = false; }
     };
     // Upload whatever changed since the last upload
     const cloudFlush = async () => {
@@ -3338,8 +3459,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     await b.commit(); // offline: waits here and finishes when the phone is back online
                 }
             }
-            Cloud.lastSync = Date.now(); setCloudStatus('synced');
-        } catch (e) { console.warn('Cloud upload failed', e); Cloud.sent = {}; setCloudStatus('error', e, 'save'); }
+            Cloud.lastSync = Date.now(); cloudOk(); setCloudStatus('synced');
+        } catch (e) { console.warn('Cloud upload failed', e); Cloud.sent = {}; setCloudStatus('error', e, 'save'); cloudRetry(); }
         finally { clearTimeout(slow); Cloud.flushing = false; if (Cloud.again) { Cloud.again = false; scheduleFlush(300); } }
     };
     // Live updates from your other phones
@@ -3404,7 +3525,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }, e => console.warn(e)));
     };
     const cloudSignedOut = () => {
-        presenceStop();
+        presenceStop(); cloudOk();
         Cloud.unsub.forEach(u => u()); Cloud.unsub = []; Cloud.user = null; Cloud.sent = {};
         const wasPending = (getCloudFlag() || {}).pending;
         try { localStorage.removeItem(CLOUD_KEY); } catch (e) {}
@@ -3412,42 +3533,60 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         // an account is needed to use the app: back to the sign-in page (workouts stay on the phone)
         if (gateOn() && !wasPending && requireSignIn()) showWelcome(true);
     };
-    window.addEventListener('online', () => { if (Cloud.user) scheduleFlush(200); });
+    window.addEventListener('online', () => cloudResume(true));
     window.addEventListener('offline', () => { if (Cloud.user) setCloudStatus('offline'); });
+    // Leaving the app (home button, lock screen): upload now, because the phone pauses the app's timers in the background.
+    // Coming back: reconnect if it was away for a while, then make sure sync is running.
+    let cloudHiddenAt = 0;
+    document.addEventListener('visibilitychange', () => {
+        if (!getCloudFlag()) return;
+        if (document.visibilityState === 'hidden') { cloudHiddenAt = Date.now(); if (Cloud.user && Cloud.unsub.length) cloudFlush(); return; }
+        cloudResume(cloudHiddenAt > 0 && Date.now() - cloudHiddenAt > 30000);
+    });
+    window.addEventListener('pageshow', e => { if (e.persisted) cloudResume(true); });
 
     // Profile → account card
     const GOOGLE_G = '<svg viewBox="0 0 48 48" class="w-5 h-5" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
     const renderAccount = () => {
         const el = document.getElementById('account-card'); if (!el) return;
         const flag = getCloudFlag(), u = Cloud.user || (flag && flag.uid ? flag : null);
+        ['pf-signout'].forEach(id => { const b = document.getElementById(id); if (b) b.classList.toggle('hidden', !u); });
+        ['pf-delete', 'pf-backups'].forEach(id => { const b = document.getElementById(id); if (b) b.classList.toggle('hidden', !Cloud.user); });
         if (!u) {
             el.innerHTML = `<div class="glass-card p-5 border border-white/10">
                 <div class="flex items-center gap-3 mb-3"><span class="w-11 h-11 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="cloud" class="w-6 h-6"></i></span>
                 <div><div class="text-[16px] font-black text-white">${t('Back up & sync')}</div><div class="text-[12px] font-bold text-slate-400 leading-snug">${t('Sign in to keep your workouts safe in the cloud and use them on any phone.')}</div></div></div>
-                <button onclick="window.appActions.cloudSignIn()" ${Cloud.status === 'loading' ? 'disabled' : ''} class="w-full py-3.5 rounded-xl bg-white text-[#1f1f1f] text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-60">${GOOGLE_G}${Cloud.status === 'loading' ? t('Signing in…') : t('Continue with Google')}</button>
-                <a href="privacy.html" target="_blank" rel="noopener" class="block text-center text-[11px] font-bold text-slate-500 mt-3 underline">${t('Privacy policy')}</a></div>`;
+                <button onclick="window.appActions.cloudSignIn()" ${Cloud.status === 'loading' ? 'disabled' : ''} class="w-full py-3.5 rounded-xl bg-white text-[#1f1f1f] text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-60">${GOOGLE_G}${Cloud.status === 'loading' ? t('Signing in…') : t('Continue with Google')}</button></div>`;
         } else {
             const name = u.displayName || u.name || '', email = u.email || '', photo = u.photoURL || u.photo || '';
+            const since = flag && Number(flag.since) > 0 ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { month: 'long', year: 'numeric', numberingSystem: 'latn' }).format(Number(flag.since)) : '';
+            // sync runs by itself: this only says how it is going
             const st = { off: ['bg-slate-500', t('Connecting…')], loading: ['bg-slate-500', t('Connecting…')], syncing: ['bg-[#d4af37] animate-pulse', t('Syncing…')],
                 synced: ['bg-[#22c55e]', t('Synced · {time}', { time: Cloud.lastSync ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(Cloud.lastSync) : '' })],
-                offline: ['bg-slate-400', t('Offline · will sync when online')], error: ['bg-red-500', t('Sync problem · tap Sync now') + (Cloud.err ? ` (${Cloud.err})` : '')] }[Cloud.status] || ['bg-slate-500', ''];
-            el.innerHTML = `<div class="glass-card p-5 border border-[#22c55e]/25">
-                <div class="flex items-center gap-3">
-                    ${photo ? `<img src="${esc(photo)}" alt="" referrerpolicy="no-referrer" class="w-12 h-12 rounded-full object-cover shrink-0">` : `<span class="w-12 h-12 rounded-full bg-[#d4af37] text-black text-[18px] font-black flex items-center justify-center shrink-0">${esc((name || email || '?').charAt(0).toUpperCase())}</span>`}
-                    <div class="min-w-0 flex-1"><div class="text-[16px] font-black text-white truncate">${esc(name || email)}</div><div class="text-[11px] font-bold text-slate-400 truncate">${esc(email)}</div>
-                    <div class="flex items-center gap-1.5 mt-1"><span class="w-2 h-2 rounded-full ${st[0]}"></span><span class="text-[11px] font-bold text-slate-300">${esc(st[1])}</span></div></div>
+                offline: ['bg-slate-400', t('Offline · will sync when online')], error: ['bg-red-500', t('Sync problem · trying again')] }[Cloud.status] || ['bg-slate-500', ''];
+            el.innerHTML = `<div class="glass-card p-5 border border-white/10">
+                <div class="flex items-center gap-4">
+                    ${photo ? `<img src="${esc(photo)}" alt="" referrerpolicy="no-referrer" class="w-16 h-16 rounded-full object-cover shrink-0 ring-2 ring-[#d4af37]/60 ring-offset-2 ring-offset-black">` : `<span class="w-16 h-16 rounded-full bg-[#d4af37] text-black text-[24px] font-black flex items-center justify-center shrink-0">${esc((name || email || '?').charAt(0).toUpperCase())}</span>`}
+                    <div class="min-w-0 flex-1">
+                        <div class="text-[19px] font-black text-white truncate leading-tight">${esc(name || email)}</div>
+                        ${name && email ? `<div class="text-[12px] font-bold text-slate-400 truncate mt-0.5">${esc(email)}</div>` : ''}
+                        <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 max-w-full" title="${esc(Cloud.err)}"><span class="w-2 h-2 rounded-full shrink-0 ${st[0]}"></span><span class="text-[11px] font-bold text-slate-300 truncate">${esc(st[1])}</span></div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2 mt-4">
-                    <button onclick="window.appActions.cloudSyncNow()" class="py-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-white tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="refresh-cw" class="w-4 h-4"></i>${t('Sync now')}</button>
-                    <button onclick="window.appActions.cloudSignOut()" class="py-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-slate-300 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="log-out" class="w-4 h-4"></i>${t('Sign out')}</button>
-                </div>
-                <button onclick="window.appActions.openBackups()" class="w-full mt-2 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-white tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="history" class="w-4 h-4"></i>${t('Account backups')}</button>
-                <div class="flex justify-between mt-3"><a href="privacy.html" target="_blank" rel="noopener" class="text-[11px] font-bold text-slate-500 underline">${t('Privacy policy')}</a><button onclick="window.appActions.cloudDelete()" class="text-[11px] font-bold text-red-400 underline tap-feedback">${t('Delete my account')}</button></div></div>`;
+                ${since ? `<div class="mt-4 pt-3 border-t border-white/5 text-[11px] font-bold text-slate-500 flex items-center gap-1.5"><i data-lucide="badge-check" class="w-4 h-4 text-[#d4af37]"></i>${t('Member since {date}', { date: esc(since) })}</div>` : ''}</div>`;
         }
         if (window.lucide) window.lucide.createIcons({ root: el });
         if (typeof updateBackupStatus === 'function') updateBackupStatus();
         if (welcomeOpen()) updateWelcomeUI(); // "Signing in…" on the welcome page too
     };
+    Object.assign(window.appActions, {
+        // Profile → My training chips
+        setTraining: (k, v) => {
+            const row = TRAINING.find(x => x[0] === k); if (!row || !row[2].some(o => o[0] === v)) return;
+            writeItem(PROFILE_KEY, JSON.stringify({ ...getProfile(), [k]: v }));
+            renderTraining();
+        }
+    });
     Object.assign(window.appActions, {
         cloudSignIn: async () => {
             setCloudStatus('loading');
@@ -3466,7 +3605,6 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             }
         },
         // if the first connection failed (no live updates yet), start over; otherwise just upload everything again
-        cloudSyncNow: () => { if (!Cloud.user) return; if (!Cloud.unsub.length) return cloudSignedIn(Cloud.user); Cloud.sent = {}; cloudFlush(); },
         cloudSignOut: () => window.appActions.showConfirm(t('Sign out?'), t('Your workouts stay on this phone. Sign in again anytime to sync.'), async () => {
             try { await Promise.race([cloudFlush(), new Promise(r => setTimeout(r, 4000))]); } catch (e) {}
             Cloud.unsub.forEach(u => u()); Cloud.unsub = [];
@@ -3485,6 +3623,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 // every account backup (and its parts) goes too
                 const bs = await Cloud.db.collection(`users/${uid}/backups`).get();
                 bs.forEach(d => { const n = Number((d.data() || {}).parts) || 1; for (let i = 0; i < n; i++) paths.push(`users/${uid}/backups/${d.id}/parts/${i}`); paths.push(`users/${uid}/backups/${d.id}`); });
+                // routines you shared with a code stop working too
+                try { const ss = await Cloud.db.collection('shared').where('by', '==', uid).get(); ss.forEach(d => paths.push(`shared/${d.id}`)); } catch (e) { console.warn('Shared routines', e); }
                 presenceStop();
                 paths.push(coachPath(uid), presPath(uid), `users/${uid}`);
                 for (let i = 0; i < paths.length; i += 400) { const b = Cloud.db.batch(); paths.slice(i, i + 400).forEach(x => b.delete(Cloud.db.doc(x))); await b.commit(); }
@@ -3502,6 +3642,148 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     });
 
 
+
+    // 🔗 ROUTINE CODES: share one routine with a friend by an 8-letter code. The routine is copied to shared/{code}
+    // (no workouts or personal details, just the days and exercises); anyone signed in who has the code can add it.
+    // Letters that look alike (0/O, 1/I) are left out so a code can be read aloud. A link with ?r=CODE opens it too.
+    const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', CODE_RE = /^[A-HJ-NP-Z2-9]{8}$/;
+    const SHARED_KEY = 'workoutSharedCodes_rakan_final'; // routine id → { code, sig }: the same routine, unchanged, keeps its code
+    const PENDING_CODE = 'workoutPendingCode';
+    const newCode = () => { const a = new Uint32Array(8); crypto.getRandomValues(a); return Array.from(a, x => CODE_ABC[x % 32]).join(''); };
+    const cleanCode = v => { const c = String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); return CODE_RE.test(c) ? c : ''; };
+    const fmtCode = c => `${c.slice(0, 4)}-${c.slice(4)}`;
+    const codeLink = c => `${location.origin}${location.pathname}?r=${c}`;
+    const withTimeout = (p, ms = 12000) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(Object.assign(new Error('timeout'), { code: 'unavailable' })), ms))]);
+    const sharedRoutine = w => JSON.parse(JSON.stringify({ name: cut(w.name, 60, 'Routine'), schedule: w.schedule.map(d => ({ day: d.day, title: d.title, isRest: d.isRest === true, recoveryType: d.recoveryType || null,
+        exercises: (d.exercises || []).slice(0, 60).map(e => ({ name: e.name, muscle: e.muscle, sets: e.sets, reps: e.reps })) })) }));
+    // A friend's routine, moved onto your week: each workout stays on its weekday, starting from your first day of the week
+    const alignToMyWeek = schedule => {
+        const aD = DAY_NAMES, idx = aD.indexOf(StorageManager.getStartDay()), byDay = {};
+        schedule.forEach(d => { byDay[d.day] = d; });
+        const list = Object.keys(byDay).length === 7 ? aD.map((_, i) => byDay[aD[(idx + i) % 7]]) : schedule;
+        return list.map((d, i) => ({ ...d, id: i + 1, day: aD[(idx + i) % 7] }));
+    };
+    const codeErr = e => (e && (e.code === 'unavailable' || /offline|network/i.test(e.message || ''))) || navigator.onLine === false
+        ? t('No internet connection. Try again when online.') : t('Something went wrong. Please try again.');
+    const codeSheet = (title, body) => {
+        document.getElementById('code-title').textContent = title;
+        const b = document.getElementById('code-body'); b.innerHTML = body;
+        if (window.lucide) window.lucide.createIcons({ root: b });
+        const o = document.getElementById('code-overlay');
+        if (!o.classList.contains('flex')) { openSheet('code-overlay', 'code-box'); pushBack('code', () => window.appActions.closeCodeSheet()); }
+    };
+    const shareBody = (w, code) => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Give this code to a friend. They open Apex Lift → Profile → Add a routine by code.')}</p>
+        <div class="rounded-2xl bg-black/40 border border-white/10 py-6 px-4 text-center mb-4">
+            <div class="text-[12px] font-black text-slate-400 mb-2 truncate">${esc(t(w.name))}</div>
+            ${code ? `<div class="code-big" dir="ltr">${fmtCode(code)}</div>` : `<div class="flex items-center justify-center gap-2 h-[41px] text-[13px] font-black text-slate-400"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>${t('Creating code…')}</div>`}
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-4">
+            <button onclick="window.appActions.copyCode(${jsArg(code)})" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="copy" class="w-4 h-4"></i>${t('Copy code')}</button>
+            <button onclick="window.appActions.sendCode(${jsArg(code)}, ${jsArg(t(w.name))})" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="share" class="w-4 h-4"></i>${t('Share')}</button>
+        </div>
+        <p class="text-[11px] font-bold text-slate-500 leading-snug flex gap-2"><i data-lucide="lock" class="w-4 h-4 shrink-0"></i><span>${t('Only the days and exercises are shared. Your workouts and personal details stay private.')}</span></p>`;
+    const findBody = (code = '') => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Type or paste the code a friend gave you.')}</p>
+        <input id="code-in" type="text" value="${esc(code ? fmtCode(code) : '')}" maxlength="12" placeholder="ABCD-EFGH" autocomplete="off" autocapitalize="characters" spellcheck="false" dir="ltr" class="code-input"
+            oninput="window.appActions.codeTyped(this)" onkeydown="if(event.key==='Enter')window.appActions.codeFind()">
+        <button id="code-find" onclick="window.appActions.codeFind()" class="w-full mt-3 py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><i data-lucide="search" class="w-4 h-4"></i>${t('Find routine')}</button>
+        <div id="code-result" class="mt-4"></div>`;
+    const previewHTML = wk => {
+        const work = wk.schedule.filter(d => !d.isRest && d.exercises.length), exN = work.reduce((a, d) => a + d.exercises.length, 0), full = appData.weeks.length >= 5;
+        return `<div class="glass-card p-4 border border-[#d4af37]/30 p-pop">
+            <div class="text-[17px] font-black text-white truncate">${esc(t(wk.name))}</div>
+            <div class="text-[12px] font-bold text-slate-400 mb-3">${t('{a} workout days · {b} exercises', { a: work.length, b: exN })}</div>
+            <div class="space-y-1.5">${wk.schedule.map(d => `<div class="flex items-center gap-3 text-[13px]"><span class="w-10 shrink-0 font-black text-slate-500">${esc(dayShort(d.day))}</span><span class="flex-1 min-w-0 truncate font-bold ${d.isRest ? 'text-slate-500' : 'text-white'}">${esc(t(d.isRest ? (d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : d.title))}</span>${d.isRest ? '' : `<span class="shrink-0 text-[11px] font-black text-slate-400">${t('{n} exercises', { n: d.exercises.length })}</span>`}</div>`).join('')}</div>
+        </div>
+        ${full ? `<p class="text-[12px] font-bold text-red-400 mt-3">${t('You have 5 routines, the most allowed. Delete one in Edit first.')}</p>` : ''}
+        <button onclick="window.appActions.codeAdd()" ${full ? 'disabled' : ''} class="w-full mt-3 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add to my routines')}</button>`;
+    };
+    // a ?r=CODE link: remember it, clean the address bar, and open it once you're signed in
+    try { const u = new URL(location.href), c = cleanCode(u.searchParams.get('r')); if (c) { sessionStorage.setItem(PENDING_CODE, c); u.searchParams.delete('r'); history.replaceState(history.state, '', u.pathname + u.search + u.hash); } } catch (e) {}
+    const openPendingCode = () => {
+        let c = ''; try { c = sessionStorage.getItem(PENDING_CODE) || ''; sessionStorage.removeItem(PENDING_CODE); } catch (e) {}
+        if (cleanCode(c)) setTimeout(() => { window.appActions.openCodeSheet(c); window.appActions.codeFind(); }, 600);
+    };
+    Object.assign(window.appActions, {
+        closeCodeSheet: () => { popBack('code'); closeSheet('code-overlay', 'code-box'); },
+        openCodeSheet: (code = '') => { window.appState.codeFound = null; codeSheet(t('Add a routine by code'), findBody(cleanCode(code))); },
+        // keeps the code tidy while typing: capitals, a dash after 4 letters
+        codeTyped: el => { const c = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8); el.value = c.length > 4 ? fmtCode(c) : c; },
+        codeFind: async () => {
+            const inp = document.getElementById('code-in'), res = document.getElementById('code-result'), btn = document.getElementById('code-find'); if (!inp || !res) return;
+            const code = cleanCode(inp.value);
+            if (!code) { res.innerHTML = `<p class="text-[12px] font-bold text-red-400">${t('A code has 8 letters and numbers, like ABCD-EFGH.')}</p>`; return; }
+            if (!Cloud.user || !Cloud.db) { res.innerHTML = `<p class="text-[12px] font-bold text-red-400">${t('Sign in to use routine codes.')}</p>`; return; }
+            if (btn) btn.disabled = true;
+            res.innerHTML = `<div class="flex items-center justify-center gap-2 py-4 text-[13px] font-black text-slate-400"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>${t('Looking for the routine…')}</div>`;
+            if (window.lucide) window.lucide.createIcons({ root: res });
+            try {
+                const snap = await withTimeout(Cloud.db.doc(`shared/${code}`).get({ source: 'server' }));
+                const r = snap.exists ? (snap.data() || {}).routine : null;
+                const clean = isObj(r) && Array.isArray(r.schedule) ? sanitizePlan({ weeks: [{ id: 'w_' + Date.now(), name: r.name, schedule: r.schedule }] }) : null;
+                if (!clean) { window.appState.codeFound = null; res.innerHTML = `<p class="text-[12px] font-bold text-red-400">${t('No routine found for this code. Check it and try again.')}</p>`; return; }
+                const wk = clean.weeks[0]; wk.schedule = alignToMyWeek(wk.schedule);
+                window.appState.codeFound = wk;
+                res.innerHTML = previewHTML(wk);
+                if (window.lucide) window.lucide.createIcons({ root: res });
+            } catch (e) { console.warn('Routine code', e); res.innerHTML = `<p class="text-[12px] font-bold text-red-400">${esc(codeErr(e))}</p>`; }
+            finally { if (btn) btn.disabled = false; }
+        },
+        codeAdd: () => {
+            const wk = window.appState.codeFound; if (!wk) return;
+            if (appData.weeks.length >= 5) return window.appActions.showToast(t('Up to 5 routines'), 'error');
+            if (window.appState.sess) return window.appActions.showToast(t('Finish your workout first.'), 'error');
+            const prev = currentWeekId;
+            appData.weeks.push(wk); currentWeekId = wk.id;
+            StorageManager.setPlan(appData); StorageManager.setActiveWeek(wk.id);
+            window.appState.codeFound = null;
+            window.appActions.closeCodeSheet();
+            activeDay = getTodayId(); renderSidePanel(); window.appActions.switchTab('today');
+            window.appActions.showToast(t('Routine added and set as active'), 'success', { label: t('Undo'), fn: () => {
+                appData.weeks = appData.weeks.filter(w => w.id !== wk.id);
+                currentWeekId = appData.weeks.some(w => w.id === prev) ? prev : appData.weeks[0].id;
+                StorageManager.setPlan(appData); StorageManager.setActiveWeek(currentWeekId); renderSidePanel(); renderNav(); renderWorkout();
+            } });
+        },
+        // Edit → a routine's share button: make (or reuse) its code
+        shareWeek: async id => {
+            const w = appData.weeks.find(x => x.id === id); if (!w) return;
+            if (!Cloud.user || !Cloud.db) return window.appActions.showToast(t('Sign in to use routine codes.'), 'error');
+            const routine = sharedRoutine(w), sig = JSON.stringify(routine);
+            const saved = readJSON(SHARED_KEY, {}), mine = isObj(saved) && isObj(saved[id]) && saved[id].sig === sig ? cleanCode(saved[id].code) : '';
+            if (mine) return codeSheet(t('Share routine'), shareBody(w, mine));
+            codeSheet(t('Share routine'), shareBody(w, ''));
+            try {
+                if (navigator.onLine === false) throw Object.assign(new Error('offline'), { code: 'unavailable' });
+                let code = '';
+                // a new random code; if it is already taken the database says no and we pick another
+                for (let i = 0; i < 3 && !code; i++) {
+                    const c = newCode();
+                    try { await withTimeout(Cloud.db.doc(`shared/${c}`).set({ v: 1, routine, by: Cloud.user.uid, createdAt: Date.now() })); code = c; }
+                    catch (e) { if (e.code !== 'permission-denied' || i === 2) throw e; }
+                }
+                const all = isObj(saved) ? saved : {};
+                all[id] = { code, sig };
+                Object.keys(all).forEach(k => { if (!appData.weeks.some(x => x.id === k)) delete all[k]; });
+                try { localStorage.setItem(SHARED_KEY, JSON.stringify(all)); } catch (e) {}
+                if (document.getElementById('code-overlay').classList.contains('flex')) codeSheet(t('Share routine'), shareBody(w, code));
+            } catch (e) {
+                console.warn('Share routine', e);
+                window.appActions.closeCodeSheet();
+                window.appActions.showToast(codeErr(e), 'error');
+            }
+        },
+        copyCode: async code => {
+            if (!cleanCode(code)) return;
+            try { await navigator.clipboard.writeText(fmtCode(code)); window.appActions.showToast(t('Code copied'), 'success'); }
+            catch (e) { window.appActions.showToast(t('Could not copy. Use Share instead.'), 'error'); }
+        },
+        sendCode: async (code, name) => {
+            if (!cleanCode(code)) return;
+            const text = t('Try my "{name}" routine in Apex Lift. Code: {code}', { name, code: fmtCode(code) });
+            if (navigator.share) { try { await navigator.share({ title: 'Apex Lift', text, url: codeLink(code) }); } catch (e) {} return; }
+            window.appActions.copyCode(code);
+        }
+    });
 
     // 📦 BACKUP FILE v2: readable by people and AI models (names instead of internal keys, real dates, kg and reps)
     const exerciseNames = () => {
@@ -3818,6 +4100,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         }, true)
     });
 
+    const themeChoice = () => { try { const v = localStorage.getItem('workoutTheme_rakan_final'); return ['light', 'system'].includes(v) ? v : 'dark'; } catch (e) { return 'dark'; } };
+    const phoneLight = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+    const applyTheme = () => {
+        const v = themeChoice(), light = v === 'light' || (v === 'system' && !!phoneLight && phoneLight.matches);
+        if (light) document.documentElement.setAttribute('data-theme', 'light'); else document.documentElement.removeAttribute('data-theme');
+        const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', light ? '#f3f3f0' : '#000000');
+    };
+    if (phoneLight && phoneLight.addEventListener) phoneLight.addEventListener('change', () => { if (themeChoice() === 'system') applyTheme(); });
     // Apply the language to the fixed parts of the page (index.html) and set right-to-left for Arabic
     const applyStaticLanguage = () => {
         document.documentElement.lang = LANG;
@@ -3827,7 +4117,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
         document.querySelectorAll('#setting-start-day option').forEach(o => { o.textContent = tDay(o.value); });
         const ls = document.getElementById('setting-lang'); if (ls) ls.value = LANG;
-        const th = document.getElementById('setting-theme'); if (th) th.value = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        const th = document.getElementById('setting-theme'); if (th) th.value = themeChoice();
+        const ver = document.getElementById('app-version'); if (ver) ver.textContent = APP_VERSION;
     };
     applyStaticLanguage();
     window.appActions.switchTab('today');
@@ -3855,18 +4146,20 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const restEl = document.getElementById('setting-rest');
     if (restEl) restEl.value = String(StorageManager.getRestSeconds());
 
-    // Backup reminder without pop-ups: red dot on the menu button + "Last backup" text in the menu
+    // Without an account, a reminder to export (no pop-ups): red dot on the Profile tab + "Last export" under Export data
     const updateBackupStatus = () => {
         let lB = StorageManager.getBackupDate();
         if (!lB) { StorageManager.setBackupDate(); lB = Date.now(); }
         const days = Math.floor((Date.now() - lB) / 86400000), old = days >= 7 && !Cloud.user && !getCloudFlag();
         const dot = document.getElementById('backup-dot'); if (dot) dot.classList.toggle('hidden', !old);
         const age = document.getElementById('backup-age');
-        if (age) { age.textContent = days < 1 ? t('Last backup: today') : t('Last backup: {n} days ago', { n: days }); age.className = `text-[10px] font-bold text-center mb-3 ${old ? 'text-red-400' : 'text-slate-500'}`; }
+        // signed in, everything is already kept in the account: the file is for sharing or for an AI
+        const synced = !!(Cloud.user || getCloudFlag());
+        if (age) { age.textContent = synced ? t('Save a file or share it with an AI') : days < 1 ? t('Last export: today') : t('Last export: {n} days ago', { n: days }); age.classList.toggle('is-warn', old); }
     };
     updateBackupStatus();
     renderAccount();
-    if (getCloudFlag()) loadFirebase().catch(() => setCloudStatus('offline'));
+    cloudKick();
     // First launch (or signed out): intro pages + sign-in. Signed in: straight to the app (setup questions if needed).
     setTimeout(() => {
         const introSeen = localStorage.getItem(INTRO_KEY) === '1';
@@ -3877,7 +4170,6 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     let lastToday = getTodayId();
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState !== 'visible') return;
-        if (Cloud.user) scheduleFlush(2000); // a new day: the "last active" day is uploaded (nothing is sent if nothing changed)
         if (window.appState.sess) return;
         const now = getTodayId();
         if (now !== lastToday) { lastToday = now; activeDay = now; renderNav(); renderWorkout(); }
