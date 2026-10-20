@@ -26,7 +26,7 @@
     const startOfDay = t => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
     const ago = t => { if (!num(t)) return ''; const d = Math.floor((startOfDay(Date.now()) - startOfDay(t)) / DAY); return d <= 0 ? 'today' : d === 1 ? 'yesterday' : `${d} days ago`; };
     const LABEL = {
-        goal: { muscle: 'Build muscle', strength: 'Get stronger', fat: 'Lose fat' }, exp: { new: '< 1 year', mid: '1–3 years', adv: '3+ years' }, eq: { gym: 'Full gym', db: 'Dumbbells' },
+        goal: { muscle: 'Build muscle', strength: 'Get stronger', fat: 'Lose fat' }, exp: { none: 'Just starting', new: '< 1 year', mid: '1–3 years', adv: '3–5 years', pro: '5+ years' }, eq: { gym: 'Full gym', db: 'Dumbbells' },
         sex: { male: 'Male', female: 'Female', na: '—' }, lang: { en: 'English', ar: 'Arabic' }, platform: { ios: 'iPhone / iPad', android: 'Android', desktop: 'Computer' },
         setup: { program: 'Picked a program', own: 'Built their own', skip: 'Skipped' }
     };

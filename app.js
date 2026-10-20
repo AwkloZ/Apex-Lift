@@ -600,6 +600,65 @@
         "Where you train": "مكان التمرين",
         "You have 5 routines, the most allowed. Delete one in Edit first.": "لديك 5 برامج وهو الحد الأقصى. احذف واحدًا من تبويب تعديل أولًا.",
         "{a} workout days · {b} exercises": "{a} أيام تمرين · {b} تمارين",
+        "3 to 5 years": "من 3 إلى 5 سنوات",
+        "Back to sign in": "العودة لتسجيل الدخول",
+        "Backing up your data…": "جارٍ نسخ بياناتك احتياطيًا…",
+        "Before import": "قبل الاستيراد",
+        "Confirm your password": "أكّد كلمة المرور",
+        "Continue with email": "المتابعة بالبريد الإلكتروني",
+        "Could not back up your data, so nothing was imported. Check your connection and try again.": "تعذّر نسخ بياناتك احتياطيًا، لذلك لم يتم استيراد أي شيء. تحقق من اتصالك وحاول مرة أخرى.",
+        "Create account": "إنشاء الحساب",
+        "Create an account": "أنشئ حسابًا",
+        "Create your account": "أنشئ حسابك",
+        "Email": "البريد الإلكتروني",
+        "Email or password is wrong.": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+        "Email sent. Check your inbox.": "تم الإرسال. تحقق من بريدك.",
+        "Email sign-in is not turned on yet. Please use Google for now.": "تسجيل الدخول بالبريد غير مفعّل بعد. استخدم Google حاليًا.",
+        "Enter your account's email. We'll send you a link to choose a new password.": "أدخل بريد حسابك وسنرسل لك رابطًا لاختيار كلمة مرور جديدة.",
+        "Extra sets on the first three lifts": "مجموعات إضافية في أول ثلاثة تمارين",
+        "Find the program that fits you best": "اعثر على البرنامج الأنسب لك",
+        "For your safety, enter your password to delete your account.": "لحمايتك، أدخل كلمة المرور لحذف حسابك.",
+        "Forgot password?": "نسيت كلمة المرور؟",
+        "Have an account?": "لديك حساب؟",
+        "I'm just starting": "أنا مبتدئ تمامًا",
+        "If this email has an account, a link to choose a new password is on its way. Check your inbox.": "إذا كان لهذا البريد حساب فسيصلك رابط لاختيار كلمة مرور جديدة. تحقق من بريدك.",
+        "Import": "استيراد",
+        "Import this file?": "استيراد هذا الملف؟",
+        "Imported. Your previous data is saved in Account backups.": "تم الاستيراد. بياناتك السابقة محفوظة في نسخ الحساب الاحتياطية.",
+        "More than 5 years": "أكثر من 5 سنوات",
+        "Needed to fit the app to you. Birth year, height and sex can't be changed later, so please check them.": "مطلوبة لتخصيص التطبيق لك. لا يمكن تغيير سنة الميلاد والطول والجنس لاحقًا، فتأكد منها.",
+        "Never trained, or back after a long break": "لم أتمرن من قبل، أو عائد بعد انقطاع طويل",
+        "New here?": "جديد هنا؟",
+        "One file with your routines, workout history and settings. Save it, send it to a friend, or give it to an AI assistant to review your training.": "ملف واحد فيه برامجك وسجل تمارينك وإعداداتك. احفظه أو أرسله لصديق أو أعطه لمساعد ذكاء اصطناعي ليراجع تمرينك.",
+        "Password": "كلمة المرور",
+        "Please confirm your email: open the link we sent you.": "أكّد بريدك الإلكتروني: افتح الرابط الذي أرسلناه لك.",
+        "Please enter a valid email.": "أدخل بريدًا إلكترونيًا صحيحًا.",
+        "Please enter your name.": "أدخل اسمك.",
+        "Please enter your password.": "أدخل كلمة المرور.",
+        "Please fill in all fields.": "يرجى تعبئة جميع الحقول.",
+        "Program & data": "البرنامج والبيانات",
+        "Reset your password": "إعادة تعيين كلمة المرور",
+        "Saved": "تم الحفظ",
+        "Send again": "أعد الإرسال",
+        "Send link": "إرسال الرابط",
+        "Send the link, or give the code to a friend: in Apex Lift they open Edit → My routines → Add a routine by code.": "أرسل الرابط أو أعطِ الرمز لصديقك: يفتح Apex Lift ← تعديل ← برامجي ← أضف برنامجًا برمز.",
+        "Show password": "إظهار كلمة المرور",
+        "Sign in": "تسجيل الدخول",
+        "Sign in first: your data is backed up to your account before an import.": "سجّل الدخول أولًا: تُنسخ بياناتك احتياطيًا في حسابك قبل الاستيراد.",
+        "Sign in with email": "تسجيل الدخول بالبريد",
+        "This account is turned off. Contact us.": "هذا الحساب موقوف. تواصل معنا.",
+        "This can't be changed.": "لا يمكن تغيير هذا.",
+        "This email already has an account. Sign in instead.": "لهذا البريد حساب بالفعل. سجّل الدخول بدلًا من ذلك.",
+        "Too many tries. Wait a few minutes and try again.": "محاولات كثيرة. انتظر بضع دقائق وحاول مرة أخرى.",
+        "Update your weight anytime. Birth year, height and sex can't be changed; contact us if something is wrong.": "حدّث وزنك في أي وقت. لا يمكن تغيير سنة الميلاد والطول والجنس؛ تواصل معنا إذا كان هناك خطأ.",
+        "Use at least 8 characters for your password.": "استخدم 8 أحرف على الأقل لكلمة المرور.",
+        "Use your email and a password of at least 8 characters.": "استخدم بريدك وكلمة مرور من 8 أحرف على الأقل.",
+        "Used to tailor the app and to improve Apex Lift. Never sold or shared.": "تُستخدم لتخصيص التطبيق وتطوير Apex Lift، ولا تُباع ولا تُشارك أبدًا.",
+        "You can change any day and exercise later in Edit.": "يمكنك تغيير أي يوم أو تمرين لاحقًا من تبويب تعديل.",
+        "Your name": "اسمك",
+        "Your routines and settings are replaced by the file's, and its workouts are added to yours. Your current data is saved to your account first.": "تُستبدل برامجك وإعداداتك بما في الملف، وتُضاف تمارينه المسجّلة إلى تمارينك. تُحفظ بياناتك الحالية في حسابك أولًا.",
+        "Your workouts are saved to your account and kept in sync on all your phones.": "تُحفظ تمارينك في حسابك وتبقى متزامنة على كل أجهزتك.",
+        "{n} exercises with history": "{n} تمارين لها سجل",
     };
     const t = (en, vars) => {
         let out = (isAR && Object.prototype.hasOwnProperty.call(AR, en) && AR[en]) || en;
@@ -839,7 +898,7 @@
     const getResets = () => { const v = readJSON(RESET_KEY, {}); return isObj(v) ? v : {}; };
     const setResets = d => { try { localStorage.setItem(RESET_KEY, JSON.stringify(d)); } catch (e) {} };
     // Terms of Use & Privacy Policy: which version the user agreed to, and when
-    const TERMS_VERSION = '2026-10.4';
+    const TERMS_VERSION = '2026-10.5';
     const AGREE_KEY = 'workoutAgreed_rakan_final';
     const getAgree = () => { const v = readJSON(AGREE_KEY, null); return isObj(v) && v.v === TERMS_VERSION ? v : null; };
     const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
@@ -911,7 +970,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '28';
+    const APP_VERSION = '29';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -962,7 +1021,7 @@
     let currentWeekId = StorageManager.getActiveWeek() || appData.weeks[0].id;
     if (!appData.weeks.find(w => w.id === currentWeekId)) { currentWeekId = appData.weeks[0].id; StorageManager.setActiveWeek(currentWeekId); }
     
-window.appState = { currentView: 'today', sortableInstance: null, mappingConfig: null, awTimer: null };    let loggedWeights = StorageManager.get();    let loggedReps = StorageManager.getReps();
+window.appState = { currentView: 'today', sortableInstance: null, awTimer: null };    let loggedWeights = StorageManager.get();    let loggedReps = StorageManager.getReps();
 
     const getActiveSchedule = () => (appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0]).schedule;
     const getTodayId = () => ((new Date().getDay() - DAY_NAMES.indexOf(StorageManager.getStartDay()) + 7) % 7) + 1;
@@ -1030,10 +1089,15 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     let activeDay = getTodayId();
 
     // Build a 7-day schedule from a program, starting on the user's first day of the week.
-    // exp: 'new' = one set less on accessories, 'adv' = one set more on the first two lifts of each day (never more than 4)
+    // exp (training experience): 'none' = just starting: one set less on every exercise (at least 2),
+    // 'new' = under a year: one set less on accessories, 'mid' = 1–3 years: as written,
+    // 'adv' = 3–5 years: one set more on the first two lifts of each day (never more than 4),
+    // 'pro' = over 5 years: one set more on the first three lifts (never more than 5)
+    const EXP_LEVELS = ['none', 'new', 'mid', 'adv', 'pro'];
     const PROFILE_KEY = 'workoutProfile_rakan_final';
     const getProfile = () => { const v = readJSON(PROFILE_KEY, {}); return isObj(v) ? v : {}; };
-    // "About you" (all optional): birth year, sex, height, body weight + a log of body weight over time
+    // "About you" (needed in the setup): birth year, sex, height, body weight + a log of body weight over time.
+    // Once confirmed (locked), birth year, height and sex can't be changed; body weight can.
     const BODY_KEY = 'workoutBody_rakan_final';
     const MIN_AGE = 13;
     const thisYear = () => new Date().getFullYear();
@@ -1045,11 +1109,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const w = parseFloat(latinDigits(b.weightKg)); if (w >= 25 && w <= 350) out.weightKg = Math.round(w * 10) / 10;
         if (Array.isArray(b.log)) out.log = b.log.filter(x => isObj(x) && typeof x.t === 'number' && isFinite(x.t) && parseFloat(x.kg) >= 25 && parseFloat(x.kg) <= 350)
             .map(x => ({ t: x.t, kg: Math.round(parseFloat(x.kg) * 10) / 10 })).sort((a, c) => a.t - c.t).slice(-200);
+        if (b.locked === true) out.locked = true;
         return out;
     };
     const getBody = () => sanitizeBody(readJSON(BODY_KEY, {}));
     const setBody = b => writeItem(BODY_KEY, JSON.stringify(sanitizeBody(b)));
     const ageOf = b => b.birthYear ? thisYear() - b.birthYear : null;
+    const aboutComplete = b => !!(b.birthYear && b.heightCm && b.weightKg && b.sex);
+    const LOCKED_ABOUT = ['birthYear', 'heightCm', 'sex'];
     const programSchedule = (prog, exp) => {
         const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
         return prog.week.map((slot, i) => {
@@ -1059,8 +1126,10 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const [title, list] = WORKOUTS[slot];
             return { ...base, title, savedTitle: title, isRest: false, recoveryType: null, exercises: list.map(([name, muscle, sets, reps], j) => {
                 let n = parseInt(sets);
+                if (exp === 'none') n = Math.max(2, n - 1);
                 if (exp === 'new' && j >= 2) n = Math.max(2, n - 1);
                 if (exp === 'adv' && j < 2) n = Math.max(n, Math.min(4, n + 1));
+                if (exp === 'pro' && j < 3) n = Math.max(n, Math.min(5, n + 1));
                 return { muscle, name, sets: String(n), reps };
             }) };
         });
@@ -1069,6 +1138,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const recommendProgram = a => {
         if (a.eq === 'db') return 'db3';
         const d = parseInt(a.days) || 4;
+        // just starting: simple programs, at most 4 days, so the body can get used to training
+        if (a.exp === 'none') return a.goal === 'strength' ? 's5x5' : d <= 3 ? 'fb3' : 'ul4';
+        // over 5 years: programs with more volume
+        if (a.exp === 'pro') {
+            if (a.goal === 'strength') return d <= 3 ? 's5x5' : 'phul';
+            if (a.goal === 'muscle' && d >= 6) return 'arnold6';
+        }
         if (a.goal === 'strength') return d <= 3 ? 's5x5' : 'phul';
         if (a.goal === 'fat') return d <= 3 ? 'fb3' : d === 4 ? 'ul4' : d === 5 ? 'hybrid5' : 'ppl6';
         if (d <= 3) return a.exp === 'new' ? 'fb3' : 'ppl3';
@@ -1729,8 +1805,22 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const aboutFormHTML = (ctx = 'about') => { // ctx keeps the ids unique (setup questions vs Profile)
         const b = getBody(), age = ageOf(b), young = age !== null && age < MIN_AGE;
         const inp = 'w-full bg-black/40 border border-white/10 rounded-xl px-3 py-3 text-white text-center font-black outline-none focus:border-[#d4af37]';
-        const sexBtn = (v, l) => `<button onclick="window.appActions.setAbout('sex', ${jsArg(v)})" class="flex-1 py-3 rounded-xl text-[12px] font-black tap-feedback border ${b.sex === v ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-white border-white/10'}">${l}</button>`;
+        const sexBtn = (v, l) => `<button onclick="window.appActions.setAbout('sex', ${jsArg(v)})" role="radio" aria-checked="${b.sex === v}" class="flex-1 py-3 rounded-xl text-[12px] font-black tap-feedback border ${b.sex === v ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-white border-white/10'}">${l}</button>`;
         const field = (f, label, val, ph, mode) => `<label class="block"><span class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">${label}</span><input id="${ctx}-${f}" type="text" inputmode="${mode}" autocomplete="off" value="${val === undefined ? '' : esc(val)}" placeholder="${esc(ph)}" onchange="window.appActions.setAbout(${jsArg(f)}, this.value)" class="${inp}" dir="ltr"></label>`;
+        const sexLabel = { male: t('Male'), female: t('Female'), na: t('Prefer not to say') };
+        // confirmed: birth year, height and sex are shown, not edited; body weight stays editable
+        if (b.locked) {
+            const tile = (label, value) => `<div class="rounded-xl bg-white/5 border border-white/5 px-3 py-2.5 min-w-0"><span class="flex items-start gap-1 text-[11px] font-bold text-slate-500 leading-tight mb-1"><i data-lucide="lock" class="w-3 h-3 shrink-0 mt-px"></i><span>${label}</span></span><span class="block text-[15px] font-black text-white truncate">${value}</span></div>`;
+            return `<div class="space-y-4">
+                <div class="grid grid-cols-3 gap-2.5">
+                    ${tile(t('Birth year'), `<span dir="ltr">${esc(b.birthYear || '—')}</span>`)}
+                    ${tile(t('Height (cm)'), `<span dir="ltr">${esc(b.heightCm || '—')}</span>`)}
+                    ${tile(t('Sex'), esc(sexLabel[b.sex] || '—'))}
+                </div>
+                ${field('weightKg', t('Weight (kg)'), b.weightKg, '75', 'decimal')}
+                <p class="text-[11px] font-bold text-slate-500 leading-snug">${t("Update your weight anytime. Birth year, height and sex can't be changed; contact us if something is wrong.")}</p>
+            </div>`;
+        }
         return `<div class="space-y-4">
             <div class="grid grid-cols-3 gap-3">
                 ${field('birthYear', t('Birth year'), b.birthYear, String(thisYear() - 25), 'numeric')}
@@ -1739,8 +1829,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             </div>
             <div id="${ctx}-young-slot">${young ? youngHTML(ctx) : ''}</div>
             <div><span class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">${t('Sex')}</span>
-            <div class="flex gap-2">${sexBtn('male', t('Male'))}${sexBtn('female', t('Female'))}${sexBtn('na', t('Prefer not to say'))}</div></div>
-            <p class="text-[11px] font-bold text-slate-500 leading-snug">${t('Optional. Used to tailor the app and to improve Apex Lift. Never sold or shared.')}</p>
+            <div class="flex gap-2" role="radiogroup">${sexBtn('male', t('Male'))}${sexBtn('female', t('Female'))}${sexBtn('na', t('Prefer not to say'))}</div></div>
+            <p class="text-[11px] font-bold text-slate-500 leading-snug">${t('Used to tailor the app and to improve Apex Lift. Never sold or shared.')}</p>
         </div>`;
     };
     // Profile → About you, with a small body-weight chart
@@ -1760,23 +1850,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         el.innerHTML = `<div class="grid grid-cols-3 gap-2.5">${tile('calendar-check', dayKeys.length, t('Workouts'))}${tile('flame', weekStreak(dayKeys), t('Week streak'))}${tile('trophy', records, t('Records'))}</div>`;
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
-    // Profile → My training: the setup answers (goal, days, experience, equipment), each one changed with a tap
-    const TRAINING = [
-        ['goal', 'Goal', [['muscle', 'Build muscle'], ['strength', 'Get stronger'], ['fat', 'Lose fat']]],
-        ['days', 'Days a week', [['3', '3'], ['4', '4'], ['5', '5'], ['6', '6']]],
-        ['exp', 'Experience', [['new', 'Less than 1 year'], ['mid', '1 to 3 years'], ['adv', 'More than 3 years']]],
-        ['eq', 'Where you train', [['gym', 'Full gym'], ['db', 'Dumbbells only']]]
-    ];
-    const renderTraining = () => {
-        const el = document.getElementById('training-card'); if (!el) return;
-        const pr = getProfile();
-        el.innerHTML = `<div class="glass-card p-5 border border-white/10">
-            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="target" class="w-5 h-5"></i></span><div class="min-w-0"><div class="text-[16px] font-black text-white">${t('My training')}</div><div class="text-[11px] font-bold text-slate-500">${t('Used to suggest programs and sets.')}</div></div></div>
-            <div class="space-y-4">${TRAINING.map(([k, label, opts]) => `<div><span class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">${t(label)}</span>
-                <div class="flex flex-wrap gap-2" role="radiogroup" aria-label="${esc(t(label))}">${opts.map(([v, l]) => `<button onclick="window.appActions.setTraining(${jsArg(k)}, ${jsArg(v)})" role="radio" aria-checked="${pr[k] === v}" class="pf-chip tap-feedback ${pr[k] === v ? 'is-on' : ''}">${esc(t(l))}</button>`).join('')}</div></div>`).join('')}</div></div>`;
-        if (window.lucide) window.lucide.createIcons({ root: el });
-    };
-    const renderProfile = () => { renderAccount(); renderProfileStats(); renderAbout(); renderTraining(); updateBackupStatus(); };
+    const renderProfile = () => { renderAccount(); renderProfileStats(); renderAbout(); updateBackupStatus(); };
     const bodyChartHTML = () => {
         const b = getBody(), log = b.log || [];
         let chart = '';
@@ -2848,12 +2922,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         closeBackupModal: () => { popBack('backup'); closeModal('smart-backup-overlay','smart-backup-box'); },
         // Export: the phone's share sheet (save to Files, send to a friend, or open in an AI app); "copy" puts the text on the clipboard
         executeSmartBackup: async (mode = 'file') => {
-            const doProg = document.getElementById('backup-opt-progress').checked;
-            const doSched = document.getElementById('backup-opt-schedule').checked;
-            const doSet = document.getElementById('backup-opt-settings').checked;
-            if (!doProg && !doSched && !doSet) return window.appActions.showToast(t("Select at least one option!"), "error");
-            // readable format (v2): easy to share with a friend or give to an AI; old files still import
-            const text = JSON.stringify(buildExport({ prog: doProg, sched: doSched, sett: doSet }), null, 2);
+            // everything, in the readable format (v2): easy to share with a friend or give to an AI; old files still import
+            const text = JSON.stringify(buildExport({ prog: true, sched: true, sett: true }), null, 2);
             const done = msg => { StorageManager.setBackupDate(); updateBackupStatus(); window.appActions.closeBackupModal(); setTimeout(() => window.appActions.showToast(msg, "success"), 300); };
             if (mode === 'copy') {
                 try { await navigator.clipboard.writeText(text); done(t('Copied. Paste it into a chat with an AI assistant.')); }
@@ -2861,9 +2931,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 return;
             }
             const n = new Date(), ms = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], dStr = `${ms[n.getMonth()]}${n.getDate()}`;
-            let fName = `ApexLift_Backup_${dStr}.json`;
-            if (doProg && !doSched && !doSet) fName = `ApexLift_ProgressOnly_${dStr}.json`;
-            else if (!doProg && doSched && !doSet) fName = `ApexLift_RoutineOnly_${dStr}.json`;
+            const fName = `ApexLift_${dStr}.json`;
             const file = new File([text], fName, { type: 'application/json' });
             if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
                 try { await navigator.share({ files: [file], title: 'Apex Lift' }); return done(t("Data Exported!")); }
@@ -2875,17 +2943,20 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             setTimeout(() => URL.revokeObjectURL(a.href), 10000);
             done(t("Data Exported!"));
         },
+        // Import: everything in an Apex Lift file, no choices. Your current data is saved to your account first,
+        // so an import can always be undone (Profile → Account backups).
         importData: e => {
-            const f=e.target.files[0]; if(!f)return;
-            if (f.size > 5e6) { e.target.value=''; return window.appActions.showToast(t("Invalid Backup file"),"error"); } // over 5 MB is not an Apex Lift file
-            const r=new FileReader();
-            r.onload=ev=>{
+            const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+            if (f.size > 5e6) return window.appActions.showToast(t("Invalid Backup file"), "error"); // over 5 MB is not an Apex Lift file
+            const r = new FileReader();
+            r.onload = ev => {
+                let d;
                 try {
-                    let raw=JSON.parse(ev.target.result);
-                    if(!isObj(raw)) throw new Error('Backup is not an object');
+                    let raw = JSON.parse(ev.target.result);
+                    if (!isObj(raw)) throw new Error('Backup is not an object');
                     if (raw.format === 2 || raw.app === 'Apex Lift') raw = fromExportV2(raw);
                     // Clean everything in the file before using it
-                    const d = {
+                    d = {
                         w: raw.w !== undefined ? sanitizeValueMap(raw.w) : undefined,
                         h: sanitizeHistory(raw.h),
                         p: raw.p !== undefined ? sanitizePlan(raw.p) : null,
@@ -2894,139 +2965,57 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                         rt: REST_CHOICES.includes(raw.rt) ? raw.rt : null,
                         cx: sanitizeCustomEx(raw.cx)
                     };
-                    if(raw.p !== undefined && !d.p) window.appActions.showToast(t("Routine in file is damaged: skipped"),"error");
-                    if(!d.w && !d.p && !d.s) throw new Error('Nothing usable in backup');
-                    window.appState.pendingRestoreData = d;
-                    document.getElementById('restore-progress-desc').innerText = d.w && Object.keys(d.w).length ? t('{n} exercises found', { n: Object.keys(d.w).length }) : t('No progress found');
-                    document.getElementById('restore-schedule-desc').innerText = d.p ? t('Custom schedule found') : t('No schedule found');
-                    document.getElementById('restore-settings-desc').innerText = d.s ? t('Start Day: {d}', { d: tDay(d.s) }) : t('No settings found');
-                    document.getElementById('restore-opt-progress').checked = !!(d.w && Object.keys(d.w).length);
-                    document.getElementById('restore-opt-progress').disabled = !(d.w && Object.keys(d.w).length);
-                    document.getElementById('restore-opt-schedule').checked = false; 
-                    document.getElementById('restore-opt-schedule').disabled = !d.p;
-                    document.getElementById('restore-opt-settings').checked = false;
-                    document.getElementById('restore-opt-settings').disabled = !d.s;
-                    openModal('smart-restore-overlay','smart-restore-box'); pushBack('restore', () => window.appActions.closeRestoreModal());
-                } catch(err) { window.appActions.showToast(t("Invalid Backup file"),"error"); }
+                    if (!d.w && !d.p && !d.s && !Object.keys(d.h).length) throw new Error('Nothing usable in backup');
+                } catch (err) { return window.appActions.showToast(t("Invalid Backup file"), "error"); }
+                const found = [d.p ? t('{n} routines', { n: d.p.weeks.length }) : '', Object.keys(d.h).length ? t('{n} exercises with history', { n: Object.keys(d.h).length }) : ''].filter(Boolean).join(' · ');
+                window.appActions.showConfirm(t('Import this file?'), (found ? found + '\n\n' : '') + t("Your routines and settings are replaced by the file's, and its workouts are added to yours. Your current data is saved to your account first."),
+                    () => window.appActions.runImport(d), false, t('Import'));
             };
-            r.readAsText(f); e.target.value='';
+            r.readAsText(f);
         },
-        closeRestoreModal: () => {
-            popBack('restore'); closeModal('smart-restore-overlay','smart-restore-box', 300, () => { window.appState.pendingRestoreData = null; });
-        },
-        executeSmartRestore: () => {
-            const d = window.appState.pendingRestoreData; if(!d) return;
-            const doProg = document.getElementById('restore-opt-progress').checked;
-            const doSched = document.getElementById('restore-opt-schedule').checked;
-            const doSet = document.getElementById('restore-opt-settings').checked;
-            if (doProg && d.w) {
-                let targetPlan = doSched && d.p ? d.p : appData;
-                let targetExMap = new Map();
-                targetPlan.weeks.forEach(w => w.schedule.forEach(day => {
-                    if (day.exercises) day.exercises.forEach(ex => { targetExMap.set(ex.name, ex.muscle); });
-                }));
-                let targetExData = Array.from(targetExMap.entries()).map(([name, muscle]) => ({name, muscle})).sort((a,b) => a.name.localeCompare(b.name));
-                window.appState.mappingConfig = { d, doSched, doSet, targetExData };
-                window.appActions.closeRestoreModal();
-                setTimeout(() => window.appActions.openMappingModal(), 350);
-            } else {
-                window.appActions.finishRestore(false, doSched, doSet, d);
-            }
-        },
-        openMappingModal: () => {
-            const { d, targetExData } = window.appState.mappingConfig;
-            const ml = document.getElementById('mapping-list');
-            let html = '';
-            const getBroadGroup = (m) => {
-                m = (m||'').toLowerCase();
-                if (m.includes('leg') || m.includes('quad') || m.includes('ham') || m.includes('calf') || m.includes('calves') || m.includes('glute')) return 'legs';
-                if (m.includes('chest') || m.includes('shoulder') || m.includes('delt') || m.includes('tricep') || m.includes('push') || m.includes('pec')) return 'push';
-                if (m.includes('back') || m.includes('lat') || m.includes('trap') || m.includes('bicep') || m.includes('pull') || m.includes('rear') || m.includes('row')) return 'pull';
-                if (m.includes('abs') || m.includes('core')) return 'core';
-                return 'all';
-            };
-            Object.keys(d.w).forEach(oldKey => {
-                let readable = oldKey.replace('global_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                let oldMuscle = 'Unknown';
-                if (d.p && d.p.weeks) {
-                    d.p.weeks.forEach(w => w.schedule.forEach(day => {
-                        if (day.exercises) day.exercises.forEach(ex => { if (getExKey('','','',ex.name) === oldKey) oldMuscle = ex.muscle; });
-                    }));
+        runImport: async d => {
+            if (!Cloud.user || !Cloud.db) return window.appActions.showToast(t('Sign in first: your data is backed up to your account before an import.'), 'error');
+            if (window.appState.sess) return window.appActions.showToast(t('Finish your workout first.'), 'error');
+            if (window.appState.importing) return; window.appState.importing = true;
+            try {
+                window.appActions.showToast(t('Backing up your data…'), 'success');
+                try { await cloudBackup('before-import'); }
+                catch (e) { console.warn('Backup before import failed', e); return window.appActions.showToast(t('Could not back up your data, so nothing was imported. Check your connection and try again.'), 'error'); }
+                // workouts: both lists together, in date order, without duplicates (and without records you deleted)
+                const w = StorageManager.get(), h = StorageManager.getHistory(), del = getDeleted();
+                Object.keys(d.h).forEach(k => { h[k] = mergeLogs(h[k], d.h[k], del[k]); const n = h[k][h[k].length - 1]; if (n) w[k] = n.w; });
+                if (d.w) Object.keys(d.w).forEach(k => { if (!w[k]) w[k] = d.w[k]; });
+                StorageManager.set(w); StorageManager.setHistory(h); loggedWeights = w;
+                if (d.p) {
+                    // Only use the saved active routine if it really exists in the file
+                    currentWeekId = (d.aw && d.p.weeks.some(x => x.id === d.aw)) ? d.aw : d.p.weeks[0].id;
+                    appData = d.p; StorageManager.setActiveWeek(currentWeekId);
+                    // the file's own exercises join this phone's list
+                    const cx = getCustomEx(); (d.cx || []).forEach(x => { if (!cx.some(y => y.name.toLowerCase() === x.name.toLowerCase())) cx.push(x); }); setCustomEx(cx);
                 }
-                if (oldMuscle === 'Unknown') {
-                    if (readable.match(/leg|squat|calf|calves|ham|glute/i)) oldMuscle = 'Legs';
-                    else if (readable.match(/chest|press|pushdown|tricep|fly|delt|shoulder/i)) oldMuscle = 'Chest';
-                    else if (readable.match(/row|pull|bicep|curl|back|lat/i)) oldMuscle = 'Back';
-                }
-                let oldGroup = getBroadGroup(oldMuscle);
-                let filteredTargets = targetExData;
-                if (oldGroup !== 'all') {
-                    let matches = targetExData.filter(tx => getBroadGroup(tx.muscle) === oldGroup);
-                    if (matches.length > 0) filteredTargets = matches;
-                }
-                let autoMatch = '';
-                let tKeyMatch = filteredTargets.find(tx => getExKey('','','',tx.name) === oldKey);
-                if(tKeyMatch) autoMatch = tKeyMatch.name;
-                let opts = `<option value="SKIP" ${!autoMatch ? 'selected' : ''}>${t('-- Skip (Do Not Import) --')}</option>`;
-                filteredTargets.forEach(tx => { opts += `<option value="${esc(tx.name)}" ${autoMatch === tx.name ? 'selected' : ''}>${esc(tx.name)}</option>`; });
-                html += `<div class="bg-black/40 p-3 rounded-xl border border-white/5 mb-3 last:mb-0"><div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 pb-1 border-b border-white/5 flex justify-between items-center"><span class="truncate pe-2">${t('Old:')} ${esc(readable)}</span><span class="text-[8px] text-[#d4af37] bg-[#d4af37]/10 px-1.5 py-0.5 rounded shadow-sm shrink-0 border border-[#d4af37]/20">${esc(t(oldGroup.toUpperCase()))}</span></div><select id="map_${esc(oldKey)}" class="w-full bg-black/60 p-2.5 rounded-lg text-[12px] font-bold text-white outline-none cursor-pointer border border-white/10 tap-feedback">${opts}</select></div>`;
-            });
-            ml.innerHTML = html || `<div class="text-center text-[10px] font-bold text-slate-500 uppercase py-4">${t('No exercises found')}</div>`;
-            openModal('smart-mapping-overlay','smart-mapping-box'); pushBack('mapping', () => window.appActions.closeMappingModal());
-        },
-        closeMappingModal: () => {
-            popBack('mapping'); closeModal('smart-mapping-overlay','smart-mapping-box');
-        },
-        executeMappedMerge: () => {
-            const { d, doSched, doSet } = window.appState.mappingConfig;
-            let currW = StorageManager.get(), currH = StorageManager.getHistory();
-            Object.keys(d.w).forEach(oldKey => {
-                const sel = document.getElementById(`map_${oldKey}`);
-                if(sel && sel.value !== 'SKIP') {
-                    const newKey = getExKey('','','',sel.value);
-                    currW[newKey] = d.w[oldKey];
-                    let oldHist = (d.h && d.h[oldKey]) || [];
-                    if(oldHist.length > 0) {
-                        // both lists together, in date order, without duplicates (and without records you deleted)
-                        currH[newKey] = mergeLogs(currH[newKey], sanitizeHistory({ x: oldHist }).x || [], getDeleted()[newKey]);
-                        const newest = currH[newKey][currH[newKey].length - 1];
-                        if (newest) currW[newKey] = newest.w; // "last weight" = the newest log, not the backup's
-                    }
-                }
-            });
-            StorageManager.set(currW); StorageManager.setHistory(currH); loggedWeights = currW;
-            window.appActions.closeMappingModal();
-            window.appActions.finishRestore(true, doSched, doSet, d);
-        },
-        finishRestore: (didProg, doSched, doSet, d) => {
-            let count = didProg ? 1 : 0;
-            if (doSched && d.p) {
-                const iP = d.p; // already cleaned by sanitizePlan when the file was opened
-                // Only use the saved active week if it really exists in this routine
-                currentWeekId = (d.aw && iP.weeks.some(w => w.id === d.aw)) ? d.aw : iP.weeks[0].id;
-                StorageManager.setActiveWeek(currentWeekId);
-                StorageManager.setPlan(iP); appData = iP; count++;
-                if (!(doSet && d.s)) setWeekStart(StorageManager.getStartDay()); // keep each day on its weekday on this phone
-                // add the backup's own exercises to this phone's list
-                const cx = getCustomEx(); (d.cx || []).forEach(x => { if (!cx.some(y => y.name.toLowerCase() === x.name.toLowerCase())) cx.push(x); }); setCustomEx(cx);
-            }
-            if (doSet && d.s) { 
-                const aD=DAY_NAMES, idx=aD.indexOf(d.s);
                 if (d.rt) { StorageManager.setRestSeconds(d.rt); const rs = document.getElementById('setting-rest'); if (rs) rs.value = String(d.rt); }
-                if(idx!==-1){ setWeekStart(d.s); document.getElementById('setting-start-day').value = d.s; }
-                count++; 
-            }
-            if (count > 0) { if (StorageManager.setPlan(appData) === false) return; activeDay = getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Data Merged Successfully!"), "success"); }
-            if(!didProg) window.appActions.closeRestoreModal();
-    },
+                // each day stays on its weekday (the file's first day of the week, or this phone's)
+                setWeekStart(d.s || StorageManager.getStartDay());
+                const sd = document.getElementById('setting-start-day'); if (sd) sd.value = StorageManager.getStartDay();
+                if (StorageManager.setPlan(appData) === false) return;
+                activeDay = getTodayId(); renderNav(); window.appActions.refreshUI();
+                window.appActions.showToast(t('Imported. Your previous data is saved in Account backups.'), 'success');
+            } finally { window.appState.importing = false; }
+        },
     restoreDefaults: () => { window.appActions.showConfirm(t("Reset app"),t("Your routines go back to the default. Your history is kept."),()=>{const aD=DAY_NAMES, sI=aD.indexOf('SAT'); const def=JSON.parse(JSON.stringify(defaultWorkoutData)); def.forEach((d,i)=>d.day=aD[(sI+i)%7]); appData={weeks:[{id:'w_default',name:t('Main Routine'),schedule:def}]}; currentWeekId='w_default'; StorageManager.setActiveWeek('w_default'); StorageManager.setPlan(appData); StorageManager.setStartDay('SAT'); document.getElementById('setting-start-day').value='SAT'; activeDay=getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Reset Complete"));},true); },
         // ---------- First-launch setup (also from Profile → Set up again) ----------
-        initOnboarding: () => { if (!StorageManager.getOnboard()) window.appActions.startWizard(true); },
-        startWizard: (firstRun = false) => {
+        // First launch: the whole setup. Set up already but About you not confirmed yet (older versions): just that page.
+        initOnboarding: () => {
+            if (!StorageManager.getOnboard()) window.appActions.startWizard(true);
+            else if (!getBody().locked) window.appActions.startWizard(true, true);
+        },
+        // The setup can't be skipped: it ends with a program. From Profile it can be closed (✕) without changing anything.
+        startWizard: (firstRun = false, aboutOnly = false) => {
             let hasLang = false; try { hasLang = localStorage.getItem(LANG_KEY) !== null; } catch (e) {}
-            const pr = getProfile();
-            window.appState.wiz = { firstRun, steps: [...(hasLang ? [] : ['lang']), 'goal', 'days', 'exp', 'eq', 'about', 'start', 'result'], step: 0,
-                goal: pr.goal || null, days: pr.days || null, exp: pr.exp || null, eq: pr.eq || null, showAll: false };
+            const pr = getProfile(), locked = !!getBody().locked;
+            const steps = aboutOnly ? ['about'] : [...(hasLang ? [] : ['lang']), 'goal', 'days', 'exp', 'eq', ...(locked ? [] : ['about']), 'start', 'result'];
+            window.appState.wiz = { firstRun, aboutOnly, steps, step: 0,
+                goal: pr.goal || null, days: pr.days || null, exp: EXP_LEVELS.includes(pr.exp) ? pr.exp : null, eq: pr.eq || null, showAll: false };
             window.appActions.renderWizard();
             openModal('onboarding-overlay', 'onboarding-box');
             // phone Back: previous question; on the first question it closes (the very first setup stays open)
@@ -3054,10 +3043,12 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (key === 'days') body = head(t('How many days a week can you train?'), t('Pick what you can keep up every week.'))
                 + ['3', '4', '5', '6'].map(d => opt(d, t('{n} days', { n: d }), '', 'calendar-days', W.days)).join('');
             if (key === 'exp') body = head(t('How long have you been training?'), t('This sets how many sets you start with.'))
-                + opt('new', t('Less than 1 year'), t('Fewer sets to start'), 'sprout', W.exp) + opt('mid', t('1 to 3 years'), t('Standard sets'), 'trending-up', W.exp) + opt('adv', t('More than 3 years'), t('Extra sets on the main lifts'), 'flame', W.exp);
+                + opt('none', t("I'm just starting"), t('Never trained, or back after a long break'), 'sparkles', W.exp)
+                + opt('new', t('Less than 1 year'), t('Fewer sets to start'), 'sprout', W.exp) + opt('mid', t('1 to 3 years'), t('Standard sets'), 'trending-up', W.exp)
+                + opt('adv', t('3 to 5 years'), t('Extra sets on the main lifts'), 'flame', W.exp) + opt('pro', t('More than 5 years'), t('Extra sets on the first three lifts'), 'trophy', W.exp);
             if (key === 'eq') body = head(t('Where do you train?'), '')
                 + opt('gym', t('Full gym'), t('Barbells, machines and cables'), 'building-2', W.eq) + opt('db', t('Dumbbells only'), t('Home or a small gym'), 'dumbbell', W.eq);
-            if (key === 'about') body = head(t('About you'), t('Optional. Helps the app fit you. You can change it anytime in Profile.')) + aboutFormHTML()
+            if (key === 'about') body = head(t('About you'), t("Needed to fit the app to you. Birth year, height and sex can't be changed later, so please check them.")) + aboutFormHTML()
                 + `<button id="wiz-about-next" onclick="window.appActions.wizChoose('about', 'done')" class="w-full mt-6 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback">${t('Next')}</button>`;
             if (key === 'start') body = head(t('Which day does your week start?'), t('Your week in the app starts on this day.'))
                 + ['SAT', 'SUN', 'MON'].map(d => opt(d, esc(dayLong(d)), '', 'calendar', StorageManager.getStartDay())).join('');
@@ -3072,14 +3063,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                     + (W.showAll ? `<div class="text-[11px] font-black text-slate-500 uppercase tracking-widest mt-5 mb-2">${t('Other programs')}</div>` + others.map(p => card(p, false)).join('')
                         : `<button onclick="window.appState.wiz.showAll=true;window.appActions.renderWizard()" class="w-full py-3 mb-3 rounded-xl bg-white/5 border border-white/10 text-[12px] font-black uppercase tracking-widest text-slate-300 tap-feedback">${t('See all {n} programs', { n: PROGRAMS.length })}</button>`)
                     + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#050505]"><button onclick="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback">${t('Start with this program')}</button>
-                       <button onclick="window.appActions.wizFinish('own')" class="w-full py-3 mt-1 text-[12px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${t("I'll build my own")}</button></div>`;
+                       <p class="text-[11px] font-bold text-slate-500 text-center mt-2">${t('You can change any day and exercise later in Edit.')}</p></div>`;
             }
             const dots = W.steps.map((_, i) => `<span class="h-1.5 rounded-full transition-all ${i === W.step ? 'w-6 bg-[#d4af37]' : i < W.step ? 'w-3 bg-[#d4af37]/50' : 'w-3 bg-white/15'}"></span>`).join('');
             document.getElementById('onboarding-box').innerHTML = `
                 <div class="flex items-center justify-between py-4 shrink-0">
                     <button onclick="window.appActions.wizBack()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.step === 0 ? 'invisible' : ''}" aria-label="Back"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
                     <div class="flex gap-1.5" dir="ltr">${dots}</div>
-                    <button onclick="window.appActions.wizFinish('skip')" class="text-[11px] font-black uppercase tracking-widest text-slate-500 tap-feedback ${key === 'lang' || key === 'result' ? 'invisible' : ''}">${t('Skip')}</button>
+                    <button onclick="window.appActions.closeWizard()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.firstRun ? 'invisible' : ''}" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <div class="flex-1 fade-in">${body}</div>`;
             if (window.lucide) window.lucide.createIcons({ root: document.getElementById('onboarding-box') });
@@ -3087,7 +3078,15 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         wizChoose: (key, val) => {
             const W = window.appState.wiz;
-            if (key === 'about') { const a = ageOf(getBody()); if (a !== null && a < MIN_AGE) return window.appActions.showToast(t('Apex Lift is for ages {n} and up.', { n: MIN_AGE }), 'error'); }
+            if (key === 'about') {
+                // the typed numbers are saved when a box loses focus: save the one still being typed first
+                const f = document.activeElement; if (f && f.tagName === 'INPUT' && f.id && f.id.startsWith('about-')) f.blur();
+                const b = getBody(), a = ageOf(b);
+                if (!aboutComplete(b)) return window.appActions.showToast(t('Please fill in all fields.'), 'error');
+                if (a !== null && a < MIN_AGE) return window.appActions.showToast(t('Apex Lift is for ages {n} and up.', { n: MIN_AGE }), 'error');
+                setBody({ ...b, locked: true });
+                if (W.aboutOnly) { W.done = true; window.appActions.closeWizard(true); if (window.appState.currentView === 'profile') renderProfile(); return window.appActions.showToast(t('Saved'), 'success'); }
+            }
             if (key === 'lang') {
                 writeItem(LANG_KEY, val);
                 if (val !== LANG) return location.reload(); // the setup continues in the chosen language
@@ -3102,12 +3101,17 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         wizBack: () => { const W = window.appState.wiz; if (W.step > 0) { W.step--; window.appActions.renderWizard(); } },
         wizPick: id => { window.appState.wiz.pick = id; window.appActions.renderWizard(); },
-        // program = use the chosen program, own = start with empty days, skip = keep things as they are
+        // ✕ (only when started from Profile): close, nothing changes. force = the About you page was just confirmed.
+        closeWizard: (force = false) => {
+            const W = window.appState.wiz; if (!W || (W.firstRun && !force)) return;
+            popBack('wizard'); closeModal('onboarding-overlay', 'onboarding-box', 300);
+        },
+        // the setup always ends with the chosen program
         wizFinish: (mode, sure = false) => {
             const W = window.appState.wiz;
-            if (W.done) return; // double tap
+            if (W.done || mode !== 'program') return; // double tap
             // already 5 routines: the current one would be replaced, so ask first
-            if (!sure && !W.firstRun && mode !== 'skip' && appData.weeks.length >= 5)
+            if (!sure && !W.firstRun && appData.weeks.length >= 5)
                 return window.appActions.showConfirm(t('Replace current routine?'), t('You have 5 routines (the most). The current one will be replaced; your history is kept.'), () => window.appActions.wizFinish(mode, true), true);
             W.done = true;
             try { localStorage.setItem(SETUP_KEY, mode); } catch (e) {}
@@ -3115,16 +3119,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             StorageManager.setOnboard();
             popBack('wizard');
             closeModal('onboarding-overlay', 'onboarding-box', 300);
-            if (mode === 'program') {
-                const id = W.pick || recommendProgram(W);
-                window.appActions.applyProgram(id, { exp: W.exp, replace: W.firstRun });
-            } else if (mode === 'own') {
-                const empty = DAY_NAMES.map((_, i) => ({ id: i + 1, day: DAY_NAMES[(DAY_NAMES.indexOf(StorageManager.getStartDay()) + i) % 7], title: 'New Day', isRest: false, recoveryType: null, savedTitle: '', exercises: [] }));
-                if (W.firstRun || appData.weeks.length >= 5) { const w = appData.weeks.find(x => x.id === currentWeekId); w.schedule = empty; w.name = t('My routine'); }
-                else { const id = 'w_' + Date.now(); appData.weeks.push({ id, name: t('My routine'), schedule: empty }); currentWeekId = id; StorageManager.setActiveWeek(id); }
-                StorageManager.setPlan(appData);
-                window.appActions.switchTab('plan');
-            }
+            window.appActions.applyProgram(W.pick || recommendProgram(W), { exp: W.exp, replace: W.firstRun });
         },
         // Put a program into the app: as a new routine (keeps your current one) or replacing the current one
         applyProgram: (id, { exp = (getProfile().exp || 'mid'), replace = false, undo = false } = {}) => {
@@ -3335,6 +3330,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const rp = document.getElementById('setting-rpe'); if (rp) rp.checked = StorageManager.getShowRpe();
         renderNav(); renderWorkout();
         if (window.appState.currentView === 'profile') renderProfile();
+        // About you was confirmed on another phone: this phone doesn't need to ask
+        const W = window.appState.wiz; if (W && W.aboutOnly && !W.done && getBody().locked) { W.done = true; window.appActions.closeWizard(true); }
     };
     // Combine two lists of logs without duplicates (same time, weight and reps = same log)
     const mergeLogs = (a, b, del) => {
@@ -3556,7 +3553,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             el.innerHTML = `<div class="glass-card p-5 border border-white/10">
                 <div class="flex items-center gap-3 mb-3"><span class="w-11 h-11 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="cloud" class="w-6 h-6"></i></span>
                 <div><div class="text-[16px] font-black text-white">${t('Back up & sync')}</div><div class="text-[12px] font-bold text-slate-400 leading-snug">${t('Sign in to keep your workouts safe in the cloud and use them on any phone.')}</div></div></div>
-                <button onclick="window.appActions.cloudSignIn()" ${Cloud.status === 'loading' ? 'disabled' : ''} class="w-full py-3.5 rounded-xl bg-white text-[#1f1f1f] text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-60">${GOOGLE_G}${Cloud.status === 'loading' ? t('Signing in…') : t('Continue with Google')}</button></div>`;
+                <button onclick="window.appActions.cloudSignIn()" ${Cloud.status === 'loading' ? 'disabled' : ''} class="w-full py-3.5 rounded-xl bg-white text-[#1f1f1f] text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-60">${GOOGLE_G}${Cloud.status === 'loading' ? t('Signing in…') : t('Continue with Google')}</button>
+                <button onclick="window.appActions.openEmail('in')" class="w-full mt-2 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button></div>`;
         } else {
             const name = u.displayName || u.name || '', email = u.email || '', photo = u.photoURL || u.photo || '';
             const since = flag && Number(flag.since) > 0 ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { month: 'long', year: 'numeric', numberingSystem: 'latn' }).format(Number(flag.since)) : '';
@@ -3573,20 +3571,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                         <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 max-w-full" title="${esc(Cloud.err)}"><span class="w-2 h-2 rounded-full shrink-0 ${st[0]}"></span><span class="text-[11px] font-bold text-slate-300 truncate">${esc(st[1])}</span></div>
                     </div>
                 </div>
+                ${isPasswordUser() && !Cloud.user.emailVerified ? `<div class="mt-4 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/25 px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold text-slate-300"><i data-lucide="mail-warning" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="flex-1 min-w-0">${t('Please confirm your email: open the link we sent you.')}</span><button onclick="window.appActions.resendVerify()" class="shrink-0 text-[12px] font-black text-[#d4af37] tap-feedback">${t('Send again')}</button></div>` : ''}
                 ${since ? `<div class="mt-4 pt-3 border-t border-white/5 text-[11px] font-bold text-slate-500 flex items-center gap-1.5"><i data-lucide="badge-check" class="w-4 h-4 text-[#d4af37]"></i>${t('Member since {date}', { date: esc(since) })}</div>` : ''}</div>`;
         }
         if (window.lucide) window.lucide.createIcons({ root: el });
         if (typeof updateBackupStatus === 'function') updateBackupStatus();
         if (welcomeOpen()) updateWelcomeUI(); // "Signing in…" on the welcome page too
     };
-    Object.assign(window.appActions, {
-        // Profile → My training chips
-        setTraining: (k, v) => {
-            const row = TRAINING.find(x => x[0] === k); if (!row || !row[2].some(o => o[0] === v)) return;
-            writeItem(PROFILE_KEY, JSON.stringify({ ...getProfile(), [k]: v }));
-            renderTraining();
-        }
-    });
     Object.assign(window.appActions, {
         cloudSignIn: async () => {
             setCloudStatus('loading');
@@ -3612,7 +3603,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             cloudSignedOut();
             window.appActions.showToast(t('Signed out'), 'success');
         }),
-        cloudDelete: () => window.appActions.showConfirm(t('Delete your account?'), t('This deletes your cloud backup and your account. The workouts on this phone stay.'), async () => {
+        // email accounts confirm their password first, so the account can really be deleted after its data
+        cloudDelete: () => window.appActions.showConfirm(t('Delete your account?'), t('This deletes your cloud backup and your account. The workouts on this phone stay.'), () => {
+            if (!Cloud.user) return;
+            if (isPasswordUser()) return window.appActions.openEmail('reauth', () => window.appActions.cloudDeleteNow());
+            window.appActions.cloudDeleteNow();
+        }, true),
+        cloudDeleteNow: async () => {
             if (!Cloud.user) return;
             setCloudStatus('syncing');
             try {
@@ -3638,7 +3635,107 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 cloudSignedOut();
                 window.appActions.showToast(t('Account deleted'), 'success');
             } catch (e) { console.warn(e); setCloudStatus('error', e); window.appActions.showToast(cloudErrorText(e), 'error'); }
-        }, true)
+        }
+    });
+
+    // ✉️ EMAIL SIGN-IN: an account with an email and password (Firebase Authentication), next to Google.
+    // Turned on once in Firebase: Authentication → Sign-in method → Email/Password.
+    // Modes: 'in' sign in, 'up' create an account, 'reset' forgot password, 'reauth' confirm the password (before deleting the account)
+    const isPasswordUser = () => !!Cloud.user && (Cloud.user.providerData || []).some(p => p && p.providerId === 'password')
+        && !(Cloud.user.providerData || []).some(p => p && p.providerId === 'google.com');
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailSt = { mode: 'in', busy: false, then: null };
+    const authErrorText = e => {
+        const c = (e && e.code) || '';
+        if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-login-credentials'].includes(c)) return t('Email or password is wrong.');
+        if (c === 'auth/email-already-in-use') return t('This email already has an account. Sign in instead.');
+        if (c === 'auth/invalid-email' || c === 'auth/missing-email') return t('Please enter a valid email.');
+        if (c === 'auth/weak-password') return t('Use at least 8 characters for your password.');
+        if (c === 'auth/too-many-requests') return t('Too many tries. Wait a few minutes and try again.');
+        if (c === 'auth/operation-not-allowed') return t('Email sign-in is not turned on yet. Please use Google for now.');
+        if (c === 'auth/user-disabled') return t('This account is turned off. Contact us.');
+        return cloudErrorText(e);
+    };
+    const renderEmail = (msg = '', good = false) => {
+        const m = emailSt.mode, keep = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+        const email = keep('em-email') || (m === 'reauth' && Cloud.user ? Cloud.user.email || '' : ''), name = keep('em-name');
+        const title = { in: t('Sign in with email'), up: t('Create your account'), reset: t('Reset your password'), reauth: t('Confirm your password') }[m];
+        const sub = { in: '', up: t('Use your email and a password of at least 8 characters.'), reset: t("Enter your account's email. We'll send you a link to choose a new password."), reauth: t('For your safety, enter your password to delete your account.') }[m];
+        const inp = 'w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-[#d4af37]';
+        const lbl = (txt, html) => `<label class="block"><span class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">${txt}</span>${html}</label>`;
+        const link = (fn, txt) => `<button type="button" onclick="${fn}" class="text-[13px] font-black text-[#d4af37] tap-feedback">${txt}</button>`;
+        const btn = { in: t('Sign in'), up: t('Create account'), reset: t('Send link'), reauth: t('Confirm') }[m];
+        document.getElementById('email-body').innerHTML = `
+            <div class="flex items-center justify-between pb-2"><h3 class="text-lg font-black text-white">${title}</h3>
+                <button type="button" onclick="window.appActions.closeEmail()" class="p-2 bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            ${sub ? `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${sub}</p>` : '<div class="h-2"></div>'}
+            <form onsubmit="event.preventDefault(); window.appActions.emailSubmit()" class="space-y-3" novalidate>
+                ${m === 'up' ? lbl(t('Your name'), `<input id="em-name" type="text" autocomplete="name" maxlength="60" value="${esc(name)}" class="${inp}" dir="auto">`) : ''}
+                ${m === 'reauth' ? `<div class="text-[13px] font-bold text-slate-300" dir="ltr">${esc(email)}</div>` : lbl(t('Email'), `<input id="em-email" type="email" inputmode="email" autocomplete="${m === 'up' ? 'email' : 'username'}" autocapitalize="off" spellcheck="false" maxlength="200" value="${esc(email)}" class="${inp}" dir="ltr">`)}
+                ${m === 'reset' ? '' : lbl(t('Password'), `<div class="relative"><input id="em-pass" type="password" autocomplete="${m === 'up' ? 'new-password' : 'current-password'}" maxlength="200" class="${inp} pe-12" dir="ltr">
+                    <button type="button" onclick="const i=document.getElementById('em-pass');i.type=i.type==='password'?'text':'password'" class="absolute inset-y-0 end-0 px-3.5 text-slate-400 tap-feedback" aria-label="${esc(t('Show password'))}"><i data-lucide="eye" class="w-5 h-5"></i></button></div>`)}
+                <p id="em-msg" class="text-[12px] font-bold leading-snug ${good ? 'text-[#22c55e]' : 'text-red-400'} ${msg ? '' : 'hidden'}" role="alert">${esc(msg)}</p>
+                <button id="em-go" type="submit" ${emailSt.busy ? 'disabled' : ''} class="w-full py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 disabled:opacity-60">${emailSt.busy ? '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>' : ''}${btn}</button>
+            </form>
+            <div class="flex flex-col items-center gap-3 mt-5 mb-2">
+                ${m === 'in' ? link("window.appActions.emailMode('reset')", t('Forgot password?')) + `<span class="text-[13px] font-bold text-slate-400">${t('New here?')} ${link("window.appActions.emailMode('up')", t('Create an account'))}</span>` : ''}
+                ${m === 'up' ? `<span class="text-[13px] font-bold text-slate-400">${t('Have an account?')} ${link("window.appActions.emailMode('in')", t('Sign in'))}</span>` : ''}
+                ${m === 'reset' ? link("window.appActions.emailMode('in')", t('Back to sign in')) : ''}
+            </div>`;
+        if (window.lucide) window.lucide.createIcons({ root: document.getElementById('email-body') });
+    };
+    Object.assign(window.appActions, {
+        openEmail: (mode = 'in', then = null) => {
+            if (mode !== 'reauth' && welcomeOpen() && !getAgree()) return window.appActions.showToast(t('Please agree to the Terms and Privacy Policy first.'), 'error');
+            emailSt.mode = mode; emailSt.then = then; emailSt.busy = false;
+            document.getElementById('email-body').innerHTML = '';
+            renderEmail();
+            const o = document.getElementById('email-overlay'); // closed, or still sliding away: open it (again)
+            if (!o.classList.contains('flex') || o.classList.contains('opacity-0')) { openSheet('email-overlay', 'email-box'); pushBack('email', () => window.appActions.closeEmail()); }
+            setTimeout(() => { const f = document.getElementById(mode === 'up' ? 'em-name' : mode === 'reauth' ? 'em-pass' : 'em-email'); if (f) f.focus(); }, 350);
+        },
+        closeEmail: () => { popBack('email'); closeSheet('email-overlay', 'email-box'); emailSt.then = null; },
+        emailMode: mode => { emailSt.mode = mode; renderEmail(); },
+        emailSubmit: async () => {
+            if (emailSt.busy) return;
+            const m = emailSt.mode, val = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+            const email = val('em-email').toLowerCase(), pass = (document.getElementById('em-pass') || {}).value || '', name = val('em-name');
+            if (m !== 'reauth' && !EMAIL_RE.test(email)) return renderEmail(t('Please enter a valid email.'));
+            if (m === 'up' && !name) return renderEmail(t('Please enter your name.'));
+            if (m !== 'reset' && !pass) return renderEmail(t('Please enter your password.'));
+            if (m === 'up' && pass.length < 8) return renderEmail(t('Use at least 8 characters for your password.'));
+            if (navigator.onLine === false) return renderEmail(t('No internet connection. Try again when online.'));
+            emailSt.busy = true; renderEmail();
+            try {
+                await loadFirebase();
+                if (m === 'in') await Cloud.auth.signInWithEmailAndPassword(email, pass);
+                else if (m === 'up') {
+                    const cred = await Cloud.auth.createUserWithEmailAndPassword(email, pass);
+                    await cred.user.updateProfile({ displayName: name.slice(0, 60) });
+                    cred.user.sendEmailVerification().catch(() => {});
+                    // the name arrived after sign-in started: put it on the account card and in the next upload
+                    const f = getCloudFlag(); if (f && f.uid === cred.user.uid) writeItem(CLOUD_KEY, JSON.stringify({ ...f, name: name.slice(0, 60) }));
+                    Cloud.sent.main = ''; scheduleFlush(500); renderAccount();
+                } else if (m === 'reset') {
+                    try { await Cloud.auth.sendPasswordResetEmail(email); } catch (e) { if (e.code !== 'auth/user-not-found') throw e; }
+                    emailSt.busy = false; emailSt.mode = 'in';
+                    return renderEmail(t('If this email has an account, a link to choose a new password is on its way. Check your inbox.'), true);
+                } else if (m === 'reauth') {
+                    await Cloud.auth.currentUser.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(Cloud.auth.currentUser.email, pass));
+                }
+                const then = emailSt.then;
+                emailSt.busy = false; window.appActions.closeEmail();
+                if (then) then();
+            } catch (e) {
+                console.warn('Email sign-in', e);
+                emailSt.busy = false; renderEmail(authErrorText(e));
+            }
+        },
+        resendVerify: async () => {
+            if (!Cloud.user) return;
+            try { await Cloud.user.sendEmailVerification(); window.appActions.showToast(t('Email sent. Check your inbox.'), 'success'); }
+            catch (e) { window.appActions.showToast(authErrorText(e), 'error'); }
+        }
     });
 
 
@@ -3670,9 +3767,9 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const b = document.getElementById('code-body'); b.innerHTML = body;
         if (window.lucide) window.lucide.createIcons({ root: b });
         const o = document.getElementById('code-overlay');
-        if (!o.classList.contains('flex')) { openSheet('code-overlay', 'code-box'); pushBack('code', () => window.appActions.closeCodeSheet()); }
+        if (!o.classList.contains('flex') || o.classList.contains('opacity-0')) { openSheet('code-overlay', 'code-box'); pushBack('code', () => window.appActions.closeCodeSheet()); }
     };
-    const shareBody = (w, code) => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Give this code to a friend. They open Apex Lift → Profile → Add a routine by code.')}</p>
+    const shareBody = (w, code) => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Send the link, or give the code to a friend: in Apex Lift they open Edit → My routines → Add a routine by code.')}</p>
         <div class="rounded-2xl bg-black/40 border border-white/10 py-6 px-4 text-center mb-4">
             <div class="text-[12px] font-black text-slate-400 mb-2 truncate">${esc(t(w.name))}</div>
             ${code ? `<div class="code-big" dir="ltr">${fmtCode(code)}</div>` : `<div class="flex items-center justify-center gap-2 h-[41px] text-[13px] font-black text-slate-400"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>${t('Creating code…')}</div>`}
@@ -3871,7 +3968,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         { icon: 'dumbbell', title: 'Your training, organised', text: 'Your weekly plan, every set you lift and your progress — all in one place.', art: 'plan' },
         { icon: 'check-circle-2', title: 'Log a set in one tap', text: 'Your weights from last time are filled in. Tap ✓ after each set and the rest timer starts by itself.', art: 'sets' },
         { icon: 'trending-up', title: 'Watch yourself get stronger', text: 'The app tells you when to add weight, and shows your records and weekly volume per muscle.', art: 'chart' },
-        { icon: 'shield-check', title: 'Sign in to start', text: 'Your workouts are saved to your Google account and kept in sync on all your phones.', art: 'gate' }
+        { icon: 'shield-check', title: 'Sign in to start', text: 'Your workouts are saved to your account and kept in sync on all your phones.', art: 'gate' }
     ];
     const welcomeArt = a => {
         if (a === 'plan') return `<div class="w-full max-w-[290px] space-y-2.5">${[['Push', '6'], ['Pull', '6'], ['Legs', '5']].map(([n, c], i) => `<div class="flex items-center gap-3 rounded-2xl bg-white/[0.04] border border-white/10 px-4 py-3 float-${i}"><span class="w-9 h-9 rounded-full ${i === 0 ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300'} flex items-center justify-center text-[12px] font-black">${tDay(['SAT', 'SUN', 'MON'][i]).slice(0, 3)}</span><span class="flex-1 text-[15px] font-black text-white">${t(n)}</span><span class="text-[11px] font-bold text-slate-400">${t('{n} exercises', { n: c })}</span></div>`).join('')}</div>`;
@@ -3901,7 +3998,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         const gate = document.getElementById('welcome-gate');
         if (gate) gate.innerHTML = `${isSignedIn()
                 ? `<button id="welcome-continue" onclick="window.appActions.welcomeContinue()" ${agreed ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback disabled:opacity-40 transition-opacity">${t('Continue')}</button>`
-                : `<button id="welcome-google" onclick="window.appActions.welcomeSignIn()" ${agreed && !loading ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-white text-[#1f1f1f] text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity">${GOOGLE_G}${loading ? t('Signing in…') : t('Continue with Google')}</button>`}
+                : `<button id="welcome-google" onclick="window.appActions.welcomeSignIn()" ${agreed && !loading ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-white text-[#1f1f1f] text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity">${GOOGLE_G}${loading ? t('Signing in…') : t('Continue with Google')}</button>
+                   <button id="welcome-email" onclick="window.appActions.openEmail('in')" ${agreed && !loading ? '' : 'disabled'} class="w-full mt-2.5 py-4 rounded-2xl bg-white/5 border border-white/15 text-white text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button>`}
                <label class="flex items-start gap-3 mt-4 cursor-pointer text-start" dir="${isAR ? 'rtl' : 'ltr'}"><input id="welcome-agree" type="checkbox" ${agreed ? 'checked' : ''} onchange="window.appActions.welcomeAgree(this.checked)" class="mt-0.5 w-5 h-5 shrink-0 accent-[#d4af37]"><span class="text-[12px] font-bold text-slate-400 leading-snug">${t('I agree to the {terms} and the {privacy}.', { terms: `<a href="terms.html" target="_blank" rel="noopener" class="text-[#d4af37] underline">${t('Terms of Use')}</a>`, privacy: `<a href="privacy.html" target="_blank" rel="noopener" class="text-[#d4af37] underline">${t('Privacy Policy')}</a>` })}</span></label>`;
         if (gate && !isSignedIn() && !requireSignIn()) gate.insertAdjacentHTML('beforeend', `<button id="welcome-later" onclick="window.appActions.welcomeLater()" class="w-full mt-3 py-3 text-[13px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${t('Not now')}</button>`);
         document.getElementById('welcome-actions').innerHTML = last ? '' : `<div class="flex gap-3"><button onclick="window.appActions.welcomeGo(${W_SLIDES.length - 1})" class="px-5 py-4 rounded-2xl text-[13px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${t('Skip')}</button><button onclick="window.appActions.welcomeGo(${welcomeIdx + 1})" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button></div>`;
@@ -3980,7 +4078,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         refreshAfterCloud();
         Cloud.sent = {}; return cloudFlush();
     };
-    const kindLabel = k => k === 'auto' ? t('Automatic') : k === 'before-restore' ? t('Before restore') : k === 'before-coach' ? t('Before coach update') : t('Manual');
+    const kindLabel = k => k === 'auto' ? t('Automatic') : k === 'before-restore' ? t('Before restore') : k === 'before-import' ? t('Before import') : k === 'before-coach' ? t('Before coach update') : t('Manual');
     const renderBackups = async () => {
         const list = document.getElementById('backups-list');
         list.innerHTML = `<div class="p-8 text-center text-[12px] font-bold text-slate-500">${t('Loading…')}</div>`;
@@ -3988,7 +4086,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             const all = await listBackups();
             if (!all.length) { list.innerHTML = `<div class="p-8 text-center text-[13px] font-bold text-slate-500">${t('No backups yet. Tap Back up now to make the first one.')}</div>`; return; }
             list.innerHTML = all.map(b => `<div class="flex items-center gap-3 px-5 py-3.5 border-b border-white/5">
-                <span class="w-10 h-10 rounded-full ${b.kind === 'auto' ? 'bg-white/5 text-slate-300' : 'bg-[#d4af37]/15 text-[#d4af37]'} flex items-center justify-center shrink-0"><i data-lucide="${b.kind === 'auto' ? 'clock' : b.kind === 'before-restore' ? 'rotate-ccw' : 'save'}" class="w-5 h-5"></i></span>
+                <span class="w-10 h-10 rounded-full ${b.kind === 'auto' ? 'bg-white/5 text-slate-300' : 'bg-[#d4af37]/15 text-[#d4af37]'} flex items-center justify-center shrink-0"><i data-lucide="${b.kind === 'auto' ? 'clock' : b.kind === 'before-restore' || b.kind === 'before-import' ? 'rotate-ccw' : 'save'}" class="w-5 h-5"></i></span>
                 <div class="flex-1 min-w-0"><div class="text-[14px] font-black text-white">${esc(fmtDate(b.createdAt, true))}</div><div class="text-[11px] font-bold text-slate-400">${esc(kindLabel(b.kind))} · ${t('{n} workouts', { n: Number(b.workouts) || 0 })} · ${t('{n} exercises', { n: Number(b.exercises) || 0 })}</div></div>
                 <button onclick="window.appActions.restoreBackup(${jsArg(b.id)}, ${jsArg(fmtDate(b.createdAt, true))})" class="shrink-0 px-3.5 py-2 rounded-lg bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-white tap-feedback">${t('Restore')}</button>
             </div>`).join('');
@@ -4054,7 +4152,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         },
         setAbout: (field, value) => {
             const b = getBody(), v = latinDigits(value).trim();
-            if (field === 'sex') b.sex = b.sex === value ? undefined : value;
+            if (b.locked && LOCKED_ABOUT.includes(field)) return window.appActions.showToast(t("This can't be changed."), 'error');
+            if (field === 'sex') b.sex = ['male', 'female', 'na'].includes(value) ? value : b.sex;
             else if (field === 'birthYear') { const y = parseInt(v); if (!v) delete b.birthYear; else if (y >= thisYear() - 100 && y <= thisYear() - 5) b.birthYear = y; else window.appActions.showToast(t('Please check this number.'), 'error'); }
             else if (field === 'heightCm') { const h = parseFloat(v); if (!v) delete b.heightCm; else if (h >= 100 && h <= 250) b.heightCm = h; else window.appActions.showToast(t('Please check this number.'), 'error'); }
             else if (field === 'weightKg') {

@@ -71,6 +71,14 @@
         </div>
     </div>
 
+    <!-- Email sign-in: sign in, create an account, reset the password, or confirm the password (filled by app.js). Above the welcome page. -->
+    <div id="email-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[9995] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeEmail()">
+        <div id="email-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[92dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div id="email-body" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+        </div>
+    </div>
+
     <!-- Routine codes: share a routine with a code, or add one from a friend's code (filled by app.js) -->
     <div id="code-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeCodeSheet()">
         <div id="code-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[90dvh] transform translate-y-full transition-transform duration-300">
@@ -200,95 +208,11 @@
                 <button onclick="window.appActions.closeBackupModal()" class="text-slate-400 hover:text-white tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             
-            <p class="text-[12px] font-bold text-slate-400 mb-5 leading-relaxed" data-i18n="Choose what goes in the file. Save it, send it to a friend, or give it to an AI assistant to review your training.">Choose what goes in the file. Save it, send it to a friend, or give it to an AI assistant to review your training.</p>
-            
-            <div class="space-y-3 mb-6">
-                <label class="flex items-center justify-between p-3.5 bg-black/40 rounded-xl border border-white/5 cursor-pointer tap-feedback">
-                    <div class="flex flex-col">
-                        <span class="text-[12px] font-black text-white uppercase tracking-wider"><span data-i18n="Workout history">Workout history</span></span>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><span data-i18n="Saves weights & history">Saves weights & history</span></span>
-                    </div>
-                    <input type="checkbox" id="backup-opt-progress" class="w-5 h-5 accent-[#d4af37] bg-white/10 border-none rounded" checked>
-                </label>
+            <p class="text-[12px] font-bold text-slate-400 mb-5 leading-relaxed" data-i18n="One file with your routines, workout history and settings. Save it, send it to a friend, or give it to an AI assistant to review your training.">One file with your routines, workout history and settings. Save it, send it to a friend, or give it to an AI assistant to review your training.</p>
 
-                <label class="flex items-center justify-between p-3.5 bg-black/40 rounded-xl border border-white/5 cursor-pointer tap-feedback">
-                    <div class="flex flex-col">
-                        <span class="text-[12px] font-black text-white uppercase tracking-wider"><span data-i18n="Workout Routine">Workout Routine</span></span>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><span data-i18n="Saves current schedule">Saves current schedule</span></span>
-                    </div>
-                    <input type="checkbox" id="backup-opt-schedule" class="w-5 h-5 accent-[#d4af37] bg-white/10 border-none rounded" checked>
-                </label>
-
-                <label class="flex items-center justify-between p-3.5 bg-black/40 rounded-xl border border-white/5 cursor-pointer tap-feedback">
-                    <div class="flex flex-col">
-                        <span class="text-[12px] font-black text-white uppercase tracking-wider"><span data-i18n="App Settings">App Settings</span></span>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><span data-i18n="Saves Start Day & Rest Timer">Saves Start Day & Rest Timer</span></span>
-                    </div>
-                    <input type="checkbox" id="backup-opt-settings" class="w-5 h-5 accent-[#d4af37] bg-white/10 border-none rounded" checked>
-                </label>
-            </div>
-            
             <button onclick="window.appActions.executeSmartBackup('file')" class="w-full rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center gap-2"><i data-lucide="share" class="w-4 h-4"></i><span data-i18n="Save or share file">Save or share file</span></button>
             <button onclick="window.appActions.executeSmartBackup('copy')" class="w-full mt-2 rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest text-white bg-white/5 border border-white/10 tap-feedback flex items-center justify-center gap-2"><i data-lucide="copy" class="w-4 h-4"></i><span data-i18n="Copy as text">Copy as text</span></button>
             <p class="text-[11px] font-bold text-slate-500 mt-3 leading-snug text-center" data-i18n="Copy as text: paste it into a chat with an AI assistant.">Copy as text: paste it into a chat with an AI assistant.</p>
-        </div>
-    </div>
-    <div id="smart-restore-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 px-6">
-        <div id="smart-restore-box" class="glass-card p-6 w-full max-w-sm transform scale-95 transition-transform duration-300 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
-                <div class="flex items-center gap-3">
-                    <i data-lucide="database" class="w-5 h-5 text-[#d4af37]"></i>
-                    <h3 class="text-lg font-black text-white uppercase tracking-tighter"><span data-i18n="Restore Manager">Restore Manager</span></h3>
-                </div>
-                <button onclick="window.appActions.closeRestoreModal()" class="text-slate-400 hover:text-white tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            
-            <p class="text-[11px] font-bold text-slate-400 mb-5 leading-relaxed"><span data-i18n="Select exactly what you want to extract from this backup file.">Select exactly what you want to extract from this backup file.</span></p>
-            
-            <div class="space-y-3 mb-6">
-                <label class="flex items-center justify-between p-3.5 bg-black/40 rounded-xl border border-white/5 cursor-pointer tap-feedback">
-                    <div class="flex flex-col">
-                        <span class="text-[12px] font-black text-white uppercase tracking-wider"><span data-i18n="Workout history">Workout history</span></span>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5" id="restore-progress-desc"><span data-i18n="Scans for weights & history">Scans for weights & history</span></span>
-                    </div>
-                    <input type="checkbox" id="restore-opt-progress" class="w-5 h-5 accent-[#d4af37] bg-white/10 border-none rounded" checked>
-                </label>
-
-                <label class="flex items-center justify-between p-3.5 bg-black/40 rounded-xl border border-white/5 cursor-pointer tap-feedback">
-                    <div class="flex flex-col">
-                        <span class="text-[12px] font-black text-white uppercase tracking-wider"><span data-i18n="Workout Routine">Workout Routine</span></span>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5" id="restore-schedule-desc"><span data-i18n="Overwrites current schedule">Overwrites current schedule</span></span>
-                    </div>
-                    <input type="checkbox" id="restore-opt-schedule" class="w-5 h-5 accent-[#d4af37] bg-white/10 border-none rounded">
-                </label>
-
-                <label class="flex items-center justify-between p-3.5 bg-black/40 rounded-xl border border-white/5 cursor-pointer tap-feedback">
-                    <div class="flex flex-col">
-                        <span class="text-[12px] font-black text-white uppercase tracking-wider"><span data-i18n="App Settings">App Settings</span></span>
-                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5" id="restore-settings-desc"><span data-i18n="Restores Start Day & Rest Timer">Restores Start Day & Rest Timer</span></span>
-                    </div>
-                    <input type="checkbox" id="restore-opt-settings" class="w-5 h-5 accent-[#d4af37] bg-white/10 border-none rounded">
-                </label>
-            </div>
-            
-            <button onclick="window.appActions.executeSmartRestore()" class="w-full rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)]"><i data-lucide="check-circle" class="w-4 h-4 inline mr-1 -mt-0.5"></i> <span data-i18n="Merge Selected Data">Merge Selected Data</span></button>
-        </div>
-    </div>
-    <div id="smart-mapping-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 px-6">
-        <div id="smart-mapping-box" class="glass-card p-6 w-full max-w-sm transform scale-95 transition-transform duration-300 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] max-h-[85vh] flex flex-col">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10 shrink-0">
-                <div class="flex items-center gap-3">
-                    <i data-lucide="git-merge" class="w-5 h-5 text-[#d4af37]"></i>
-                    <h3 class="text-lg font-black text-white uppercase tracking-tighter"><span data-i18n="Link Progress">Link Progress</span></h3>
-                </div>
-                <button onclick="window.appActions.closeMappingModal()" class="text-slate-400 hover:text-white tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            
-            <p class="text-[11px] font-bold text-slate-400 mb-5 leading-relaxed shrink-0"><span data-i18n="Match old backup exercises to your active routine. Unlinked data will be skipped.">Match old backup exercises to your active routine. Unlinked data will be skipped.</span></p>
-            
-            <div id="mapping-list" class="space-y-3 mb-6 overflow-y-auto flex-1 pr-2 rounded-xl"></div>
-            
-            <button onclick="window.appActions.executeMappedMerge()" class="w-full rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)] shrink-0"><i data-lucide="check-circle" class="w-4 h-4 inline mr-1 -mt-0.5"></i> <span data-i18n="Confirm & Merge">Confirm & Merge</span></button>
         </div>
     </div>
     <!-- Exercise picker (slides up from the bottom) -->
@@ -332,12 +256,11 @@
             <nav id="nav-container" class="mb-4"></nav>
             <main id="workout-container" class="space-y-4"></main>
 
-            <!-- Profile: you (account + stats), About you, My training, then the settings in grouped cards -->
+            <!-- Profile: you (account + stats), About you, then the settings in grouped cards -->
             <section id="profile-view" class="hidden pb-6">
                 <div id="account-card" class="mb-3"></div>
                 <div id="profile-stats" class="mb-6"></div>
                 <div id="about-card" class="mb-6"></div>
-                <div id="training-card" class="mb-6"></div>
 
                 <h3 class="pf-h" data-i18n="Workout">Workout</h3>
                 <div class="pf-group mb-6">
@@ -392,13 +315,8 @@
                     </label>
                 </div>
 
-                <h3 class="pf-h" data-i18n="Routines & data">Routines & data</h3>
+                <h3 class="pf-h" data-i18n="Program & data">Program & data</h3>
                 <div class="pf-group mb-6">
-                    <button onclick="window.appActions.openCodeSheet()" class="pf-row tap-feedback">
-                        <span class="pf-ic"><i data-lucide="ticket"></i></span>
-                        <span class="pf-label"><span data-i18n="Add a routine by code">Add a routine by code</span><span class="pf-sub" data-i18n="Paste a code a friend gave you">Paste a code a friend gave you</span></span>
-                        <i data-lucide="chevron-right" class="pf-chev"></i>
-                    </button>
                     <button onclick="window.appActions.openBackupModal()" class="pf-row tap-feedback">
                         <span class="pf-ic"><i data-lucide="share"></i></span>
                         <span class="pf-label"><span data-i18n="Export data">Export data</span><span id="backup-age" class="pf-sub"></span></span>
@@ -417,7 +335,7 @@
                     </button>
                     <button onclick="window.appActions.startWizard(false)" class="pf-row tap-feedback">
                         <span class="pf-ic"><i data-lucide="wand-2"></i></span>
-                        <span class="pf-label"><span data-i18n="Set up my program again">Set up my program again</span><span class="pf-sub" data-i18n="Answer the setup questions again">Answer the setup questions again</span></span>
+                        <span class="pf-label"><span data-i18n="Set up my program again">Set up my program again</span><span class="pf-sub" data-i18n="Find the program that fits you best">Find the program that fits you best</span></span>
                         <i data-lucide="chevron-right" class="pf-chev"></i>
                     </button>
                 </div>

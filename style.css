@@ -192,9 +192,6 @@ body.has-mini #toast-container { bottom: calc(150px + env(safe-area-inset-bottom
 .pf-switch:checked::after { transform: translateX(18px); }
 .pf-switch:focus-visible, .pf-row:focus-visible { outline: 2px solid #d4af37; outline-offset: -2px; }
 .pf-foot { margin-top: 28px; text-align: center; font-size: 11px; font-weight: 800; color: #64748b; line-height: 1.8; }
-/* small chips (My training) */
-.pf-chip { padding: 8px 12px; border-radius: 12px; font-size: 12px; font-weight: 900; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.05); color: #fff; }
-.pf-chip.is-on { background: #d4af37; border-color: #d4af37; color: #000; }
 /* routine code: big letters, easy to read aloud */
 .code-big { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 34px; font-weight: 900; letter-spacing: 4px; color: #d4af37; }
 .code-input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 24px; font-weight: 900; letter-spacing: 3px; text-align: center; text-transform: uppercase; outline: none; }
@@ -210,8 +207,6 @@ body.has-mini #toast-container { bottom: calc(150px + env(safe-area-inset-bottom
 :root[data-theme="light"] .pf-h, :root[data-theme="light"] .pf-sub, :root[data-theme="light"] .pf-foot, :root[data-theme="light"] .pf-chev { color: #556273; }
 :root[data-theme="light"] .pf-switch { background: rgba(120, 120, 128, 0.2); }
 :root[data-theme="light"] .pf-switch:checked { background: #d4af37; }
-:root[data-theme="light"] .pf-chip { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.1); color: #111318; }
-:root[data-theme="light"] .pf-chip.is-on { background: #d4af37; border-color: #d4af37; color: #000; }
 :root[data-theme="light"] .code-input { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.12); color: #111318; }
 :root[data-theme="light"] .code-big { color: #9a7810; }
 /* a newly chosen section pops in */

@@ -31,8 +31,10 @@ window.ApexCoach = (() => {
             const [title, list] = WORKOUTS[slot];
             return { id: i + 1, day, title, savedTitle: title, isRest: false, recoveryType: null, exercises: list.map(([name, muscle, sets, reps], j) => {
                 let n = parseInt(sets);
+                if (S.client.exp === 'none') n = Math.max(2, n - 1);
                 if (S.client.exp === 'new' && j >= 2) n = Math.max(2, n - 1);
                 if (S.client.exp === 'adv' && j < 2) n = Math.max(n, Math.min(4, n + 1));
+                if (S.client.exp === 'pro' && j < 3) n = Math.max(n, Math.min(5, n + 1));
                 return { muscle, name, sets: String(n), reps };
             }) };
         })

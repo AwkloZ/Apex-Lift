@@ -45,7 +45,7 @@ service cloud.firestore {
         allow read: if isOwner(uid) || isAdmin();
         allow create, update: if isOwner(uid)
           && fields().keys().hasOnly(['createdAt', 'kind', 'parts', 'workouts', 'exercises', 'routines', 'size'])
-          && fields().kind in ['auto', 'manual', 'before-restore', 'before-coach']
+          && fields().kind in ['auto', 'manual', 'before-restore', 'before-import', 'before-coach']
           && fields().createdAt is int && fields().workouts is int && fields().exercises is int
           && fields().routines is int && fields().size is int
           && fields().parts is int && fields().parts >= 1 && fields().parts <= 30;
