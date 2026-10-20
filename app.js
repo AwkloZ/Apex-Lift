@@ -398,12 +398,10 @@
         "Could not save the backup. Check your connection.": "تعذر حفظ النسخة. تحقق من الاتصال.",
         "Did the set? Tap ✓. Change the KG or reps first if they were different.": "أنهيت المجموعة؟ اضغط ✓. وعدّل الوزن أو التكرارات أولًا إذا كانت مختلفة.",
         "Got it": "فهمت",
-        "I agree to the {terms} and the {privacy}.": "أوافق على {terms} و{privacy}.",
         "Loading…": "جارٍ التحميل…",
         "Manual": "يدوية",
         "Next": "التالي",
         "No backups yet. Tap Back up now to make the first one.": "لا توجد نسخ بعد. اضغط «انسخ الآن» لإنشاء أول نسخة.",
-        "Please agree to the Terms and Privacy Policy first.": "يرجى الموافقة على الشروط وسياسة الخصوصية أولًا.",
         "Privacy Policy": "سياسة الخصوصية",
         "Rest timer: it starts by itself. Use −15 / +15 or Skip.": "مؤقت الراحة يبدأ تلقائيًا. استخدم −15 / +15 أو تخطي.",
         "Restore": "استرجاع",
@@ -662,6 +660,9 @@
         "One symbol, like ! @ # $ %": "رمز واحد على الأقل، مثل ! @ # $ %",
         "Your password needs at least 8 characters, a capital letter and a symbol.": "كلمة المرور يجب أن تكون 8 أحرف على الأقل وفيها حرف كبير ورمز.",
         "Use your email and a strong password.": "استخدم بريدك وكلمة مرور قوية.",
+        "Before you continue": "قبل المتابعة",
+        "Please read and agree to our Terms of Use and Privacy Policy. They explain how Apex Lift works and how your data is kept safe.": "يرجى قراءة شروط الاستخدام وسياسة الخصوصية والموافقة عليها. توضّح كيف يعمل Apex Lift وكيف تُحفظ بياناتك بأمان.",
+        "I agree, continue": "أوافق، متابعة",
     };
     const t = (en, vars) => {
         let out = (isAR && Object.prototype.hasOwnProperty.call(AR, en) && AR[en]) || en;
@@ -973,7 +974,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '32';
+    const APP_VERSION = '33';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3531,7 +3532,11 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         try { localStorage.removeItem(CLOUD_KEY); } catch (e) {}
         setCloudStatus('off');
         // an account is needed to use the app: back to the sign-in page (workouts stay on the phone)
-        if (gateOn() && !wasPending && requireSignIn()) showWelcome(true);
+        if (gateOn() && !wasPending && requireSignIn()) {
+            // the setup questions (if open) belong to the account that just left: close them so the sign-in page is on top
+            const W = window.appState.wiz; if (W && !W.done) { W.done = true; popBack('wizard'); closeModal('onboarding-overlay', 'onboarding-box', 300); }
+            showWelcome(true);
+        }
     };
     window.addEventListener('online', () => cloudResume(true));
     window.addEventListener('offline', () => { if (Cloud.user) setCloudStatus('offline'); });
@@ -3677,9 +3682,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const link = (fn, txt) => `<button type="button" onclick="${fn}" class="text-[13px] font-bold text-[#d4af37] tap-feedback">${txt}</button>`;
         const btn = { in: t('Sign in'), up: t('Create account'), reset: t('Send link'), reauth: t('Confirm') }[m];
         document.getElementById('email-body').innerHTML = `
-            <div class="flex items-center justify-between pb-2"><h3 class="text-lg font-black text-white">${title}</h3>
-                <button type="button" onclick="window.appActions.closeEmail()" class="p-2 bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button></div>
-            ${sub ? `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${sub}</p>` : '<div class="h-2"></div>'}
+            <div class="relative text-center pt-3 pb-1">
+                <button type="button" onclick="window.appActions.closeEmail()" class="absolute -top-1 -end-1 p-2 bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <span class="w-14 h-14 mx-auto mb-3 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center"><i data-lucide="${{ in: 'mail', up: 'user-plus', reset: 'key-round', reauth: 'shield-check' }[m]}" class="w-7 h-7"></i></span>
+                <h3 class="text-xl font-black text-white">${title}</h3>
+            </div>
+            ${sub ? `<p class="text-[13px] font-bold text-slate-400 text-center mt-1 mb-5 leading-snug">${sub}</p>` : '<div class="h-4"></div>'}
             <form onsubmit="event.preventDefault(); window.appActions.emailSubmit()" class="space-y-3" novalidate>
                 ${m === 'up' ? lbl(t('Your name'), `<input id="em-name" type="text" autocomplete="name" maxlength="60" value="${esc(name)}" class="${inp}" dir="auto">`) : ''}
                 ${m === 'reauth' ? `<div class="text-[13px] font-bold text-slate-300" dir="ltr">${esc(email)}</div>` : lbl(t('Email'), `<input id="em-email" type="email" inputmode="email" autocomplete="${m === 'up' ? 'email' : 'username'}" autocapitalize="off" spellcheck="false" maxlength="200" value="${esc(email)}" class="${inp}" dir="ltr">`)}
@@ -3698,15 +3706,15 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
     Object.assign(window.appActions, {
         openEmail: (mode = 'in', then = null) => {
-            if (mode !== 'reauth' && welcomeOpen() && !getAgree()) return window.appActions.showToast(t('Please agree to the Terms and Privacy Policy first.'), 'error');
+            if (mode !== 'reauth' && welcomeOpen() && !getAgree()) return window.appActions.needAgree(() => window.appActions.openEmail(mode, then));
             emailSt.mode = mode; emailSt.then = then; emailSt.busy = false;
             document.getElementById('email-body').innerHTML = '';
             renderEmail();
             const o = document.getElementById('email-overlay'); // closed, or still sliding away: open it (again)
-            if (!o.classList.contains('flex') || o.classList.contains('opacity-0')) { openSheet('email-overlay', 'email-box'); pushBack('email', () => window.appActions.closeEmail()); }
+            if (!o.classList.contains('flex') || o.classList.contains('opacity-0')) { openModal('email-overlay', 'email-box'); pushBack('email', () => window.appActions.closeEmail()); }
             setTimeout(() => { const f = document.getElementById(mode === 'up' ? 'em-name' : mode === 'reauth' ? 'em-pass' : 'em-email'); if (f) f.focus(); }, 350);
         },
-        closeEmail: () => { popBack('email'); closeSheet('email-overlay', 'email-box'); emailSt.then = null; },
+        closeEmail: () => { popBack('email'); if (document.activeElement) document.activeElement.blur(); closeModal('email-overlay', 'email-box'); emailSt.then = null; },
         emailMode: mode => { emailSt.mode = mode; renderEmail(); },
         // ticks each password rule while typing (new accounts)
         passTyped: v => {
@@ -4012,13 +4020,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const updateWelcomeUI = () => {
         const last = welcomeIdx === W_SLIDES.length - 1, loading = Cloud.status === 'loading';
         document.getElementById('welcome-dots').innerHTML = W_SLIDES.map((_, i) => `<span class="h-2 rounded-full transition-all duration-300 ${i === welcomeIdx ? 'w-6 bg-[#d4af37]' : 'w-2 bg-white/20'}"></span>`).join('');
-        const agreed = !!getAgree();
         const gate = document.getElementById('welcome-gate');
+        // the Terms and Privacy Policy are agreed in a pop-up after choosing Google or email (see needAgree)
         if (gate) gate.innerHTML = `${isSignedIn()
-                ? `<button id="welcome-continue" onclick="window.appActions.welcomeContinue()" ${agreed ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback disabled:opacity-40 transition-opacity">${t('Continue')}</button>`
-                : `<button id="welcome-google" onclick="window.appActions.welcomeSignIn()" ${agreed && !loading ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-white text-[#1f1f1f] text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity">${GOOGLE_G}${loading ? t('Signing in…') : t('Continue with Google')}</button>
-                   <button id="welcome-email" onclick="window.appActions.openEmail('in')" ${agreed && !loading ? '' : 'disabled'} class="w-full mt-2.5 py-4 rounded-2xl bg-white/5 border border-white/15 text-white text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button>`}
-               <label class="flex items-start gap-3 mt-4 cursor-pointer text-start" dir="${isAR ? 'rtl' : 'ltr'}"><input id="welcome-agree" type="checkbox" ${agreed ? 'checked' : ''} onchange="window.appActions.welcomeAgree(this.checked)" class="mt-0.5 w-5 h-5 shrink-0 accent-[#d4af37]"><span class="text-[12px] font-bold text-slate-400 leading-snug">${t('I agree to the {terms} and the {privacy}.', { terms: `<a href="terms.html" target="_blank" rel="noopener" class="text-[#d4af37] underline">${t('Terms of Use')}</a>`, privacy: `<a href="privacy.html" target="_blank" rel="noopener" class="text-[#d4af37] underline">${t('Privacy Policy')}</a>` })}</span></label>`;
+                ? `<button id="welcome-continue" onclick="window.appActions.welcomeContinue()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback disabled:opacity-40 transition-opacity">${t('Continue')}</button>`
+                : `<button id="welcome-google" onclick="window.appActions.welcomeSignIn()" ${loading ? 'disabled' : ''} class="w-full py-4 rounded-2xl bg-white text-[#1f1f1f] text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity">${GOOGLE_G}${loading ? t('Signing in…') : t('Continue with Google')}</button>
+                   <button id="welcome-email" onclick="window.appActions.openEmail('in')" ${loading ? 'disabled' : ''} class="w-full mt-2.5 py-4 rounded-2xl bg-white/5 border border-white/15 text-white text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button>`}
+               <p class="text-[12px] font-bold text-slate-500 text-center mt-4"><a href="terms.html" target="_blank" rel="noopener" class="underline underline-offset-2">${t('Terms of Use')}</a> · <a href="privacy.html" target="_blank" rel="noopener" class="underline underline-offset-2">${t('Privacy Policy')}</a></p>`;
         if (gate && !isSignedIn() && !requireSignIn()) gate.insertAdjacentHTML('beforeend', `<button id="welcome-later" onclick="window.appActions.welcomeLater()" class="w-full mt-3 py-3 text-[13px] font-bold text-slate-400 tap-feedback">${t('Not now')}</button>`);
         document.getElementById('welcome-actions').innerHTML = last ? '' : `<div class="flex gap-3"><button onclick="window.appActions.welcomeGo(${W_SLIDES.length - 1})" class="px-5 py-4 rounded-2xl text-[13px] font-bold text-slate-400 tap-feedback">${t('Skip')}</button><button onclick="window.appActions.welcomeGo(${welcomeIdx + 1})" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button></div>`;
         if (window.lucide) window.lucide.createIcons({ root: document.getElementById('welcome-overlay') });
@@ -4166,10 +4174,32 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             box.scrollTo({ left: welcomeIdx * box.clientWidth, behavior: instant ? 'auto' : 'smooth' });
             updateWelcomeUI();
         },
-        welcomeAgree: on => {
-            try { if (on) localStorage.setItem(AGREE_KEY, JSON.stringify({ v: TERMS_VERSION, at: Date.now() })); else localStorage.removeItem(AGREE_KEY); } catch (e) {}
-            updateWelcomeUI();
+        // Terms of Use + Privacy Policy pop-up, shown once after choosing Google or email (or Continue, when a new
+        // version needs agreeing). Agree runs the chosen sign-in straight away, in the same tap (so Google's window can open).
+        needAgree: next => {
+            if (getAgree()) return next();
+            window.appState.agreeNext = next;
+            const link = (href, txt) => `<a href="${href}" target="_blank" rel="noopener" class="flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-[13px] font-black text-white tap-feedback">${txt}<i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 shrink-0"></i></a>`;
+            const box = document.getElementById('agree-box');
+            box.innerHTML = `<div class="text-center" dir="${isAR ? 'rtl' : 'ltr'}">
+                <span class="w-14 h-14 mx-auto mb-4 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center"><i data-lucide="shield-check" class="w-7 h-7"></i></span>
+                <h3 id="agree-title" class="text-xl font-black text-white mb-2">${t('Before you continue')}</h3>
+                <p class="text-[13px] font-bold text-slate-400 leading-relaxed mb-5">${t('Please read and agree to our Terms of Use and Privacy Policy. They explain how Apex Lift works and how your data is kept safe.')}</p>
+                <div class="space-y-2 mb-5 text-start">${link('terms.html', t('Terms of Use'))}${link('privacy.html', t('Privacy Policy'))}</div>
+                <button id="agree-yes" onclick="window.appActions.agreeYes()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-extrabold tap-feedback">${t('I agree, continue')}</button>
+                <button onclick="window.appActions.agreeNo()" class="w-full mt-2 py-3 text-[13px] font-bold text-slate-400 tap-feedback">${t('Cancel')}</button>
+            </div>`;
+            if (window.lucide) window.lucide.createIcons({ root: box });
+            const o = document.getElementById('agree-overlay');
+            if (!o.classList.contains('flex') || o.classList.contains('opacity-0')) { openModal('agree-overlay', 'agree-box'); pushBack('agree', () => window.appActions.agreeNo()); }
         },
+        agreeYes: () => {
+            try { localStorage.setItem(AGREE_KEY, JSON.stringify({ v: TERMS_VERSION, at: Date.now() })); } catch (e) {}
+            const next = window.appState.agreeNext; window.appState.agreeNext = null;
+            popBack('agree'); closeModal('agree-overlay', 'agree-box');
+            if (next) next();
+        },
+        agreeNo: () => { window.appState.agreeNext = null; popBack('agree'); closeModal('agree-overlay', 'agree-box'); },
         setAbout: (field, value) => {
             const b = getBody(), v = latinDigits(value).trim();
             if (b.locked && LOCKED_ABOUT.includes(field)) return window.appActions.showToast(t("This can't be changed."), 'error');
@@ -4190,14 +4220,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         },
         welcomeLater: () => { if (requireSignIn() && !isSignedIn()) return; hideWelcome(); window.appActions.initOnboarding(); },
         welcomeContinue: () => {
-            if (!getAgree()) return;
+            if (!getAgree()) return window.appActions.needAgree(() => window.appActions.welcomeContinue());
             hideWelcome(); window.appActions.initOnboarding();
             if (Cloud.user) { Cloud.sent.main = ''; scheduleFlush(300); } // save the agreement to the account
         },
         welcomeSignIn: () => {
-            if (!getAgree()) return window.appActions.showToast(t('Please agree to the Terms and Privacy Policy first.'), 'error');
             if (navigator.onLine === false) return window.appActions.showToast(t('No internet connection. Try again when online.'), 'error');
-            window.appActions.cloudSignIn();
+            window.appActions.needAgree(() => window.appActions.cloudSignIn());
         },
         openBackups: () => { if (!Cloud.user) return; openSheet('backups-overlay', 'backups-box'); pushBack('backups', () => window.appActions.closeBackups()); renderBackups(); },
         closeBackups: () => { popBack('backups'); closeSheet('backups-overlay', 'backups-box'); },

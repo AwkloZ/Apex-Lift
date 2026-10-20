@@ -71,12 +71,17 @@
         </div>
     </div>
 
-    <!-- Email sign-in: sign in, create an account, reset the password, or confirm the password (filled by app.js). Above the welcome page. -->
-    <div id="email-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[9995] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeEmail()">
-        <div id="email-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div id="email-body" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+    <!-- Email sign-in: sign in, create an account, reset the password, or confirm the password (filled by app.js).
+         A card in the middle of the screen, above the welcome page. -->
+    <div id="email-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9995] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeEmail()">
+        <div id="email-box" role="dialog" aria-modal="true" class="w-full max-w-md max-h-[92dvh] overflow-y-auto overscroll-contain bg-[#111] rounded-3xl border border-white/10 px-5 pt-4 pb-5 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+            <div id="email-body"></div>
         </div>
+    </div>
+
+    <!-- Terms of Use and Privacy Policy: asked after choosing Google or email (filled by app.js). Above the email card. -->
+    <div id="agree-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9996] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="agree-box" role="dialog" aria-modal="true" aria-labelledby="agree-title" class="w-full max-w-sm bg-[#111] rounded-3xl border border-white/10 p-6 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]"></div>
     </div>
 
     <!-- Routine codes: share a routine with a code, or add one from a friend's code (filled by app.js) -->

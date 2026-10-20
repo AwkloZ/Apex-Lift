@@ -8,7 +8,7 @@
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
 // (require-sign-in.js is left out on purpose: it can be deleted, and a missing file in APP_FILES would break the install.
 //  It is still saved for offline use the first time the app loads it.)
-const CACHE = 'apex-lift-v32';
+const CACHE = 'apex-lift-v33';
 const APP_FILES = [
     './',
     'index.html',
