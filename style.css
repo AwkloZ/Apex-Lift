@@ -148,11 +148,10 @@ input[type="number"] {
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
 /* ===== Arabic =====
-   The layout stays the same as English (side menu on the right, nothing mirrored).
-   Arabic text gets an Arabic font, no letter spacing (letters must stay connected), and each line
-   picks its own reading direction so punctuation and numbers land in the right place. */
+   Right-to-left like iOS: the layout mirrors (dir="rtl" on the page), arrows flip, numbers use Arabic digits.
+   Arabic text gets an Arabic font and no letter spacing (letters must stay connected). */
 :root[lang="ar"] body { font-family: 'Cairo', 'Inter', sans-serif; }
-:root[lang="ar"] body :is(div, p, span, h1, h2, h3, button, label, a) { unicode-bidi: plaintext; }
+:root[dir="rtl"] :is([data-lucide="chevron-right"], [data-lucide="chevron-left"], [data-lucide="arrow-right"], [data-lucide="arrow-left"], .lucide-chevron-right, .lucide-chevron-left, .lucide-arrow-right, .lucide-arrow-left) { transform: scaleX(-1); } /* arrows point the reading way */
 :root[lang="ar"] * { letter-spacing: 0 !important; }
 :root[lang="ar"] .italic { font-style: normal; }
 

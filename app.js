@@ -37,20 +37,20 @@
         "Ready to add weight": "جاهز لزيادة الوزن",
         "Save": "حفظ",
         "Sets this week": "مجموعات هذا الأسبوع",
-        "Stronger (est. 1-rep max)": "أقوى (أقصى تكرار واحد تقديري)",
+        "Stronger (est. 1-rep max)": "أقوى (الحد الأقصى المقدّر لتكرار واحد)",
         "Tap a bar to see that week.": "اضغط على عمود لترى ذلك الأسبوع.",
         "Track your body weight": "تابع وزن جسمك",
         "Update today's weight": "حدّث وزن اليوم",
         "Week of {d}": "أسبوع {d}",
-        "Weeks in a row": "بدون انقطاع",
+        "Weeks in a row": "دون انقطاع",
         "Weight saved": "تم حفظ الوزن",
-        "Workouts": "التمارين المنجزة",
+        "Workouts": "الحصص",
         "Your week, every exercise, sets per muscle and your body weight are here.": "أسبوعك، وكل تمرين، والمجموعات لكل عضلة، ووزن جسمك — كلها هنا.",
         "in 30 days": "خلال 30 يومًا",
         "since you started": "منذ أن بدأت",
-        "vs last week": "عن الأسبوع الماضي",
-        "{n} planned": "{n} مخطط",
-        "Next workout": "التمرين القادم",
+        "vs last week": "مقارنةً بالأسبوع الماضي",
+        "{n} planned": "من أصل {n}",
+        "Next workout": "الحصة القادمة",
         "Change exercise": "تغيير التمرين",
         "Custom": "مخصص",
         "Day options": "خيارات اليوم",
@@ -64,15 +64,15 @@
         "Muscle balance": "توازن العضلات",
         "Sets per week": "مجموعات في الأسبوع",
         "Aim for about 10–20 sets a week for each muscle.": "الهدف تقريبًا 10–20 مجموعة أسبوعيًا لكل عضلة.",
-        "Core": "البطن",
-        "Duplicate routine": "تكرار الجدول",
+        "Core": "الجذع",
+        "Duplicate routine": "نسخ الجدول",
         "{name} (copy)": "{name} (نسخة)",
-        "Routine duplicated": "تم تكرار الجدول",
+        "Routine duplicated": "تم نسخ الجدول",
         "Tap a day to edit it. Hold ⋮⋮ and drag to move it to another day.": "اضغط على يوم لتعديله. اضغط مطولًا على ⋮⋮ واسحبه لنقله إلى يوم آخر.",
         "Tap ✏️ to change this day's exercises.": "اضغط ✏️ لتغيير تمارين هذا اليوم.",
         "Add exercises to start training on this day.": "أضف تمارين لتبدأ التمرين في هذا اليوم.",
         "Tap a day to edit it": "اضغط على يوم لتعديله",
-        "Go to today's workout": "اذهب إلى تمرين اليوم",
+        "Go to today's workout": "اذهب إلى حصة اليوم",
         "Edit": "تعديل",
         "More": "المزيد",
         "More day tools": "أدوات اليوم الأخرى",
@@ -106,7 +106,7 @@
         "Day tools": "أدوات اليوم",
         "1 to 3 years": "من سنة إلى 3 سنوات",
         "Add as a new routine": "أضفه كجدول جديد",
-        "Barbells, machines and cables": "بار، أجهزة وكابلات",
+        "Barbells, machines and cables": "بار وأجهزة وكابلات",
         "Best": "الأفضل",
         "Best reps": "أكثر تكرارات",
         "Best time": "أطول وقت",
@@ -115,17 +115,17 @@
         "Day type": "نوع اليوم",
         "Delete routine": "حذف الجدول",
         "Delete this routine? Your history is kept.": "حذف هذا الجدول؟ سجلك لن يُحذف.",
-        "Dumbbells only": "دمبلز فقط",
-        "Est. 1-rep max": "أقصى تكرار واحد (تقديري)",
+        "Dumbbells only": "دمبل فقط",
+        "Est. 1-rep max": "الحد الأقصى المقدّر",
         "Exercise history": "سجل التمرين",
         "Extra sets on the main lifts": "مجموعات إضافية للتمارين الأساسية",
         "Fewer sets to start": "مجموعات أقل للبداية",
-        "Finish your first workout to see your progress here.": "أنهِ أول تمرين لترى تقدّمك هنا.",
-        "Full gym": "نادي كامل",
+        "Finish your first workout to see your progress here.": "أنهِ أول حصة لترى تقدّمك هنا.",
+        "Full gym": "نادٍ مجهّز بالكامل",
         "Get bigger and more defined": "حجم أكبر وتفاصيل أوضح",
         "Get stronger": "زيادة القوة",
         "Heaviest weight per session": "أثقل وزن في كل تمرين",
-        "Home or a small gym": "البيت أو نادي صغير",
+        "Home or a small gym": "المنزل أو نادٍ صغير",
         "How long have you been training?": "منذ متى وأنت تتمرن؟",
         "How many days a week can you train?": "كم يوماً في الأسبوع تستطيع التمرين؟",
         "I'll build my own": "سأبني جدولي بنفسي",
@@ -139,8 +139,8 @@
         "My routine": "جدولي",
         "My routines": "جداولي",
         "New routine": "جدول جديد",
-        "No new records yet. Add weight when the app says so and they will come.": "لا توجد أرقام جديدة بعد. زِد الوزن عندما يقترح التطبيق ذلك وستأتي.",
-        "No workouts yet": "لا توجد تمارين بعد",
+        "No new records yet. Add weight when the app says so and they will come.": "لا أرقام قياسية جديدة بعد. زِد الوزن عندما يقترح التطبيق ذلك وستحققها.",
+        "No workouts yet": "لا توجد حصص بعد",
         "Other programs": "برامج أخرى",
         "Overview": "نظرة عامة",
         "Pick what you can keep up every week.": "اختر ما تستطيع الالتزام به كل أسبوع.",
@@ -152,8 +152,8 @@
         "Replace current routine?": "استبدال الجدول الحالي؟",
         "Reset app": "إعادة ضبط التطبيق",
         "Routine {n}": "جدول {n}",
-        "See all {n} programs": "شاهد كل البرامج ({n})",
-        "Sessions": "عدد التمارين",
+        "See all {n} programs": "عرض كل البرامج ({n})",
+        "Sessions": "الحصص",
         "Set up my program again": "إعادة إعداد برنامجي",
         "Standard sets": "مجموعات عادية",
         "Start with this program": "ابدأ بهذا البرنامج",
@@ -171,17 +171,17 @@
         "What's your main goal?": "ما هدفك الأساسي؟",
         "Where do you train?": "أين تتمرن؟",
         "Which day does your week start?": "في أي يوم يبدأ أسبوعك؟",
-        "Workout history": "سجل التمارين",
-        "Workouts this week": "تمارين هذا الأسبوع",
+        "Workout history": "سجل الحصص",
+        "Workouts this week": "حصص هذا الأسبوع",
         "You have 5 routines (the most). The current one will be replaced; your history is kept.": "لديك 5 جداول (الحد الأقصى). سيتم استبدال الجدول الحالي، وسجلك لن يُحذف.",
         "Your current routine and all your history are kept.": "جدولك الحالي وكل سجلك يبقيان كما هما.",
         "Your program": "برنامجك",
         "Your routines go back to the default. Your history is kept.": "ستعود جداولك إلى الوضع الافتراضي. سجلك لن يُحذف.",
         "Your week in the app starts on this day.": "يبدأ أسبوعك في التطبيق من هذا اليوم.",
-        "kg lifted this week": "كجم مرفوعة هذا الأسبوع",
+        "kg lifted this week": "كجم إجمالي هذا الأسبوع",
         "{name} is ready": "{name} جاهز",
         "{n} days": "{n} أيام",
-        "{n} sessions": "{n} تمارين",
+        "{n} sessions": "{n} حصص",
         "Push / Pull / Legs": "دفع / سحب / أرجل",
         "Push / Pull / Legs (3 days)": "دفع / سحب / أرجل (3 أيام)",
         "Upper / Lower": "علوي / سفلي",
@@ -191,8 +191,8 @@
         "Arnold Split": "تقسيم أرنولد",
         "Full Body": "جسم كامل",
         "5×5 Strength": "قوة 5×5",
-        "Glutes & Legs Focus": "تركيز على المؤخرة والأرجل",
-        "Dumbbells Only": "دمبلز فقط",
+        "Glutes & Legs Focus": "تركيز على الألوية والأرجل",
+        "Dumbbells Only": "دمبل فقط",
         "Each muscle twice a week. The classic for building muscle.": "كل عضلة مرتين في الأسبوع. الخيار الكلاسيكي لبناء العضلات.",
         "The same split once a week, with a rest day between sessions.": "نفس التقسيم مرة في الأسبوع، مع يوم راحة بين التمارين.",
         "Upper and lower body twice a week. Balanced and easy to fit in.": "الجزء العلوي والسفلي مرتين في الأسبوع. متوازن وسهل الالتزام.",
@@ -202,33 +202,33 @@
         "Chest & back, shoulders & arms, legs. Twice a week, high volume.": "صدر وظهر، أكتاف وذراعين، أرجل. مرتين في الأسبوع وبحجم عالٍ.",
         "The whole body every session. Great with a busy schedule.": "الجسم كامل في كل تمرين. مناسب لمن وقته ضيق.",
         "Few big lifts, heavy weights, 5 sets of 5. Built for strength.": "تمارين أساسية قليلة وأوزان ثقيلة، 5 مجموعات × 5. مصمم للقوة.",
-        "Extra work for glutes and legs, plus one upper body day.": "تمرين إضافي للمؤخرة والأرجل، مع يوم للجزء العلوي.",
-        "Only dumbbells needed. Good for home or a small gym.": "تحتاج دمبلز فقط. مناسب للبيت أو نادي صغير.",
-        "Arms": "الذراعين",
+        "Extra work for glutes and legs, plus one upper body day.": "تمرين إضافي للألوية والأرجل، مع يوم للجزء العلوي.",
+        "Only dumbbells needed. Good for home or a small gym.": "يكفيك زوج دمبل. مناسب للمنزل أو نادٍ صغير.",
+        "Arms": "الذراعان",
         "Back": "الظهر",
         "Chest": "الصدر",
         "Chest & Back": "صدر وظهر",
-        "Glutes": "المؤخرة",
-        "Glutes & Hamstrings": "المؤخرة وخلفي الفخذ",
-        "Lower Hypertrophy": "سفلي تضخيم",
-        "Lower Power": "سفلي قوة",
-        "Quads & Glutes": "أمامي الفخذ والمؤخرة",
+        "Glutes": "الألوية",
+        "Glutes & Hamstrings": "الألوية وأوتار الركبة",
+        "Lower Hypertrophy": "تضخيم سفلي",
+        "Lower Power": "قوة سفلي",
+        "Quads & Glutes": "رباعية الرؤوس والألوية",
         "Shoulders": "الأكتاف",
         "Shoulders & Arms": "أكتاف وذراعين",
         "Strength A": "قوة A",
         "Strength B": "قوة B",
-        "Upper Hypertrophy": "علوي تضخيم",
-        "Upper Power": "علوي قوة",
+        "Upper Hypertrophy": "تضخيم علوي",
+        "Upper Power": "قوة علوي",
         "Add reps": "زِد التكرارات",
         "Add weight": "زِد الوزن",
         "Add weight:": "زِد الوزن:",
         "Aim:": "الهدف:",
-        "Continue workout": "أكمل التمرين",
-        "Discard this workout?": "تجاهل هذا التمرين؟",
+        "Continue workout": "متابعة الحصة",
+        "Discard this workout?": "تجاهل هذه الحصة؟",
         "Done this week": "منجز هذا الأسبوع",
         "Easy day:": "يوم خفيف:",
         "Exercises": "التمارين",
-        "Finish workout": "إنهاء التمرين",
+        "Finish workout": "إنهاء الحصة",
         "First time": "أول مرة",
         "Go lighter": "خفّف الوزن",
         "Go lighter:": "خفّف الوزن:",
@@ -242,13 +242,13 @@
         "Progress": "التقدّم",
         "RPE column off": "تم إخفاء عمود RPE",
         "RPE column on": "تم إظهار عمود RPE",
-        "Recover well. See you next session.": "استشفِ جيداً. نراك في التمرين القادم.",
-        "Show RPE": "إظهار RPE",
-        "Start workout": "ابدأ التمرين",
+        "Recover well. See you next session.": "خذ قسطًا كافيًا من الراحة. نراك في الحصة القادمة.",
+        "Show RPE": "إظهار مستوى الجهد (RPE)",
+        "Start workout": "ابدأ الحصة",
         "Time": "الوقت",
         "Today": "اليوم",
-        "Workout complete!": "أحسنت! انتهى التمرين",
-        "kg lifted": "كجم مرفوعة",
+        "Workout complete!": "أحسنت! اكتملت الحصة",
+        "kg lifted": "كجم إجمالي",
         "sets": "مجموعات",
         "{n} exercises": "{n} تمارين",
         "{n} sets": "{n} مجموعات",
@@ -258,12 +258,12 @@
         "Add set": "إضافة مجموعة",
         "Remove set": "حذف مجموعة",
         "Tap a previous set to copy it. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.": "اضغط على المجموعة السابقة لنسخها. RPE (اختياري): 10 = لا تكرارات متبقية، 9 = تكرار واحد، 8 = تكراران.",
-        "Discard current session?": "تجاهل الجلسة الحالية؟",
+        "Discard current session?": "تجاهل الحصة الحالية؟",
         "Unsaved sets for {name} will be lost.": "ستضيع المجموعات غير المحفوظة لتمرين {name}.",
         "Your unsaved sets will be lost.": "ستضيع مجموعاتك غير المحفوظة.",
         "Enter KG for every set (0 = bodyweight)": "أدخل الوزن لكل مجموعة (0 = وزن الجسم)",
         "Confirm": "تأكيد",
-        "Workout completed": "تم إنهاء التمرين",
+        "Workout completed": "اكتملت الحصة",
         "Day progress": "تقدّم اليوم",
         "Copy to...": "نسخ إلى...",
         "Copy": "نسخ",
@@ -271,11 +271,11 @@
         "Replace {day}?": "استبدال {day}؟",
         "Its current exercises will be replaced.": "سيتم استبدال تمارينه الحالية.",
         "Last backup: today": "آخر نسخة احتياطية: اليوم",
-        "Last backup: {n} days ago": "آخر نسخة احتياطية: قبل {n} يوم",
+        "Last backup: {n} days ago": "آخر نسخة احتياطية: قبل {n} أيام",
         "-- Skip (Do Not Import) --": "-- تخطي (لا تستورد) --",
         "1 exercise added": "تمت إضافة تمرين واحد",
         "3 quick taps to adjust today's targets.": "3 ضغطات سريعة لضبط أهداف اليوم.",
-        "A bit": "قليلاً",
+        "A bit": "قليلًا",
         "ALL": "الكل",
         "Action Plan Empty": "لا توجد خطة بعد",
         "Active": "نشط",
@@ -302,7 +302,7 @@
         "Complete a workout and log your sets. The app will analyze your performance and generate smart weight recommendations here.": "أكمل تمريناً وسجّل مجموعاتك، وسيحلل التطبيق أداءك ويعطيك توصيات ذكية للأوزان هنا.",
         "Completion": "نسبة الإنجاز",
         "Confirm & Merge": "تأكيد ودمج",
-        "Confirm Action": "تأكيد",
+        "Confirm Action": "تأكيد الإجراء",
         "Contact Us": "تواصل معنا",
         "Custom schedule found": "تم العثور على جدول",
         "Daily Check-in": "تقييم اليوم",
@@ -329,9 +329,9 @@
         "Fresh": "مرتاح",
         "Full Body A": "جسم كامل A",
         "Full Body B": "جسم كامل B",
-        "GO!": "انطلق!",
+        "GO!": "يلا!",
         "Great": "ممتاز",
-        "High": "عالي",
+        "High": "مرتفع",
         "In this day": "موجود في هذا اليوم",
         "In your routines": "في جداولك",
         "Invalid Backup file": "ملف النسخة الاحتياطية غير صالح",
@@ -363,7 +363,7 @@
         "Normal Day": "يوم عادي",
         "Not in the list? Choose a muscle above, then add \"{name}\" as your own exercise.": "غير موجود؟ اختر العضلة من الأعلى ثم أضف \"{name}\" كتمرين خاص بك.",
         "OF {n} SETS": "من {n} مجموعات",
-        "OK": "متوسط",
+        "OK": "عادي",
         "Official Instagram": "حسابنا في إنستغرام",
         "About you": "معلومات عنك",
         "Birth year": "سنة الميلاد",
@@ -383,7 +383,7 @@
         "Account backups": "نسخ الحساب الاحتياطية",
         "Add more exercises from the full library here.": "أضف تمارين أخرى من المكتبة الكاملة من هنا.",
         "Automatic": "تلقائية",
-        "Back up now": "انسخ الآن",
+        "Back up now": "نسخ احتياطي الآن",
         "Backup restored": "تم استرجاع النسخة",
         "Backup saved to your account": "تم حفظ النسخة في حسابك",
         "Backup isn't available right now. Try again later.": "النسخ الاحتياطي غير متاح حاليًا. حاول لاحقًا.",
@@ -403,7 +403,7 @@
         "Loading…": "جارٍ التحميل…",
         "Manual": "يدوية",
         "Next": "التالي",
-        "No backups yet. Tap Back up now to make the first one.": "لا توجد نسخ بعد. اضغط «انسخ الآن» لإنشاء أول نسخة.",
+        "No backups yet. Tap Back up now to make the first one.": "لا توجد نسخ بعد. اضغط «نسخ احتياطي الآن» لإنشاء أول نسخة.",
         "Privacy Policy": "سياسة الخصوصية",
         "Rest timer: it starts by itself. Use −15 / +15 or Skip.": "مؤقت الراحة يبدأ تلقائيًا. استخدم −15 / +15 أو تخطي.",
         "Restore": "استرجاع",
@@ -411,31 +411,31 @@
         "Restoring…": "جارٍ الاسترجاع…",
         "Tap a day, or swipe left or right, to see another day of your plan.": "اضغط على يوم، أو اسحب يمينًا أو يسارًا، لترى يومًا آخر من خطتك.",
         "Tap an exercise to see its details and start it.": "اضغط على تمرين لترى تفاصيله وتبدأه.",
-        "Tap ⌄ to look at your plan. The workout keeps running at the bottom.": "اضغط ⌄ لمشاهدة خطتك، ويستمر التمرين في الأسفل.",
+        "Tap ⌄ to look at your plan. The workout keeps running at the bottom.": "اضغط ⌄ لعرض خطتك، وتبقى الحصة مستمرة في الأسفل.",
         "Terms of Use": "شروط الاستخدام",
         "Your records, next targets and weekly volume per muscle are here.": "أرقامك القياسية وأهدافك القادمة وحجم التمرين الأسبوعي لكل عضلة هنا.",
-        "Your routines, settings and workouts go back to {date}, on all your phones. A copy of how things are now is saved first.": "ستعود برامجك وإعداداتك وتمارينك إلى {date} على جميع أجهزتك. تُحفظ نسخة من وضعك الحالي أولًا.",
-        "{n} workouts": "{n} تمارين",
-        "Your training, organised": "تمرينك، منظّم",
+        "Your routines, settings and workouts go back to {date}, on all your phones. A copy of how things are now is saved first.": "ستعود جداولك وإعداداتك وحصصك إلى {date} على جميع أجهزتك، بعد حفظ نسخة من وضعك الحالي.",
+        "{n} workouts": "{n} حصص",
+        "Your training, organised": "تمرينك منظّم",
         "Your weekly plan, every set you lift and your progress — all in one place.": "خطتك الأسبوعية وكل مجموعة ترفعها وتقدّمك — في مكان واحد.",
-        "Log a set in one tap": "سجّل المجموعة بضغطة",
+        "Log a set in one tap": "سجّل المجموعة بلمسة",
         "Your weights from last time are filled in. Tap ✓ after each set and the rest timer starts by itself.": "أوزانك من المرة السابقة مكتوبة مسبقًا. اضغط ✓ بعد كل مجموعة ويبدأ مؤقت الراحة تلقائيًا.",
-        "Watch yourself get stronger": "شاهد قوتك تزيد",
+        "Watch yourself get stronger": "شاهد قوتك تزداد",
         "The app tells you when to add weight, and shows your records and weekly volume per muscle.": "يخبرك التطبيق متى تزيد الوزن، ويعرض أرقامك القياسية وحجم التمرين الأسبوعي لكل عضلة.",
         "Sign in to start": "سجّل الدخول للبدء",
-        "Your workouts are saved to your Google account and kept in sync on all your phones.": "تُحفظ تمارينك في حساب Google وتتزامن على جميع أجهزتك.",
+        "Your workouts are saved to your Google account and kept in sync on all your phones.": "تُحفظ حصصك في حساب Google وتتزامن على كل أجهزتك.",
         "Please review and agree": "يرجى المراجعة والموافقة",
         "To keep using Apex Lift, please agree to our Terms of Use and Privacy Policy.": "لمتابعة استخدام Apex Lift، يرجى الموافقة على شروط الاستخدام وسياسة الخصوصية.",
-        "Push & Bi": "دفع وبايسبس",
-        "Pull & TRI": "سحب وترايسبس",
-        "Legs A": "أرجل أ",
+        "Push & Bi": "دفع وذات الرأسين",
+        "Pull & TRI": "سحب وثلاثية الرؤوس",
+        "Legs A": "أرجل A",
         "Lower Body & Abs": "الجزء السفلي والبطن",
-        "Finish workout?": "إنهاء التمرين؟",
+        "Finish workout?": "إنهاء الحصة؟",
         "{n} sets are still empty. Only the sets you did will be saved.": "{n} مجموعات ما زالت فارغة. سيتم حفظ المجموعات التي أديتها فقط.",
         "Log the rest": "سجّل الباقي",
         "Name this day": "سمِّ هذا اليوم",
         "Same for all": "نفس العدد للكل",
-        "You have an unfinished workout. Finish it to save your sets.": "لديك تمرين لم يكتمل. أنهِه لحفظ مجموعاتك.",
+        "You have an unfinished workout. Finish it to save your sets.": "لديك حصة لم تكتمل. أنهِها لحفظ مجموعاتك.",
         "Account deleted": "تم حذف الحساب",
         "Back up & sync": "النسخ الاحتياطي والمزامنة",
         "Connecting…": "جارٍ الاتصال…",
@@ -444,21 +444,21 @@
         "Delete your account?": "حذف حسابك؟",
         "No internet connection. Try again when online.": "لا يوجد اتصال بالإنترنت. حاول مرة أخرى عند الاتصال.",
         "Privacy policy": "سياسة الخصوصية",
-        "Sign in to keep your workouts safe in the cloud and use them on any phone.": "سجّل الدخول لحفظ تمارينك في السحابة واستخدامها على أي جوال.",
+        "Sign in to keep your workouts safe in the cloud and use them on any phone.": "سجّل الدخول لحفظ حصصك في السحابة واستخدامها على أي جوال.",
         "Sign out": "تسجيل الخروج",
         "Sign out?": "تسجيل الخروج؟",
         "Sign-in failed. Please try again.": "فشل تسجيل الدخول. حاول مرة أخرى.",
         "Signed out": "تم تسجيل الخروج",
         "Signing in…": "جارٍ تسجيل الدخول…",
         "Syncing…": "جارٍ المزامنة…",
-        "This deletes your cloud backup and your account. The workouts on this phone stay.": "سيحذف هذا نسختك السحابية وحسابك. التمارين المحفوظة على هذا الجوال تبقى.",
+        "This deletes your cloud backup and your account. The workouts on this phone stay.": "سيُحذف حسابك ونسختك السحابية. تبقى الحصص المحفوظة على هذا الجوال.",
         "Sign-in isn't available on this site yet.": "تسجيل الدخول غير متاح على هذا الموقع حاليًا.",
-        "Your workouts stay on this phone. Sign in again anytime to sync.": "تمارينك تبقى على هذا الجوال. سجّل الدخول مرة أخرى في أي وقت للمزامنة.",
+        "Your workouts stay on this phone. Sign in again anytime to sync.": "تبقى حصصك على هذا الجوال. سجّل الدخول مجددًا في أي وقت للمزامنة.",
         "Old:": "القديم:",
         "Overwrites current schedule": "يستبدل الجدول الحالي",
         "PULL": "سحب",
         "PUSH": "دفع",
-        "Poor": "سيئ",
+        "Poor": "ضعيف",
         "Pull": "سحب",
         "Push": "دفع",
         "Push Day": "يوم قوي",
@@ -490,7 +490,7 @@
         "Sets": "المجموعات",
         "Skip": "تخطي",
         "Sleep": "النوم",
-        "Soreness": "الإجهاد العضلي",
+        "Soreness": "ألم العضلات",
         "Start Day: {d}": "بداية الأسبوع: {d}",
         "Storage full: data not saved. Backup & delete old records.": "الذاكرة ممتلئة: لم تُحفظ البيانات. خذ نسخة احتياطية واحذف السجلات القديمة.",
         "Swap": "تبديل",
@@ -501,7 +501,7 @@
         "Unnamed": "بدون اسم",
         "Updated all exercises": "تم تحديث كل التمارين",
         "Upper Body": "الجزء العلوي",
-        "Very": "كثير",
+        "Very": "كثيرًا",
         "WEEK {n}": "الأسبوع {n}",
         "Week {n}": "الأسبوع {n}",
         "Week 1": "الأسبوع 1",
@@ -509,11 +509,11 @@
         "Week starts on {d}": "يبدأ الأسبوع يوم {d}",
         "Well recovered. Go for your targets.": "استشفاء ممتاز. انطلق نحو أهدافك.",
         "Workload Tracking": "حجم التمرين",
-        "Workout": "التمرين",
+        "Workout": "الحصة",
         "Workout Routine": "جدول التمارين",
-        "Yes, Do it": "نعم، نفّذ",
+        "Yes, Do it": "نعم، تابِع",
         "{n} exercises added": "تمت إضافة {n} تمارين",
-        "{n} exercises found": "تم العثور على {n} تمرين",
+        "{n} exercises found": "{n} تمارين",
         "Start": "ابدأ",
         "History": "السجل",
         "How do you feel?": "كيف تشعر اليوم؟",
@@ -522,11 +522,11 @@
         "Close": "إغلاق",
         "How to do it (YouTube)": "طريقة الأداء (يوتيوب)",
         "Week of {range}": "أسبوع {range}",
-        "{a} of {b} workouts done": "تم {a} من {b} تمارين",
+        "{a} of {b} workouts done": "أنجزت {a} من {b} حصص",
         "Reps per set": "التكرار لكل مجموعة",
         "Seconds per set": "الثواني لكل مجموعة",
-        "{w} kg for {r} reps": "{w} كجم لـ {r} تكرار",
-        "{w} kg for {r} sec": "{w} كجم لـ {r} ثانية",
+        "{w} kg for {r} reps": "{w} كجم × {r} تكرار",
+        "{w} kg for {r} sec": "{w} كجم × {r} ثانية",
         "{r} reps": "{r} تكرار",
         "{r} sec": "{r} ثانية",
         "All {n} sets": "كل المجموعات ({n})",
@@ -540,15 +540,15 @@
         "Sets × reps": "المجموعات × التكرار",
         "Today's target": "هدف اليوم",
         "Last time": "آخر مرة",
-        "Finish the workout or discard it with ✕ to leave.": "أنهِ التمرين أو ألغِه بزر ✕ للخروج.",
+        "Finish the workout or discard it with ✕ to leave.": "أنهِ الحصة أو تجاهلها بزر ✕ للخروج.",
         "Type the KG and reps you did. The set turns green by itself.": "اكتب الوزن والتكرار الذي أديته. تصبح المجموعة خضراء تلقائيًا.",
         "Type the KG and reps you did: the set turns green by itself. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.": "اكتب الوزن والتكرار الذي أديته: تصبح المجموعة خضراء تلقائيًا. RPE (اختياري): 10 = لا تكرارات متبقية، 9 = تكرار واحد، 8 = تكراران.",
         "A code has 8 letters and numbers, like ABCD-EFGH.": "الرمز مكوّن من 8 أحرف وأرقام، مثل ABCD-EFGH.",
         "Account": "الحساب",
-        "Add a routine by code": "أضف برنامجًا برمز",
-        "Add to my routines": "أضف إلى برامجي",
+        "Add a routine by code": "أضف جدولًا برمز",
+        "Add to my routines": "أضف إلى جداولي",
         "App": "التطبيق",
-        "Back to the default routine. History is kept.": "العودة إلى البرنامج الافتراضي. يبقى سجلك محفوظًا.",
+        "Back to the default routine. History is kept.": "العودة إلى الجدول الافتراضي. يبقى سجلك محفوظًا.",
         "Choose what goes in the file. Save it, send it to a friend, or give it to an AI assistant to review your training.": "اختر ما يحتويه الملف. احفظه أو أرسله لصديق أو أعطه لمساعد ذكاء اصطناعي ليراجع تمرينك.",
         "Code copied": "تم نسخ الرمز",
         "Contact us": "تواصل معنا",
@@ -563,12 +563,12 @@
         "Deletes your cloud data and your account": "يحذف بياناتك السحابية وحسابك",
         "Experience": "الخبرة",
         "Export data": "تصدير البيانات",
-        "Find routine": "ابحث عن البرنامج",
+        "Find routine": "ابحث عن الجدول",
         "Use another code": "استخدم رمزًا آخر",
-        "Routine found": "تم العثور على البرنامج",
-        "Finish your workout first.": "أنهِ تمرينك أولًا.",
+        "Routine found": "تم العثور على الجدول",
+        "Finish your workout first.": "أنهِ حصتك أولًا.",
         "From an Apex Lift file": "من ملف Apex Lift",
-        "Give this code to a friend. They open Apex Lift → Profile → Add a routine by code.": "أعطِ هذا الرمز لصديقك. يفتح Apex Lift ← حسابي ← أضف برنامجًا برمز.",
+        "Give this code to a friend. They open Apex Lift → Profile → Add a routine by code.": "أعطِ هذا الرمز لصديقك ليفتح Apex Lift ← حسابي ← أضف جدولًا برمز.",
         "Go back to an earlier copy": "ارجع إلى نسخة سابقة",
         "Goal": "الهدف",
         "Help & legal": "المساعدة والشروط",
@@ -576,26 +576,26 @@
         "Import data": "استيراد البيانات",
         "Save or share a copy": "احفظ أو شارك نسخة",
         "Last export: today": "آخر تصدير: اليوم",
-        "Last export: {n} days ago": "آخر تصدير: قبل {n} يوم",
-        "Looking for the routine…": "جارٍ البحث عن البرنامج…",
+        "Last export: {n} days ago": "آخر تصدير: قبل {n} أيام",
+        "Looking for the routine…": "جارٍ البحث عن الجدول…",
         "Member since {date}": "عضو منذ {date}",
         "My training": "تمريني",
-        "No routine found for this code. Check it and try again.": "لا يوجد برنامج بهذا الرمز. تأكد منه وحاول مرة أخرى.",
-        "Only the routine is shared. Your workouts and details stay private.": "تتم مشاركة الجدول فقط. تبقى تمارينك وبياناتك خاصة.",
+        "No routine found for this code. Check it and try again.": "لا يوجد جدول بهذا الرمز. تأكد منه وحاول مرة أخرى.",
+        "Only the routine is shared. Your workouts and details stay private.": "تتم مشاركة الجدول فقط، وتبقى حصصك وبياناتك خاصة.",
         "Paste a code a friend gave you": "الصق رمزًا أعطاك إياه صديق",
         "Records": "الأرقام القياسية",
-        "Reset routines": "إعادة ضبط البرامج",
-        "Routine added and set as active": "تمت إضافة البرنامج وتفعيله",
-        "Routines & data": "البرامج والبيانات",
+        "Reset routines": "إعادة ضبط الجداول",
+        "Routine added and set as active": "تمت إضافة الجدول وتفعيله",
+        "Routines & data": "الجداول والبيانات",
         "Same as phone": "مثل الجوال",
         "Save or share file": "حفظ أو مشاركة الملف",
         "Share": "مشاركة",
-        "Share routine": "مشاركة البرنامج",
-        "Routine options": "خيارات البرنامج",
-        "Use this routine": "استخدم هذا البرنامج",
-        "Sign in to use routine codes.": "سجّل الدخول لاستخدام رموز البرامج.",
+        "Share routine": "مشاركة الجدول",
+        "Routine options": "خيارات الجدول",
+        "Use this routine": "استخدم هذا الجدول",
+        "Sign in to use routine codes.": "سجّل الدخول لاستخدام رموز الجداول.",
         "Something went wrong. Please try again.": "حدث خطأ. حاول مرة أخرى.",
-        "Try my \"{name}\" routine in Apex Lift. Code: {code}": "جرّب برنامجي \"{name}\" في Apex Lift. الرمز: {code}",
+        "Try my \"{name}\" routine in Apex Lift. Code: {code}": "جرّب جدولي \"{name}\" في Apex Lift. الرمز: {code}",
         "Type or paste the code a friend gave you.": "اكتب أو الصق الرمز الذي أعطاك إياه صديقك.",
         "Used to suggest programs and sets.": "يُستخدم لاقتراح البرامج وعدد المجموعات.",
         "Where you train": "مكان التمرين",
@@ -624,7 +624,7 @@
         "Open Apex Lift in your browser": "افتح Apex Lift في المتصفح",
         "You're inside another app, which signs you out when it closes. Tap ••• or the share button, then Open in Safari.": "أنت داخل تطبيق آخر، وهو يسجّل خروجك عند إغلاقه. اضغط ••• أو زر المشاركة ثم اختر الفتح في Safari.",
         "You're inside another app, which signs you out when it closes. Open Apex Lift in Chrome to stay signed in.": "أنت داخل تطبيق آخر، وهو يسجّل خروجك عند إغلاقه. افتح Apex Lift في Chrome لتبقى مسجّلًا.",
-        "Open in Chrome": "افتح في Chrome",
+        "Open in Chrome": "الفتح في Chrome",
         "Copy link": "نسخ الرابط",
         "Link copied": "تم نسخ الرابط",
         "Backing up your data…": "جارٍ نسخ بياناتك احتياطيًا…",
@@ -644,7 +644,7 @@
         "Enter your password to delete your account.": "أدخل كلمة المرور لحذف حسابك.",
         "Forgot password?": "نسيت كلمة المرور؟",
         "Have an account?": "لديك حساب؟",
-        "I'm just starting": "أنا مبتدئ تمامًا",
+        "I'm just starting": "مبتدئ تمامًا",
         "If an account exists, we've sent a reset link. Check your inbox.": "إذا كان هناك حساب بهذا البريد فقد أرسلنا رابط إعادة التعيين. تحقق من بريدك.",
         "Import": "استيراد",
         "Import this file?": "استيراد هذا الملف؟",
@@ -652,7 +652,7 @@
         "More than 5 years": "أكثر من 5 سنوات",
         "Never trained, or back after a long break": "لم أتمرن من قبل، أو عائد بعد انقطاع طويل",
         "New here?": "جديد هنا؟",
-        "Your routines, workouts and settings in one file.": "برامجك وتمارينك وإعداداتك في ملف واحد.",
+        "Your routines, workouts and settings in one file.": "جداولك وحصصك وإعداداتك في ملف واحد.",
         "Password": "كلمة المرور",
         "Confirm your email. Check your inbox.": "أكّد بريدك الإلكتروني. تحقق من رسائلك.",
         "Please enter a valid email.": "أدخل بريدًا إلكترونيًا صحيحًا.",
@@ -673,8 +673,8 @@
         "This email already has an account. Sign in instead.": "لهذا البريد حساب بالفعل. سجّل الدخول بدلًا من ذلك.",
         "Too many tries. Wait a few minutes and try again.": "محاولات كثيرة. انتظر بضع دقائق وحاول مرة أخرى.",
         "Your name": "اسمك",
-        "Routines and settings will be replaced and workouts added. We back up your current data first.": "ستُستبدل البرامج والإعدادات وتُضاف التمارين. نحفظ نسخة من بياناتك الحالية أولًا.",
-        "Your workouts are saved to your account and kept in sync on all your phones.": "تُحفظ تمارينك في حسابك وتبقى متزامنة على كل أجهزتك.",
+        "Routines and settings will be replaced and workouts added. We back up your current data first.": "ستُستبدل الجداول والإعدادات وتُضاف الحصص. نحفظ نسخة من بياناتك الحالية أولًا.",
+        "Your workouts are saved to your account and kept in sync on all your phones.": "تُحفظ حصصك في حسابك وتتزامن على كل أجهزتك.",
         "{n} exercises with history": "{n} تمارين لها سجل",
         "At least 8 characters": "8 أحرف على الأقل",
         "One capital letter (A–Z)": "حرف كبير واحد على الأقل (A–Z)",
@@ -704,7 +704,7 @@
         "Just starting": "مبتدئ",
         "Locked": "مقفل",
         "Other": "أخرى",
-        "Profile updated": "تم تحديث الملف",
+        "Profile updated": "تم تحديث ملفك",
         "This has to match the birth year on your profile ({y}).": "يجب أن يطابق سنة الميلاد في ملفك ({y}).",
         "Updated {date}": "آخر تحديث {date}",
         "Weight": "الوزن",
@@ -734,12 +734,31 @@
         "{name} fits your answers. You have 5 routines, so it replaces the current one. Your history is kept.": "{name} يناسب إجاباتك. لديك 5 جداول، لذلك سيحل محل الجدول الحالي. يبقى سجلك محفوظًا.",
         "{name} fits your answers. It is added to your routines; your current one stays.": "{name} يناسب إجاباتك. سيُضاف إلى جداولك ويبقى الحالي كما هو.",
     };
+    // Arabic counts follow Arabic grammar: 1 مجموعة واحدة, 2 مجموعتان, 3–10 مجموعات, 11+ مجموعة
+    // [one, two, 3–10, 11 and up]; the table word after "{n}" picks the row
+    const AR_COUNT = {
+        'مجموعات': ['مجموعة واحدة', 'مجموعتان', 'مجموعات', 'مجموعة'], 'مجموعة': ['مجموعة واحدة', 'مجموعتان', 'مجموعات', 'مجموعة'],
+        'تمارين': ['تمرين واحد', 'تمرينان', 'تمارين', 'تمرينًا'], 'تمرين': ['تمرين واحد', 'تمرينان', 'تمارين', 'تمرينًا'],
+        'حصص': ['حصة واحدة', 'حصتان', 'حصص', 'حصة'], 'أيام': ['يوم واحد', 'يومان', 'أيام', 'يومًا'], 'يوم': ['يوم واحد', 'يومان', 'أيام', 'يومًا'],
+        'جداول': ['جدول واحد', 'جدولان', 'جداول', 'جدولًا'], 'دقيقة': ['دقيقة واحدة', 'دقيقتان', 'دقائق', 'دقيقة'],
+        'تكرار': ['تكرار واحد', 'تكراران', 'تكرارات', 'تكرارًا'], 'تكرارات': ['تكرار واحد', 'تكراران', 'تكرارات', 'تكرارًا'],
+        'ثانية': ['ثانية واحدة', 'ثانيتان', 'ثوانٍ', 'ثانية'], 'سنوات': ['سنة واحدة', 'سنتان', 'سنوات', 'سنة']
+    };
+    const arCount = (n, word) => {
+        const f = AR_COUNT[word], v = Number(String(n).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+        if (!f) return `${n} ${word}`;
+        if (!Number.isInteger(v)) return `${n} ${f[2]}`; // a range like 6–8
+        return v === 1 ? f[0] : v === 2 ? f[1] : v >= 3 && v <= 10 ? `${n} ${f[2]}` : `${n} ${f[3]}`;
+    };
     const t = (en, vars) => {
         let out = (isAR && Object.prototype.hasOwnProperty.call(AR, en) && AR[en]) || en;
+        if (vars && isAR) out = out.replace(/\{(\w+)\} ([\u0600-\u06FF]+)/g, (m, k, w) => vars[k] !== undefined && AR_COUNT[w] ? arCount(vars[k], w) : m);
         if (vars) out = out.replace(/\{(\w+)\}/g, (m, k) => vars[k] !== undefined ? vars[k] : m);
+        // after قبل / من / خلال / بعد the dual takes its other form: قبل يومين, من مجموعتين
+        if (isAR) out = out.replace(/(قبل|من|خلال|بعد|لمدة) ([\u0600-\u06FF]+)(تان|ان)(?=\s|$|[.،:)])/g, (m, p, w, e) => `${p} ${w}${e === 'تان' ? 'تين' : 'ين'}`);
         return out;
     };
-    const MUSCLE_AR = { 'Abductors':'مبعدات الورك','Abs':'البطن','Adductors':'مقربات الورك','Back':'الظهر','Biceps':'البايسبس','Calves':'السمانة','Chest':'الصدر','Forearms':'الساعد','Front Delts':'الكتف الأمامي','Glutes':'المؤخرة','Hamstrings':'خلفي الفخذ','Lats':'اللاتس','Lower Back':'أسفل الظهر','Lower Chest':'أسفل الصدر','Neck':'الرقبة','Quads':'أمامي الفخذ','Rear Delts':'الكتف الخلفي','Shoulders':'الأكتاف','Side Delts':'الكتف الجانبي','Traps':'الترابيس','Triceps':'الترايسبس','Upper Chest':'أعلى الصدر','Abs & Core':'البطن والجذع','Muscle':'العضلة' };
+    const MUSCLE_AR = { 'Abductors':'المُبعِدات','Abs':'البطن','Adductors':'المُقرِّبات','Back':'الظهر','Biceps':'ذات الرأسين','Calves':'السمانة','Chest':'الصدر','Forearms':'الساعد','Front Delts':'الدالية الأمامية','Glutes':'الألوية','Hamstrings':'أوتار الركبة','Lats':'الظهرية العريضة','Lower Back':'أسفل الظهر','Lower Chest':'أسفل الصدر','Neck':'الرقبة','Quads':'رباعية الرؤوس','Rear Delts':'الدالية الخلفية','Shoulders':'الأكتاف','Side Delts':'الدالية الجانبية','Traps':'شبه المنحرفة','Triceps':'ثلاثية الرؤوس','Upper Chest':'أعلى الصدر','Abs & Core':'البطن والجذع','Muscle':'العضلة' };
     const tm = m => (isAR && Object.prototype.hasOwnProperty.call(MUSCLE_AR, (m || '').trim()) && MUSCLE_AR[(m || '').trim()]) || m || '';
     const DAY_AR = { SUN:'الأحد', MON:'الاثنين', TUE:'الثلاثاء', WED:'الأربعاء', THU:'الخميس', FRI:'الجمعة', SAT:'السبت' };
     const tDay = d => (isAR && Object.prototype.hasOwnProperty.call(DAY_AR, d) && DAY_AR[d]) || d;
@@ -753,8 +772,8 @@
         'Upper Body': ['Upper', 'علوي'], 'Lower Body': ['Lower', 'سفلي'], 'Full Body': ['Full Body', 'جسم كامل'],
         'Full Body A': ['Full A', 'كامل A'], 'Full Body B': ['Full B', 'كامل B'],
         'Upper Hypertrophy': ['Upper Hyp', 'علوي تضخيم'], 'Lower Hypertrophy': ['Lower Hyp', 'سفلي تضخيم'],
-        'Glutes & Hamstrings': ['Glutes & Hams', 'مؤخرة وفخذ'], 'Shoulders & Arms': ['Shldr & Arms', 'أكتاف وذراعين'],
-        'Lower Body & Abs': ['Lower & Abs', 'سفلي وبطن'], 'Push & Bi': ['Push & Bi', 'دفع وباي'], 'Pull & TRI': ['Pull & TRI', 'سحب وتراي'], 'Complete Rest': ['Rest', 'راحة'], 'Active Rest': ['Active', 'راحة نشطة']
+        'Glutes & Hamstrings': ['Glutes & Hams', 'ألوية وأوتار'], 'Shoulders & Arms': ['Shldr & Arms', 'أكتاف وذراعين'],
+        'Lower Body & Abs': ['Lower & Abs', 'سفلي وبطن'], 'Push & Bi': ['Push & Bi', 'دفع وذات الرأسين'], 'Pull & TRI': ['Pull & TRI', 'سحب وثلاثية'], 'Complete Rest': ['Rest', 'راحة'], 'Active Rest': ['Active', 'راحة نشطة']
     };
     const shortTitle = title => {
         const s = SHORT_TITLE[(title || '').trim()]; if (s) return isAR ? s[1] : s[0];
@@ -772,7 +791,9 @@
     const fmtDayMonth = d => new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { day: 'numeric', month: 'short', calendar: 'gregory', numberingSystem: 'latn' }).format(d);
 
     // 📦 1. DATA: muscles, exercises and programs come from library.js (shared with the admin coach builder)
-    const { muscleOptions, exerciseDictionary, WORKOUTS, PROGRAMS } = window.APEX_LIB;
+    const { muscleOptions, exerciseDictionary, exerciseAR, WORKOUTS, PROGRAMS } = window.APEX_LIB;
+    // exercise name to show: Arabic in Arabic (your own exercises keep the name you gave them)
+    const tx = n => (isAR && exerciseAR && Object.prototype.hasOwnProperty.call(exerciseAR, n) && exerciseAR[n]) || n || '';
     // Automatically removes any duplicates caused by overlapping categories
     const exerciseOptions=[...new Set(Object.values(exerciseDictionary).flat())].sort();
     
@@ -1044,7 +1065,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '47';
+    const APP_VERSION = '48';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1346,7 +1367,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         });
     };
 
-    // 👈 SWIPE left / right on Today to go to the next / previous day (the layout is never mirrored, so the same in Arabic)
+    // 👈 SWIPE left / right on Today to go to the next / previous day (mirrored in Arabic, like the layout)
     const enableDaySwipe = el => {
         if (!el) return;
         let x0 = null, y0 = 0, t0 = 0;
@@ -1358,7 +1379,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (x0 === null) return;
             const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
             if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.6 || Date.now() - t0 > 600) return;
-            window.appActions.setActiveDay(((activeDay - 1 + (dx < 0 ? 1 : 6)) % 7) + 1);
+            window.appActions.setActiveDay(((activeDay - 1 + ((dx < 0) !== isAR ? 1 : 6)) % 7) + 1);
         });
     };
 
@@ -1693,7 +1714,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         recs.sort((a, b) => b.t - a.t);
         const recent = recs.filter(r => r.t >= today - 30 * DAY_MS).slice(0, 6);
         html += pCard(`🏆 ${t('Records (last 30 days)')}`, recent.length ? recent.map(r => `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(nameOfKey(r.k, map))})" class="w-full flex items-center justify-between gap-2 py-2.5 border-b border-white/5 last:border-0 text-start tap-feedback">
-                <span class="min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(nameOfKey(r.k, map))}</span><span class="block text-[12px] font-bold text-slate-400 truncate">${esc(r.type === 'r' && r.unit === 's' ? t('Longest hold') : t(RECORD_LABEL[r.type]))} · ${esc(fmtDate(r.t, false))}</span></span>
+                <span class="min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(tx(nameOfKey(r.k, map)))}</span><span class="block text-[12px] font-bold text-slate-400 truncate">${esc(r.type === 'r' && r.unit === 's' ? t('Longest hold') : t(RECORD_LABEL[r.type]))} · ${esc(fmtDate(r.t, false))}</span></span>
                 <span class="text-[14px] font-black text-[#22c55e] shrink-0" dir="ltr">${r.v}${r.unit} <span class="text-[12px]">(+${r.plus})</span></span></button>`).join('')
             : `<p class="text-[12px] font-bold text-slate-400">${t('No new records yet. Add weight when the app says so and they will come.')}</p>`);
         return html;
@@ -1716,14 +1737,14 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
     const progressExerciseListHTML = rows => {
         const q = (window.appState.pexQ || '').trim().toLowerCase(), f = window.appState.pexF || 'all';
-        const shown = rows.filter(r => (!q || r.name.toLowerCase().includes(q) || tm(r.muscle).toLowerCase().includes(q))
+        const shown = rows.filter(r => (!q || r.name.toLowerCase().includes(q) || tx(r.name).includes(q) || tm(r.muscle).toLowerCase().includes(q))
             && (f === 'all' || (f === 'up' ? r.sg && r.sg.type === 'up' : r.group === f)));
         if (!shown.length) return `<div class="glass-card p-6 text-center text-[13px] font-bold text-slate-400">${t('No exercises match.')}</div>`;
         return `<div class="text-[12px] font-bold text-slate-400 mb-2 px-1">${t('{n} exercises', { n: shown.length })}</div>` + shown.map(r => {
             const tr = r.trend && TREND[r.trend];
             return `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(r.name)})" class="w-full glass-card p-4 mb-2.5 flex items-center gap-3 text-start tap-feedback">
                 <span class="flex-1 min-w-0">
-                    <span class="ex-name block text-[15px] font-black text-white leading-tight">${esc(r.name)}</span>
+                    <span class="ex-name block text-[15px] font-black text-white leading-tight">${esc(tx(r.name))}</span>
                     <span class="block text-[12px] font-bold text-slate-400 mt-0.5">${esc(tm(r.muscle))}${r.muscle ? ' · ' : ''}${t('{n} sessions', { n: r.n })} · ${esc(fmtDate(r.last, false))}</span>
                     ${r.sg ? `<span class="block mt-2">${suggestionChip(r.sg, r.timed)}</span>` : ''}
                 </span>
@@ -2084,7 +2105,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 return `<button id="ex-card-${i}" onclick="window.appActions.openExSheet(${i})" class="w-full glass-card ex-card ${full ? 'is-full' : part ? 'is-part' : ''} flex items-center gap-3 text-start tap-feedback">
                     ${progressRing(doneSets, planned, i + 1)}
                     ${isRun ? '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>' : ''}
-                    <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span><span class="block text-[12px] font-bold mt-0.5 truncate ${full ? 'text-[#22c55e]' : 'text-slate-400'}">${full ? t('Done this week') : plan}</span></span>
+                    <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(tx(ex.name))}</span><span class="block text-[12px] font-bold mt-0.5 truncate ${full ? 'text-[#22c55e]' : 'text-slate-400'}">${full ? t('Done this week') : plan}</span></span>
                     <span class="flex items-center gap-1.5 shrink-0" dir="ltr">${extra ? `<span class="ex-pill-extra">+${extra}</span>` : ''}<span class="ex-pill" dir="auto">${t('{n} sets', { n: `<span dir="ltr">${doneSets}/${planned}</span>` })}</span></span>
                 </button>`;
             }).join('') + `</div>`;
@@ -2104,7 +2125,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <div class="flex items-start gap-2">
                     <div class="flex-1 min-w-0">
                         <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
-                        <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(ex.name)}</h3>
+                        <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(tx(ex.name))}</h3>
                     </div>
                     <button onclick="window.appActions.deleteEx(${i})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-red-400/80 flex items-center justify-center tap-feedback" aria-label="${esc(t('Delete exercise'))}" title="${esc(t('Delete exercise'))}"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i></button>
                     <button onclick="window.appActions.closeExEdit()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -2177,7 +2198,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     <span class="handle w-9 h-11 shrink-0 flex items-center justify-center text-slate-400" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>
                     <button onclick="window.appActions.openExEdit(${i})" class="flex-1 min-w-0 flex items-center gap-2.5 text-start tap-feedback py-0.5">
                         <span class="plan-ex-n w-[26px] h-[26px] shrink-0 rounded-full bg-white/5 flex items-center justify-center text-[12px] font-bold text-slate-300">${i + 1}</span>
-                        <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span><span class="block text-[12px] font-bold mt-0.5 truncate text-slate-400">${esc(tm(ex.muscle))}</span></span>
+                        <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(tx(ex.name))}</span><span class="block text-[12px] font-bold mt-0.5 truncate text-slate-400">${esc(tm(ex.muscle))}</span></span>
                         <span class="shrink-0 me-1 text-[12px] font-bold px-2.5 py-1 rounded-full bg-[#d4af37]/15 text-[#d4af37]" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span>
                     </button>
                 </div>`).join('')}</div>`;
@@ -2352,7 +2373,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <div class="flex items-start gap-2">
                     <div class="flex-1 min-w-0">
                         <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
-                        <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(ex.name)}</h3>
+                        <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(tx(ex.name))}</h3>
                     </div>
                     <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}" target="_blank" rel="noopener" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('How to do it (YouTube)'))}" title="${esc(t('How to do it (YouTube)'))}"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i></a>
                     <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
@@ -2415,7 +2436,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             window.appActions.showToast(t('Weight saved'));
             renderAnalytics();
         },
-        openHistoryModal: (k, title) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=title; const hw=document.getElementById('history-howto'); if(hw) hw.href=`https://www.youtube.com/results?search_query=${encodeURIComponent(title+' exercise form')}`; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); pushBack('history', () => window.appActions.closeHistoryModal()); },
+        openHistoryModal: (k, title) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=tx(title); const hw=document.getElementById('history-howto'); if(hw) hw.href=`https://www.youtube.com/results?search_query=${encodeURIComponent(title+' exercise form')}`; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); pushBack('history', () => window.appActions.closeHistoryModal()); },
         closeHistoryModal: () => { popBack('history'); const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{if(o.classList.contains('opacity-0')){o.classList.add('hidden');o.classList.remove('flex');}},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
         refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-400 text-[12px] font-bold">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('Week {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[12px] font-bold text-[#d4af37] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
@@ -2474,16 +2495,16 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             S.cols = showRpe ? '32px minmax(0,1fr) minmax(0,1fr) 60px' : '32px minmax(0,1fr) minmax(0,1fr)';
             S.rowSeq = 0; // rows are numbered from 1 again every time the table is built
             // one exercise: the day's name on top (the exercise's own name is right below it)
-            document.getElementById('aw-title').innerText = t(S.exIdx != null && S.dayTitle ? S.dayTitle : S.title);
+            document.getElementById('aw-title').innerText = tx(t(S.exIdx != null && S.dayTitle ? S.dayTitle : S.title));
             document.getElementById('aw-status-text').innerText = t('Workout');
             document.getElementById('aw-pulse-dot').className = 'w-2 h-2 rounded-full shrink-0 bg-red-500 animate-pulse';
-            document.getElementById('aw-mini-name').innerText = t(S.title);
+            document.getElementById('aw-mini-name').innerText = tx(t(S.title));
             const head = ex => `<div class="grid items-center gap-1.5 px-2 pb-1.5 text-[12px] font-bold text-slate-400" dir="ltr" style="grid-template-columns:${S.cols}"><span class="text-center">#</span><span class="text-center">${t('kg')}</span><span class="text-center">${ex.timed ? t('sec') : t('reps')}</span>${showRpe ? '<span class="text-center">RPE</span>' : ''}</div>`;
             document.getElementById('aw-sets-container').innerHTML = S.exercises.map((ex, e) => `
                 <section class="mb-6" id="aw-ex-${e}">
                     <div class="flex items-start justify-between gap-2 px-1 mb-2">
                         <div class="min-w-0">
-                            <div class="ex-name text-[17px] font-black text-white leading-tight">${esc(ex.name)}</div>
+                            <div class="ex-name text-[17px] font-black text-white leading-tight">${esc(tx(ex.name))}</div>
                             <div class="text-[12px] font-bold text-slate-400 mt-0.5">${esc(tm(ex.muscle))} · ${t('{n} sets', { n: ex.sets })} · ${t(ex.timed ? '{r} sec' : '{r} reps', { r: `<span dir="ltr">${esc(fmtReps(ex.repsStr))}</span>` })}</div>
                         </div>
                         <span class="shrink-0">${suggestionChip(ex.sg, ex.timed)}</span>
@@ -2728,7 +2749,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 if (next !== undefined) {
                     window.appActions.discardSession();
                     renderNav();
-                    window.appActions.showToast(t('{name} saved · {n} sets', { name: title, n: sets }) + (prs.length ? ` · ${t('New record')} 🏆` : ''), 'success');
+                    window.appActions.showToast(t('{name} saved · {n} sets', { name: tx(title), n: sets }) + (prs.length ? ` · ${t('New record')} 🏆` : ''), 'success');
                     return;
                 }
                 window.appActions.discardSession();
@@ -2744,7 +2765,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const stat = (v, l, count) => `<div class="bg-white/5 rounded-xl py-3"><div class="text-[18px] font-black text-white tabular-nums num" dir="ltr" ${count !== undefined ? `data-count="${count}"` : ''}>${v}</div><div class="text-[12px] font-bold text-slate-400">${l}</div></div>`;
             document.getElementById('summary-stats').innerHTML = stat(fmtClock(duration), t('Time')) + stat(0, t('sets'), sets) + stat(0, t('kg lifted'), Math.round(volume));
             document.getElementById('summary-prs').innerHTML = prs.length
-                ? `<div class="text-[12px] font-bold text-[#d4af37] mb-2">🏆 ${t('New records')}</div>` + prs.map(x => `<div class="flex justify-between gap-2 py-2 border-b border-white/5 last:border-0"><span class="ex-name text-[13px] font-bold text-white truncate">${esc(x.name)}</span><span class="text-[13px] font-bold text-[#22c55e] shrink-0" dir="ltr">${x.w}kg (+${x.plus})</span></div>`).join('')
+                ? `<div class="text-[12px] font-bold text-[#d4af37] mb-2">🏆 ${t('New records')}</div>` + prs.map(x => `<div class="flex justify-between gap-2 py-2 border-b border-white/5 last:border-0"><span class="ex-name text-[13px] font-bold text-white truncate">${esc(tx(x.name))}</span><span class="text-[13px] font-bold text-[#22c55e] shrink-0" dir="ltr">${x.w}kg (+${x.plus})</span></div>`).join('')
                 : '';
             openModal('summary-overlay', 'summary-box');
             pushBack('summary', () => window.appActions.closeSummary());
@@ -2797,7 +2818,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             window.appActions.closeExEdit();
             const removed = d.exercises.splice(i, 1)[0];
             StorageManager.setPlan(appData); renderWorkout(); renderNav(false);
-            window.appActions.showToast(t('Removed {name}', { name: removed.name }), 'error', { label: t('Undo'), fn: () => {
+            window.appActions.showToast(t('Removed {name}', { name: tx(removed.name) }), 'error', { label: t('Undo'), fn: () => {
                 d.exercises.splice(i, 0, removed); StorageManager.setPlan(appData); renderWorkout(); renderNav(false);
             } });
         },
@@ -2808,7 +2829,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const d = getActiveSchedule().find(x => x.id === activeDay);
             const cur = mode === 'replace' ? d.exercises[idx] : null;
             window.appState.picker = { mode, idx, muscle: cur && muscleOptions.includes(cur.muscle) ? cur.muscle : 'All', q: '', sel: [] };
-            document.getElementById('picker-title').innerText = mode === 'replace' ? t('Change {name}', { name: cur.name }) : t('Add exercises');
+            document.getElementById('picker-title').innerText = mode === 'replace' ? t('Change {name}', { name: tx(cur.name) }) : t('Add exercises');
             const search = document.getElementById('picker-search'); search.value = '';
             window.appActions.renderPicker();
             openSheet('picker-overlay', 'picker-box');
@@ -2828,7 +2849,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const row = x => {
                 const sel = isSel(x.name, x.muscle), added = inDay.has(x.name);
                 return `<button onclick="window.appActions.pickerTap(${jsArg(x.name)}, ${jsArg(x.muscle)})" class="w-full flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 text-start tap-feedback ${sel ? 'bg-[#d4af37]/10' : ''}">
-                    <span class="min-w-0"><span class="ex-name block text-[14px] font-bold text-white truncate">${esc(x.name)}${x.custom ? ` <span class="text-[12px] text-[#d4af37]">★</span>` : ''}</span><span class="block text-[12px] font-bold text-slate-400">${esc(tm(x.muscle))}${added ? ` • ${esc(t('In this day'))}` : ''}</span></span>
+                    <span class="min-w-0"><span class="ex-name block text-[14px] font-bold text-white truncate">${esc(tx(x.name))}${x.custom ? ` <span class="text-[12px] text-[#d4af37]">★</span>` : ''}</span><span class="block text-[12px] font-bold text-slate-400">${esc(tm(x.muscle))}${added ? ` • ${esc(t('In this day'))}` : ''}</span></span>
                     <span class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center border ${sel ? 'bg-[#d4af37] border-[#d4af37] text-black' : 'border-white/20 text-slate-400'}"><i data-lucide="${P.mode === 'replace' ? 'replace' : (sel ? 'check' : 'plus')}" class="w-4 h-4"></i></span>
                 </button>`;
             };
@@ -2839,7 +2860,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             let html = '';
             if (q) {
                 const seen = new Set();
-                const hits = items.filter(x => (x.name.toLowerCase().includes(q) || tm(x.muscle).toLowerCase().includes(q)) && !seen.has(x.name) && seen.add(x.name));
+                const hits = items.filter(x => (x.name.toLowerCase().includes(q) || tx(x.name).includes(q) || tm(x.muscle).toLowerCase().includes(q)) && !seen.has(x.name) && seen.add(x.name));
                 html = hits.map(row).join('');
                 if (!items.some(x => x.name.toLowerCase() === q)) {
                     html += P.muscle === 'All'
@@ -2890,7 +2911,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <div class="flex items-start gap-2">
                     <div class="flex-1 min-w-0">
                         <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(W.muscle))}</div>
-                        <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(W.name)}</h3>
+                        <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(tx(W.name))}</h3>
                         <p class="text-[12px] font-bold text-slate-400 mt-1">${t('How many sets and reps for this exercise?')}</p>
                     </div>
                     <button onclick="window.appActions.closeSwapSetup()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -2915,11 +2936,11 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const d = getActiveSchedule().find(x => x.id === activeDay), ex = d && d.exercises[W.idx];
             if (!ex) return window.appActions.closeSwapSetup();
             const old = { name: ex.name, muscle: ex.muscle, sets: ex.sets, reps: ex.reps }, next = { name: W.name, muscle: W.muscle, sets: W.sets, reps: W.reps };
-            window.appActions.showConfirm(t('Change to {name}?', { name: next.name }), t('{old} will be replaced with {sets} sets of {reps}.', { old: old.name, sets: next.sets, reps: fmtReps(next.reps) + (isTimed(next.reps) && !/s$/i.test(next.reps.trim()) ? 's' : '') }), () => {
+            window.appActions.showConfirm(t('Change to {name}?', { name: tx(next.name) }), t('{old} will be replaced with {sets} sets of {reps}.', { old: old.name, sets: next.sets, reps: fmtReps(next.reps) + (isTimed(next.reps) && !/s$/i.test(next.reps.trim()) ? 's' : '') }), () => {
                 Object.assign(ex, next);
                 StorageManager.setPlan(appData);
                 window.appActions.closeSwapSetup(); window.appActions.closePicker(); renderWorkout();
-                window.appActions.showToast(t('Changed to {name}', { name: next.name }), 'success', { label: t('Undo'), fn: () => {
+                window.appActions.showToast(t('Changed to {name}', { name: tx(next.name) }), 'success', { label: t('Undo'), fn: () => {
                     if (!d.exercises.includes(ex)) return;
                     Object.assign(ex, old); StorageManager.setPlan(appData); renderWorkout();
                 } });
@@ -3344,7 +3365,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     ? `<div class="glass-card ex-card flex items-center gap-3 opacity-70"><i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-5 h-5 text-slate-400 shrink-0"></i><span class="text-[12px] font-bold text-slate-400 w-10 shrink-0">${esc(dayShort(d.day))}</span><span class="text-[14px] font-black text-slate-300">${t(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest')}</span></div>`
                     : `<div class="glass-card ex-card">
                         <div class="flex items-baseline justify-between gap-2 mb-2"><span class="min-w-0"><span class="block text-[12px] font-bold text-[#d4af37]">${esc(dayLong(d.day))}</span><span class="block text-[17px] font-black text-white leading-tight">${esc(t(d.title))}</span></span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} exercises', { n: d.exercises.length })}</span></div>
-                        ${d.exercises.map((ex, k) => `<div class="flex items-center gap-3 py-2 ${k ? 'border-t border-white/5' : ''}"><span class="w-6 text-center text-[12px] font-bold text-slate-400 shrink-0">${k + 1}</span><span class="flex-1 min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(ex.name)}</span><span class="block text-[12px] font-bold text-slate-400 truncate">${esc(tm(ex.muscle))}</span></span><span class="ex-pill" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span></div>`).join('')}
+                        ${d.exercises.map((ex, k) => `<div class="flex items-center gap-3 py-2 ${k ? 'border-t border-white/5' : ''}"><span class="w-6 text-center text-[12px] font-bold text-slate-400 shrink-0">${k + 1}</span><span class="flex-1 min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(tx(ex.name))}</span><span class="block text-[12px] font-bold text-slate-400 truncate">${esc(tm(ex.muscle))}</span></span><span class="ex-pill" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span></div>`).join('')}
                     </div>`;
                 list.innerHTML = `<div class="px-4 pb-4">
                     <button onclick="window.appActions.previewProgram(null)" class="flex items-center gap-1 mb-3 text-[12px] font-bold text-slate-400 tap-feedback"><i data-lucide="${isAR ? 'chevron-right' : 'chevron-left'}" class="w-4 h-4"></i>${t('All programs')}</button>
@@ -4600,10 +4621,27 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
     if (phoneLight && phoneLight.addEventListener) phoneLight.addEventListener('change', () => { if (themeChoice() === 'system') applyTheme(); });
     // Apply the language to the fixed parts of the page (index.html) and set right-to-left for Arabic
+    // 🔢 ARABIC DIGITS: in Arabic, numbers shown on screen use ٠١٢٣٤٥٦٧٨٩ and the Arabic decimal mark (like iOS).
+    // Done on the page itself, so every screen, chart and toast is covered; stored data and typed boxes keep 0-9.
+    // Routine codes (.code-big, .latin-num) stay in 0-9 so they can be read out and typed in.
+    const AR_DIGITS = '٠١٢٣٤٥٦٧٨٩';
+    const toArDigits = str => str.replace(/(\d)\.(?=\d)/g, '$1٫').replace(/\d/g, d => AR_DIGITS[d]);
+    const arDigitsIn = root => {
+        if (!isAR || !root) return;
+        const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => /\d/.test(n.nodeValue) && !(n.parentElement && n.parentElement.closest('script, style, textarea, .code-big, .latin-num')) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT });
+        const list = []; while (w.nextNode()) list.push(w.currentNode);
+        list.forEach(n => { n.nodeValue = toArDigits(n.nodeValue); });
+    };
+    if (isAR) {
+        new MutationObserver(ms => ms.forEach(m => { if (m.type === 'characterData') arDigitsIn(m.target.parentNode); else m.addedNodes.forEach(n => n.nodeType === 3 ? arDigitsIn(n.parentNode) : n.nodeType === 1 && arDigitsIn(n)); }))
+            .observe(document.body, { childList: true, subtree: true, characterData: true });
+        document.addEventListener('DOMContentLoaded', () => arDigitsIn(document.body));
+        arDigitsIn(document.body);
+    }
     const applyStaticLanguage = () => {
         document.documentElement.lang = LANG;
-        // Arabic uses the same layout as English (nothing is mirrored); only the text and font change
-        document.documentElement.dir = 'ltr';
+        // Arabic is right-to-left like iOS: the whole layout mirrors (number tables and charts keep dir="ltr")
+        document.documentElement.dir = isAR ? 'rtl' : 'ltr';
         document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
         document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
         document.querySelectorAll('#setting-start-day option').forEach(o => { o.textContent = tDay(o.value); });
