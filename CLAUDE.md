@@ -37,3 +37,12 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 ## Testing
 
 Test rule changes in the Firestore emulator, and test app and admin changes in a browser against the emulators (Firebase Auth + Firestore) before pushing.
+
+Design check: `node tools/design-check.js [--lang en|ar] [--theme dark|light]` (needs Playwright) opens every app screen and lists capital-letter labels, text under 12px, tap targets under 44px (40px for text buttons), unlabeled icon buttons and outside font requests. Run it in all four combinations after changing the app's look.
+
+## Design rules
+
+- Gold (`#d4af37`) marks only "now" or "do this": today, the selected item, the main button. Other cards stay neutral.
+- Labels and buttons in sentence case (no spaced-out capitals; the APEX LIFT logo is the exception). Text at least 12px.
+- Numbers (weights, reps, timer, dates, stats) use the `num` class (Barlow Condensed). Colours, corners and fonts are tokens at the top of `style.css`.
+- Fonts are stored in `vendor/fonts`; don't add Google Fonts links.

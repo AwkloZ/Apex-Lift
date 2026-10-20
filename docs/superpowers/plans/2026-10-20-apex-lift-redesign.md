@@ -41,9 +41,9 @@
 **Interfaces:**
 - Produces: `node tools/design-check.js [--lang en|ar] [--theme dark|light]` serves the repo, opens each tab and the workout screen at 390×844, prints one line per rule failure, exits 1 if any fail, and saves screenshots to `$OUT` (default `/tmp/apex-shots`).
 
-- [ ] **Step 1:** Write the checks: (a) no visible text with computed `text-transform: uppercase` outside `.logo-mark`; (b) no request to `fonts.googleapis.com`; (c) every visible `button` is at least 44×44px (or has `.tap-target` padding); (d) visible text under 12px is listed; (e) document fonts include "Barlow Condensed".
-- [ ] **Step 2:** Run on the current app. Expected: FAIL on (a), (b), (c), (e).
-- [ ] **Step 3:** Commit.
+- [x] **Step 1:** Write the checks: (a) no visible text with computed `text-transform: uppercase` outside `.logo-mark`; (b) no request to `fonts.googleapis.com`; (c) every visible `button` is at least 44×44px (or has `.tap-target` padding); (d) visible text under 12px is listed; (e) document fonts include "Barlow Condensed".
+- [x] **Step 2:** Run on the current app. Expected: FAIL on (a), (b), (c), (e).
+- [x] **Step 3:** Commit.
 
 ### Task 2: Tokens and fonts
 
@@ -51,56 +51,56 @@
 - Create: `vendor/fonts/*.woff2`, `vendor/fonts/fonts.css`
 - Modify: `style.css` (top), `index.html` (head), `sw.js` (`APP_FILES`, `CACHE`), `vendor/LICENSES.txt`
 
-- [ ] **Step 1:** Add `@font-face` rules for the three families; remove the Google `@import`.
-- [ ] **Step 2:** Add `:root` tokens: `--gold`, `--gold-ink`, `--bg`, `--surface-1/2/3`, `--line`, `--text`, `--text-2`, `--text-3`, `--good`, `--bad`, `--r-lg: 24px`, `--r-md: 18px`, `--r-sm: 12px`, `--font-num`, and their light values under `:root[data-theme="light"]`.
-- [ ] **Step 3:** Run the check. Expected: (b) and (e) pass.
-- [ ] **Step 4:** Commit and push to `Main`.
+- [x] **Step 1:** Add `@font-face` rules for the three families; remove the Google `@import`.
+- [x] **Step 2:** Add `:root` tokens: `--gold`, `--gold-ink`, `--bg`, `--surface-1/2/3`, `--line`, `--text`, `--text-2`, `--text-3`, `--good`, `--bad`, `--r-lg: 24px`, `--r-md: 18px`, `--r-sm: 12px`, `--font-num`, and their light values under `:root[data-theme="light"]`.
+- [x] **Step 3:** Run the check. Expected: (b) and (e) pass.
+- [x] **Step 4:** Commit and push to `Main`.
 
 ### Task 3: Type and labels
 
 **Files:** Modify `app.js`, `index.html`, `style.css`, `tailwind.css`
 
-- [ ] **Step 1:** Remove `uppercase` + `tracking-widest/wider` from labels and buttons; drop body text from `font-black` to `font-bold`/`font-semibold`; headings stay `font-black`.
-- [ ] **Step 2:** Add `.num` (Barlow Condensed, tabular) and use it for weights, reps, timer, dates, stats, the summary numbers.
-- [ ] **Step 3:** Raise 9–11px readable text to 12px; `text-slate-500` on dark becomes `text-slate-400`.
-- [ ] **Step 4:** Run the check. Expected: (a) and (d) pass.
-- [ ] **Step 5:** Commit and push.
+- [x] **Step 1:** Remove `uppercase` + `tracking-widest/wider` from labels and buttons; drop body text from `font-black` to `font-bold`/`font-semibold`; headings stay `font-black`.
+- [x] **Step 2:** Add `.num` (Barlow Condensed, tabular) and use it for weights, reps, timer, dates, stats, the summary numbers.
+- [x] **Step 3:** Raise 9–11px readable text to 12px; `text-slate-500` on dark becomes `text-slate-400`.
+- [x] **Step 4:** Run the check. Expected: (a) and (d) pass.
+- [x] **Step 5:** Commit and push.
 
 ### Task 4: Gold restraint and surfaces
 
 **Files:** Modify `app.js` (Plan list, routine card, cards), `style.css`
 
-- [ ] **Step 1:** Plan day cards: neutral border; gold only on today's card.
-- [ ] **Step 2:** Three surface levels (page, card, inset) and the three radii from Task 2.
-- [ ] **Step 3:** Screenshot review in dark and light. Commit and push.
+- [x] **Step 1:** Plan day cards: neutral border; gold only on today's card.
+- [x] **Step 2:** Three surface levels (page, card, inset) and the three radii from Task 2.
+- [x] **Step 3:** Screenshot review in dark and light. Commit and push.
 
 ### Task 5: Workout screen
 
 **Files:** Modify `index.html` (active workout), `app.js` (set rows, rest timer), `style.css`
 
-- [ ] **Step 1:** Set inputs use `.num` at 24px with readable "kg"/"reps" hints (contrast ≥ 4.5:1).
-- [ ] **Step 2:** A row of set segments under the exercise name shows done / now / to do.
-- [ ] **Step 3:** Rest timer: big condensed countdown with the existing bar.
-- [ ] **Step 4:** 44px − / + buttons. Run the check; commit and push.
+- [x] **Step 1:** Set inputs use `.num` at 24px with readable "kg"/"reps" hints (contrast ≥ 4.5:1).
+- [x] **Step 2:** A row of set segments under the exercise name shows done / now / to do.
+- [x] **Step 3:** Rest timer: big condensed countdown with the existing bar.
+- [x] **Step 4:** 44px − / + buttons. Run the check; commit and push.
 
 ### Task 6: Accessibility, motion and copy
 
 **Files:** Modify `app.js` (AR table, tab labels, empty states, icon buttons), `index.html`, `style.css`
 
-- [ ] **Step 1:** Global `:focus-visible` ring in gold; `aria-label` on icon-only buttons.
-- [ ] **Step 2:** Remove looping welcome animations (`float-*`, `pop-loop`, `glow-ring`) and the pulsing hint ring; keep feedback motion.
-- [ ] **Step 3:** Tabs read Today · Plan · Progress · Profile (AR: اليوم · الخطة · التقدم · الملف). Progress empty state gets a "Start today's workout" button.
-- [ ] **Step 4:** Run the check in `ar` and `light`. Commit and push.
+- [x] **Step 1:** Global `:focus-visible` ring in gold; `aria-label` on icon-only buttons.
+- [x] **Step 2:** Remove looping welcome animations (`float-*`, `pop-loop`, `glow-ring`) and the pulsing hint ring; keep feedback motion.
+- [x] **Step 3:** Tabs read Today · Plan · Progress · Profile (AR: اليوم · الخطة · التقدم · الملف). Progress empty state gets a "Start today's workout" button.
+- [x] **Step 4:** Run the check in `ar` and `light`. Commit and push.
 
 ### Task 7: Admin page
 
 **Files:** Modify `admin.html`, `admin.js`, `admin-coach.js`
 
-- [ ] **Step 1:** Use the same fonts and tokens; sentence-case headings; visible focus.
-- [ ] **Step 2:** Under 720px the users table becomes a list of rows (name, last active, workouts) with no sideways scroll.
-- [ ] **Step 3:** Screenshot with a stubbed user list. Commit and push.
+- [x] **Step 1:** Use the same fonts and tokens; sentence-case headings; visible focus.
+- [x] **Step 2:** Under 720px the users table becomes a list of rows (name, last active, workouts) with no sideways scroll.
+- [x] **Step 3:** Screenshot with a stubbed user list. Commit and push.
 
 ### Task 8: Release
 
-- [ ] **Step 1:** Bump `APP_VERSION` and `CACHE` to 32, rebuild `tailwind.css`, run the check in all four combinations.
-- [ ] **Step 2:** Commit and push to `Main`; report the commit hash and title.
+- [x] **Step 1:** Bump `APP_VERSION` and `CACHE` to 32, rebuild `tailwind.css`, run the check in all four combinations.
+- [x] **Step 2:** Commit and push to `Main`; report the commit hash and title.
