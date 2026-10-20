@@ -985,10 +985,10 @@
         if (!c || c.hidden || (!c.note && !c.routine)) return '';
         return `<div class="glass-card p-4 mb-4 border border-[#d4af37]/25">
             <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-2 min-w-0"><i data-lucide="message-circle" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="text-[12px] font-black uppercase tracking-widest text-white truncate">${t('Message from your coach')}</span></div>
-                <button onclick="window.appActions.dismissCoach()" class="text-slate-500 hover:text-white p-2 bg-white/5 rounded-lg tap-feedback shrink-0" aria-label="${esc(t('Dismiss'))}"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <div class="flex items-center gap-2 min-w-0"><i data-lucide="message-circle" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="text-[12px] font-bold text-white truncate">${t('Message from your coach')}</span></div>
+                <button onclick="window.appActions.dismissCoach()" class="text-slate-400 hover:text-white p-2 bg-white/5 rounded-lg tap-feedback shrink-0" aria-label="${esc(t('Dismiss'))}"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
-            ${c.routine ? `<div class="text-[11px] font-black text-[#d4af37] mt-2">${esc(t('New routine from your coach: {name}', { name: c.routine }))}</div>` : ''}
+            ${c.routine ? `<div class="text-[12px] font-bold text-[#d4af37] mt-2">${esc(t('New routine from your coach: {name}', { name: c.routine }))}</div>` : ''}
             ${c.note ? `<p class="text-[12px] font-bold text-slate-300 leading-snug mt-2" style="white-space:pre-wrap">${esc(c.note)}</p>` : ''}
         </div>`;
     };
@@ -1158,7 +1158,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
         return `<div class="grid grid-cols-7 gap-1 mt-3">${prog.week.map((slot, i) => {
             const rest = slot === 'R' || slot === 'A';
-            return `<div class="rounded-lg py-1.5 px-0.5 text-center ${rest ? 'bg-white/5 text-slate-500' : 'bg-[#d4af37]/15 text-[#d4af37]'}"><div class="text-[9px] font-black">${esc(dayShort(DAY_NAMES[(start + i) % 7]))}</div><div class="text-[9px] font-bold leading-tight mt-0.5 line-clamp-2">${rest ? '—' : esc(t(WORKOUTS[slot][0]))}</div></div>`;
+            return `<div class="rounded-lg py-1.5 px-0.5 text-center ${rest ? 'bg-white/5 text-slate-400' : 'bg-[#d4af37]/15 text-[#d4af37]'}"><div class="text-[12px] font-bold">${esc(dayShort(DAY_NAMES[(start + i) % 7]))}</div><div class="text-[12px] font-bold leading-tight mt-0.5 line-clamp-2">${rest ? '—' : esc(t(WORKOUTS[slot][0]))}</div></div>`;
         }).join('')}</div>`;
     };
 
@@ -1318,22 +1318,22 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // Plan tab: your routines as one folding card (shows the active routine; tap to see and manage all of them)
     const renderSidePanel = () => {
         const active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0], open = !!window.appState.routinesOpen, inDay = window.appState.planDay != null;
-        const row = w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold uppercase tracking-wider w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[9px] font-black tracking-widest uppercase shrink-0">${t('Active')}</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[10px] font-bold tracking-widest uppercase tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">${t('Select')}</button>`}<button onclick="window.appActions.shareWeek(${jsArg(w.id)})" class="text-[#d4af37] tap-feedback p-1 bg-[#d4af37]/10 rounded-lg shrink-0 border border-[#d4af37]/25" aria-label="${esc(t('Share routine'))}" title="${esc(t('Share routine'))}"><i data-lucide="share-2" class="w-4 h-4"></i></button><button onclick="window.appActions.duplicateWeek(${jsArg(w.id)})" class="text-slate-300 hover:text-white tap-feedback p-1 bg-white/5 rounded-lg shrink-0 border border-white/10" aria-label="${esc(t('Duplicate routine'))}" title="${esc(t('Duplicate routine'))}"><i data-lucide="copy" class="w-4 h-4"></i></button>${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20" aria-label="${esc(t('Delete routine'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`;
+        const row = w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[12px] font-bold shrink-0">${t('Active')}</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[12px] font-bold tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">${t('Select')}</button>`}<button onclick="window.appActions.shareWeek(${jsArg(w.id)})" class="text-[#d4af37] tap-feedback p-1 bg-[#d4af37]/10 rounded-lg shrink-0 border border-[#d4af37]/25" aria-label="${esc(t('Share routine'))}" title="${esc(t('Share routine'))}"><i data-lucide="share-2" class="w-4 h-4"></i></button><button onclick="window.appActions.duplicateWeek(${jsArg(w.id)})" class="text-slate-300 hover:text-white tap-feedback p-1 bg-white/5 rounded-lg shrink-0 border border-white/10" aria-label="${esc(t('Duplicate routine'))}" title="${esc(t('Duplicate routine'))}"><i data-lucide="copy" class="w-4 h-4"></i></button>${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20" aria-label="${esc(t('Delete routine'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`;
         // Plan is where the schedule is edited: a gold strip says so, so it isn't mistaken for Today
         document.getElementById('weeks-container').innerHTML = `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-[#d4af37]/15 border border-[#d4af37]/45">
             <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
-            <span class="flex-1 min-w-0"><span class="block text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${t('Editing your schedule')}</span><span class="block text-[11px] font-semibold text-slate-300 mt-px">${t('Changes here update your Plan page')}</span></span>
+            <span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-[#d4af37]">${t('Editing your schedule')}</span><span class="block text-[12px] font-semibold text-slate-300 mt-px">${t('Changes here update your Plan page')}</span></span>
         </div>
         ${inDay ? '' : `<div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''}">
             <button onclick="window.appActions.toggleRoutines()" class="w-full p-4 flex items-center gap-3 text-start tap-feedback" aria-expanded="${open}">
                 <span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-range" class="w-5 h-5"></i></span>
-                <span class="flex-1 min-w-0"><span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">${t('My routines')}</span><span class="block text-[15px] font-black text-white truncate">${esc(t(active.name))}</span></span>
-                <span class="shrink-0 text-[11px] font-black text-slate-400" dir="ltr">${appData.weeks.length}</span>
-                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}"></i>
+                <span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-slate-400">${t('My routines')}</span><span class="block text-[15px] font-black text-white truncate">${esc(t(active.name))}</span></span>
+                <span class="shrink-0 text-[12px] font-bold text-slate-400" dir="ltr">${appData.weeks.length}</span>
+                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}"></i>
             </button>
             ${open ? `<div class="px-4 pb-4 space-y-2.5">${appData.weeks.map(row).join('')}
-                <button onclick="window.appActions.addWeek()" class="w-full py-3 flex items-center justify-center gap-2 text-[#d4af37] font-bold uppercase tracking-widest text-[11px] tap-feedback border border-dashed border-[#d4af37]/40 bg-[#d4af37]/5 rounded-xl"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i>${t('New routine')}</button>
-                <button onclick="window.appActions.openCodeSheet()" class="w-full py-3 flex items-center justify-center gap-2 text-slate-300 font-bold uppercase tracking-widest text-[11px] tap-feedback border border-white/10 bg-white/5 rounded-xl"><i data-lucide="ticket" class="w-4 h-4 shrink-0"></i>${t('Add a routine by code')}</button>
+                <button onclick="window.appActions.addWeek()" class="w-full py-3 flex items-center justify-center gap-2 text-[#d4af37] font-bold text-[12px] tap-feedback border border-dashed border-[#d4af37]/40 bg-[#d4af37]/5 rounded-xl"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i>${t('New routine')}</button>
+                <button onclick="window.appActions.openCodeSheet()" class="w-full py-3 flex items-center justify-center gap-2 text-slate-300 font-bold text-[12px] tap-feedback border border-white/10 bg-white/5 rounded-xl"><i data-lucide="ticket" class="w-4 h-4 shrink-0"></i>${t('Add a routine by code')}</button>
             </div>` : ''}
         </div>`}`;
         document.getElementById('active-week-label').innerText = t(active.name);
@@ -1471,7 +1471,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <line class="chart-cross" x1="0" x2="0" y1="${pt}" y2="${H - pb}" stroke="#94a3b8" stroke-width="1" visibility="hidden"/>
                 <circle class="chart-hot" r="6" fill="#d4af37" stroke="#111111" stroke-width="2" visibility="hidden"/>
             </svg>
-            <div class="chart-tip hidden absolute -top-2 px-2 py-1 rounded-lg bg-black border border-white/15 text-[11px] font-black text-white whitespace-nowrap pointer-events-none"></div>
+            <div class="chart-tip hidden absolute -top-2 px-2 py-1 rounded-lg bg-black border border-white/15 text-[12px] font-bold text-white whitespace-nowrap pointer-events-none"></div>
         </div>`;
     };
     // Weekly bar chart (inline SVG): one gold bar per week, this week full gold, older weeks softer.
@@ -1495,7 +1495,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <line class="chart-cross" x1="0" x2="0" y1="${pt}" y2="${H - pb}" stroke="#94a3b8" stroke-width="1" visibility="hidden"/>
                 <circle class="chart-hot" r="0" visibility="hidden"/>
             </svg>
-            <div class="chart-tip hidden absolute -top-2 px-2 py-1 rounded-lg bg-black border border-white/15 text-[11px] font-black text-white whitespace-nowrap pointer-events-none"></div>
+            <div class="chart-tip hidden absolute -top-2 px-2 py-1 rounded-lg bg-black border border-white/15 text-[12px] font-bold text-white whitespace-nowrap pointer-events-none"></div>
         </div>`;
     };
     // Crosshair + tooltip for the charts inside an element
@@ -1520,21 +1520,21 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const all = ses.flatMap(s => s.sets);
         const best = weighted ? Math.max(...all.map(x => x.w)) : Math.max(...all.map(x => x.r));
         const e1rm = weighted && !timed ? Math.max(0, ...all.map(e1rmOf)) : 0;
-        const tile = (v, l) => `<div class="bg-white/5 rounded-xl py-2.5 text-center"><div class="text-[17px] font-black text-white" dir="ltr">${v}</div><div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">${l}</div></div>`;
+        const tile = (v, l) => `<div class="bg-white/5 rounded-xl py-2.5 text-center"><div class="text-[17px] font-black text-white" dir="ltr">${v}</div><div class="text-[12px] font-bold text-slate-400">${l}</div></div>`;
         const unit = weighted ? 'kg' : timed ? 's' : '';
         const pts = ses.slice(-12).map(s => ({ t: s.t, v: weighted ? s.w : s.r }));
         return `<div class="grid grid-cols-3 gap-2 mb-3">${tile(`${best}${unit}`, weighted ? t('Best weight') : timed ? t('Best time') : t('Best reps'))}${tile(e1rm ? `${Math.round(e1rm)}kg` : '—', t('Est. 1-rep max'))}${tile(ses.length, t('Sessions'))}</div>`
-            + (pts.length >= 2 ? `<div class="bg-white/5 rounded-2xl p-3 mb-4"><div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">${weighted ? t('Heaviest weight per session') : timed ? t('Longest set per session') : t('Most reps per session')}</div>${lineChartHTML(pts, unit)}</div>` : '');
+            + (pts.length >= 2 ? `<div class="bg-white/5 rounded-2xl p-3 mb-4"><div class="text-[12px] font-bold text-slate-400 mb-2">${weighted ? t('Heaviest weight per session') : timed ? t('Longest set per session') : t('Most reps per session')}</div>${lineChartHTML(pts, unit)}</div>` : '');
     };
 
     // Shared pieces of the Progress tab
-    const pCard = (title, body, extra = '') => `<div class="glass-card p-4 mb-3 ${extra}">${title ? `<div class="text-[13px] font-black text-white mb-3">${title}</div>` : ''}${body}</div>`;
+    const pCard = (title, body, extra = '') => `<div class="glass-card p-4 mb-3 ${extra}">${title ? `<div class="text-[13px] font-bold text-white mb-3">${title}</div>` : ''}${body}</div>`;
     const pEmpty = (icon, title, text, extra = '') => `<div class="glass-card p-8 text-center"><div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="${icon}" class="w-6 h-6 text-[#d4af37]"></i></div><div class="text-[15px] font-black text-white mb-2">${title}</div><p class="text-[12px] text-slate-400 font-bold leading-relaxed">${text}</p>${extra}</div>`;
     // "+12% vs last week" under a number (green up, orange down)
     const changeHTML = (now, before) => {
-        if (!(before > 0)) return `<div class="text-[11px] font-bold text-slate-500 mt-1.5">${t('No data last week')}</div>`;
+        if (!(before > 0)) return `<div class="text-[12px] font-bold text-slate-400 mt-1.5">${t('No data last week')}</div>`;
         const pct = Math.round((now - before) / before * 100), c = pct > 0 ? TREND.up : pct < 0 ? TREND.down : TREND.same;
-        return `<div class="flex flex-wrap items-center gap-x-1 text-[11px] font-black mt-1.5 ${c.c}"><i data-lucide="${c.i}" class="w-3.5 h-3.5 shrink-0"></i><span dir="ltr">${pct > 0 ? '+' : ''}${pct}%</span><span class="text-slate-500 font-bold">${t('vs last week')}</span></div>`;
+        return `<div class="flex flex-wrap items-center gap-x-1 text-[12px] font-bold mt-1.5 ${c.c}"><i data-lucide="${c.i}" class="w-3.5 h-3.5 shrink-0"></i><span dir="ltr">${pct > 0 ? '+' : ''}${pct}%</span><span class="text-slate-400 font-bold">${t('vs last week')}</span></div>`;
     };
 
     // Overview: this week against the same days last week, 8 weeks of sets, the 5-week calendar, recent records
@@ -1551,23 +1551,23 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const volNow = sum(wk, today, x => x.volume), volBefore = sum(weekAgo(1), sameDayLastWeek, x => x.volume);
         const plannedDays = getActiveSchedule().filter(d => !d.isRest && (d.exercises || []).length).length;
         const streak = weekStreak(dayKeys);
-        const tile = (icon, label, value, sub) => `<div class="glass-card p-4 min-w-0"><div class="flex items-center gap-1.5 text-[11px] font-black text-slate-400 mb-1.5"><i data-lucide="${icon}" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="truncate">${label}</span></div><div class="text-[26px] font-black text-white leading-none" dir="ltr">${value}</div>${sub}</div>`;
-        const plain = s => `<div class="text-[11px] font-bold text-slate-500 mt-1.5 truncate">${s}</div>`;
-        let html = `<div class="text-[12px] font-black text-slate-400 mb-2 px-1">${t('This week')}</div>
+        const tile = (icon, label, value, sub) => `<div class="glass-card p-4 min-w-0"><div class="flex items-center gap-1.5 text-[12px] font-bold text-slate-400 mb-1.5"><i data-lucide="${icon}" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="truncate">${label}</span></div><div class="text-[26px] font-black text-white leading-none num" dir="ltr">${value}</div>${sub}</div>`;
+        const plain = s => `<div class="text-[12px] font-bold text-slate-400 mt-1.5 truncate">${s}</div>`;
+        let html = `<div class="text-[12px] font-bold text-slate-400 mb-2 px-1">${t('This week')}</div>
             <div class="grid grid-cols-2 gap-2.5 mb-3">
-                ${tile('calendar-check', t('Workouts'), plannedDays ? `${inWeek.length}<span class="text-[15px] text-slate-500"> / ${plannedDays}</span>` : inWeek.length, plain(plannedDays ? t('{n} planned', { n: plannedDays }) : '&nbsp;'))}
+                ${tile('calendar-check', t('Workouts'), plannedDays ? `${inWeek.length}<span class="text-[15px] text-slate-400"> / ${plannedDays}</span>` : inWeek.length, plain(plannedDays ? t('{n} planned', { n: plannedDays }) : '&nbsp;'))}
                 ${tile('flame', t('Week streak'), streak, plain(t('Weeks in a row')))}
                 ${tile('layers', t('Sets'), setsNow, changeHTML(setsNow, setsBefore))}
                 ${tile('weight', t('kg lifted'), fmtKg(volNow), changeHTML(volNow, volBefore))}
             </div>
-            <p class="text-[11px] font-bold text-slate-500 mb-4 px-1">${t('Compared with the same days last week.')}</p>`;
+            <p class="text-[12px] font-bold text-slate-400 mb-4 px-1">${t('Compared with the same days last week.')}</p>`;
         // 8 weeks of sets
         const bars = [];
         for (let i = 7; i >= 0; i--) {
             const from = weekAgo(i), to = weekAgo(i - 1) - 1, v = sum(from, to, x => x.sets);
             bars.push({ v, label: i ? fmtDayMonth(new Date(from)) : t('This week'), tip: i ? t('Week of {d}', { d: fmtDayMonth(new Date(from)) }) : t('This week') });
         }
-        html += pCard(t('Sets per week'), `${barChartHTML(bars)}<p class="text-[11px] font-bold text-slate-500 mt-2">${t('Tap a bar to see that week.')}</p>`);
+        html += pCard(t('Sets per week'), `${barChartHTML(bars)}<p class="text-[12px] font-bold text-slate-400 mt-2">${t('Tap a bar to see that week.')}</p>`);
         // calendar: 5 weeks, gold = trained (darker = more sets)
         const start = weekAgo(4), startIdx = DAY_NAMES.indexOf(StorageManager.getStartDay());
         let cells = '';
@@ -1577,7 +1577,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const label = `${fmtDate(d, false)} · ${info ? t('{n} sets', { n: info.sets }) : t('Rest')}`;
             cells += `<button onclick="document.getElementById('cal-info').textContent=${esc(JSON.stringify(label))}" class="aspect-square rounded-lg tap-feedback ${d === today ? 'ring-2 ring-white/70' : ''} ${future ? 'opacity-30' : ''}" style="background:${info ? `rgba(212,175,55,${lvl})` : 'rgba(128,128,128,0.14)'}" aria-label="${esc(label)}" title="${esc(label)}"></button>`;
         }
-        html += pCard(t('Last 5 weeks'), `<div class="grid grid-cols-7 gap-1.5 mb-1.5">${DAY_NAMES.map((_, i) => `<div class="text-center text-[10px] font-black text-slate-500 truncate">${esc(dayShort(DAY_NAMES[(startIdx + i) % 7]))}</div>`).join('')}</div>
+        html += pCard(t('Last 5 weeks'), `<div class="grid grid-cols-7 gap-1.5 mb-1.5">${DAY_NAMES.map((_, i) => `<div class="text-center text-[12px] font-bold text-slate-400 truncate">${esc(dayShort(DAY_NAMES[(startIdx + i) % 7]))}</div>`).join('')}</div>
             <div class="grid grid-cols-7 gap-1.5" dir="ltr">${cells}</div>
             <div id="cal-info" class="text-[12px] font-bold text-slate-400 mt-3 min-h-[16px]">${t('Tap a day for details.')}</div>`);
         // recent records
@@ -1586,9 +1586,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         recs.sort((a, b) => b.t - a.t);
         const recent = recs.filter(r => r.t >= today - 30 * DAY_MS).slice(0, 6);
         html += pCard(`🏆 ${t('Records (last 30 days)')}`, recent.length ? recent.map(r => `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(nameOfKey(r.k, map))})" class="w-full flex items-center justify-between gap-2 py-2.5 border-b border-white/5 last:border-0 text-start tap-feedback">
-                <span class="min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(nameOfKey(r.k, map))}</span><span class="block text-[11px] font-bold text-slate-500 truncate">${esc(r.type === 'r' && r.unit === 's' ? t('Longest hold') : t(RECORD_LABEL[r.type]))} · ${esc(fmtDate(r.t, false))}</span></span>
-                <span class="text-[14px] font-black text-[#22c55e] shrink-0" dir="ltr">${r.v}${r.unit} <span class="text-[11px]">(+${r.plus})</span></span></button>`).join('')
-            : `<p class="text-[12px] font-bold text-slate-500">${t('No new records yet. Add weight when the app says so and they will come.')}</p>`);
+                <span class="min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(nameOfKey(r.k, map))}</span><span class="block text-[12px] font-bold text-slate-400 truncate">${esc(r.type === 'r' && r.unit === 's' ? t('Longest hold') : t(RECORD_LABEL[r.type]))} · ${esc(fmtDate(r.t, false))}</span></span>
+                <span class="text-[14px] font-black text-[#22c55e] shrink-0" dir="ltr">${r.v}${r.unit} <span class="text-[12px]">(+${r.plus})</span></span></button>`).join('')
+            : `<p class="text-[12px] font-bold text-slate-400">${t('No new records yet. Add weight when the app says so and they will come.')}</p>`);
         return html;
     };
 
@@ -1612,18 +1612,18 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const shown = rows.filter(r => (!q || r.name.toLowerCase().includes(q) || tm(r.muscle).toLowerCase().includes(q))
             && (f === 'all' || (f === 'up' ? r.sg && r.sg.type === 'up' : r.group === f)));
         if (!shown.length) return `<div class="glass-card p-6 text-center text-[13px] font-bold text-slate-400">${t('No exercises match.')}</div>`;
-        return `<div class="text-[11px] font-bold text-slate-500 mb-2 px-1">${t('{n} exercises', { n: shown.length })}</div>` + shown.map(r => {
+        return `<div class="text-[12px] font-bold text-slate-400 mb-2 px-1">${t('{n} exercises', { n: shown.length })}</div>` + shown.map(r => {
             const tr = r.trend && TREND[r.trend];
             return `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(r.name)})" class="w-full glass-card p-4 mb-2.5 flex items-center gap-3 text-start tap-feedback">
                 <span class="flex-1 min-w-0">
                     <span class="ex-name block text-[15px] font-black text-white leading-tight">${esc(r.name)}</span>
-                    <span class="block text-[11px] font-bold text-slate-400 mt-0.5">${esc(tm(r.muscle))}${r.muscle ? ' · ' : ''}${t('{n} sessions', { n: r.n })} · ${esc(fmtDate(r.last, false))}</span>
+                    <span class="block text-[12px] font-bold text-slate-400 mt-0.5">${esc(tm(r.muscle))}${r.muscle ? ' · ' : ''}${t('{n} sessions', { n: r.n })} · ${esc(fmtDate(r.last, false))}</span>
                     ${r.sg ? `<span class="block mt-2">${suggestionChip(r.sg, r.timed)}</span>` : ''}
                 </span>
                 <span class="text-end shrink-0">
-                    <span class="block text-[10px] font-black text-slate-500">${t('Best')}</span>
+                    <span class="block text-[12px] font-bold text-slate-400">${t('Best')}</span>
                     <span class="block text-[15px] font-black text-white" dir="ltr">${esc(r.best)}</span>
-                    ${tr ? `<span class="flex items-center justify-end gap-1 text-[10px] font-black mt-0.5 ${tr.c}"><i data-lucide="${tr.i}" class="w-3.5 h-3.5"></i>${t(tr.l)}</span>` : ''}
+                    ${tr ? `<span class="flex items-center justify-end gap-1 text-[12px] font-bold mt-0.5 ${tr.c}"><i data-lucide="${tr.i}" class="w-3.5 h-3.5"></i>${t(tr.l)}</span>` : ''}
                 </span>
                 <i data-lucide="chevron-right" class="w-4 h-4 text-slate-600 shrink-0"></i></button>`;
         }).join('');
@@ -1632,9 +1632,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const rows = progressExerciseRows(history);
         if (!rows.length) return pEmpty('dumbbell', t('No exercises yet'), t('Finish your first workout to see your progress here.'));
         const f = window.appState.pexF || 'all';
-        const chip = ([id, label]) => `<button onclick="window.appActions.progressFilter(${jsArg(id)})" class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[12px] font-black tap-feedback border ${f === id ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${id === 'up' ? '<i data-lucide="arrow-up-circle" class="w-3.5 h-3.5"></i>' : ''}${esc(t(label))}</button>`;
+        const chip = ([id, label]) => `<button onclick="window.appActions.progressFilter(${jsArg(id)})" class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[12px] font-extrabold tap-feedback border ${f === id ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${id === 'up' ? '<i data-lucide="arrow-up-circle" class="w-3.5 h-3.5"></i>' : ''}${esc(t(label))}</button>`;
         return `<div class="relative mb-3">
-                <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                 <input id="pex-search" type="search" autocomplete="off" value="${esc(window.appState.pexQ || '')}" placeholder="${esc(t('Search exercises'))}" oninput="window.appActions.progressSearch(this.value)" class="w-full bg-white/5 border border-white/10 rounded-2xl ps-11 pe-4 py-3.5 text-[14px] font-bold text-white outline-none focus:border-[#d4af37]">
             </div>
             <div id="pex-chips" class="flex gap-2 overflow-x-auto scrollbar-hide pb-1 mb-3 -mx-1 px-1">${PEX_FILTERS.map(chip).join('')}</div>
@@ -1657,36 +1657,36 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             return `<div class="py-3 border-b border-white/5 last:border-0">
                 <div class="flex items-center justify-between gap-2 mb-2">
                     <span class="text-[14px] font-black text-white">${esc(t(n))}</span>
-                    <span class="flex items-center gap-2 shrink-0"><span class="text-[13px] font-black text-white" dir="ltr">${x.done} / ${x.plan}</span>${status ? `<span class="text-[10px] font-black px-2 py-1 rounded-md ${status[1]}">${status[0]}</span>` : ''}</span>
+                    <span class="flex items-center gap-2 shrink-0"><span class="text-[13px] font-bold text-white" dir="ltr">${x.done} / ${x.plan}</span>${status ? `<span class="text-[12px] font-bold px-2 py-1 rounded-md ${status[1]}">${status[0]}</span>` : ''}</span>
                 </div>
                 <div class="h-2 rounded-full bg-white/10 overflow-hidden" dir="ltr"><div class="bar-fill h-full rounded-full ${full ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pct}%"></div></div>
             </div>`;
         }).join('');
-        return pCard(t('Sets this week'), `<div class="flex justify-between text-[11px] font-bold text-slate-500 -mt-2 mb-1"><span>${t('Muscle')}</span><span>${t('Done / planned')}</span></div>${rows}<p class="text-[11px] font-bold text-slate-500 mt-3">${t('Aim for about 10–20 sets a week for each muscle.')} ${t('"Low in plan" means your routine has few sets for it: add some in the Edit tab.')}</p>`);
+        return pCard(t('Sets this week'), `<div class="flex justify-between text-[12px] font-bold text-slate-400 -mt-2 mb-1"><span>${t('Muscle')}</span><span>${t('Done / planned')}</span></div>${rows}<p class="text-[12px] font-bold text-slate-400 mt-3">${t('Aim for about 10–20 sets a week for each muscle.')} ${t('"Low in plan" means your routine has few sets for it: add some in the Edit tab.')}</p>`);
     };
 
     // Body: body weight over time (the same log as Profile → About you); log today's weight here too
     const progressBodyHTML = () => {
         const b = getBody(), log = b.log || [];
-        const form = `<div class="flex gap-2 mt-4"><input id="pb-weight" type="text" inputmode="decimal" autocomplete="off" placeholder="${esc(t('Weight (kg)'))}" class="flex-1 min-w-0 bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-white text-center font-black outline-none focus:border-[#d4af37]" dir="ltr" onkeydown="if(event.key==='Enter')window.appActions.progressLogWeight()"><button onclick="window.appActions.progressLogWeight()" class="shrink-0 px-5 rounded-2xl bg-[#d4af37] text-black text-[13px] font-black tap-feedback">${t('Save')}</button></div>`;
+        const form = `<div class="flex gap-2 mt-4"><input id="pb-weight" type="text" inputmode="decimal" autocomplete="off" placeholder="${esc(t('Weight (kg)'))}" class="flex-1 min-w-0 bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-white text-center font-black outline-none focus:border-[#d4af37]" dir="ltr" onkeydown="if(event.key==='Enter')window.appActions.progressLogWeight()"><button onclick="window.appActions.progressLogWeight()" class="shrink-0 px-5 rounded-2xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback">${t('Save')}</button></div>`;
         if (!log.length) return pEmpty('scale', t('Track your body weight'), t('Log your weight once a week, at the same time of day, to see how it changes.'), form);
         const last = log[log.length - 1], monthAgo = Date.now() - 30 * DAY_MS;
         const base = [...log].reverse().find(x => x.t <= monthAgo) || log[0], diff = round1(last.kg - base.kg);
         const loggedToday = dateKey(last.t) === dateKey();
         let html = `<div class="glass-card p-5 mb-3">
             <div class="flex items-end justify-between gap-3">
-                <div><div class="text-[12px] font-black text-slate-400 mb-1">${t('Body weight')}</div><div class="text-[34px] font-black text-white leading-none" dir="ltr">${last.kg}<span class="text-[16px] text-slate-500"> kg</span></div><div class="text-[11px] font-bold text-slate-500 mt-1.5">${esc(fmtDate(last.t, false))}</div></div>
-                ${log.length >= 2 ? `<div class="text-end"><div class="text-[18px] font-black ${diff === 0 ? 'text-slate-300' : 'text-white'}" dir="ltr">${diff > 0 ? '+' : ''}${diff} kg</div><div class="text-[11px] font-bold text-slate-500">${base === log[0] && base.t > monthAgo ? t('since you started') : t('in 30 days')}</div></div>` : ''}
+                <div><div class="text-[12px] font-bold text-slate-400 mb-1">${t('Body weight')}</div><div class="text-[34px] font-black text-white leading-none num" dir="ltr">${last.kg}<span class="text-[16px] text-slate-400"> kg</span></div><div class="text-[12px] font-bold text-slate-400 mt-1.5">${esc(fmtDate(last.t, false))}</div></div>
+                ${log.length >= 2 ? `<div class="text-end"><div class="text-[18px] font-black num ${diff === 0 ? 'text-slate-300' : 'text-white'}" dir="ltr">${diff > 0 ? '+' : ''}${diff} kg</div><div class="text-[12px] font-bold text-slate-400">${base === log[0] && base.t > monthAgo ? t('since you started') : t('in 30 days')}</div></div>` : ''}
             </div>
             ${log.length >= 2 ? `<div class="mt-4">${lineChartHTML(log.slice(-20).map(x => ({ t: x.t, v: x.kg })), 'kg')}</div>` : ''}
-            <div class="text-[12px] font-black text-white mt-4">${loggedToday ? t("Update today's weight") : t("Log today's weight")}</div>
+            <div class="text-[12px] font-bold text-white mt-4">${loggedToday ? t("Update today's weight") : t("Log today's weight")}</div>
             ${form.replace('mt-4', 'mt-2')}
         </div>`;
         html += pCard(t('History'), [...log].reverse().slice(0, 8).map((x, i, arr) => {
             const prev = arr[i + 1], d = prev ? round1(x.kg - prev.kg) : null;
-            return `<div class="flex items-center justify-between py-2.5 border-b border-white/5 last:border-0"><span class="text-[13px] font-bold text-slate-300">${esc(fmtDate(x.t, false))}</span><span class="flex items-center gap-3" dir="ltr"><span class="text-[11px] font-bold text-slate-500">${d === null ? '' : `${d > 0 ? '+' : ''}${d}`}</span><span class="text-[14px] font-black text-white">${x.kg} kg</span></span></div>`;
+            return `<div class="flex items-center justify-between py-2.5 border-b border-white/5 last:border-0"><span class="text-[13px] font-bold text-slate-300">${esc(fmtDate(x.t, false))}</span><span class="flex items-center gap-3" dir="ltr"><span class="text-[12px] font-bold text-slate-400">${d === null ? '' : `${d > 0 ? '+' : ''}${d}`}</span><span class="text-[14px] font-black text-white">${x.kg} kg</span></span></div>`;
         }).join(''));
-        return html + `<p class="text-[11px] font-bold text-slate-500 px-1">${t('Also in Profile → About you.')}</p>`;
+        return html + `<p class="text-[12px] font-bold text-slate-400 px-1">${t('Also in Profile → About you.')}</p>`;
     };
 
     // Progress tab: four sections in one rounded switcher; the chosen one slides over and is remembered
@@ -1702,7 +1702,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const c = document.getElementById('workout-container');
         const activeTab = currentPTab(), idx = PTABS.findIndex(([id]) => id === activeTab);
         const prev = window.appState.aTabShown, from = PTABS.findIndex(([id]) => id === prev);
-        const seg = ([id, label, icon]) => `<button onclick="window.appActions.progressTab('${id}')" class="relative z-10 flex-1 min-w-0 flex flex-col items-center gap-1 py-2.5 rounded-[18px] tap-feedback transition-colors duration-300 ${activeTab === id ? 'text-black' : 'text-slate-400'}" aria-pressed="${activeTab === id}"><i data-lucide="${icon}" class="w-[18px] h-[18px]"></i><span class="text-[11px] font-black truncate max-w-full px-0.5">${esc(t(label))}</span></button>`;
+        const seg = ([id, label, icon]) => `<button onclick="window.appActions.progressTab('${id}')" class="relative z-10 flex-1 min-w-0 flex flex-col items-center gap-1 py-2.5 rounded-[18px] tap-feedback transition-colors duration-300 ${activeTab === id ? 'text-black' : 'text-slate-400'}" aria-pressed="${activeTab === id}"><i data-lucide="${icon}" class="w-[18px] h-[18px]"></i><span class="text-[12px] font-bold truncate max-w-full px-0.5">${esc(t(label))}</span></button>`;
         const tabsHTML = `<div id="progress-tabs" class="p-seg relative flex mb-4" role="tablist"><span class="p-seg-pill" style="--i:${from >= 0 ? from : idx}"></span>${PTABS.map(seg).join('')}</div>`;
         const contentHTML = activeTab === 'exercises' ? progressExercisesHTML(history)
             : activeTab === 'volume' ? progressVolumeHTML(history)
@@ -1727,7 +1727,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const r = getReadinessToday(), open = !!window.appState.ciOpen;
         if (!r && window.appState.ciSkipped === dateKey()) return '';
         const L = r ? READY[r.level] : null, c = L ? L.c : '#d4af37';
-        return `<button onclick="window.appActions.toggleCheckIn()" class="ci-chip self-start inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-widest tap-feedback" style="color:${c};border-color:${c}55;background:${c}14" aria-expanded="${open}"><i data-lucide="${L ? L.i : 'activity'}" class="w-3.5 h-3.5"></i>${L ? `${t(L.t)} <span class="text-slate-500">• ${r.score}/6</span>` : t('How do you feel?')}<i data-lucide="chevron-${open ? 'up' : 'down'}" class="w-3 h-3 opacity-70"></i></button>`;
+        return `<button onclick="window.appActions.toggleCheckIn()" class="ci-chip self-start inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[12px] font-bold tap-feedback" style="color:${c};border-color:${c}55;background:${c}14" aria-expanded="${open}"><i data-lucide="${L ? L.i : 'activity'}" class="w-3.5 h-3.5"></i>${L ? `${t(L.t)} <span class="text-slate-400">• ${r.score}/6</span>` : t('How do you feel?')}<i data-lucide="chevron-${open ? 'up' : 'down'}" class="w-3 h-3 opacity-70"></i></button>`;
     };
     // Daily check-in card (opened from the button in today's day card)
     const checkInHTML = () => {
@@ -1737,24 +1737,24 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             return `<div class="glass-card p-4 mb-4 flex items-center gap-3 border" style="border-color:${L.c}55">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:${L.c}1a;color:${L.c}"><i data-lucide="${L.i}" class="w-5 h-5"></i></div>
                 <div class="flex-1 min-w-0">
-                    <div class="text-[12px] font-black uppercase tracking-widest" style="color:${L.c}">${L.t} <span class="text-slate-500">• ${r.score}/6</span></div>
-                    <div class="text-[10px] font-bold text-slate-400 leading-snug mt-0.5">${L.d}</div>
+                    <div class="text-[12px] font-bold" style="color:${L.c}">${L.t} <span class="text-slate-400">• ${r.score}/6</span></div>
+                    <div class="text-[12px] font-bold text-slate-400 leading-snug mt-0.5">${L.d}</div>
                 </div>
-                <button onclick="window.appActions.resetCheckIn()" class="text-slate-500 hover:text-white p-2 bg-white/5 rounded-lg tap-feedback shrink-0" aria-label="${esc(t('Change check-in'))}"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                <button onclick="window.appActions.resetCheckIn()" class="text-slate-400 hover:text-white p-2 bg-white/5 rounded-lg tap-feedback shrink-0" aria-label="${esc(t('Change check-in'))}"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
             </div>`;
         }
         if (window.appState.ciSkipped === dateKey()) return '';
         const draft = window.appState.ciDraft || {};
         const row = (key, label, opts) => `<div class="flex items-center justify-between gap-2 mt-3">
-            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest w-[70px] shrink-0">${t(label)}</span>
-            <div class="flex gap-1.5 flex-1">${opts.map((o, val) => `<button onclick="window.appActions.setCheckIn('${key}', ${val})" class="flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider tap-feedback border ${draft[key] === val ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-black/40 text-slate-300 border-white/10'}">${t(o)}</button>`).join('')}</div>
+            <span class="text-[12px] font-bold text-slate-400 w-[70px] shrink-0">${t(label)}</span>
+            <div class="flex gap-1.5 flex-1">${opts.map((o, val) => `<button onclick="window.appActions.setCheckIn('${key}', ${val})" class="flex-1 py-2 rounded-lg text-[12px] font-extrabold tap-feedback border ${draft[key] === val ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-black/40 text-slate-300 border-white/10'}">${t(o)}</button>`).join('')}</div>
         </div>`;
         return `<div class="glass-card p-4 mb-4 border border-[#d4af37]/30">
             <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4 text-[#d4af37]"></i><span class="text-[12px] font-black uppercase tracking-widest text-white">${t('Daily Check-in')}</span></div>
-                <button onclick="window.appActions.skipCheckIn()" class="text-[9px] font-bold uppercase tracking-widest text-slate-500 hover:text-white tap-feedback">${t('Skip')}</button>
+                <div class="flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4 text-[#d4af37]"></i><span class="text-[12px] font-bold text-white">${t('Daily Check-in')}</span></div>
+                <button onclick="window.appActions.skipCheckIn()" class="text-[12px] font-bold text-slate-400 hover:text-white tap-feedback">${t('Skip')}</button>
             </div>
-            <p class="text-[10px] font-bold text-slate-500 mt-1">${t("3 quick taps to adjust today's targets.")}</p>
+            <p class="text-[12px] font-bold text-slate-400 mt-1">${t("3 quick taps to adjust today's targets.")}</p>
             ${row('sleep', 'Sleep', ['Poor', 'OK', 'Great'])}
             ${row('soreness', 'Soreness', ['Very', 'A bit', 'Fresh'])}
             ${row('energy', 'Energy', ['Low', 'OK', 'High'])}
@@ -1780,7 +1780,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const suggestionChip = (sg, timed) => {
         if (!sg) return '';
         const c = SUGG[sg.type];
-        return `<span class="inline-flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-md border ${c.cls}"><i data-lucide="${c.icon}" class="w-3 h-3"></i>${t(c.label)} <span dir="ltr">${fmtW(sg.w)} × ${sg.r}${timed ? 's' : ''}</span></span>`;
+        return `<span class="inline-flex items-center gap-1 text-[12px] font-bold px-2 py-1 rounded-md border ${c.cls}"><i data-lucide="${c.icon}" class="w-3 h-3"></i>${t(c.label)} <span dir="ltr">${fmtW(sg.w)} × ${sg.r}${timed ? 's' : ''}</span></span>`;
     };
 
     // New first day of the week: every workout stays on its own weekday (Push on Saturday stays on Saturday),
@@ -1808,12 +1808,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const aboutFormHTML = (ctx = 'about') => { // ctx keeps the ids unique (setup questions vs Profile)
         const b = getBody(), age = ageOf(b), young = age !== null && age < MIN_AGE;
         const inp = 'w-full bg-black/40 border border-white/10 rounded-xl px-3 py-3 text-white text-center font-black outline-none focus:border-[#d4af37]';
-        const sexBtn = (v, l) => `<button onclick="window.appActions.setAbout('sex', ${jsArg(v)})" role="radio" aria-checked="${b.sex === v}" class="flex-1 py-3 rounded-xl text-[12px] font-black tap-feedback border ${b.sex === v ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-white border-white/10'}">${l}</button>`;
-        const field = (f, label, val, ph, mode) => `<label class="block"><span class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">${label}</span><input id="${ctx}-${f}" type="text" inputmode="${mode}" autocomplete="off" value="${val === undefined ? '' : esc(val)}" placeholder="${esc(ph)}" onchange="window.appActions.setAbout(${jsArg(f)}, this.value)" class="${inp}" dir="ltr"></label>`;
+        const sexBtn = (v, l) => `<button onclick="window.appActions.setAbout('sex', ${jsArg(v)})" role="radio" aria-checked="${b.sex === v}" class="flex-1 py-3 rounded-xl text-[12px] font-extrabold tap-feedback border ${b.sex === v ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-white border-white/10'}">${l}</button>`;
+        const field = (f, label, val, ph, mode) => `<label class="block"><span class="block text-[12px] font-bold text-slate-400 mb-1.5">${label}</span><input id="${ctx}-${f}" type="text" inputmode="${mode}" autocomplete="off" value="${val === undefined ? '' : esc(val)}" placeholder="${esc(ph)}" onchange="window.appActions.setAbout(${jsArg(f)}, this.value)" class="${inp}" dir="ltr"></label>`;
         const sexLabel = { male: t('Male'), female: t('Female'), na: t('Prefer not to say') };
         // confirmed: birth year, height and sex are shown, not edited; body weight stays editable
         if (b.locked) {
-            const tile = (label, value) => `<div class="rounded-xl bg-white/5 border border-white/5 px-3 py-2.5 min-w-0"><span class="flex items-start gap-1 text-[11px] font-bold text-slate-500 leading-tight mb-1"><i data-lucide="lock" class="w-3 h-3 shrink-0 mt-px"></i><span>${label}</span></span><span class="block text-[15px] font-black text-white truncate">${value}</span></div>`;
+            const tile = (label, value) => `<div class="rounded-xl bg-white/5 border border-white/5 px-3 py-2.5 min-w-0"><span class="flex items-start gap-1 text-[12px] font-bold text-slate-400 leading-tight mb-1"><i data-lucide="lock" class="w-3 h-3 shrink-0 mt-px"></i><span>${label}</span></span><span class="block text-[15px] font-black text-white truncate">${value}</span></div>`;
             return `<div class="space-y-4">
                 <div class="grid grid-cols-3 gap-2.5">
                     ${tile(t('Birth year'), `<span dir="ltr">${esc(b.birthYear || '—')}</span>`)}
@@ -1821,7 +1821,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     ${tile(t('Sex'), esc(sexLabel[b.sex] || '—'))}
                 </div>
                 ${field('weightKg', t('Weight (kg)'), b.weightKg, '75', 'decimal')}
-                <p class="text-[11px] font-bold text-slate-500 leading-snug">${t("Update your weight anytime. Birth year, height and sex can't be changed; contact us if something is wrong.")}</p>
+                <p class="text-[12px] font-bold text-slate-400 leading-snug">${t("Update your weight anytime. Birth year, height and sex can't be changed; contact us if something is wrong.")}</p>
             </div>`;
         }
         return `<div class="space-y-4">
@@ -1831,9 +1831,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 ${field('weightKg', t('Weight (kg)'), b.weightKg, '75', 'decimal')}
             </div>
             <div id="${ctx}-young-slot">${young ? youngHTML(ctx) : ''}</div>
-            <div><span class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">${t('Sex')}</span>
+            <div><span class="block text-[12px] font-bold text-slate-400 mb-1.5">${t('Sex')}</span>
             <div class="flex gap-2" role="radiogroup">${sexBtn('male', t('Male'))}${sexBtn('female', t('Female'))}${sexBtn('na', t('Prefer not to say'))}</div></div>
-            <p class="text-[11px] font-bold text-slate-500 leading-snug">${t('Used to tailor the app and to improve Apex Lift. Never sold or shared.')}</p>
+            <p class="text-[12px] font-bold text-slate-400 leading-snug">${t('Used to tailor the app and to improve Apex Lift. Never sold or shared.')}</p>
         </div>`;
     };
     // Profile → About you, with a small body-weight chart
@@ -1849,7 +1849,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const el = document.getElementById('profile-stats'); if (!el) return;
         const h = StorageManager.getHistory(), dayKeys = Object.keys(workoutDays(h)).map(Number);
         const records = Object.keys(h).filter(k => !k.startsWith('temp_')).reduce((a, k) => a + recordsOf(h[k]).length, 0);
-        const tile = (icon, value, label) => `<button onclick="window.appActions.switchTab('progress')" class="glass-card p-3.5 text-start tap-feedback min-w-0"><i data-lucide="${icon}" class="w-4 h-4 text-[#d4af37] mb-2"></i><div class="text-[22px] font-black text-white leading-none" dir="ltr">${value}</div><div class="text-[11px] font-bold text-slate-400 mt-1.5 leading-snug">${label}</div></button>`;
+        const tile = (icon, value, label) => `<button onclick="window.appActions.switchTab('progress')" class="glass-card p-3.5 text-start tap-feedback min-w-0"><i data-lucide="${icon}" class="w-4 h-4 text-[#d4af37] mb-2"></i><div class="text-[22px] font-black text-white leading-none num" dir="ltr">${value}</div><div class="text-[12px] font-bold text-slate-400 mt-1.5 leading-snug">${label}</div></button>`;
         el.innerHTML = `<div class="grid grid-cols-3 gap-2.5">${tile('calendar-check', dayKeys.length, t('Workouts'))}${tile('flame', weekStreak(dayKeys), t('Week streak'))}${tile('trophy', records, t('Records'))}</div>`;
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
@@ -1861,7 +1861,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const W = 300, H = 70, ks = log.map(x => x.kg), lo = Math.min(...ks), hi = Math.max(...ks), span = Math.max(1, hi - lo);
             const pts = log.map((x, i) => `${(i / (log.length - 1) * W).toFixed(1)},${(H - 6 - (x.kg - lo) / span * (H - 12)).toFixed(1)}`).join(' ');
             const diff = Math.round((ks[ks.length - 1] - ks[0]) * 10) / 10;
-            chart = `<div class="mt-4 rounded-xl bg-black/30 border border-white/5 p-3"><div class="flex justify-between text-[11px] font-black mb-1"><span class="text-slate-400">${t('Body weight')}</span><span class="${diff <= 0 ? 'text-[#22c55e]' : 'text-[#d4af37]'}" dir="ltr">${diff > 0 ? '+' : ''}${diff} kg</span></div><svg viewBox="0 0 ${W} ${H}" class="w-full h-auto" dir="ltr"><polyline points="${pts}" fill="none" stroke="#d4af37" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>`;
+            chart = `<div class="mt-4 rounded-xl bg-black/30 border border-white/5 p-3"><div class="flex justify-between text-[12px] font-bold mb-1"><span class="text-slate-400">${t('Body weight')}</span><span class="${diff <= 0 ? 'text-[#22c55e]' : 'text-[#d4af37]'}" dir="ltr">${diff > 0 ? '+' : ''}${diff} kg</span></div><svg viewBox="0 0 ${W} ${H}" class="w-full h-auto" dir="ltr"><polyline points="${pts}" fill="none" stroke="#d4af37" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>`;
         }
         return chart;
     };
@@ -1917,8 +1917,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // Today's edit mode: a gold bar on top (Done / plan the whole week), then the same day editor as Plan
     const todayEditBar = () => `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-[#d4af37]/15 border border-[#d4af37]/45">
             <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
-            <span class="flex-1 min-w-0"><span class="block text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${t('Editing this day')}</span><button onclick="window.appActions.planWholeWeek()" class="block text-[11px] font-bold text-slate-300 underline underline-offset-2 tap-feedback">${t('Plan the whole week →')}</button></span>
-            <button id="today-edit-done" onclick="window.appActions.setTodayEdit(false)" class="shrink-0 h-9 px-4 rounded-full bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4"></i>${t('Done')}</button>
+            <span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-[#d4af37]">${t('Editing this day')}</span><button onclick="window.appActions.planWholeWeek()" class="block text-[12px] font-bold text-slate-300 underline underline-offset-2 tap-feedback">${t('Plan the whole week →')}</button></span>
+            <button id="today-edit-done" onclick="window.appActions.setTodayEdit(false)" class="shrink-0 h-9 px-4 rounded-full bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4"></i>${t('Done')}</button>
         </div>`;
     const renderToday = () => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), history = StorageManager.getHistory();
@@ -1927,15 +1927,15 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         if (window.appState.todayEdit) return renderPlanDay(todayEditBar());
         const editBtn = S ? '' : `<button id="today-edit-btn" onclick="window.appActions.setTodayEdit(true)" class="w-9 h-9 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('Edit this day'))}" title="${esc(t('Edit this day'))}"><i data-lucide="pencil" class="w-4 h-4"></i></button>`;
         const weekTop = `<div id="today-week" class="today-week">${weekNavHTML()}</div>`;
-        const dayLabel = `<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}</div>`;
+        const dayLabel = `<div class="text-[12px] font-bold text-[#d4af37]">${esc(isT ? t('Today') : dayLong(day.day))}</div>`;
         let html = '';
         if (day.isRest) {
             html += `<div class="glass-card today-card">${weekTop}<div class="today-body is-row"><div class="flex-1 min-w-0">${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${day.recoveryType==='active'?t('Active Rest'):t('Complete Rest')}</h2><div class="text-[12px] font-bold text-slate-400 mt-1">${t('Recover well. See you next session.')}</div></div><i data-lucide="${day.recoveryType==='active'?'footprints':'moon'}" class="w-9 h-9 text-[#d4af37] shrink-0 ${day.recoveryType==='active'?'animate-walk':'animate-pulse-glow'}"></i>${editBtn}</div></div>` + coachCardHTML();
             // Point to the next training day so a rest day is never a dead end
             const nextDay = [1, 2, 3, 4, 5, 6].map(o => schedule.find(d => d.id === ((activeDay - 1 + o) % 7) + 1)).find(d => d && !d.isRest && d.exercises.length);
-            if (nextDay) html += `<button onclick="window.appActions.setActiveDay(${nextDay.id})" class="w-full glass-card p-4 mt-3 flex items-center gap-3 text-start tap-feedback"><span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-clock" class="w-5 h-5"></i></span><span class="flex-1 min-w-0"><span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">${t('Next workout')}</span><span class="block text-[15px] font-black text-white truncate">${esc(dayLong(nextDay.day))} · ${esc(t(nextDay.title))}</span></span><i data-lucide="chevron-right" class="w-5 h-5 text-slate-500 shrink-0"></i></button>`;
+            if (nextDay) html += `<button onclick="window.appActions.setActiveDay(${nextDay.id})" class="w-full glass-card p-4 mt-3 flex items-center gap-3 text-start tap-feedback"><span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-clock" class="w-5 h-5"></i></span><span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-slate-400">${t('Next workout')}</span><span class="block text-[15px] font-black text-white truncate">${esc(dayLong(nextDay.day))} · ${esc(t(nextDay.title))}</span></span><i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 shrink-0"></i></button>`;
         } else if (!day.exercises.length) {
-            html += `<div class="glass-card today-card">${weekTop}<div class="today-body"><div class="flex items-start gap-2"><div class="flex-1 min-w-0">${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${t('No exercises yet')}</h2></div>${editBtn}</div><div class="text-[12px] font-bold text-slate-400">${t('Add exercises to start training on this day.')}</div><button onclick="window.appActions.setTodayEdit(true)" class="self-start px-5 py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback">${t('Plan this day')}</button></div></div>` + coachCardHTML();
+            html += `<div class="glass-card today-card">${weekTop}<div class="today-body"><div class="flex items-start gap-2"><div class="flex-1 min-w-0">${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${t('No exercises yet')}</h2></div>${editBtn}</div><div class="text-[12px] font-bold text-slate-400">${t('Add exercises to start training on this day.')}</div><button onclick="window.appActions.setTodayEdit(true)" class="self-start px-5 py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback">${t('Plan this day')}</button></div></div>` + coachCardHTML();
         } else {
             const pr = dayProgress(day, history), fin = exercisesFinished(day, history);
             const finished = (pr.planned > 0 && pr.done >= pr.planned) || fin.every(Boolean);
@@ -1944,14 +1944,14 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             html += `<div class="glass-card today-card ${finished ? 'border border-[#22c55e]/30' : ''}">${weekTop}<div class="today-body">
                 <div class="flex items-start gap-2">
                     <div class="flex-1 min-w-0">
-                        <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(isT ? t('Today') : dayLong(day.day))}${finished ? ` · <span class="text-[#22c55e]">${t('Done')}</span>` : ''}</div>
+                        <div class="text-[12px] font-bold text-[#d4af37]">${esc(isT ? t('Today') : dayLong(day.day))}${finished ? ` · <span class="text-[#22c55e]">${t('Done')}</span>` : ''}</div>
                         <h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${esc(t(day.title))}</h2>
                     </div>
                     ${editBtn}
                 </div>
                 <div class="text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: day.exercises.length })} · ${t('{n} sets', { n: pr.planned })} · ${t('~{n} min', { n: mins })}</div>
-                ${pr.done > 0 ? `<div><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${t('Done this week')}</span><span class="${finished ? 'text-[#22c55e]' : 'text-white'}" dir="ltr">${pr.done} / ${pr.planned}</span></div><div class="w-full h-1.5 bg-black/50 rounded-full overflow-hidden"><div class="bar-fill h-full rounded-full ${finished ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pr.pct}%"></div></div></div>` : ''}
-                ${running ? `<button onclick="window.appActions.expandSession()" class="w-full py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><span class="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0"></span><span class="truncate">${t('Continue workout')}</span></button>` : ''}
+                ${pr.done > 0 ? `<div><div class="flex justify-between text-[12px] font-bold mb-1.5"><span class="text-slate-400">${t('Done this week')}</span><span class="${finished ? 'text-[#22c55e]' : 'text-white'}" dir="ltr">${pr.done} / ${pr.planned}</span></div><div class="w-full h-1.5 bg-black/50 rounded-full overflow-hidden"><div class="bar-fill h-full rounded-full ${finished ? 'bg-[#22c55e]' : 'bg-[#d4af37]'}" style="width:${pr.pct}%"></div></div></div>` : ''}
+                ${running ? `<button onclick="window.appActions.expandSession()" class="w-full py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2"><span class="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0"></span><span class="truncate">${t('Continue workout')}</span></button>` : ''}
                 ${isT && !finished ? checkInChip() : ''}
             </div></div>` + coachCardHTML();
             if (isT && !finished && window.appState.ciOpen) html += checkInHTML();
@@ -1963,7 +1963,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 return `<button id="ex-card-${i}" onclick="window.appActions.openExSheet(${i})" class="w-full glass-card ex-card ${full ? 'is-full' : part ? 'is-part' : ''} flex items-center gap-3 text-start tap-feedback">
                     ${progressRing(doneSets, planned, i + 1)}
                     ${isRun ? '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>' : ''}
-                    <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span><span class="block text-[11.5px] font-bold mt-0.5 truncate ${full ? 'text-[#22c55e]' : 'text-slate-400'}">${full ? t('Done this week') : plan}</span></span>
+                    <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span><span class="block text-[12px] font-bold mt-0.5 truncate ${full ? 'text-[#22c55e]' : 'text-slate-400'}">${full ? t('Done this week') : plan}</span></span>
                     <span class="flex items-center gap-1.5 shrink-0" dir="ltr">${extra ? `<span class="ex-pill-extra">+${extra}</span>` : ''}<span class="ex-pill" dir="auto">${t('{n} sets', { n: `<span dir="ltr">${doneSets}/${planned}</span>` })}</span></span>
                 </button>`;
             }).join('') + `</div>`;
@@ -1978,27 +1978,27 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // change exercise on top, then sets and reps; delete is a small icon next to close so it isn't pressed by accident
     const exEditHTML = (i, ex) => {
         const sets = parseInt(ex.sets) || 0, custom = !REPS_PRESETS.includes(ex.reps);
-        const label = 'px-0.5 mb-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest';
+        const label = 'px-0.5 mb-1.5 text-[12px] font-bold text-slate-400';
         return `<div class="px-5 pt-1">
                 <div class="flex items-start gap-2">
                     <div class="flex-1 min-w-0">
-                        <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(tm(ex.muscle))}</div>
+                        <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
                         <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(ex.name)}</h3>
                     </div>
                     <button onclick="window.appActions.deleteEx(${i})" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-red-400/80 flex items-center justify-center tap-feedback" aria-label="${esc(t('Delete exercise'))}" title="${esc(t('Delete exercise'))}"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i></button>
                     <button onclick="window.appActions.closeExEdit()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
-                <button onclick="window.appActions.openPicker('replace', ${i})" class="w-full mt-4 py-3 rounded-2xl bg-white/5 text-white text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><i data-lucide="replace" class="w-4 h-4 text-[#d4af37]"></i>${esc(t('Change exercise'))}</button>
+                <button onclick="window.appActions.openPicker('replace', ${i})" class="w-full mt-4 py-3 rounded-2xl bg-white/5 text-white text-[12px] font-bold tap-feedback flex items-center justify-center gap-2"><i data-lucide="replace" class="w-4 h-4 text-[#d4af37]"></i>${esc(t('Change exercise'))}</button>
                 <div class="${label} mt-4">${esc(t('Sets'))}</div>
                 <div class="flex items-center gap-3 rounded-2xl bg-white/5 p-2" dir="ltr">
                     <button onclick="window.appActions.exEditSets(-1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="−">−</button>
-                    <div class="flex-1 text-center text-[22px] font-black text-white tabular-nums">${sets || esc(ex.sets)}</div>
+                    <div class="flex-1 text-center text-[22px] font-black text-white tabular-nums num">${sets || esc(ex.sets)}</div>
                     <button onclick="window.appActions.exEditSets(1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="+">+</button>
                 </div>
                 <div class="${label} mt-3">${esc(t(isTimed(ex.reps) ? 'Seconds per set' : 'Reps per set'))}</div>
-                <div class="grid grid-cols-4 gap-2" dir="ltr">${REPS_PRESETS.map(r => `<button onclick="window.appActions.exEditReps(${jsArg(r)})" class="py-2.5 rounded-xl text-[12px] font-black tap-feedback ${ex.reps === r ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-white'}">${esc(fmtReps(r))}</button>`).join('')}<button onclick="window.appState.customReps=true;window.appActions.refreshExEdit()" class="py-2.5 rounded-xl text-[12px] font-black tap-feedback flex items-center justify-center gap-1 ${custom ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300 border border-dashed border-white/20'}" aria-label="${esc(t('Custom'))}">${custom ? esc(fmtReps(ex.reps)) : `<i data-lucide="plus" class="w-3.5 h-3.5"></i>${esc(t('Custom'))}`}</button></div>
-                ${window.appState.customReps ? `<div class="flex gap-2 mt-2"><input id="exedit-custom" type="text" inputmode="text" value="${custom ? esc(ex.reps) : ''}" placeholder="${esc(t('Custom reps, e.g. 5 or 6 - 8'))}" onkeydown="if(event.key==='Enter')this.blur()" onchange="window.appState.customReps=false;window.appActions.exEditReps(this.value)" class="flex-1 min-w-0 bg-white/5 border border-[#d4af37]/60 rounded-xl px-3 py-2.5 text-white font-bold outline-none focus:border-[#d4af37]" dir="ltr"><button onclick="const v=document.getElementById('exedit-custom').value;window.appState.customReps=false;if(v.trim())window.appActions.exEditReps(v);else window.appActions.refreshExEdit()" class="shrink-0 px-4 rounded-xl bg-[#d4af37] text-black text-[12px] font-black tap-feedback"><i data-lucide="check" class="w-4 h-4"></i></button></div>` : ''}
-                <button onclick="window.appActions.closeExEdit()" class="w-full mt-5 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><i data-lucide="check" class="w-5 h-5"></i>${esc(t('Done'))}</button>
+                <div class="grid grid-cols-4 gap-2" dir="ltr">${REPS_PRESETS.map(r => `<button onclick="window.appActions.exEditReps(${jsArg(r)})" class="py-2.5 rounded-xl text-[12px] font-bold tap-feedback ${ex.reps === r ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-white'}">${esc(fmtReps(r))}</button>`).join('')}<button onclick="window.appState.customReps=true;window.appActions.refreshExEdit()" class="py-2.5 rounded-xl text-[12px] font-bold tap-feedback flex items-center justify-center gap-1 ${custom ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300 border border-dashed border-white/20'}" aria-label="${esc(t('Custom'))}">${custom ? esc(fmtReps(ex.reps)) : `<i data-lucide="plus" class="w-3.5 h-3.5"></i>${esc(t('Custom'))}`}</button></div>
+                ${window.appState.customReps ? `<div class="flex gap-2 mt-2"><input id="exedit-custom" type="text" inputmode="text" value="${custom ? esc(ex.reps) : ''}" placeholder="${esc(t('Custom reps, e.g. 5 or 6 - 8'))}" onkeydown="if(event.key==='Enter')this.blur()" onchange="window.appState.customReps=false;window.appActions.exEditReps(this.value)" class="flex-1 min-w-0 bg-white/5 border border-[#d4af37]/60 rounded-xl px-3 py-2.5 text-white font-bold outline-none focus:border-[#d4af37]" dir="ltr"><button onclick="const v=document.getElementById('exedit-custom').value;window.appState.customReps=false;if(v.trim())window.appActions.exEditReps(v);else window.appActions.refreshExEdit()" class="shrink-0 px-4 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback"><i data-lucide="check" class="w-4 h-4"></i></button></div>` : ''}
+                <button onclick="window.appActions.closeExEdit()" class="w-full mt-5 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><i data-lucide="check" class="w-5 h-5"></i>${esc(t('Done'))}</button>
             </div>`;
     };
     // Re-draws the open "Edit exercise" pop-up (after a change, or after the exercise was changed in the picker)
@@ -2026,8 +2026,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), S = window.appState;
         const planned = day.exercises.reduce((a, ex) => a + (parseInt(ex.sets) || 0), 0);
         const mins = Math.max(10, Math.round(planned * 2.5 / 5) * 5), hasEx = !day.isRest && day.exercises.length > 0;
-        const pill = 'flex items-center justify-center gap-1.5 h-10 px-3.5 rounded-full border text-[11px] font-black whitespace-nowrap';
-        const dayLabel = `<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(dayLong(day.day))}</div>`;
+        const pill = 'flex items-center justify-center gap-1.5 h-10 px-3.5 rounded-full border text-[12px] font-black whitespace-nowrap';
+        const dayLabel = `<div class="text-[12px] font-bold text-[#d4af37]">${esc(dayLong(day.day))}</div>`;
         let html = `<div class="glass-card today-card plan-card"><div id="today-week" class="today-week">${weekNavHTML()}</div><div class="today-body">
             ${!day.isRest
                 ? `<div>${dayLabel}<input type="text" value="${esc(day.title === 'New Day' ? '' : t(day.title))}" placeholder="${esc(t('Name this day'))}" onchange="window.appActions.updateDayTitle(this.value)" aria-label="${esc(t('Name this day'))}" class="day-title-input w-full mt-0.5 pb-1 bg-transparent border-b-[1.5px] border-dashed border-white/25 focus:border-solid focus:border-[#d4af37] text-[21px] font-black text-white placeholder:text-slate-600 outline-none leading-tight transition-colors"></div>
@@ -2039,28 +2039,28 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 ${hasEx ? `<button onclick="window.appState.sameAll=!window.appState.sameAll;window.appActions.refreshUI()" class="${pill} shrink-0 tap-feedback ${S.sameAll ? 'bg-[#d4af37] border-[#d4af37] text-black' : 'bg-white/5 border-white/10 text-slate-200'}" aria-pressed="${!!S.sameAll}"><i data-lucide="list-checks" class="w-4 h-4"></i>${t('Same sets & reps for all')}</button>` : ''}
             </div>
             ${hasEx && S.sameAll ? `<div class="flex items-center justify-between gap-2">
-                <div class="text-[11px] font-black text-slate-300 leading-tight min-w-0">${t('Same for all')}</div>
+                <div class="text-[12px] font-bold text-slate-300 leading-tight min-w-0">${t('Same for all')}</div>
                 <div class="flex items-center gap-2">
-                    <input type="text" id="global-sets" placeholder="${t('Sets')}" class="w-[72px] placeholder:text-[11px] bg-black/40 text-white text-[14px] font-bold text-center rounded-lg py-2 border border-white/10 outline-none focus:border-[#d4af37]">
-                    <input type="text" id="global-reps" placeholder="${t('Reps')}" class="w-[72px] placeholder:text-[11px] bg-black/40 text-white text-[14px] font-bold text-center rounded-lg py-2 border border-white/10 outline-none focus:border-[#d4af37]">
-                    <button onclick="window.appActions.applyGlobalSetsReps()" class="bg-[#d4af37] text-black px-3 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest tap-feedback shadow-sm">${t('Apply')}</button>
+                    <input type="text" id="global-sets" placeholder="${t('Sets')}" class="w-[72px] placeholder:text-[12px] bg-black/40 text-white text-[14px] font-bold text-center rounded-lg py-2 border border-white/10 outline-none focus:border-[#d4af37]">
+                    <input type="text" id="global-reps" placeholder="${t('Reps')}" class="w-[72px] placeholder:text-[12px] bg-black/40 text-white text-[14px] font-bold text-center rounded-lg py-2 border border-white/10 outline-none focus:border-[#d4af37]">
+                    <button onclick="window.appActions.applyGlobalSetsReps()" class="bg-[#d4af37] text-black px-3 py-2 rounded-lg font-extrabold text-[12px] tap-feedback shadow-sm">${t('Apply')}</button>
                 </div>
             </div>` : ''}
         </div></div>`;
 
         if (!day.isRest) {
             const grip = `<svg width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true"><circle cx="5" cy="4" r="1.8"/><circle cx="11" cy="4" r="1.8"/><circle cx="5" cy="10" r="1.8"/><circle cx="11" cy="10" r="1.8"/><circle cx="5" cy="16" r="1.8"/><circle cx="11" cy="16" r="1.8"/></svg>`;
-            if (day.exercises.length > 1) html += `<div class="px-1.5 mb-2 text-[11px] font-extrabold text-slate-400">${t('Hold ⋮⋮ and drag to change the order')}</div>`;
+            if (day.exercises.length > 1) html += `<div class="px-1.5 mb-2 text-[12px] font-extrabold text-slate-400">${t('Hold ⋮⋮ and drag to change the order')}</div>`;
             // ⋮⋮ drags straight away (no waiting, no fight with scrolling); the rest of the card opens the editor
             html += `<div id="sortable-list" class="space-y-2">${day.exercises.map((ex, i) => `<div class="glass-card plan-ex flex items-center gap-1.5" data-i="${i}">
-                    <span class="handle w-9 h-11 shrink-0 flex items-center justify-center text-slate-500" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>
+                    <span class="handle w-9 h-11 shrink-0 flex items-center justify-center text-slate-400" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>
                     <button onclick="window.appActions.openExEdit(${i})" class="flex-1 min-w-0 flex items-center gap-2.5 text-start tap-feedback py-0.5">
-                        <span class="plan-ex-n w-[26px] h-[26px] shrink-0 rounded-full bg-white/5 flex items-center justify-center text-[12px] font-black text-slate-300">${i + 1}</span>
-                        <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span><span class="block text-[11.5px] font-bold mt-0.5 truncate text-slate-400">${esc(tm(ex.muscle))}</span></span>
-                        <span class="shrink-0 me-1 text-[11px] font-black px-2.5 py-1 rounded-full bg-[#d4af37]/15 text-[#d4af37]" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span>
+                        <span class="plan-ex-n w-[26px] h-[26px] shrink-0 rounded-full bg-white/5 flex items-center justify-center text-[12px] font-bold text-slate-300">${i + 1}</span>
+                        <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(ex.name)}</span><span class="block text-[12px] font-bold mt-0.5 truncate text-slate-400">${esc(tm(ex.muscle))}</span></span>
+                        <span class="shrink-0 me-1 text-[12px] font-bold px-2.5 py-1 rounded-full bg-[#d4af37]/15 text-[#d4af37]" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span>
                     </button>
                 </div>`).join('')}</div>`;
-            html += `<button onclick="window.appActions.openPicker('add')" class="w-full p-4 mt-2.5 mb-10 rounded-[20px] flex items-center justify-center gap-2 text-[#d4af37] font-black uppercase tracking-widest text-[12px] tap-feedback border-[1.5px] border-dashed border-[#d4af37]/50 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button>`;
+            html += `<button onclick="window.appActions.openPicker('add')" class="w-full p-4 mt-2.5 mb-10 rounded-[20px] flex items-center justify-center gap-2 text-[#d4af37] font-bold text-[12px] tap-feedback border-[1.5px] border-dashed border-[#d4af37]/50 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button>`;
         }
 
         document.getElementById('workout-container').innerHTML = `<div class="plan-scope ${enterClass('edit')}">${top}${html}</div>`;
@@ -2097,13 +2097,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         if (!sets.some(x => x.n)) return '';
         const top = Math.max(20, ...sets.map(x => x.n));
         return `<div class="glass-card p-4 mt-4">
-            <div class="flex items-baseline justify-between mb-3"><span class="text-[11px] font-black text-slate-400 uppercase tracking-widest">${t('Muscle balance')}</span><span class="text-[10px] font-bold text-slate-500">${t('Sets per week')}</span></div>
+            <div class="flex items-baseline justify-between mb-3"><span class="text-[12px] font-bold text-slate-400">${t('Muscle balance')}</span><span class="text-[12px] font-bold text-slate-400">${t('Sets per week')}</span></div>
             <div class="space-y-2.5">${sets.map(x => { const lo = x.n < x.low; return `<div class="flex items-center gap-3">
-                <span class="w-[74px] shrink-0 text-[12px] font-black ${lo ? 'text-orange-400' : 'text-slate-200'}">${esc(t(x.g))}</span>
+                <span class="w-[74px] shrink-0 text-[12px] font-bold ${lo ? 'text-orange-400' : 'text-slate-200'}">${esc(t(x.g))}</span>
                 <span class="flex-1 h-2 rounded-full bg-white/10 overflow-hidden" dir="ltr"><span class="block h-full rounded-full ${lo ? 'bg-orange-400' : 'bg-[#d4af37]'}" style="width:${Math.max(x.n ? 4 : 0, Math.round(x.n / top * 100))}%"></span></span>
-                <span class="w-[58px] shrink-0 text-end text-[12px] font-black ${lo ? 'text-orange-400' : 'text-white'}"><span dir="ltr">${x.n}</span>${lo ? ` · ${t('Low')}` : ''}</span>
+                <span class="w-[58px] shrink-0 text-end text-[12px] font-bold ${lo ? 'text-orange-400' : 'text-white'}"><span dir="ltr">${x.n}</span>${lo ? ` · ${t('Low')}` : ''}</span>
             </div>`; }).join('')}</div>
-            <p class="text-[11px] font-bold text-slate-500 mt-3">${t('Aim for about 10–20 sets a week for each muscle.')}</p>
+            <p class="text-[12px] font-bold text-slate-400 mt-3">${t('Aim for about 10–20 sets a week for each muscle.')}</p>
         </div>`;
     };
     const renderPlanWeek = () => {
@@ -2124,21 +2124,21 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const meta = d.isRest ? '' : empty ? `<span class="text-[#d4af37]">＋ ${t('Add exercises')}</span>` : `${t('{n} exercises', { n: d.exercises.length })} · ${t('{n} sets', { n })}`;
             const open = window.appState.weekMenu === d.id;
             return `<div class="glass-card plan-ex plan-day ${d.isRest ? 'is-rest' : ''} h-[62px] flex items-center gap-1.5 relative ${open ? 'z-20' : ''}">
-                <span class="handle w-9 h-11 shrink-0 flex items-center justify-center text-slate-500" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>
+                <span class="handle w-9 h-11 shrink-0 flex items-center justify-center text-slate-400" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>
                 <button onclick="window.appActions.openPlanDay(${d.id})" class="flex-1 min-w-0 h-full flex items-center gap-2.5 text-start tap-feedback" aria-label="${esc(dayLong(d.day) + ' · ' + title)}">
-                    ${d.isRest ? `<i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-4 h-4 text-slate-500 shrink-0"></i>` : empty ? '<span class="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>' : ''}
-                    <span class="flex-1 min-w-0"><span class="block text-[15px] font-black leading-tight truncate ${d.isRest || empty ? 'text-slate-400' : 'text-white'}">${esc(title)}</span>${meta ? `<span class="block text-[11.5px] font-bold text-slate-400 mt-0.5 truncate">${meta}</span>` : ''}</span>
+                    ${d.isRest ? `<i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-4 h-4 text-slate-400 shrink-0"></i>` : empty ? '<span class="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>' : ''}
+                    <span class="flex-1 min-w-0"><span class="block text-[15px] font-black leading-tight truncate ${d.isRest || empty ? 'text-slate-400' : 'text-white'}">${esc(title)}</span>${meta ? `<span class="block text-[12px] font-bold text-slate-400 mt-0.5 truncate">${meta}</span>` : ''}</span>
                 </button>
                 <button onclick="window.appActions.toggleWeekMenu(${d.id})" class="w-9 h-11 shrink-0 flex items-center justify-center rounded-xl tap-feedback ${open ? 'text-[#d4af37]' : 'text-slate-400'}" aria-haspopup="menu" aria-expanded="${open}" aria-label="${esc(t('Day options') + ' · ' + dayLong(d.day))}"><i data-lucide="ellipsis-vertical" class="w-[18px] h-[18px]"></i></button>
                 ${menu(d)}
             </div>`;
         };
         let html = `<div class="flex items-center justify-between gap-2 px-1 mb-2.5">
-                <span class="min-w-0"><span class="block text-[11px] font-black text-[#d4af37] uppercase tracking-widest">${t('This week')}</span><span class="block text-[11px] font-bold text-slate-400">${t('Tap a day to edit it')}</span></span>
-                <button onclick="window.appActions.openPrograms()" class="shrink-0 flex items-center gap-1.5 h-10 px-3.5 rounded-full border text-[11px] font-black bg-[#d4af37]/10 border-[#d4af37]/40 text-[#d4af37] tap-feedback"><i data-lucide="layout-list" class="w-4 h-4"></i>${t('Programs')}</button>
+                <span class="min-w-0"><span class="block text-[12px] font-bold text-[#d4af37]">${t('This week')}</span><span class="block text-[12px] font-bold text-slate-400">${t('Tap a day to edit it')}</span></span>
+                <button onclick="window.appActions.openPrograms()" class="shrink-0 flex items-center gap-1.5 h-10 px-3.5 rounded-full border text-[12px] font-bold bg-[#d4af37]/10 border-[#d4af37]/40 text-[#d4af37] tap-feedback"><i data-lucide="layout-list" class="w-4 h-4"></i>${t('Programs')}</button>
             </div>
             <div class="flex gap-2">
-                <div class="w-11 shrink-0 flex flex-col gap-2" aria-hidden="true">${schedule.map(d => `<div class="h-[62px] flex flex-col items-center justify-center rounded-2xl ${d.id === today ? 'bg-[#d4af37]/15 text-[#d4af37]' : 'text-slate-400'}"><span class="text-[10px] font-black uppercase">${esc(dayShort(d.day))}</span><span class="text-[16px] font-black leading-tight ${d.id === today ? '' : 'text-white'}">${dateOf(d.id).getDate()}</span></div>`).join('')}</div>
+                <div class="w-11 shrink-0 flex flex-col gap-2" aria-hidden="true">${schedule.map(d => `<div class="h-[62px] flex flex-col items-center justify-center rounded-2xl ${d.id === today ? 'bg-[#d4af37]/15 text-[#d4af37]' : 'text-slate-400'}"><span class="text-[12px] font-bold">${esc(dayShort(d.day))}</span><span class="text-[16px] font-black leading-tight ${d.id === today ? '' : 'text-white'}">${dateOf(d.id).getDate()}</span></div>`).join('')}</div>
                 <div id="week-list" class="flex-1 min-w-0 flex flex-col gap-2">${schedule.map(row).join('')}</div>
             </div>
             ${muscleBalanceHTML(schedule)}
@@ -2173,7 +2173,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         showToast: (m, type='success', action=null) => {
             const c = document.getElementById('toast-container'); c.innerHTML=''; const d=document.createElement('div'), iS=type==='success', cS=iS?'text-[#22c55e]':'text-red-400', bS=iS?'bg-[#22c55e]/10 border-[#22c55e]/20':'bg-red-500/10 border-red-500/20';
             d.className=`glass-card p-4 flex items-center gap-3 border shadow-2xl transform translate-y-full opacity-0 transition-all duration-500 mt-2 ${bS} backdrop-blur-3xl pointer-events-auto`;
-            d.innerHTML=`<i data-lucide="${iS?'check-circle':'alert-circle'}" class="w-5 h-5 shrink-0 ${cS}"></i><span class="text-[13px] font-bold text-white leading-snug flex-1">${esc(m)}</span>${action ? `<button class="shrink-0 px-3 py-1.5 rounded-lg bg-white/10 text-white text-[11px] font-black uppercase tracking-widest tap-feedback">${esc(action.label)}</button>` : ''}`;
+            d.innerHTML=`<i data-lucide="${iS?'check-circle':'alert-circle'}" class="w-5 h-5 shrink-0 ${cS}"></i><span class="text-[13px] font-bold text-white leading-snug flex-1">${esc(m)}</span>${action ? `<button class="shrink-0 px-3 py-1.5 rounded-lg bg-white/10 text-white text-[12px] font-bold tap-feedback">${esc(action.label)}</button>` : ''}`;
             if (action) d.querySelector('button').onclick = () => { action.fn(); d.remove(); };
             c.appendChild(d); if(window.lucide) window.lucide.createIcons({root:d}); void d.offsetWidth; d.classList.remove('translate-y-full','opacity-0');
             setTimeout(()=>{if(c.contains(d)){d.classList.add('opacity-0','translate-y-full');setTimeout(()=>{if(c.contains(d))d.remove();},500);}}, action ? 5000 : 3500);
@@ -2182,7 +2182,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const y = document.getElementById('confirm-yes-btn');
             y.innerHTML = `<span>${esc(okLabel || t('Yes, Do it'))}</span>`;
             document.getElementById('confirm-title').innerText=title; document.getElementById('confirm-message').innerText=m;
-            y.className=`flex-1 rounded-xl py-3.5 text-[12px] font-black uppercase tracking-widest shadow-lg tap-feedback ${dng?'text-white bg-red-500 shadow-red-500/20':'text-black bg-[#d4af37] shadow-[#d4af37]/20'}`;
+            y.className=`flex-1 rounded-xl py-3.5 text-[12px] font-extrabold shadow-lg tap-feedback ${dng?'text-white bg-red-500 shadow-red-500/20':'text-black bg-[#d4af37] shadow-[#d4af37]/20'}`;
             document.getElementById('confirm-icon').innerHTML=`<i data-lucide="${dng?'alert-octagon':'alert-triangle'}" class="w-6 h-6 ${dng?'text-red-500':'text-[#d4af37]'}"></i>`;
             if(window.lucide) window.lucide.createIcons({root: document.getElementById('confirm-icon')});
             const nY = y.cloneNode(true); y.parentNode.replaceChild(nY,y); nY.onclick=()=>{nY.onclick=null;window.appActions.closeConfirm();setTimeout(ok,200);}; // runs once, even on a double tap
@@ -2225,29 +2225,29 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const isRun = S && S.dayId === day.id && (!S.weekId || S.weekId === currentWeekId) && (S.exIdx === i || S.exIdx == null);
             // sets past the plan count too (4 of 3 = +1 extra); the target only shows while sets are left this week
             const lastDay = lastDaySets(hA, day.id), prev = lastDay ? lastDay.sets : [], full = planned > 0 && doneSets >= planned, shown = doneSets, extra = Math.max(0, doneSets - planned);
-            const tile = (label, value) => `<div class="rounded-2xl bg-white/5 px-3.5 py-2.5 min-w-0"><div class="text-[10px] font-black text-slate-500 uppercase tracking-widest">${label}</div><div class="text-[22px] font-black text-white leading-tight mt-0.5"><span dir="ltr">${value}</span></div></div>`;
+            const tile = (label, value) => `<div class="rounded-2xl bg-white/5 px-3.5 py-2.5 min-w-0"><div class="text-[12px] font-bold text-slate-400">${label}</div><div class="text-[22px] font-black text-white leading-tight mt-0.5"><span dir="ltr">${value}</span></div></div>`;
             const tgtCls = sg ? { up: 'is-up', down: 'is-down' }[sg.type] || '' : '';
             document.getElementById('ex-sheet-content').innerHTML = `<div class="px-5 pt-1">
                 <div class="flex items-start gap-2">
                     <div class="flex-1 min-w-0">
-                        <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(tm(ex.muscle))}</div>
+                        <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
                         <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(ex.name)}</h3>
                     </div>
                     <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
                     <button onclick="window.appActions.closeExSheet()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <div class="ex-week ${full ? 'is-full' : shown > 0 ? 'is-part' : ''} mt-4">
-                    <div class="flex items-baseline justify-between gap-2"><span class="text-[12px] font-black">${t('Done this week')}</span><b class="text-[15px] font-black">${extra ? `${t('{a} of {b} sets', { a: shown, b: planned })} <span class="ex-extra">${t('+{n} extra', { n: extra })}</span>` : full ? t('All {n} sets', { n: planned }) : t('{a} of {b} sets', { a: shown, b: planned })}</b></div>
+                    <div class="flex items-baseline justify-between gap-2"><span class="text-[12px] font-bold">${t('Done this week')}</span><b class="text-[15px] font-black">${extra ? `${t('{a} of {b} sets', { a: shown, b: planned })} <span class="ex-extra">${t('+{n} extra', { n: extra })}</span>` : full ? t('All {n} sets', { n: planned }) : t('{a} of {b} sets', { a: shown, b: planned })}</b></div>
                     <div class="ex-segs" dir="ltr">${Array.from({ length: Math.max(planned, shown) }, (_, k) => `<i class="${k >= planned ? 'is-extra' : k < shown ? 'is-on' : ''}"></i>`).join('')}</div>
                 </div>
                 <div class="grid grid-cols-2 gap-2 mt-2.5">${tile(t('Sets'), esc(ex.sets))}${tile(t(timed ? 'Seconds per set' : 'Reps per set'), esc(fmtReps(ex.reps)))}</div>
                 ${sg && !full ? `<div class="ex-target ${tgtCls} mt-2"><i data-lucide="target" class="w-[18px] h-[18px] shrink-0"></i><div class="min-w-0"><div class="ex-target-l">${t("Today's target")}${sg.type !== 'build' ? ` · ${t(SUGG[sg.type].label).replace(/[:：]\s*$/, '')}` : ''}</div><div class="text-[16px] font-black text-white">${targetSentence(sg, timed)}</div></div></div>` : ''}
                 <div class="mt-3">
-                    <div class="flex justify-between px-0.5 mb-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest"><span>${t('Last time')}</span><span>${lastDay ? esc(isToday(lastDay.ts) ? t('Today') : fmtDate(lastDay.ts, false)) : ''}</span></div>
+                    <div class="flex justify-between px-0.5 mb-1.5 text-[12px] font-bold text-slate-400"><span>${t('Last time')}</span><span>${lastDay ? esc(isToday(lastDay.ts) ? t('Today') : fmtDate(lastDay.ts, false)) : ''}</span></div>
                     ${prev.length ? `<table class="ex-last-tbl" dir="ltr"><thead><tr><th>#</th><th>${t('KG')}</th><th>${t(timed ? 'SEC' : 'REPS')}</th></tr></thead><tbody>${prev.map((x, k) => `<tr><td>${t('Set {n}', { n: k + 1 })}</td><td>${x.w > 0 ? x.w : t('BW')}</td><td>${x.r}</td></tr>`).join('')}</tbody></table>`
                         : `<div class="rounded-2xl bg-white/5 px-3.5 py-3 text-[13px] font-bold text-slate-400">${t('First time doing this exercise')}</div>`}
                 </div>
-                <button onclick="window.appActions.closeExSheet(); window.appActions.startWorkout(${day.id}, null, ${i})" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : full ? t('Log more sets') : shown > 0 ? t('Continue') : t('Start workout')}</button>
+                <button onclick="window.appActions.closeExSheet(); window.appActions.startWorkout(${day.id}, null, ${i})" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : full ? t('Log more sets') : shown > 0 ? t('Continue') : t('Start workout')}</button>
             </div>`;
             if (window.lucide) window.lucide.createIcons({ root: document.getElementById('ex-sheet-box') });
             openModal('ex-sheet-overlay', 'ex-sheet-box');
@@ -2296,8 +2296,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         openHistoryModal: (k, title) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=title; const hw=document.getElementById('history-howto'); if(hw) hw.href=`https://www.youtube.com/results?search_query=${encodeURIComponent(title+' exercise form')}`; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); pushBack('history', () => window.appActions.closeHistoryModal()); },
         closeHistoryModal: () => { popBack('history'); const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{if(o.classList.contains('opacity-0')){o.classList.add('hidden');o.classList.remove('flex');}},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
-        refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-500 text-[12px] font-bold uppercase tracking-widest">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('WEEK {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-[2px] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
-         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[10px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[10px] text-slate-400">${t('KG')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">${h.u==='s'?t('SEC'):t('REPS')}</span></span>`:''}`}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=exerciseStatsHTML(hA)+html; bindCharts(c); if(window.lucide) window.lucide.createIcons({root:c}); },
+        refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-400 text-[12px] font-bold">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('WEEK {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[12px] font-bold text-[#d4af37] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
+         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[12px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[12px] text-slate-400">${t('KG')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[12px] text-slate-400">${h.u==='s'?t('SEC'):t('REPS')}</span></span>`:''}`}</span></div><span class="text-[12px] font-bold text-slate-400 mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=exerciseStatsHTML(hA)+html; bindCharts(c); if(window.lucide) window.lucide.createIcons({root:c}); },
         deleteHistoryRecord: (k, i) => window.appActions.showConfirm(t("Delete Record"), t("Remove this record?"), () => { let h=StorageManager.getHistory(); if(h[k]&&h[k][i]){const dl=getDeleted(); dl[k]=[...(dl[k]||[]), logSig(h[k][i])].slice(-200); setDeleted(dl); h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast(t("Deleted"),"error");} }, true),
         handleTyping: (k, type, v) => { 
             if (type === 'load') { loggedWeights[k] = v; StorageManager.set(loggedWeights); } 
@@ -2356,23 +2356,23 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             document.getElementById('aw-status-text').innerText = t('Workout');
             document.getElementById('aw-pulse-dot').className = 'w-2 h-2 rounded-full shrink-0 bg-red-500 animate-pulse';
             document.getElementById('aw-mini-name').innerText = t(S.title);
-            const head = ex => `<div class="grid items-center gap-1.5 px-2 pb-1.5 text-[9px] font-black text-slate-500 uppercase tracking-widest" dir="ltr" style="grid-template-columns:${S.cols}"><span class="text-center">#</span><span class="text-center">${t('KG')}</span><span class="text-center">${ex.timed ? t('SEC') : t('REPS')}</span>${showRpe ? '<span class="text-center">RPE</span>' : ''}</div>`;
+            const head = ex => `<div class="grid items-center gap-1.5 px-2 pb-1.5 text-[12px] font-bold text-slate-400" dir="ltr" style="grid-template-columns:${S.cols}"><span class="text-center">#</span><span class="text-center">${t('KG')}</span><span class="text-center">${ex.timed ? t('SEC') : t('REPS')}</span>${showRpe ? '<span class="text-center">RPE</span>' : ''}</div>`;
             document.getElementById('aw-sets-container').innerHTML = S.exercises.map((ex, e) => `
                 <section class="mb-6" id="aw-ex-${e}">
                     <div class="flex items-start justify-between gap-2 px-1 mb-2">
                         <div class="min-w-0">
                             <div class="ex-name text-[17px] font-black text-white leading-tight">${esc(ex.name)}</div>
-                            <div class="text-[11px] font-bold text-slate-400 mt-0.5">${esc(tm(ex.muscle))} · ${t('{n} sets', { n: ex.sets })} · ${t(ex.timed ? '{r} sec' : '{r} reps', { r: `<span dir="ltr">${esc(fmtReps(ex.repsStr))}</span>` })}</div>
+                            <div class="text-[12px] font-bold text-slate-400 mt-0.5">${esc(tm(ex.muscle))} · ${t('{n} sets', { n: ex.sets })} · ${t(ex.timed ? '{r} sec' : '{r} reps', { r: `<span dir="ltr">${esc(fmtReps(ex.repsStr))}</span>` })}</div>
                         </div>
                         <span class="shrink-0">${suggestionChip(ex.sg, ex.timed)}</span>
                     </div>
-                    ${(() => { const last = lastSessionText(StorageManager.getHistory()[ex.k] || [], ex.timed); return `<div class="flex items-center gap-2 mx-1 mb-3 px-3 py-2.5 rounded-xl bg-white/5 border border-white/5 text-[12px] font-bold text-slate-400"><i data-lucide="history" class="w-4 h-4 shrink-0 text-slate-500"></i>${last ? `<span class="min-w-0">${t('Last time')} · ${esc(last.when)}<span class="block text-[14px] font-black text-white mt-0.5" dir="ltr">${last.body}</span></span>` : `<span>${t('First time')}</span>`}</div>`; })()}
+                    ${(() => { const last = lastSessionText(StorageManager.getHistory()[ex.k] || [], ex.timed); return `<div class="flex items-center gap-2 mx-1 mb-3 px-3 py-2.5 rounded-xl bg-white/5 border border-white/5 text-[12px] font-bold text-slate-400"><i data-lucide="history" class="w-4 h-4 shrink-0 text-slate-400"></i>${last ? `<span class="min-w-0">${t('Last time')} · ${esc(last.when)}<span class="block text-[14px] font-black text-white mt-0.5" dir="ltr">${last.body}</span></span>` : `<span>${t('First time')}</span>`}</div>`; })()}
                     ${head(ex)}
                     <div id="aw-rows-${e}" class="space-y-1.5"></div>
-                    <div id="aw-note-${e}" class="hidden px-2 py-2 text-[11px] font-black text-[#22c55e]"><i data-lucide="check" class="w-3.5 h-3.5 inline -mt-0.5"></i> ${t('Done this week')}</div>
+                    <div id="aw-note-${e}" class="hidden px-2 py-2 text-[12px] font-bold text-[#22c55e]"><i data-lucide="check" class="w-3.5 h-3.5 inline -mt-0.5"></i> ${t('Done this week')}</div>
                     <div class="flex gap-2 mt-2 px-1">
                         <button onclick="window.appActions.removeSetRow(${e})" class="py-2 px-4 rounded-xl bg-white/5 border border-white/10 text-slate-400 tap-feedback" aria-label="${esc(t('Remove set'))}"><i data-lucide="minus" class="w-4 h-4"></i></button>
-                        <button onclick="window.appActions.addSetRow(${e})" class="flex-1 py-2 rounded-xl bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-slate-300 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add set')}</button>
+                        <button onclick="window.appActions.addSetRow(${e})" class="flex-1 py-2 rounded-xl bg-white/5 border border-white/10 text-[12px] font-bold text-slate-300 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add set')}</button>
                     </div>
                 </section>`).join('');
             if (rows && rows.length) rows.forEach(r => { if (S.exercises[r.e]) window.appActions.addSetRow(r.e, r, true); });
@@ -2394,7 +2394,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const all = document.querySelectorAll('#aw-sets-container .aw-row'), done = document.querySelectorAll('#aw-sets-container .aw-row[data-done="1"]');
             const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
             const old = document.getElementById('aw-progress-fill'), prevPct = old ? parseFloat(old.style.width) || 0 : pct;
-            document.getElementById('aw-info').innerHTML = `<div class="w-full"><div class="flex justify-between text-[11px] font-black mb-1.5"><span class="text-slate-400">${S.exercises.length > 1 ? t('{n} exercises', { n: S.exercises.length }) : ''}</span><span class="text-white" dir="ltr">${done.length} / ${all.length} ${t('sets')}</span></div><div class="w-full h-2 bg-black/60 rounded-full overflow-hidden"><div id="aw-progress-fill" class="bar-fill h-full bg-[#22c55e] rounded-full" style="width:${prevPct}%"></div></div></div>`;
+            document.getElementById('aw-info').innerHTML = `<div class="w-full"><div class="flex justify-between text-[12px] font-bold mb-1.5"><span class="text-slate-400">${S.exercises.length > 1 ? t('{n} exercises', { n: S.exercises.length }) : ''}</span><span class="text-white" dir="ltr">${done.length} / ${all.length} ${t('sets')}</span></div><div class="w-full h-2 bg-black/60 rounded-full overflow-hidden"><div id="aw-progress-fill" class="bar-fill h-full bg-[#22c55e] rounded-full" style="width:${prevPct}%"></div></div></div>`;
             const fill = document.getElementById('aw-progress-fill'); void fill.offsetWidth; fill.style.width = pct + '%';
         },
         // Adds one set row to exercise e
@@ -2416,7 +2416,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const inCls = 'w-full h-11 rounded-lg bg-black/50 border border-white/10 text-center text-[16px] font-black text-white outline-none focus:border-[#d4af37] placeholder:text-slate-600 placeholder:font-bold';
             box.insertAdjacentHTML('beforeend', `
                 <div class="aw-row grid items-center gap-1.5 px-2 py-1 rounded-xl transition-colors ${r.done ? 'is-done' : ''} ${r.logged ? 'is-logged' : ''}" data-i="${i}" data-e="${e}" data-done="${r.done ? 1 : 0}" ${r.logged ? 'data-logged="1"' : ''} id="aw-row-${i}" dir="ltr" style="grid-template-columns:${S.cols}">
-                    <span class="w-7 h-7 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center" id="aw-num-${i}">${n}</span>
+                    <span class="w-7 h-7 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-bold flex items-center justify-center" id="aw-num-${i}">${n}</span>
                     <input id="aw-w-${i}" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.w)}" ${r.logged ? 'disabled' : ''} placeholder="${isBodyweight(ex.name) ? t('BW') : t('KG')}" onfocus="window.appActions.selectAll(this)" oninput="window.appActions.numInput(this, true)" class="${inCls} text-[#d4af37]">
                     <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" ${r.logged ? 'disabled' : ''} placeholder="${ex.timed ? t('SEC') : t('REPS')}" onfocus="window.appActions.selectAll(this)" oninput="window.appActions.numInput(this, false)" onblur="window.appActions.repsChanged(${i})" onkeydown="if(event.key==='Enter')this.blur()" class="${inCls}">
                     ${showRpe ? `<select id="aw-rpe-${i}" ${r.logged ? 'disabled' : ''} onchange="window.appActions.sessionChanged()" class="${inCls} appearance-none text-[14px]"><option value="">–</option>${[6,7,8,9,10].map(x => `<option value="${x}" ${String(r.rpe) === String(x) ? 'selected' : ''}>${x}</option>`).join('')}</select>` : ''}
@@ -2620,10 +2620,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         },
         showSummary: ({ title, duration, sets, volume, prs }) => {
             document.getElementById('summary-title').innerText = `${t(title)} · ${fmtDate(Date.now(), false)}`;
-            const stat = (v, l, count) => `<div class="bg-white/5 rounded-xl py-3"><div class="text-[18px] font-black text-white tabular-nums" dir="ltr" ${count !== undefined ? `data-count="${count}"` : ''}>${v}</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${l}</div></div>`;
+            const stat = (v, l, count) => `<div class="bg-white/5 rounded-xl py-3"><div class="text-[18px] font-black text-white tabular-nums num" dir="ltr" ${count !== undefined ? `data-count="${count}"` : ''}>${v}</div><div class="text-[12px] font-bold text-slate-400">${l}</div></div>`;
             document.getElementById('summary-stats').innerHTML = stat(fmtClock(duration), t('Time')) + stat(0, t('sets'), sets) + stat(0, t('kg lifted'), Math.round(volume));
             document.getElementById('summary-prs').innerHTML = prs.length
-                ? `<div class="text-[11px] font-black text-[#d4af37] uppercase tracking-widest mb-2">🏆 ${t('New records')}</div>` + prs.map(x => `<div class="flex justify-between gap-2 py-2 border-b border-white/5 last:border-0"><span class="ex-name text-[13px] font-bold text-white truncate">${esc(x.name)}</span><span class="text-[13px] font-black text-[#22c55e] shrink-0" dir="ltr">${x.w}kg (+${x.plus})</span></div>`).join('')
+                ? `<div class="text-[12px] font-bold text-[#d4af37] mb-2">🏆 ${t('New records')}</div>` + prs.map(x => `<div class="flex justify-between gap-2 py-2 border-b border-white/5 last:border-0"><span class="ex-name text-[13px] font-bold text-white truncate">${esc(x.name)}</span><span class="text-[13px] font-bold text-[#22c55e] shrink-0" dir="ltr">${x.w}kg (+${x.plus})</span></div>`).join('')
                 : '';
             openModal('summary-overlay', 'summary-box');
             pushBack('summary', () => window.appActions.closeSummary());
@@ -2702,16 +2702,16 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const isSel = (name, muscle) => P.sel.some(x => x.name === name && x.muscle === muscle);
             if (withChips) {
                 document.getElementById('picker-chips').innerHTML = ['All', ...muscleOptions].map(m =>
-                    `<button onclick="window.appActions.pickerMuscle(${jsArg(m)})" class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-black tap-feedback border ${P.muscle === m ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${esc(m === 'All' ? t('All') : tm(m))}</button>`).join('');
+                    `<button onclick="window.appActions.pickerMuscle(${jsArg(m)})" class="shrink-0 px-3 py-1.5 rounded-full text-[12px] font-extrabold tap-feedback border ${P.muscle === m ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${esc(m === 'All' ? t('All') : tm(m))}</button>`).join('');
             }
             const row = x => {
                 const sel = isSel(x.name, x.muscle), added = inDay.has(x.name);
                 return `<button onclick="window.appActions.pickerTap(${jsArg(x.name)}, ${jsArg(x.muscle)})" class="w-full flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 text-start tap-feedback ${sel ? 'bg-[#d4af37]/10' : ''}">
-                    <span class="min-w-0"><span class="ex-name block text-[14px] font-bold text-white truncate">${esc(x.name)}${x.custom ? ` <span class="text-[9px] text-[#d4af37]">★</span>` : ''}</span><span class="block text-[10px] font-bold text-slate-500">${esc(tm(x.muscle))}${added ? ` • ${esc(t('In this day'))}` : ''}</span></span>
+                    <span class="min-w-0"><span class="ex-name block text-[14px] font-bold text-white truncate">${esc(x.name)}${x.custom ? ` <span class="text-[12px] text-[#d4af37]">★</span>` : ''}</span><span class="block text-[12px] font-bold text-slate-400">${esc(tm(x.muscle))}${added ? ` • ${esc(t('In this day'))}` : ''}</span></span>
                     <span class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center border ${sel ? 'bg-[#d4af37] border-[#d4af37] text-black' : 'border-white/20 text-slate-400'}"><i data-lucide="${P.mode === 'replace' ? 'replace' : (sel ? 'check' : 'plus')}" class="w-4 h-4"></i></span>
                 </button>`;
             };
-            const header = txt => `<div class="px-4 pt-4 pb-1 text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(txt)}</div>`;
+            const header = txt => `<div class="px-4 pt-4 pb-1 text-[12px] font-bold text-[#d4af37]">${esc(txt)}</div>`;
             const q = P.q.trim().toLowerCase();
             let items = catalogue();
             if (P.muscle !== 'All') items = items.filter(x => x.muscle === P.muscle);
@@ -2722,8 +2722,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 html = hits.map(row).join('');
                 if (!items.some(x => x.name.toLowerCase() === q)) {
                     html += P.muscle === 'All'
-                        ? `<div class="px-4 py-4 text-[11px] font-bold text-slate-500">${esc(t('Not in the list? Choose a muscle above, then add "{name}" as your own exercise.', { name: P.q.trim() }))}</div>`
-                        : `<button onclick="window.appActions.addCustomEx()" class="w-full flex items-center gap-3 px-4 py-4 text-start text-[#d4af37] font-black text-[13px] tap-feedback"><i data-lucide="plus-circle" class="w-5 h-5"></i>${esc(t('Add "{name}" to {muscle}', { name: P.q.trim(), muscle: tm(P.muscle) }))}</button>`;
+                        ? `<div class="px-4 py-4 text-[12px] font-bold text-slate-400">${esc(t('Not in the list? Choose a muscle above, then add "{name}" as your own exercise.', { name: P.q.trim() }))}</div>`
+                        : `<button onclick="window.appActions.addCustomEx()" class="w-full flex items-center gap-3 px-4 py-4 text-start text-[#d4af37] font-bold text-[13px] tap-feedback"><i data-lucide="plus-circle" class="w-5 h-5"></i>${esc(t('Add "{name}" to {muscle}', { name: P.q.trim(), muscle: tm(P.muscle) }))}</button>`;
                 }
             } else if (P.muscle === 'All') {
                 // Exercises already used in your routines first, then everything by muscle
@@ -2735,7 +2735,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 html = items.map(row).join('');
             }
             const list = document.getElementById('picker-list');
-            list.innerHTML = html || `<div class="p-10 text-center text-[12px] font-bold text-slate-500">${esc(t('No exercises found'))}</div>`;
+            list.innerHTML = html || `<div class="p-10 text-center text-[12px] font-bold text-slate-400">${esc(t('No exercises found'))}</div>`;
             if (window.lucide) window.lucide.createIcons({ root: list });
             const btn = document.getElementById('picker-add-btn');
             btn.classList.toggle('hidden', P.mode !== 'add' || P.sel.length === 0);
@@ -2763,12 +2763,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         // ---------- Change exercise: sets & reps pop-up (after picking the new exercise, before the confirmation) ----------
         renderSwapSetup: () => {
             const W = window.appState.swapSetup; if (!W) return;
-            const label = 'px-0.5 mb-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest';
+            const label = 'px-0.5 mb-1.5 text-[12px] font-bold text-slate-400';
             const c = document.getElementById('swapsetup-content');
             c.innerHTML = `<div class="px-5 pt-1">
                 <div class="flex items-start gap-2">
                     <div class="flex-1 min-w-0">
-                        <div class="text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(tm(W.muscle))}</div>
+                        <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(W.muscle))}</div>
                         <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(W.name)}</h3>
                         <p class="text-[12px] font-bold text-slate-400 mt-1">${t('How many sets and reps for this exercise?')}</p>
                     </div>
@@ -2777,12 +2777,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <div class="${label} mt-4">${esc(t('Sets'))}</div>
                 <div class="flex items-center gap-3 rounded-2xl bg-white/5 p-2" dir="ltr">
                     <button onclick="window.appActions.swapSetSets(-1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="−">−</button>
-                    <div class="flex-1 text-center text-[22px] font-black text-white tabular-nums">${esc(W.sets)}</div>
+                    <div class="flex-1 text-center text-[22px] font-black text-white tabular-nums num">${esc(W.sets)}</div>
                     <button onclick="window.appActions.swapSetSets(1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="+">+</button>
                 </div>
                 <div class="${label} mt-3">${esc(t(isTimed(W.reps) ? 'Seconds per set' : 'Reps per set'))}</div>
-                <div class="grid grid-cols-4 gap-2" dir="ltr">${REPS_PRESETS.map(r => `<button onclick="window.appActions.swapSetReps(${jsArg(r)})" class="py-2.5 rounded-xl text-[12px] font-black tap-feedback ${W.reps === r ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-white'}">${esc(fmtReps(r))}</button>`).join('')}</div>
-                <button onclick="window.appActions.swapSetupNext()" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button>
+                <div class="grid grid-cols-4 gap-2" dir="ltr">${REPS_PRESETS.map(r => `<button onclick="window.appActions.swapSetReps(${jsArg(r)})" class="py-2.5 rounded-xl text-[12px] font-bold tap-feedback ${W.reps === r ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-white'}">${esc(fmtReps(r))}</button>`).join('')}</div>
+                <button onclick="window.appActions.swapSetupNext()" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button>
             </div>`;
             if (window.lucide) window.lucide.createIcons({ root: c });
         },
@@ -2862,7 +2862,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (tab === 'workout') tab = 'today'; if (tab === 'analytics') tab = 'progress';
             window.appState.inlineEdit = null; window.appState.weekMenu = null; window.appState.todayEdit = false; window.appState.planDay = null; popBack('planday'); window.appState.currentView = tab;
             const prevTab = document.querySelector('.tab-btn.text-\\[\\#d4af37\\]');
-            ['today', 'plan', 'progress', 'profile'].forEach(v => { const b = document.getElementById('tabbtn-' + v); if (b) b.className = `tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative ${v === tab ? 'text-[#d4af37]' : 'text-slate-500'}`; });
+            ['today', 'plan', 'progress', 'profile'].forEach(v => { const b = document.getElementById('tabbtn-' + v); if (b) b.className = `tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative ${v === tab ? 'text-[#d4af37]' : 'text-slate-400'}`; });
             const ic = document.querySelector(`#tabbtn-${tab} svg`);
             if (ic && (!prevTab || prevTab.id !== 'tabbtn-' + tab)) { ic.classList.remove('hop'); void ic.getBoundingClientRect(); ic.classList.add('hop'); }
             document.getElementById('nav-container').style.display = 'none'; // Today and Plan show it inside the day card
@@ -3040,7 +3040,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600 shrink-0"></i></button>`;
             const head = (title, sub) => `<h2 class="text-[26px] font-black text-white leading-tight mb-2">${title}</h2><p class="text-[13px] font-bold text-slate-400 mb-6">${sub}</p>`;
             let body = '';
-            if (key === 'lang') body = `<div class="text-center mb-8 mt-6"><div class="text-4xl font-black italic tracking-tighter text-white" dir="ltr">APEX <span class="text-[#d4af37]">LIFT</span></div></div>` + head('Choose your language · اختر لغتك', '') + opt('en', 'English', '', 'languages', LANG) + opt('ar', 'العربية', '', 'languages', LANG);
+            if (key === 'lang') body = `<div class="text-center mb-8 mt-6"><div class="text-4xl font-black italic tracking-tighter text-white logo-mark" dir="ltr">APEX <span class="text-[#d4af37]">LIFT</span></div></div>` + head('Choose your language · اختر لغتك', '') + opt('en', 'English', '', 'languages', LANG) + opt('ar', 'العربية', '', 'languages', LANG);
             if (key === 'goal') body = head(t("What's your main goal?"), t('We use this to suggest a program. You can change it anytime.'))
                 + opt('muscle', t('Build muscle'), t('Get bigger and more defined'), 'dumbbell', W.goal) + opt('strength', t('Get stronger'), t('Lift heavier on the big lifts'), 'trophy', W.goal) + opt('fat', t('Lose fat'), t('Stay strong while you lean out'), 'flame', W.goal);
             if (key === 'days') body = head(t('How many days a week can you train?'), t('Pick what you can keep up every week.'))
@@ -3052,21 +3052,21 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (key === 'eq') body = head(t('Where do you train?'), '')
                 + opt('gym', t('Full gym'), t('Barbells, machines and cables'), 'building-2', W.eq) + opt('db', t('Dumbbells only'), t('Home or a small gym'), 'dumbbell', W.eq);
             if (key === 'about') body = head(t('About you'), t("Needed to fit the app to you. Birth year, height and sex can't be changed later, so please check them.")) + aboutFormHTML()
-                + `<button id="wiz-about-next" onclick="window.appActions.wizChoose('about', 'done')" class="w-full mt-6 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback">${t('Next')}</button>`;
+                + `<button id="wiz-about-next" onclick="window.appActions.wizChoose('about', 'done')" class="w-full mt-6 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Next')}</button>`;
             if (key === 'start') body = head(t('Which day does your week start?'), t('Your week in the app starts on this day.'))
                 + ['SAT', 'SUN', 'MON'].map(d => opt(d, esc(dayLong(d)), '', 'calendar', StorageManager.getStartDay())).join('');
             if (key === 'result') {
                 const rec = PROGRAMS.find(p => p.id === recommendProgram(W)), pick = PROGRAMS.find(p => p.id === (W.pick || rec.id));
                 const card = (p, isRec) => `<button onclick="window.appActions.wizPick(${jsArg(p.id)})" class="w-full text-start p-4 mb-3 rounded-2xl border tap-feedback ${pick.id === p.id ? 'bg-[#d4af37]/10 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
-                    <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[11px] font-black text-slate-400 shrink-0">${t('{n} days', { n: p.days })}</span></span>
-                    ${isRec ? `<span class="inline-block mt-1 text-[10px] font-black uppercase tracking-widest text-[#22c55e]">★ ${t('Recommended for you')}</span>` : ''}
+                    <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} days', { n: p.days })}</span></span>
+                    ${isRec ? `<span class="inline-block mt-1 text-[12px] font-bold text-[#22c55e]">★ ${t('Recommended for you')}</span>` : ''}
                     <span class="block text-[12px] font-bold text-slate-400 mt-1">${esc(t(p.desc))}</span>${pick.id === p.id ? programPreviewHTML(p) : ''}</button>`;
                 const others = PROGRAMS.filter(p => p.id !== rec.id).sort((a, b) => (b.days === parseInt(W.days)) - (a.days === parseInt(W.days)));
                 body = head(t('Your program'), t('Tap a program to see its week.')) + card(rec, true)
-                    + (W.showAll ? `<div class="text-[11px] font-black text-slate-500 uppercase tracking-widest mt-5 mb-2">${t('Other programs')}</div>` + others.map(p => card(p, false)).join('')
-                        : `<button onclick="window.appState.wiz.showAll=true;window.appActions.renderWizard()" class="w-full py-3 mb-3 rounded-xl bg-white/5 border border-white/10 text-[12px] font-black uppercase tracking-widest text-slate-300 tap-feedback">${t('See all {n} programs', { n: PROGRAMS.length })}</button>`)
-                    + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#050505]"><button onclick="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback">${t('Start with this program')}</button>
-                       <p class="text-[11px] font-bold text-slate-500 text-center mt-2">${t('You can change any day and exercise later in Edit.')}</p></div>`;
+                    + (W.showAll ? `<div class="text-[12px] font-bold text-slate-400 mt-5 mb-2">${t('Other programs')}</div>` + others.map(p => card(p, false)).join('')
+                        : `<button onclick="window.appState.wiz.showAll=true;window.appActions.renderWizard()" class="w-full py-3 mb-3 rounded-xl bg-white/5 border border-white/10 text-[12px] font-bold text-slate-300 tap-feedback">${t('See all {n} programs', { n: PROGRAMS.length })}</button>`)
+                    + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#050505]"><button onclick="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Start with this program')}</button>
+                       <p class="text-[12px] font-bold text-slate-400 text-center mt-2">${t('You can change any day and exercise later in Edit.')}</p></div>`;
             }
             const dots = W.steps.map((_, i) => `<span class="h-1.5 rounded-full transition-all ${i === W.step ? 'w-6 bg-[#d4af37]' : i < W.step ? 'w-3 bg-[#d4af37]/50' : 'w-3 bg-white/15'}"></span>`).join('');
             document.getElementById('onboarding-box').innerHTML = `
@@ -3161,34 +3161,34 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (!pick) {
                 list.innerHTML = PROGRAMS.map(p => `<button onclick="window.appActions.previewProgram(${jsArg(p.id)})" class="w-[calc(100%-2rem)] mx-4 mb-3 p-4 rounded-2xl border bg-white/5 border-white/10 text-start tap-feedback flex items-center gap-3">
                     <span class="flex-1 min-w-0">
-                        <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[11px] font-black text-slate-400 shrink-0">${t('{n} days', { n: p.days })}${p.eq === 'db' ? ' · ' + t('Dumbbells only') : ''}</span></span>
+                        <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} days', { n: p.days })}${p.eq === 'db' ? ' · ' + t('Dumbbells only') : ''}</span></span>
                         <span class="block text-[12px] font-bold text-slate-400 mt-1">${esc(t(p.desc))}</span>
                         ${programPreviewHTML(p)}
                     </span>
-                    <i data-lucide="${isAR ? 'chevron-left' : 'chevron-right'}" class="w-5 h-5 text-slate-500 shrink-0"></i>
-                </button>`).join('') + `<p class="mx-6 mb-6 text-[11px] font-bold text-slate-500">${t('Your current routine and all your history are kept.')}</p>`;
+                    <i data-lucide="${isAR ? 'chevron-left' : 'chevron-right'}" class="w-5 h-5 text-slate-400 shrink-0"></i>
+                </button>`).join('') + `<p class="mx-6 mb-6 text-[12px] font-bold text-slate-400">${t('Your current routine and all your history are kept.')}</p>`;
             } else {
                 const exp = window.appState.progExp || 'mid', sched = programSchedule(pick, exp), full = appData.weeks.length >= 5;
-                const lvl = (v, l) => `<button onclick="window.appActions.setProgramLevel(${jsArg(v)})" class="flex-1 py-2 rounded-xl text-[12px] font-black tap-feedback ${exp === v ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300'}">${t(l)}</button>`;
+                const lvl = (v, l) => `<button onclick="window.appActions.setProgramLevel(${jsArg(v)})" class="flex-1 py-2 rounded-xl text-[12px] font-bold tap-feedback ${exp === v ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300'}">${t(l)}</button>`;
                 const dayCard = d => d.isRest
-                    ? `<div class="glass-card ex-card flex items-center gap-3 opacity-70"><i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-5 h-5 text-slate-400 shrink-0"></i><span class="text-[11px] font-black text-slate-400 uppercase tracking-widest w-10 shrink-0">${esc(dayShort(d.day))}</span><span class="text-[14px] font-black text-slate-300">${t(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest')}</span></div>`
+                    ? `<div class="glass-card ex-card flex items-center gap-3 opacity-70"><i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-5 h-5 text-slate-400 shrink-0"></i><span class="text-[12px] font-bold text-slate-400 w-10 shrink-0">${esc(dayShort(d.day))}</span><span class="text-[14px] font-black text-slate-300">${t(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest')}</span></div>`
                     : `<div class="glass-card ex-card">
-                        <div class="flex items-baseline justify-between gap-2 mb-2"><span class="min-w-0"><span class="block text-[10px] font-black text-[#d4af37] uppercase tracking-widest">${esc(dayLong(d.day))}</span><span class="block text-[17px] font-black text-white leading-tight">${esc(t(d.title))}</span></span><span class="text-[11px] font-bold text-slate-400 shrink-0">${t('{n} exercises', { n: d.exercises.length })}</span></div>
-                        ${d.exercises.map((ex, k) => `<div class="flex items-center gap-3 py-2 ${k ? 'border-t border-white/5' : ''}"><span class="w-6 text-center text-[12px] font-black text-slate-500 shrink-0">${k + 1}</span><span class="flex-1 min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(ex.name)}</span><span class="block text-[11px] font-bold text-slate-400 truncate">${esc(tm(ex.muscle))}</span></span><span class="ex-pill" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span></div>`).join('')}
+                        <div class="flex items-baseline justify-between gap-2 mb-2"><span class="min-w-0"><span class="block text-[12px] font-bold text-[#d4af37]">${esc(dayLong(d.day))}</span><span class="block text-[17px] font-black text-white leading-tight">${esc(t(d.title))}</span></span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} exercises', { n: d.exercises.length })}</span></div>
+                        ${d.exercises.map((ex, k) => `<div class="flex items-center gap-3 py-2 ${k ? 'border-t border-white/5' : ''}"><span class="w-6 text-center text-[12px] font-bold text-slate-400 shrink-0">${k + 1}</span><span class="flex-1 min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(ex.name)}</span><span class="block text-[12px] font-bold text-slate-400 truncate">${esc(tm(ex.muscle))}</span></span><span class="ex-pill" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span></div>`).join('')}
                     </div>`;
                 list.innerHTML = `<div class="px-4 pb-4">
-                    <button onclick="window.appActions.previewProgram(null)" class="flex items-center gap-1 mb-3 text-[12px] font-black text-slate-400 tap-feedback"><i data-lucide="${isAR ? 'chevron-right' : 'chevron-left'}" class="w-4 h-4"></i>${t('All programs')}</button>
+                    <button onclick="window.appActions.previewProgram(null)" class="flex items-center gap-1 mb-3 text-[12px] font-bold text-slate-400 tap-feedback"><i data-lucide="${isAR ? 'chevron-right' : 'chevron-left'}" class="w-4 h-4"></i>${t('All programs')}</button>
                     <h2 class="text-[24px] font-black text-white leading-tight">${esc(t(pick.name))}</h2>
                     <p class="text-[13px] font-bold text-slate-400 mt-1">${esc(t(pick.desc))}</p>
-                    <div class="text-[12px] font-black text-slate-300 mt-2">${t('{n} training days', { n: pick.days })} · ${pick.eq === 'db' ? t('Dumbbells only') : t('Full gym')}</div>
+                    <div class="text-[12px] font-bold text-slate-300 mt-2">${t('{n} training days', { n: pick.days })} · ${pick.eq === 'db' ? t('Dumbbells only') : t('Full gym')}</div>
                     ${programPreviewHTML(pick)}
-                    <div class="mt-4 mb-1.5 px-0.5 text-[10px] font-black text-slate-500 uppercase tracking-widest">${t('Level')}</div>
+                    <div class="mt-4 mb-1.5 px-0.5 text-[12px] font-bold text-slate-400">${t('Level')}</div>
                     <div class="flex gap-2 mb-4">${lvl('new', 'Beginner')}${lvl('mid', 'Intermediate')}${lvl('adv', 'Advanced')}</div>
                     <div class="space-y-2">${sched.map(dayCard).join('')}</div>
                 </div>
                 <div class="sticky bottom-0 bg-[#111] border-t border-white/10 px-4 pt-3" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
-                    <p class="text-[11px] font-bold text-slate-500 mb-2 text-center">${full ? t('It replaces your current routine. Your history is kept.') : t('It is added as a new routine. Your current routine and history are kept.')}</p>
-                    <button onclick="window.appActions.useProgram(${jsArg(pick.id)})" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><i data-lucide="check" class="w-5 h-5"></i>${t('Use this program')}</button>
+                    <p class="text-[12px] font-bold text-slate-400 mb-2 text-center">${full ? t('It replaces your current routine. Your history is kept.') : t('It is added as a new routine. Your current routine and history are kept.')}</p>
+                    <button onclick="window.appActions.useProgram(${jsArg(pick.id)})" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><i data-lucide="check" class="w-5 h-5"></i>${t('Use this program')}</button>
                 </div>`;
             }
             list.scrollTop = 0;
@@ -3571,11 +3571,11 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     <div class="min-w-0 flex-1">
                         <div class="text-[19px] font-black text-white truncate leading-tight">${esc(name || email)}</div>
                         ${name && email ? `<div class="text-[12px] font-bold text-slate-400 truncate mt-0.5">${esc(email)}</div>` : ''}
-                        <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 max-w-full" title="${esc(Cloud.err)}"><span class="w-2 h-2 rounded-full shrink-0 ${st[0]}"></span><span class="text-[11px] font-bold text-slate-300 truncate">${esc(st[1])}</span></div>
+                        <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 max-w-full" title="${esc(Cloud.err)}"><span class="w-2 h-2 rounded-full shrink-0 ${st[0]}"></span><span class="text-[12px] font-bold text-slate-300 truncate">${esc(st[1])}</span></div>
                     </div>
                 </div>
-                ${isPasswordUser() && !Cloud.user.emailVerified ? `<div class="mt-4 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/25 px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold text-slate-300"><i data-lucide="mail-warning" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="flex-1 min-w-0">${t('Please confirm your email: open the link we sent you.')}</span><button onclick="window.appActions.resendVerify()" class="shrink-0 text-[12px] font-black text-[#d4af37] tap-feedback">${t('Send again')}</button></div>` : ''}
-                ${since ? `<div class="mt-4 pt-3 border-t border-white/5 text-[11px] font-bold text-slate-500 flex items-center gap-1.5"><i data-lucide="badge-check" class="w-4 h-4 text-[#d4af37]"></i>${t('Member since {date}', { date: esc(since) })}</div>` : ''}</div>`;
+                ${isPasswordUser() && !Cloud.user.emailVerified ? `<div class="mt-4 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/25 px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold text-slate-300"><i data-lucide="mail-warning" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="flex-1 min-w-0">${t('Please confirm your email: open the link we sent you.')}</span><button onclick="window.appActions.resendVerify()" class="shrink-0 text-[12px] font-bold text-[#d4af37] tap-feedback">${t('Send again')}</button></div>` : ''}
+                ${since ? `<div class="mt-4 pt-3 border-t border-white/5 text-[12px] font-bold text-slate-400 flex items-center gap-1.5"><i data-lucide="badge-check" class="w-4 h-4 text-[#d4af37]"></i>${t('Member since {date}', { date: esc(since) })}</div>` : ''}</div>`;
         }
         if (window.lucide) window.lucide.createIcons({ root: el });
         if (typeof updateBackupStatus === 'function') updateBackupStatus();
@@ -3655,7 +3655,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         ['One symbol, like ! @ # $ %', p => /[^\p{L}\p{N}\s]/u.test(p)]
     ];
     const passStrong = p => PASS_RULES.every(r => r[1](p));
-    const passRulesHTML = p => PASS_RULES.map(([l, ok]) => `<li class="flex items-center gap-2 ${ok(p) ? 'text-[#22c55e]' : 'text-slate-500'}"><i data-lucide="${ok(p) ? 'check-circle-2' : 'circle'}" class="w-4 h-4 shrink-0"></i>${t(l)}</li>`).join('');
+    const passRulesHTML = p => PASS_RULES.map(([l, ok]) => `<li class="flex items-center gap-2 ${ok(p) ? 'text-[#22c55e]' : 'text-slate-400'}"><i data-lucide="${ok(p) ? 'check-circle-2' : 'circle'}" class="w-4 h-4 shrink-0"></i>${t(l)}</li>`).join('');
     const authErrorText = e => {
         const c = (e && e.code) || '';
         if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-login-credentials'].includes(c)) return t('Email or password is wrong.');
@@ -3673,8 +3673,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const title = { in: t('Sign in with email'), up: t('Create your account'), reset: t('Reset your password'), reauth: t('Confirm your password') }[m];
         const sub = { in: '', up: t('Use your email and a strong password.'), reset: t("Enter your account's email. We'll send you a link to choose a new password."), reauth: t('For your safety, enter your password to delete your account.') }[m];
         const inp = 'w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-[#d4af37]';
-        const lbl = (txt, html) => `<label class="block"><span class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5">${txt}</span>${html}</label>`;
-        const link = (fn, txt) => `<button type="button" onclick="${fn}" class="text-[13px] font-black text-[#d4af37] tap-feedback">${txt}</button>`;
+        const lbl = (txt, html) => `<label class="block"><span class="block text-[12px] font-bold text-slate-400 mb-1.5">${txt}</span>${html}</label>`;
+        const link = (fn, txt) => `<button type="button" onclick="${fn}" class="text-[13px] font-bold text-[#d4af37] tap-feedback">${txt}</button>`;
         const btn = { in: t('Sign in'), up: t('Create account'), reset: t('Send link'), reauth: t('Confirm') }[m];
         document.getElementById('email-body').innerHTML = `
             <div class="flex items-center justify-between pb-2"><h3 class="text-lg font-black text-white">${title}</h3>
@@ -3687,7 +3687,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     <button type="button" onclick="const i=document.getElementById('em-pass');i.type=i.type==='password'?'text':'password'" class="absolute inset-y-0 end-0 px-3.5 text-slate-400 tap-feedback" aria-label="${esc(t('Show password'))}"><i data-lucide="eye" class="w-5 h-5"></i></button></div>`)}
                 ${m === 'up' ? `<ul id="em-rules" class="space-y-1.5 text-[12px] font-bold">${passRulesHTML(pass)}</ul>` : ''}
                 <p id="em-msg" class="text-[12px] font-bold leading-snug ${good ? 'text-[#22c55e]' : 'text-red-400'} ${msg ? '' : 'hidden'}" role="alert">${esc(msg)}</p>
-                <button id="em-go" type="submit" ${emailSt.busy ? 'disabled' : ''} class="w-full py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 disabled:opacity-60">${emailSt.busy ? '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>' : ''}${btn}</button>
+                <button id="em-go" type="submit" ${emailSt.busy ? 'disabled' : ''} class="w-full py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2 disabled:opacity-60">${emailSt.busy ? '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>' : ''}${btn}</button>
             </form>
             <div class="flex flex-col items-center gap-3 mt-5 mb-2">
                 ${m === 'in' ? link("window.appActions.emailMode('reset')", t('Forgot password?')) + `<span class="text-[13px] font-bold text-slate-400">${t('New here?')} ${link("window.appActions.emailMode('up')", t('Create an account'))}</span>` : ''}
@@ -3789,28 +3789,28 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
     const shareBody = (w, code) => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Send the link, or give the code to a friend: in Apex Lift they open Edit → My routines → Add a routine by code.')}</p>
         <div class="rounded-2xl bg-black/40 border border-white/10 py-6 px-4 text-center mb-4">
-            <div class="text-[12px] font-black text-slate-400 mb-2 truncate">${esc(t(w.name))}</div>
-            ${code ? `<div class="code-big" dir="ltr">${fmtCode(code)}</div>` : `<div class="flex items-center justify-center gap-2 h-[41px] text-[13px] font-black text-slate-400"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>${t('Creating code…')}</div>`}
+            <div class="text-[12px] font-bold text-slate-400 mb-2 truncate">${esc(t(w.name))}</div>
+            ${code ? `<div class="code-big" dir="ltr">${fmtCode(code)}</div>` : `<div class="flex items-center justify-center gap-2 h-[41px] text-[13px] font-bold text-slate-400"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>${t('Creating code…')}</div>`}
         </div>
         <div class="grid grid-cols-2 gap-2 mb-4">
-            <button onclick="window.appActions.copyCode(${jsArg(code)})" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="copy" class="w-4 h-4"></i>${t('Copy code')}</button>
-            <button onclick="window.appActions.sendCode(${jsArg(code)}, ${jsArg(t(w.name))})" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="share" class="w-4 h-4"></i>${t('Share')}</button>
+            <button onclick="window.appActions.copyCode(${jsArg(code)})" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="copy" class="w-4 h-4"></i>${t('Copy code')}</button>
+            <button onclick="window.appActions.sendCode(${jsArg(code)}, ${jsArg(t(w.name))})" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-bold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="share" class="w-4 h-4"></i>${t('Share')}</button>
         </div>
-        <p class="text-[11px] font-bold text-slate-500 leading-snug flex gap-2"><i data-lucide="lock" class="w-4 h-4 shrink-0"></i><span>${t('Only the days and exercises are shared. Your workouts and personal details stay private.')}</span></p>`;
+        <p class="text-[12px] font-bold text-slate-400 leading-snug flex gap-2"><i data-lucide="lock" class="w-4 h-4 shrink-0"></i><span>${t('Only the days and exercises are shared. Your workouts and personal details stay private.')}</span></p>`;
     const findBody = (code = '') => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Type or paste the code a friend gave you.')}</p>
         <input id="code-in" type="text" value="${esc(code ? fmtCode(code) : '')}" maxlength="12" placeholder="ABCD-EFGH" autocomplete="off" autocapitalize="characters" spellcheck="false" dir="ltr" class="code-input"
             oninput="window.appActions.codeTyped(this)" onkeydown="if(event.key==='Enter')window.appActions.codeFind()">
-        <button id="code-find" onclick="window.appActions.codeFind()" class="w-full mt-3 py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2"><i data-lucide="search" class="w-4 h-4"></i>${t('Find routine')}</button>
+        <button id="code-find" onclick="window.appActions.codeFind()" class="w-full mt-3 py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="search" class="w-4 h-4"></i>${t('Find routine')}</button>
         <div id="code-result" class="mt-4"></div>`;
     const previewHTML = wk => {
         const work = wk.schedule.filter(d => !d.isRest && d.exercises.length), exN = work.reduce((a, d) => a + d.exercises.length, 0), full = appData.weeks.length >= 5;
         return `<div class="glass-card p-4 border border-[#d4af37]/30 p-pop">
             <div class="text-[17px] font-black text-white truncate">${esc(t(wk.name))}</div>
             <div class="text-[12px] font-bold text-slate-400 mb-3">${t('{a} workout days · {b} exercises', { a: work.length, b: exN })}</div>
-            <div class="space-y-1.5">${wk.schedule.map(d => `<div class="flex items-center gap-3 text-[13px]"><span class="w-10 shrink-0 font-black text-slate-500">${esc(dayShort(d.day))}</span><span class="flex-1 min-w-0 truncate font-bold ${d.isRest ? 'text-slate-500' : 'text-white'}">${esc(t(d.isRest ? (d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : d.title))}</span>${d.isRest ? '' : `<span class="shrink-0 text-[11px] font-black text-slate-400">${t('{n} exercises', { n: d.exercises.length })}</span>`}</div>`).join('')}</div>
+            <div class="space-y-1.5">${wk.schedule.map(d => `<div class="flex items-center gap-3 text-[13px]"><span class="w-10 shrink-0 font-black text-slate-400">${esc(dayShort(d.day))}</span><span class="flex-1 min-w-0 truncate font-bold ${d.isRest ? 'text-slate-400' : 'text-white'}">${esc(t(d.isRest ? (d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : d.title))}</span>${d.isRest ? '' : `<span class="shrink-0 text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: d.exercises.length })}</span>`}</div>`).join('')}</div>
         </div>
         ${full ? `<p class="text-[12px] font-bold text-red-400 mt-3">${t('You have 5 routines, the most allowed. Delete one in Edit first.')}</p>` : ''}
-        <button onclick="window.appActions.codeAdd()" ${full ? 'disabled' : ''} class="w-full mt-3 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add to my routines')}</button>`;
+        <button onclick="window.appActions.codeAdd()" ${full ? 'disabled' : ''} class="w-full mt-3 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add to my routines')}</button>`;
     };
     // a ?r=CODE link: remember it, clean the address bar, and open it once you're signed in
     try { const u = new URL(location.href), c = cleanCode(u.searchParams.get('r')); if (c) { sessionStorage.setItem(PENDING_CODE, c); u.searchParams.delete('r'); history.replaceState(history.state, '', u.pathname + u.search + u.hash); } } catch (e) {}
@@ -3829,7 +3829,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (!code) { res.innerHTML = `<p class="text-[12px] font-bold text-red-400">${t('A code has 8 letters and numbers, like ABCD-EFGH.')}</p>`; return; }
             if (!Cloud.user || !Cloud.db) { res.innerHTML = `<p class="text-[12px] font-bold text-red-400">${t('Sign in to use routine codes.')}</p>`; return; }
             if (btn) btn.disabled = true;
-            res.innerHTML = `<div class="flex items-center justify-center gap-2 py-4 text-[13px] font-black text-slate-400"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>${t('Looking for the routine…')}</div>`;
+            res.innerHTML = `<div class="flex items-center justify-center gap-2 py-4 text-[13px] font-bold text-slate-400"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>${t('Looking for the routine…')}</div>`;
             if (window.lucide) window.lucide.createIcons({ root: res });
             try {
                 const snap = await withTimeout(Cloud.db.doc(`shared/${code}`).get({ source: 'server' }));
@@ -3989,9 +3989,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         { icon: 'shield-check', title: 'Sign in to start', text: 'Your workouts are saved to your account and kept in sync on all your phones.', art: 'gate' }
     ];
     const welcomeArt = a => {
-        if (a === 'plan') return `<div class="w-full max-w-[290px] space-y-2.5">${[['Push', '6'], ['Pull', '6'], ['Legs', '5']].map(([n, c], i) => `<div class="flex items-center gap-3 rounded-2xl bg-white/[0.04] border border-white/10 px-4 py-3 float-${i}"><span class="w-9 h-9 rounded-full ${i === 0 ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300'} flex items-center justify-center text-[12px] font-black">${tDay(['SAT', 'SUN', 'MON'][i]).slice(0, 3)}</span><span class="flex-1 text-[15px] font-black text-white">${t(n)}</span><span class="text-[11px] font-bold text-slate-400">${t('{n} exercises', { n: c })}</span></div>`).join('')}</div>`;
-        if (a === 'sets') return `<div class="w-full max-w-[290px] rounded-2xl bg-white/[0.04] border border-white/10 p-3 space-y-2" dir="ltr">${[['60', '10', 1], ['60', '9', 1], ['60', '8', 0]].map(([w, r, d], i) => `<div class="grid grid-cols-[28px_1fr_1fr_44px] gap-2 items-center"><span class="w-7 h-7 rounded-full ${d ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center">${i + 1}</span><span class="h-10 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-[15px] font-black text-[#d4af37]">${w}</span><span class="h-10 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-[15px] font-black text-white">${r}</span><span class="h-10 rounded-lg flex items-center justify-center ${d ? 'bg-[#22c55e] text-black' : 'bg-white/5 border border-white/10 text-slate-400'} ${i === 1 ? 'pop-loop' : ''}"><i data-lucide="check" class="w-5 h-5"></i></span></div>`).join('')}<div class="mt-1 rounded-xl bg-[#22c55e]/10 border border-[#22c55e]/25 px-3 py-2 flex items-center gap-2 text-[#22c55e] text-[12px] font-black"><i data-lucide="timer" class="w-4 h-4"></i>${t('Rest')} <span class="text-white text-[16px]">1:30</span></div></div>`;
-        if (a === 'chart') return `<div class="w-full max-w-[290px] rounded-2xl bg-white/[0.04] border border-white/10 p-4"><div class="flex items-center justify-between mb-2"><span class="text-[13px] font-black text-white ex-name">Bench Press</span><span class="text-[11px] font-black text-[#22c55e]" dir="ltr">+12.5kg</span></div><svg viewBox="0 0 260 110" class="w-full h-auto" dir="ltr"><defs><linearGradient id="wg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d4af37" stop-opacity=".35"/><stop offset="1" stop-color="#d4af37" stop-opacity="0"/></linearGradient></defs><path d="M5 95 L45 85 L85 80 L125 62 L165 58 L205 40 L255 18 L255 110 L5 110 Z" fill="url(#wg)"/><path class="draw-line" d="M5 95 L45 85 L85 80 L125 62 L165 58 L205 40 L255 18" fill="none" stroke="#d4af37" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="255" cy="18" r="5" fill="#d4af37"/></svg><div class="mt-2 inline-flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-md border text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20"><i data-lucide="arrow-up-circle" class="w-3 h-3"></i>${t('Add weight:')} <span dir="ltr">62.5kg × 8</span></div></div>`;
+        if (a === 'plan') return `<div class="w-full max-w-[290px] space-y-2.5">${[['Push', '6'], ['Pull', '6'], ['Legs', '5']].map(([n, c], i) => `<div class="flex items-center gap-3 rounded-2xl bg-white/[0.04] border border-white/10 px-4 py-3 float-${i}"><span class="w-9 h-9 rounded-full ${i === 0 ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300'} flex items-center justify-center text-[12px] font-bold">${tDay(['SAT', 'SUN', 'MON'][i]).slice(0, 3)}</span><span class="flex-1 text-[15px] font-black text-white">${t(n)}</span><span class="text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: c })}</span></div>`).join('')}</div>`;
+        if (a === 'sets') return `<div class="w-full max-w-[290px] rounded-2xl bg-white/[0.04] border border-white/10 p-3 space-y-2" dir="ltr">${[['60', '10', 1], ['60', '9', 1], ['60', '8', 0]].map(([w, r, d], i) => `<div class="grid grid-cols-[28px_1fr_1fr_44px] gap-2 items-center"><span class="w-7 h-7 rounded-full ${d ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-bold flex items-center justify-center">${i + 1}</span><span class="h-10 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-[15px] font-black text-[#d4af37]">${w}</span><span class="h-10 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center text-[15px] font-black text-white">${r}</span><span class="h-10 rounded-lg flex items-center justify-center ${d ? 'bg-[#22c55e] text-black' : 'bg-white/5 border border-white/10 text-slate-400'} ${i === 1 ? 'pop-loop' : ''}"><i data-lucide="check" class="w-5 h-5"></i></span></div>`).join('')}<div class="mt-1 rounded-xl bg-[#22c55e]/10 border border-[#22c55e]/25 px-3 py-2 flex items-center gap-2 text-[#22c55e] text-[12px] font-bold"><i data-lucide="timer" class="w-4 h-4"></i>${t('Rest')} <span class="text-white text-[16px]">1:30</span></div></div>`;
+        if (a === 'chart') return `<div class="w-full max-w-[290px] rounded-2xl bg-white/[0.04] border border-white/10 p-4"><div class="flex items-center justify-between mb-2"><span class="text-[13px] font-bold text-white ex-name">Bench Press</span><span class="text-[12px] font-bold text-[#22c55e]" dir="ltr">+12.5kg</span></div><svg viewBox="0 0 260 110" class="w-full h-auto" dir="ltr"><defs><linearGradient id="wg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d4af37" stop-opacity=".35"/><stop offset="1" stop-color="#d4af37" stop-opacity="0"/></linearGradient></defs><path d="M5 95 L45 85 L85 80 L125 62 L165 58 L205 40 L255 18 L255 110 L5 110 Z" fill="url(#wg)"/><path class="draw-line" d="M5 95 L45 85 L85 80 L125 62 L165 58 L205 40 L255 18" fill="none" stroke="#d4af37" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="255" cy="18" r="5" fill="#d4af37"/></svg><div class="mt-2 inline-flex items-center gap-1 text-[12px] font-bold px-2 py-1 rounded-md border text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20"><i data-lucide="arrow-up-circle" class="w-3 h-3"></i>${t('Add weight:')} <span dir="ltr">62.5kg × 8</span></div></div>`;
         return `<div class="relative w-28 h-28 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/30 flex items-center justify-center glow-ring"><i data-lucide="cloud" class="w-14 h-14 text-[#d4af37]"></i></div>`;
     };
     let welcomeIdx = 0;
@@ -4015,12 +4015,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const agreed = !!getAgree();
         const gate = document.getElementById('welcome-gate');
         if (gate) gate.innerHTML = `${isSignedIn()
-                ? `<button id="welcome-continue" onclick="window.appActions.welcomeContinue()" ${agreed ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback disabled:opacity-40 transition-opacity">${t('Continue')}</button>`
+                ? `<button id="welcome-continue" onclick="window.appActions.welcomeContinue()" ${agreed ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback disabled:opacity-40 transition-opacity">${t('Continue')}</button>`
                 : `<button id="welcome-google" onclick="window.appActions.welcomeSignIn()" ${agreed && !loading ? '' : 'disabled'} class="w-full py-4 rounded-2xl bg-white text-[#1f1f1f] text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity">${GOOGLE_G}${loading ? t('Signing in…') : t('Continue with Google')}</button>
                    <button id="welcome-email" onclick="window.appActions.openEmail('in')" ${agreed && !loading ? '' : 'disabled'} class="w-full mt-2.5 py-4 rounded-2xl bg-white/5 border border-white/15 text-white text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button>`}
                <label class="flex items-start gap-3 mt-4 cursor-pointer text-start" dir="${isAR ? 'rtl' : 'ltr'}"><input id="welcome-agree" type="checkbox" ${agreed ? 'checked' : ''} onchange="window.appActions.welcomeAgree(this.checked)" class="mt-0.5 w-5 h-5 shrink-0 accent-[#d4af37]"><span class="text-[12px] font-bold text-slate-400 leading-snug">${t('I agree to the {terms} and the {privacy}.', { terms: `<a href="terms.html" target="_blank" rel="noopener" class="text-[#d4af37] underline">${t('Terms of Use')}</a>`, privacy: `<a href="privacy.html" target="_blank" rel="noopener" class="text-[#d4af37] underline">${t('Privacy Policy')}</a>` })}</span></label>`;
-        if (gate && !isSignedIn() && !requireSignIn()) gate.insertAdjacentHTML('beforeend', `<button id="welcome-later" onclick="window.appActions.welcomeLater()" class="w-full mt-3 py-3 text-[13px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${t('Not now')}</button>`);
-        document.getElementById('welcome-actions').innerHTML = last ? '' : `<div class="flex gap-3"><button onclick="window.appActions.welcomeGo(${W_SLIDES.length - 1})" class="px-5 py-4 rounded-2xl text-[13px] font-black uppercase tracking-widest text-slate-400 tap-feedback">${t('Skip')}</button><button onclick="window.appActions.welcomeGo(${welcomeIdx + 1})" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black uppercase tracking-widest tap-feedback flex items-center justify-center gap-2">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button></div>`;
+        if (gate && !isSignedIn() && !requireSignIn()) gate.insertAdjacentHTML('beforeend', `<button id="welcome-later" onclick="window.appActions.welcomeLater()" class="w-full mt-3 py-3 text-[13px] font-bold text-slate-400 tap-feedback">${t('Not now')}</button>`);
+        document.getElementById('welcome-actions').innerHTML = last ? '' : `<div class="flex gap-3"><button onclick="window.appActions.welcomeGo(${W_SLIDES.length - 1})" class="px-5 py-4 rounded-2xl text-[13px] font-bold text-slate-400 tap-feedback">${t('Skip')}</button><button onclick="window.appActions.welcomeGo(${welcomeIdx + 1})" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button></div>`;
         if (window.lucide) window.lucide.createIcons({ root: document.getElementById('welcome-overlay') });
     };
     const showWelcome = (toLast = false) => {
@@ -4101,14 +4101,14 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const kindLabel = k => k === 'auto' ? t('Automatic') : k === 'before-restore' ? t('Before restore') : k === 'before-import' ? t('Before import') : k === 'before-coach' ? t('Before coach update') : t('Manual');
     const renderBackups = async () => {
         const list = document.getElementById('backups-list');
-        list.innerHTML = `<div class="p-8 text-center text-[12px] font-bold text-slate-500">${t('Loading…')}</div>`;
+        list.innerHTML = `<div class="p-8 text-center text-[12px] font-bold text-slate-400">${t('Loading…')}</div>`;
         try {
             const all = await listBackups();
-            if (!all.length) { list.innerHTML = `<div class="p-8 text-center text-[13px] font-bold text-slate-500">${t('No backups yet. Tap Back up now to make the first one.')}</div>`; return; }
+            if (!all.length) { list.innerHTML = `<div class="p-8 text-center text-[13px] font-bold text-slate-400">${t('No backups yet. Tap Back up now to make the first one.')}</div>`; return; }
             list.innerHTML = all.map(b => `<div class="flex items-center gap-3 px-5 py-3.5 border-b border-white/5">
                 <span class="w-10 h-10 rounded-full ${b.kind === 'auto' ? 'bg-white/5 text-slate-300' : 'bg-[#d4af37]/15 text-[#d4af37]'} flex items-center justify-center shrink-0"><i data-lucide="${b.kind === 'auto' ? 'clock' : b.kind === 'before-restore' || b.kind === 'before-import' ? 'rotate-ccw' : 'save'}" class="w-5 h-5"></i></span>
-                <div class="flex-1 min-w-0"><div class="text-[14px] font-black text-white">${esc(fmtDate(b.createdAt, true))}</div><div class="text-[11px] font-bold text-slate-400">${esc(kindLabel(b.kind))} · ${t('{n} workouts', { n: Number(b.workouts) || 0 })} · ${t('{n} exercises', { n: Number(b.exercises) || 0 })}</div></div>
-                <button onclick="window.appActions.restoreBackup(${jsArg(b.id)}, ${jsArg(fmtDate(b.createdAt, true))})" class="shrink-0 px-3.5 py-2 rounded-lg bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-widest text-white tap-feedback">${t('Restore')}</button>
+                <div class="flex-1 min-w-0"><div class="text-[14px] font-black text-white">${esc(fmtDate(b.createdAt, true))}</div><div class="text-[12px] font-bold text-slate-400">${esc(kindLabel(b.kind))} · ${t('{n} workouts', { n: Number(b.workouts) || 0 })} · ${t('{n} exercises', { n: Number(b.exercises) || 0 })}</div></div>
+                <button onclick="window.appActions.restoreBackup(${jsArg(b.id)}, ${jsArg(fmtDate(b.createdAt, true))})" class="shrink-0 px-3.5 py-2 rounded-lg bg-white/5 border border-white/10 text-[12px] font-bold text-white tap-feedback">${t('Restore')}</button>
             </div>`).join('');
             if (window.lucide) window.lucide.createIcons({ root: list });
         } catch (e) {
@@ -4142,7 +4142,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const el = document.createElement('div'), below = r.bottom + 150 < window.innerHeight;
             el.className = 'fixed z-[9600] max-w-[300px] rounded-2xl bg-[#1a1a1a] border border-[#d4af37]/50 shadow-[0_15px_40px_rgba(0,0,0,0.7)] p-4 transition-opacity duration-200 hint-in';
             el.setAttribute('dir', isAR ? 'rtl' : 'ltr');
-            el.innerHTML = `<div class="flex items-start gap-2.5"><i data-lucide="lightbulb" class="w-5 h-5 text-[#d4af37] shrink-0 mt-0.5"></i><p class="text-[13px] font-bold text-white leading-snug flex-1">${esc(text)}</p></div><div class="flex justify-end mt-2.5"><span class="px-3 py-1.5 rounded-lg bg-[#d4af37] text-black text-[11px] font-black uppercase tracking-widest">${t('Got it')}</span></div>`;
+            el.innerHTML = `<div class="flex items-start gap-2.5"><i data-lucide="lightbulb" class="w-5 h-5 text-[#d4af37] shrink-0 mt-0.5"></i><p class="text-[13px] font-bold text-white leading-snug flex-1">${esc(text)}</p></div><div class="flex justify-end mt-2.5"><span class="px-3 py-1.5 rounded-lg bg-[#d4af37] text-black text-[12px] font-extrabold">${t('Got it')}</span></div>`;
             document.body.appendChild(el);
             const w = el.offsetWidth, left = Math.max(12, Math.min(window.innerWidth - w - 12, r.left + r.width / 2 - w / 2));
             el.style.left = left + 'px';
