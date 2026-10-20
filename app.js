@@ -337,6 +337,9 @@
         "In your routines": "في جداولك",
         "Invalid Backup file": "ملف النسخة الاحتياطية غير صالح",
         "KG": "كجم",
+        "kg": "كجم",
+        "reps": "تكرار",
+        "sec": "ثانية",
         "LEGS": "أرجل",
         "LOGGED": "مسجّل",
         "Language": "اللغة",
@@ -974,7 +977,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '34';
+    const APP_VERSION = '35';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -2350,14 +2353,14 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const S = window.appState.sess; if (!S) return;
             if (typeof S.showRpe !== 'boolean') S.showRpe = StorageManager.getShowRpe();
             const showRpe = S.showRpe;
-            S.cols = showRpe ? '28px minmax(0,1fr) minmax(0,1fr) 56px' : '28px minmax(0,1fr) minmax(0,1fr)';
+            S.cols = showRpe ? '32px minmax(0,1fr) minmax(0,1fr) 60px' : '32px minmax(0,1fr) minmax(0,1fr)';
             S.rowSeq = 0; // rows are numbered from 1 again every time the table is built
             // one exercise: the day's name on top (the exercise's own name is right below it)
             document.getElementById('aw-title').innerText = t(S.exIdx != null && S.dayTitle ? S.dayTitle : S.title);
             document.getElementById('aw-status-text').innerText = t('Workout');
             document.getElementById('aw-pulse-dot').className = 'w-2 h-2 rounded-full shrink-0 bg-red-500 animate-pulse';
             document.getElementById('aw-mini-name').innerText = t(S.title);
-            const head = ex => `<div class="grid items-center gap-1.5 px-2 pb-1.5 text-[12px] font-bold text-slate-400" dir="ltr" style="grid-template-columns:${S.cols}"><span class="text-center">#</span><span class="text-center">${t('KG')}</span><span class="text-center">${ex.timed ? t('SEC') : t('REPS')}</span>${showRpe ? '<span class="text-center">RPE</span>' : ''}</div>`;
+            const head = ex => `<div class="grid items-center gap-1.5 px-2 pb-1.5 text-[12px] font-bold text-slate-400" dir="ltr" style="grid-template-columns:${S.cols}"><span class="text-center">#</span><span class="text-center">${t('kg')}</span><span class="text-center">${ex.timed ? t('sec') : t('reps')}</span>${showRpe ? '<span class="text-center">RPE</span>' : ''}</div>`;
             document.getElementById('aw-sets-container').innerHTML = S.exercises.map((ex, e) => `
                 <section class="mb-6" id="aw-ex-${e}">
                     <div class="flex items-start justify-between gap-2 px-1 mb-2">
@@ -2393,10 +2396,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         updateSessionInfo: () => {
             const S = window.appState.sess; if (!S) return;
             const all = document.querySelectorAll('#aw-sets-container .aw-row'), done = document.querySelectorAll('#aw-sets-container .aw-row[data-done="1"]');
-            const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
-            const old = document.getElementById('aw-progress-fill'), prevPct = old ? parseFloat(old.style.width) || 0 : pct;
-            document.getElementById('aw-info').innerHTML = `<div class="w-full"><div class="flex justify-between text-[12px] font-bold mb-1.5"><span class="text-slate-400">${S.exercises.length > 1 ? t('{n} exercises', { n: S.exercises.length }) : ''}</span><span class="text-white" dir="ltr">${done.length} / ${all.length} ${t('sets')}</span></div><div class="w-full h-2 bg-black/60 rounded-full overflow-hidden"><div id="aw-progress-fill" class="bar-fill h-full bg-[#22c55e] rounded-full" style="width:${prevPct}%"></div></div></div>`;
-            const fill = document.getElementById('aw-progress-fill'); void fill.offsetWidth; fill.style.width = pct + '%';
+            const rowsAll = [...all], nextI = rowsAll.findIndex(r => r.dataset.done !== '1');
+            const segs = rowsAll.length <= 40 ? rowsAll.map((r, j) => `<i class="${r.dataset.done === '1' ? 'is-on' : j === nextI ? 'is-now' : ''}"></i>`).join('') : `<i class="is-on" style="flex:${done.length}"></i><i style="flex:${all.length - done.length}"></i>`;
+            document.getElementById('aw-info').innerHTML = `<div class="w-full"><div class="flex justify-between items-baseline text-[12px] font-bold mb-2"><span class="text-slate-400">${S.exercises.length > 1 ? t('{n} exercises', { n: S.exercises.length }) : ''}</span><span class="text-slate-400" dir="ltr"><b class="num text-[20px] font-bold text-white">${done.length}</b> / ${all.length} ${t('sets')}</span></div><div class="aw-segs" dir="ltr" role="progressbar" aria-valuemin="0" aria-valuemax="${all.length}" aria-valuenow="${done.length}">${segs}</div></div>`;
         },
         // Adds one set row to exercise e
         addSetRow: (e, r = null, building = false) => {
@@ -2414,12 +2416,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             S.rowSeq = (S.rowSeq || 0) + 1;
             const i = S.rowSeq;
             const showRpe = S.showRpe;
-            const inCls = 'w-full h-11 rounded-lg bg-black/50 border border-white/10 text-center text-[16px] font-black text-white outline-none focus:border-[#d4af37] placeholder:text-slate-600 placeholder:font-bold';
+            const inCls = 'aw-in w-full h-14 rounded-xl bg-black/50 border border-white/10 text-center text-[26px] font-bold text-white outline-none focus:border-[#d4af37]';
             box.insertAdjacentHTML('beforeend', `
                 <div class="aw-row grid items-center gap-1.5 px-2 py-1 rounded-xl transition-colors ${r.done ? 'is-done' : ''} ${r.logged ? 'is-logged' : ''}" data-i="${i}" data-e="${e}" data-done="${r.done ? 1 : 0}" ${r.logged ? 'data-logged="1"' : ''} id="aw-row-${i}" dir="ltr" style="grid-template-columns:${S.cols}">
-                    <span class="w-7 h-7 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-bold flex items-center justify-center" id="aw-num-${i}">${n}</span>
-                    <input id="aw-w-${i}" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.w)}" ${r.logged ? 'disabled' : ''} placeholder="${isBodyweight(ex.name) ? t('BW') : t('KG')}" onfocus="window.appActions.selectAll(this)" oninput="window.appActions.numInput(this, true)" class="${inCls} text-[#d4af37]">
-                    <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" ${r.logged ? 'disabled' : ''} placeholder="${ex.timed ? t('SEC') : t('REPS')}" onfocus="window.appActions.selectAll(this)" oninput="window.appActions.numInput(this, false)" onblur="window.appActions.repsChanged(${i})" onkeydown="if(event.key==='Enter')this.blur()" class="${inCls}">
+                    <span class="num w-8 h-8 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[16px] font-bold flex items-center justify-center" id="aw-num-${i}">${n}</span>
+                    <input id="aw-w-${i}" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.w)}" ${r.logged ? 'disabled' : ''} placeholder="${isBodyweight(ex.name) ? t('BW') : t('kg')}" onfocus="window.appActions.selectAll(this)" oninput="window.appActions.numInput(this, true)" class="${inCls} text-[#d4af37]">
+                    <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" ${r.logged ? 'disabled' : ''} placeholder="${ex.timed ? t('sec') : t('reps')}" onfocus="window.appActions.selectAll(this)" oninput="window.appActions.numInput(this, false)" onblur="window.appActions.repsChanged(${i})" onkeydown="if(event.key==='Enter')this.blur()" class="${inCls}">
                     ${showRpe ? `<select id="aw-rpe-${i}" ${r.logged ? 'disabled' : ''} onchange="window.appActions.sessionChanged()" class="${inCls} appearance-none text-[14px]"><option value="">–</option>${[6,7,8,9,10].map(x => `<option value="${x}" ${String(r.rpe) === String(x) ? 'selected' : ''}>${x}</option>`).join('')}</select>` : ''}
                 </div>`);
             document.getElementById(`aw-note-${e}`).classList.add('hidden');
@@ -2454,7 +2456,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 row.dataset.done = on ? '1' : '0';
                 row.classList.toggle('is-done', on);
                 const num = document.getElementById(`aw-num-${i}`);
-                if (num) num.className = `w-7 h-7 rounded-full ${on ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[12px] font-black flex items-center justify-center`;
+                if (num) num.className = `num w-8 h-8 rounded-full ${on ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[16px] font-bold flex items-center justify-center`;
             };
             if (row.dataset.done === '1') { setDone(false); window.appActions.updateSessionInfo(); saveSessionDraft(); return; }
             if (!(parseInt(inp.value) > 0)) return;

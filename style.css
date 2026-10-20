@@ -170,6 +170,17 @@ body.has-mini #toast-container { bottom: calc(150px + env(safe-area-inset-bottom
 #aw-sets-container input[type=number] { -moz-appearance: textfield; }
 /* the numbers you type in the workout use the condensed number font */
 #aw-sets-container input { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+#aw-sets-container .aw-in { font-size: 26px !important; font-weight: 700; }
+#aw-sets-container .aw-in::placeholder { font-family: var(--font-text); font-size: 15px; font-weight: 600; color: #8a96a8; opacity: 1; }
+/* Workout: one segment per set (done = green, the next set = gold) */
+.aw-segs { display: flex; gap: 3px; height: 6px; }
+.aw-segs i { flex: 1; border-radius: 3px; background: rgba(255, 255, 255, 0.1); transition: background-color 0.3s; }
+.aw-segs i.is-on { background: var(--good); }
+.aw-segs i.is-now { background: var(--gold); }
+:root[data-theme="light"] .aw-segs i { background: rgba(0, 0, 0, 0.1); }
+:root[data-theme="light"] .aw-segs i.is-on { background: var(--good); }
+:root[data-theme="light"] .aw-segs i.is-now { background: var(--gold); }
+:root[data-theme="light"] #aw-sets-container .aw-in::placeholder { color: #6b7686; }
 
 /* ===== Motion =====
    Short, soft animations so the app feels alive without slowing you down.

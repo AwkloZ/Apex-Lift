@@ -79,6 +79,8 @@ const audit = smallOk => {
     await page.waitForTimeout(600);
     await shot('exercise', () => page.click('.ex-card'));
     await shot('workout', () => page.click('#ex-sheet-content button[onclick*="startWorkout"]'));
+    // tick off the first set: the row turns green and the rest timer shows
+    await shot('rest', async () => { await page.fill('#aw-sets-container input[id^="aw-w-"]', '60'); await page.fill('#aw-sets-container input[id^="aw-rep-"]', '8'); await page.click('#aw-title'); });
     const barlow = await page.evaluate(async () => { await document.fonts.ready; return [...document.fonts].some(f => /Barlow Condensed/.test(f.family) && f.status === 'loaded'); });
     if (!barlow) fails.push('Barlow Condensed is not loaded');
     await browser.close(); server.close();

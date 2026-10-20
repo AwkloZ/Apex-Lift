@@ -126,7 +126,7 @@
                     </div>
                     <h3 id="aw-title" class="ex-name text-[19px] font-black text-white leading-tight truncate">Exercise</h3>
                 </div>
-                <div id="aw-timer" class="text-2xl font-black text-white tabular-nums shrink-0 num">00:00</div>
+                <div id="aw-timer" class="text-[34px] font-bold text-white tabular-nums leading-none shrink-0 num">00:00</div>
             </div>
             <div id="aw-info" class="px-4 pb-3 flex flex-wrap gap-2 shrink-0"></div>
             <div id="aw-scroll" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-3 pb-4">
@@ -140,13 +140,13 @@
                     <div class="flex items-center justify-between px-4 py-3">
                     <div class="flex items-center gap-2">
                     <i data-lucide="timer" class="w-5 h-5 text-[#22c55e]"></i>
-                    <span id="aw-rest-label" class="text-[12px] font-bold text-[#22c55e]"><span data-i18n="Rest">Rest</span></span>
-                    <span id="aw-rest-time" class="text-2xl font-black text-white tabular-nums leading-none num">1:30</span>
+                    <span id="aw-rest-label" class="text-[13px] font-bold text-[#22c55e]"><span data-i18n="Rest">Rest</span></span>
+                    <span id="aw-rest-time" class="text-[40px] font-bold text-white tabular-nums leading-none num">1:30</span>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="window.appActions.restAdd(-15)" class="text-[12px] font-bold text-white bg-white/10 px-2.5 py-1.5 rounded-lg tap-feedback">−15</button>
-                    <button onclick="window.appActions.restAdd(15)" class="text-[12px] font-bold text-white bg-white/10 px-2.5 py-1.5 rounded-lg tap-feedback">+15</button>
-                    <button onclick="window.appActions.restSkip()" class="text-[12px] font-bold text-slate-300 bg-white/5 px-2.5 py-1.5 rounded-lg tap-feedback"><span data-i18n="Skip">Skip</span></button>
+                    <button onclick="window.appActions.restAdd(-15)" class="num h-11 min-w-[44px] text-[17px] font-bold text-white bg-white/10 px-3 rounded-xl tap-feedback">−15</button>
+                    <button onclick="window.appActions.restAdd(15)" class="num h-11 min-w-[44px] text-[17px] font-bold text-white bg-white/10 px-3 rounded-xl tap-feedback">+15</button>
+                    <button onclick="window.appActions.restSkip()" class="h-11 text-[13px] font-bold text-slate-200 bg-white/5 px-3.5 rounded-xl tap-feedback"><span data-i18n="Skip">Skip</span></button>
                 </div>
                     </div>
                     <div class="h-1 bg-black/40"><div id="aw-rest-bar" class="h-full bg-[#22c55e]" style="width:100%"></div></div>
