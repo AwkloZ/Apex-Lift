@@ -615,7 +615,17 @@
         "Password changed.": "تم تغيير كلمة المرور.",
         "This link has expired or was already used. Ask for a new one below.": "انتهت صلاحية هذا الرابط أو تم استخدامه من قبل. اطلب رابطًا جديدًا بالأسفل.",
         "This link has expired or was already used.": "انتهت صلاحية هذا الرابط أو تم استخدامه من قبل.",
-        "Your email is confirmed.": "تم تأكيد بريدك الإلكتروني.",
+        "Email confirmed": "تم تأكيد البريد",
+        "Thanks! Your email is confirmed.": "شكرًا! تم تأكيد بريدك الإلكتروني.",
+        "Your email is confirmed. You can go back to Apex Lift, or sign in here.": "تم تأكيد بريدك الإلكتروني. يمكنك العودة إلى Apex Lift أو تسجيل الدخول هنا.",
+        "Link not valid": "الرابط غير صالح",
+        "Send a new link": "أرسل رابطًا جديدًا",
+        "Open Apex Lift in your browser": "افتح Apex Lift في المتصفح",
+        "You're inside another app, which signs you out when it closes. Tap ••• or the share button, then Open in Safari.": "أنت داخل تطبيق آخر، وهو يسجّل خروجك عند إغلاقه. اضغط ••• أو زر المشاركة ثم اختر الفتح في Safari.",
+        "You're inside another app, which signs you out when it closes. Open Apex Lift in Chrome to stay signed in.": "أنت داخل تطبيق آخر، وهو يسجّل خروجك عند إغلاقه. افتح Apex Lift في Chrome لتبقى مسجّلًا.",
+        "Open in Chrome": "افتح في Chrome",
+        "Copy link": "نسخ الرابط",
+        "Link copied": "تم نسخ الرابط",
         "Backing up your data…": "جارٍ نسخ بياناتك احتياطيًا…",
         "Before import": "قبل الاستيراد",
         "Confirm your password": "أكّد كلمة المرور",
@@ -1033,7 +1043,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '44';
+    const APP_VERSION = '45';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3439,7 +3449,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             signIn: (Cloud.user.providerData || []).some(p => p && p.providerId === 'google.com') ? 'google' : 'email', verified: Cloud.user.emailVerified === true,
             tz: (() => { try { return (Intl.DateTimeFormat().resolvedOptions().timeZone || '').slice(0, 60); } catch (e) { return ''; } })(),
             locale: String(navigator.language || '').slice(0, 20), screen: `${Math.round(screen.width)}x${Math.round(screen.height)}`,
-            ref: (localStorage.getItem(REF_KEY) || '').slice(0, 30) };
+            ref: (localStorage.getItem(REF_KEY) || '').slice(0, 30), browser: browserKind() };
     };
     const platformName = () => {
         const ua = navigator.userAgent || '';
@@ -3448,6 +3458,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         return 'desktop';
     };
     const isInstalled = () => { try { return navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches; } catch (e) { return false; } };
+    // Opened inside another app (Instagram, Facebook, Snapchat, TikTok...): those built-in browsers keep their own storage
+    // and often clear it when they close, so you're signed out every time (and Google blocks its sign-in there)
+    const IN_APP = [['Instagram', 'instagram'], ['FBAN', 'facebook'], ['FBAV', 'facebook'], ['FB_IAB', 'facebook'], ['Snapchat', 'snapchat'], ['TikTok', 'tiktok'], ['musical_ly', 'tiktok'],
+        ['BytedanceWebview', 'tiktok'], ['Line/', 'line'], ['Twitter', 'x'], ['LinkedInApp', 'linkedin'], ['Pinterest', 'pinterest'], ['GSA/', 'google-app'], ['; wv)', 'webview']];
+    const inAppBrowser = () => { const ua = navigator.userAgent || '', m = IN_APP.find(([k]) => ua.includes(k)); return m ? m[1] : ''; };
+    // shown on the admin page, to tell why someone keeps getting signed out
+    const browserKind = () => isInstalled() ? 'installed' : inAppBrowser() ? 'in-app: ' + inAppBrowser() : 'browser';
     // A short summary of the training (workout days, exercises, most-done exercises), so the admin page
     // can show activity and retention by reading one document per user instead of every workout.
     const activitySummary = () => {
@@ -3549,6 +3566,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // First time on this phone: merge the phone's workouts with the cloud's, then keep both in step
     const cloudSignedIn = async user => {
         if (Cloud.starting) return; Cloud.starting = true;
+        // ask the browser to keep the app's storage (the sign-in lives there) when the phone is low on space.
+        // Not on Firefox, which asks with a pop-up.
+        try { if (navigator.storage && navigator.storage.persist && !/Firefox/.test(navigator.userAgent)) navigator.storage.persist().catch(() => {}); } catch (e) {}
         const prevUid = localStorage.getItem(CLOUD_LASTUID);
         Cloud.user = user;
         const oldFlag = getCloudFlag() || {};
@@ -4011,18 +4031,40 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             return { mode, code, raw };
         } catch (e) { return null; }
     })();
+    // a message page in the email window (the email links show their result here)
+    const emailNotice = (icon, good, title, text, buttons) => {
+        const body = document.getElementById('email-body');
+        body.innerHTML = `<div class="text-center pt-4 pb-1" dir="${isAR ? 'rtl' : 'ltr'}">
+            <span class="w-16 h-16 mx-auto mb-4 rounded-full ${good ? 'bg-[#22c55e]/15 text-[#22c55e]' : 'bg-white/5 text-slate-300'} flex items-center justify-center"><i data-lucide="${icon}" class="w-8 h-8"></i></span>
+            <h3 class="text-xl font-black text-white">${title}</h3>
+            <p class="text-[13px] font-bold text-slate-400 mt-2 mb-6 leading-snug">${text}</p>
+            ${buttons}</div>`;
+        if (window.lucide) window.lucide.createIcons({ root: body });
+        const o = document.getElementById('email-overlay');
+        if (!o.classList.contains('flex') || o.classList.contains('opacity-0')) { openModal('email-overlay', 'email-box'); pushBack('email', () => window.appActions.closeEmail()); }
+    };
+    const noticeBtn = (fn, txt) => `<button type="button" onclick="${fn}" class="w-full py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback">${txt}</button>`;
+    // Firebase has finished checking who is signed in on this phone
+    const authReady = () => new Promise(ok => { const off = Cloud.auth.onAuthStateChanged(u => { off(); ok(u); }); });
     const linkErrorText = e => ['auth/expired-action-code', 'auth/invalid-action-code'].includes((e && e.code) || '') ? t('This link has expired or was already used.') : authErrorText(e);
     const openAuthLink = async () => {
         const a = AUTH_LINK; if (!a || a.done) return; a.done = true;
         if (a.mode !== 'resetPassword' && a.mode !== 'verifyEmail') return location.replace('https://apex-lift-52a18.firebaseapp.com/__/auth/action' + a.raw);
         try { await loadFirebase(); } catch (e) { return window.appActions.showToast(t('No internet connection. Try again when online.'), 'error'); }
         if (a.mode === 'verifyEmail') {
+            const user = await authReady();
             try {
                 await Cloud.auth.applyActionCode(a.code);
-                if (Cloud.auth.currentUser) { await Cloud.auth.currentUser.reload(); Cloud.sent.main = ''; scheduleFlush(500); }
+                if (user) { await user.reload(); Cloud.sent.main = ''; scheduleFlush(500); }
                 renderAccount(); renderAccountSheet();
-                window.appActions.showToast(t('Your email is confirmed.'), 'success');
-            } catch (e) { window.appActions.showToast(linkErrorText(e), 'error'); }
+                // signed in here: back to the app; opened on another browser or phone: sign in from here if they want
+                emailNotice('badge-check', true, t('Email confirmed'), user ? t('Thanks! Your email is confirmed.') : t('Your email is confirmed. You can go back to Apex Lift, or sign in here.'),
+                    user ? noticeBtn('window.appActions.closeEmail()', t('Continue')) : noticeBtn("window.appActions.openEmail('in')", t('Sign in')));
+            } catch (e) {
+                const canResend = !!user && isPasswordUser() && !user.emailVerified;
+                emailNotice('circle-alert', false, t('Link not valid'), esc(linkErrorText(e)),
+                    canResend ? noticeBtn('window.appActions.closeEmail(); window.appActions.resendVerify()', t('Send a new link')) : noticeBtn('window.appActions.closeEmail()', t('Close')));
+            }
             return;
         }
         try {
@@ -4299,10 +4341,31 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 : `<button id="welcome-google" onclick="window.appActions.welcomeSignIn()" ${loading ? 'disabled' : ''} class="w-full py-4 rounded-2xl bg-white text-[#1f1f1f] text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity">${GOOGLE_G}${loading ? t('Signing in…') : t('Continue with Google')}</button>
                    <button id="welcome-email" onclick="window.appActions.openEmail('in')" ${loading ? 'disabled' : ''} class="w-full mt-2.5 py-4 rounded-2xl bg-white/5 border border-white/15 text-white text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button>`}
                <p class="text-[12px] font-bold text-slate-400 text-center mt-4"><a href="terms.html" target="_blank" rel="noopener" class="underline underline-offset-2">${t('Terms of Use')}</a> · <a href="privacy.html" target="_blank" rel="noopener" class="underline underline-offset-2">${t('Privacy Policy')}</a></p>`;
+        if (gate && !isSignedIn() && inAppBrowser()) gate.insertAdjacentHTML('afterbegin', inAppNoteHTML());
         if (gate && !isSignedIn() && !requireSignIn()) gate.insertAdjacentHTML('beforeend', `<button id="welcome-later" onclick="window.appActions.welcomeLater()" class="w-full mt-3 py-3 text-[13px] font-bold text-slate-400 tap-feedback">${t('Not now')}</button>`);
         document.getElementById('welcome-actions').innerHTML = last ? '' : `<div class="flex gap-3"><button onclick="window.appActions.welcomeGo(${W_SLIDES.length - 1})" class="px-5 py-4 rounded-2xl text-[13px] font-bold text-slate-400 tap-feedback">${t('Skip')}</button><button onclick="window.appActions.welcomeGo(${welcomeIdx + 1})" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button></div>`;
         if (window.lucide) window.lucide.createIcons({ root: document.getElementById('welcome-overlay') });
     };
+    // inside another app's browser: how to open Apex Lift in the phone's real browser, so the sign-in is kept
+    const inAppNoteHTML = () => {
+        const ios = platformName() === 'ios', url = location.origin + location.pathname;
+        const btn = 'flex-1 min-h-[44px] px-3 whitespace-nowrap rounded-xl bg-white/5 border border-white/10 text-white text-[13px] font-bold flex items-center justify-center gap-2 tap-feedback';
+        return `<div class="mb-4 p-4 rounded-2xl bg-white/5 border border-white/10 text-start" role="note">
+            <div class="flex items-start gap-3"><i data-lucide="triangle-alert" class="w-5 h-5 text-slate-300 shrink-0 mt-0.5"></i>
+                <div><p class="text-[13px] font-bold text-white leading-snug">${t('Open Apex Lift in your browser')}</p>
+                <p class="text-[12px] font-bold text-slate-400 leading-snug mt-1">${t(ios ? "You're inside another app, which signs you out when it closes. Tap ••• or the share button, then Open in Safari." : "You're inside another app, which signs you out when it closes. Open Apex Lift in Chrome to stay signed in.")}</p></div></div>
+            <div class="flex gap-2 mt-3">
+                ${ios ? '' : `<a href="intent://${esc(location.host + location.pathname)}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(url)};end" class="${btn}"><i data-lucide="external-link" class="w-4 h-4"></i>${t('Open in Chrome')}</a>`}
+                <button type="button" onclick="window.appActions.copyAppLink()" class="${btn}"><i data-lucide="copy" class="w-4 h-4"></i>${t('Copy link')}</button>
+            </div></div>`;
+    };
+    Object.assign(window.appActions, {
+        copyAppLink: async () => {
+            const url = location.origin + location.pathname;
+            try { await navigator.clipboard.writeText(url); window.appActions.showToast(t('Link copied'), 'success'); }
+            catch (e) { window.prompt(t('Copy link'), url); }
+        }
+    });
     const showWelcome = (toLast = false) => {
         const o = document.getElementById('welcome-overlay');
         if (!welcomeOpen()) { o.classList.remove('hidden'); o.classList.add('flex'); welcomeIdx = 0; renderWelcome(); }

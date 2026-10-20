@@ -94,7 +94,7 @@
             locale: String(a.locale || ''), screen: String(a.screen || ''),
             goal: lab('goal', pr.goal), goalKey: String(pr.goal || ''), days: String(pr.days || ''), exp: lab('exp', pr.exp), eq: lab('eq', pr.eq),
             routine: String(active.name || ''), routines: plan.length, joined: num(a.createdAt), lastSeen, lastWorkout, updatedAt: num(m.updatedAt),
-            lang: lab('lang', a.lang), platform: lab('platform', a.platform), installed: a.installed === true ? 'Yes' : a.installed === false ? 'No' : '',
+            lang: lab('lang', a.lang), platform: lab('platform', a.platform), installed: a.installed === true ? 'Yes' : a.installed === false ? 'No' : '', browser: String(a.browser || ''),
             version: String(a.appVersion || ''), setup: setupLabel(String(a.setup || '')), terms: isObj(m.terms) ? String(m.terms.v || '') : '',
             hasActivity: !!act, workoutDays: days, workouts: act ? (num(act.n) || 0) : null, exercises: act ? (num(act.ex) || 0) : null,
             top: act && Array.isArray(act.top) ? act.top.filter(x => isObj(x) && x.n).slice(0, 10) : [],
@@ -388,7 +388,7 @@
             <h3>Workouts per week</h3>${u.hasActivity ? barChart(wk, { h: 110 }) : '<p class="note">Shown once they open the updated app.</p>'}
             <h3>About</h3><div class="kv">${kv('Age', u.age)}${kv('Date of birth', u.birthDate)}${kv('Sex', u.sex)}${kv('Height', u.heightCm && u.heightCm + ' cm')}${kv('Weight', u.weightKg && u.weightKg + ' kg')}${kv('BMI', u.bmi)}${kv('Workout length', u.session)}${kv('Came from', u.source)}${kv('Goal', u.goal)}${kv('Days per week', u.days)}${kv('Experience', u.exp)}${kv('Equipment', u.eq)}
                 ${kv('Workouts', u.workouts)}${kv('Exercises', u.exercises)}${kv('Last workout', u.lastWorkout && `${fmtDate(u.lastWorkout)} (${ago(u.lastWorkout)})`)}${kv('Last active', u.lastActive && `${fmtDate(u.lastActive)} (${ago(u.lastActive)})`)}
-                ${kv('Joined', fmtDate(u.joined))}${kv('Setup', u.setup)}${kv('Sign-in', u.signIn)}${kv('Email verified', u.verified)}${kv('Country', u.country)}${kv('Time zone', u.tz)}${kv('Device language', u.locale)}${kv('Screen', u.screen)}${kv('Phone', u.platform)}${kv('Installed', u.installed)}${kv('Language', u.lang)}${kv('App version', u.version)}${kv('Terms version', u.terms)}
+                ${kv('Joined', fmtDate(u.joined))}${kv('Setup', u.setup)}${kv('Sign-in', u.signIn)}${kv('Email verified', u.verified)}${kv('Country', u.country)}${kv('Time zone', u.tz)}${kv('Device language', u.locale)}${kv('Screen', u.screen)}${kv('Phone', u.platform)}${kv('Installed', u.installed)}${kv('Opened in', u.browser)}${kv('Language', u.lang)}${kv('App version', u.version)}${kv('Terms version', u.terms)}
                 ${kv('Check-ins (30 days)', rd.length ? `${rd.length} · sleep ${rAvg('sleep')} · soreness ${rAvg('soreness')} · energy ${rAvg('energy')}` : '')}</div>
             ${weights.length >= 2 ? `<h3>Body weight</h3>${lineChart(weights, { unit: 'kg' })}` : weights.length ? `<h3>Body weight</h3><div class="list"><div><span>${esc(fmtDate(weights[0].t))}</span><span>${esc(weights[0].v)} kg</span></div></div>` : ''}
             ${u.top.length ? `<h3>Most trained exercises</h3>${hbars(u.top.map(x => [String(x.n), num(x.c) || 0]))}` : ''}
