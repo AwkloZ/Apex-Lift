@@ -205,6 +205,9 @@
         if (k === 'followUp') { const t = keyTs(v); return t ? `<span class="${t <= Date.now() ? 'err' : ''}">${esc(fmtDate(t))}</span>` : ''; }
         return esc(v === null || v === undefined ? '' : v);
     };
+    // phones: one card per user (name, workouts, email, status, last active)
+    const SORTS = [['lastActive', 'Last active'], ['lastWorkout', 'Last workout'], ['workouts', 'Most workouts'], ['joined', 'Newest'], ['name', 'Name']];
+    const ucard = u => `<button type="button" class="ucard" data-uid="${esc(u.uid)}"><div class="ucard-t"><span class="ucard-n">${cell(u, 'name')}</span><span class="ucard-w"><b>${u.workouts === null ? '—' : esc(u.workouts)}</b>workouts</span></div>${u.email ? `<div class="ucard-e">${esc(u.email)}</div>` : ''}<div class="ucard-b">${cell(u, 'statusLabel')}<span class="when">${u.online ? '<span class="ok">Now</span>' : u.lastActive ? esc(ago(u.lastActive)) : ''}</span></div></button>`;
     const filtered = () => {
         const q = query.trim().toLowerCase();
         let list = users.filter(u => (!fStatus || (fStatus === 'online' ? u.online : fStatus === 'new' ? isNew(u) : fStatus === 'due' ? (keyTs(u.followUp) || Infinity) <= Date.now() : u.status === fStatus)) && (!fGoal || u.goalKey === fGoal) && (!fClients || u.client));
@@ -220,7 +223,7 @@
             .map(([v, l]) => `<div class="stat"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join('');
     };
     const render = () => {
-        $('main').innerHTML = `<div class="tabs" role="tablist"><button data-tab="users" class="${tab === 'users' ? 'on' : ''}">Users</button><button data-tab="insights" class="${tab === 'insights' ? 'on' : ''}">Insights</button></div>
+        $('main').innerHTML = `<div class="tabs" role="tablist"><button data-tab="users" role="tab" aria-selected="${tab === 'users'}" class="${tab === 'users' ? 'on' : ''}">Users</button><button data-tab="insights" role="tab" aria-selected="${tab === 'insights'}" class="${tab === 'insights' ? 'on' : ''}">Insights</button></div>
             <div class="stats">${kpis()}</div><div id="view"></div>
             <p class="note">Data is used to support users and improve Apex Lift, as described in the Privacy Policy. Never sell or share it. Opening, downloading and coaching an account is recorded in the admin log.</p>`;
         document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });
@@ -232,26 +235,30 @@
             .map(([k, l]) => `<option value="${k}" ${fStatus === k ? 'selected' : ''}>${l}</option>`).join('');
         $('view').innerHTML = `<div class="tools"><input id="q" type="search" placeholder="Search name, email, goal, notes…" value="${esc(query)}">
                 <select id="fs" aria-label="Status">${st}</select><select id="fg" aria-label="Goal"><option value="">All goals</option>${goals}</select>
+                <select id="sm" class="sort-m" aria-label="Sort">${SORTS.map(([k, l]) => `<option value="${k}" ${k === sortKey ? 'selected' : ''}>${l}</option>`).join('')}</select>
                 <label class="check"><input id="fc" type="checkbox" ${fClients ? 'checked' : ''}> Clients only</label>
                 <button id="csv" class="btn gold">Users (CSV)</button><button id="csvw" class="btn">All workouts (CSV)</button><button id="reload" class="btn">Refresh</button></div>
             ${users.some(u => !u.name && !u.email) ? `<div class="info" style="margin-bottom:10px">${users.filter(u => !u.name && !u.email).length} users show "Not shared yet": their phones still run an older version of the app, which didn't send their name and email. These fill in by themselves the next time each of them opens the updated app.</div>` : ''}
             <div class="note" id="count" style="margin:0 0 8px"></div>
-            <div class="tablewrap"><table><thead><tr>${COLS.map(([k, l]) => `<th data-k="${k}" class="${k === sortKey ? 'sorted' : ''}">${l}${k === sortKey ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('')}</tr></thead><tbody id="rows"></tbody></table></div>`;
+            <div class="tablewrap"><table><thead><tr>${COLS.map(([k, l]) => `<th data-k="${k}" class="${k === sortKey ? 'sorted' : ''}">${l}${k === sortKey ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('')}</tr></thead><tbody id="rows"></tbody></table></div><div class="ulist" id="ucards"></div>`;
         $('q').oninput = e => { query = e.target.value; renderRows(); };
         $('fs').onchange = e => { fStatus = e.target.value; renderRows(); };
         $('fg').onchange = e => { fGoal = e.target.value; renderRows(); };
         $('fc').onchange = e => { fClients = e.target.checked; renderRows(); };
+        $('sm').onchange = e => { sortKey = e.target.value; sortDir = sortKey === 'name' ? 1 : -1; renderRows(); };
         $('csv').onclick = downloadCSV;
         $('csvw').onclick = downloadWorkoutsCSV;
         $('reload').onclick = loadUsers;
         document.querySelectorAll('th[data-k]').forEach(th => th.onclick = () => { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : -1; sortKey = k; renderUsers(); });
         $('rows').onclick = e => { const tr = e.target.closest('tr[data-uid]'); if (tr) openUser(tr.dataset.uid); };
+        $('ucards').onclick = e => { const c = e.target.closest('[data-uid]'); if (c) openUser(c.dataset.uid); };
         renderRows();
     };
     const renderRows = () => {
         const list = filtered();
         $('rows').innerHTML = list.map(u => `<tr data-uid="${esc(u.uid)}">${COLS.map(([k]) => `<td class="${k === 'name' ? 'name' : k === 'email' ? 'muted' : ''}">${cell(u, k)}</td>`).join('')}</tr>`).join('')
             || `<tr><td colspan="${COLS.length}" class="muted">No users found.</td></tr>`;
+        $('ucards').innerHTML = list.map(ucard).join('') || '<p class="note">No users found.</p>';
         $('count').textContent = `${list.length} of ${users.length}`;
     };
 
