@@ -3,12 +3,12 @@
 // How it works:
 // - App files (index.html, app.js, ...) : try the internet first so you always get the newest version,
 //   but if there is no answer within 3 seconds (bad gym signal) use the saved copy.
-// - Outside files (Google font): use the saved copy, refresh it in the background.
+// - Outside files: use the saved copy, refresh it in the background (fonts are now stored in vendor/fonts).
 //
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
 // (require-sign-in.js is left out on purpose: it can be deleted, and a missing file in APP_FILES would break the install.
 //  It is still saved for offline use the first time the app loads it.)
-const CACHE = 'apex-lift-v31';
+const CACHE = 'apex-lift-v32';
 const APP_FILES = [
     './',
     'index.html',
@@ -19,6 +19,12 @@ const APP_FILES = [
     'manifest.webmanifest',
     'vendor/lucide-1.49.0.min.js',
     'vendor/sortable-1.15.7.min.js',
+    'vendor/fonts/inter-latin-var.woff2',
+    'vendor/fonts/cairo-arabic-var.woff2',
+    'vendor/fonts/barlow-condensed-latin-500.woff2',
+    'vendor/fonts/barlow-condensed-latin-600.woff2',
+    'vendor/fonts/barlow-condensed-latin-700.woff2',
+    'vendor/fonts/barlow-condensed-latin-800.woff2',
     'icons/icon-192.png',
     'icons/icon-512.png',
     'icons/icon-maskable-512.png',

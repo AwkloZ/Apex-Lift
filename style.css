@@ -1,4 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Cairo:wght@400;700;900&display=swap');
+/* ===== Fonts =====
+   Stored in the app (vendor/fonts) so they work without signal.
+   Inter: all text. Cairo: Arabic letters. Barlow Condensed: numbers and big titles (.num, .display). */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('vendor/fonts/inter-latin-var.woff2') format('woff2'); }
+@font-face { font-family: 'Cairo'; font-style: normal; font-weight: 200 1000; font-display: swap; src: url('vendor/fonts/cairo-arabic-var.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FEFC; }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 500; font-display: swap; src: url('vendor/fonts/barlow-condensed-latin-500.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 600; font-display: swap; src: url('vendor/fonts/barlow-condensed-latin-600.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 700; font-display: swap; src: url('vendor/fonts/barlow-condensed-latin-700.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 800; font-display: swap; src: url('vendor/fonts/barlow-condensed-latin-800.woff2') format('woff2'); }
+
+/* ===== Design tokens =====
+   One place for the app's colours, corners and fonts. Light mode swaps the values below. */
+:root {
+    --gold: #d4af37;          /* "now" and "do this": today, the selected item, the main button */
+    --gold-ink: #d4af37;      /* gold text */
+    --gold-soft: rgba(212, 175, 55, 0.14);
+    --on-gold: #111111;
+    --bg: #000000;
+    --surface-1: rgba(28, 28, 30, 0.6);   /* cards */
+    --surface-2: #161618;                 /* sheets and pop-ups */
+    --inset: rgba(255, 255, 255, 0.05);   /* boxes inside a card, inputs */
+    --line: rgba(255, 255, 255, 0.09);
+    --text: #ffffff;
+    --text-2: #cbd5e1;
+    --text-3: #94a3b8;                    /* the quietest text; still 4.5:1 on black */
+    --good: #22c55e;
+    --good-ink: #22c55e;
+    --bad: #f87171;
+    --r-lg: 24px;   /* cards */
+    --r-md: 18px;   /* boxes inside cards, big buttons */
+    --r-sm: 12px;   /* inputs, small buttons */
+    --font-text: 'Inter', 'Cairo', system-ui, sans-serif;
+    --font-num: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
+}
+:root[data-theme="light"] {
+    --gold-ink: #9a7810;
+    --gold-soft: rgba(212, 175, 55, 0.18);
+    --bg: #f3f3f0;
+    --surface-1: rgba(255, 255, 255, 0.92);
+    --surface-2: #ffffff;
+    --inset: rgba(0, 0, 0, 0.04);
+    --line: rgba(0, 0, 0, 0.08);
+    --text: #111318;
+    --text-2: #334155;
+    --text-3: #556273;
+    --good-ink: #15803d;
+    --bad: #dc2626;
+}
+
+/* numbers (weights, reps, timer, dates, stats) and big titles */
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+.display { font-family: var(--font-num); font-weight: 800; letter-spacing: 0.005em; line-height: 1; }
+:root[lang="ar"] .display { font-family: 'Cairo', var(--font-num); }
 
 html { background-color: #000000; overscroll-behavior: none; }
 
@@ -10,7 +62,7 @@ body {
     height: 100dvh; 
     background-color: #000000;
     background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000000 70%);
-    font-family: 'Inter', 'Cairo', sans-serif;
+    font-family: var(--font-text);
     -webkit-user-select: none;
 }
 
