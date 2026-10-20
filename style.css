@@ -318,6 +318,10 @@ input.day-title-input { font-size: 26px !important; }
 .hint-ring { animation: ring 1.6s ease-out 4; border-radius: 16px; }
 .hint-in { animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 
+/* Programs: the workout names in the 7-day preview use the narrow number font and break long words */
+.pv-wo { font-family: var(--font-num); font-size: 13px; font-weight: 600; line-height: 1.1; overflow-wrap: anywhere; hyphens: auto; }
+:root[lang="ar"] .pv-wo { font-family: 'Cairo', var(--font-num); font-size: 12px; font-weight: 600; line-height: 1.3; overflow-wrap: normal; hyphens: none; }
+
 /* ===== Today ===== */
 /* Week bar: dates + "2 of 5 workouts done" + a thin line, then one bar with the 7 days */
 .wk-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 2px 8px; }
@@ -469,6 +473,7 @@ input.day-title-input { font-size: 26px !important; }
 /* progress charts */
 :root[data-theme="light"] svg line[stroke="#262626"] { stroke: #e5e7eb; }
 :root[data-theme="light"] svg text[fill="#e2e8f0"] { fill: #111318; }
+:root[data-theme="light"] svg text[fill="#94a3b8"] { fill: #556273; }
 :root[data-theme="light"] svg circle[stroke="#111111"] { stroke: #ffffff; }
 
 /* Plan tab = the editor: dashed gold day card, exercise cards with a ⋮⋮ grip */

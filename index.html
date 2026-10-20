@@ -48,7 +48,7 @@
     <div id="welcome-overlay" class="fixed inset-0 z-[9990] bg-[#050505] hidden flex-col">
         <div class="flex items-center justify-between px-5 shrink-0" style="padding-top: calc(env(safe-area-inset-top) + 14px);">
             <div dir="ltr" class="text-xl font-black italic tracking-tighter uppercase text-white logo-mark">APEX <span class="text-[#d4af37]">LIFT</span></div>
-            <button id="welcome-lang" class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[12px] font-bold text-slate-200 tap-feedback"></button>
+            <button id="welcome-lang" class="h-10 px-4 rounded-full bg-white/5 border border-white/10 text-[12px] font-bold text-slate-200 tap-feedback"></button>
         </div>
         <div id="welcome-slides" dir="ltr" class="flex-1 min-h-0 flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide overscroll-contain"></div>
         <div class="px-6 shrink-0" style="padding-bottom: max(20px, env(safe-area-inset-bottom));">
@@ -63,7 +63,7 @@
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
             <div class="flex items-center justify-between px-5 pb-2 shrink-0">
                 <h3 class="text-lg font-black text-white" data-i18n="Account backups">Account backups</h3>
-                <button onclick="window.appActions.closeBackups()" class="p-2 bg-white/5 rounded-full text-slate-400 tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="window.appActions.closeBackups()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <p class="px-5 pb-3 text-[12px] font-bold text-slate-400 leading-snug shrink-0" data-i18n="A copy of everything is saved in your account once a day. Restore one to go back to how things were.">A copy of everything is saved in your account once a day. Restore one to go back to how things were.</p>
             <div class="px-5 pb-3 shrink-0"><button id="backups-now" onclick="window.appActions.backupNow()" class="w-full py-3 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i><span data-i18n="Back up now">Back up now</span></button></div>
@@ -90,7 +90,7 @@
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
             <div class="flex items-center justify-between px-5 pb-2 shrink-0">
                 <h3 id="code-title" class="text-lg font-black text-white"></h3>
-                <button onclick="window.appActions.closeCodeSheet()" class="p-2 bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="window.appActions.closeCodeSheet()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div id="code-body" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
         </div>
@@ -101,7 +101,7 @@
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
             <div class="flex items-center justify-between px-5 pb-3 shrink-0">
                 <h3 id="programs-title" class="text-lg font-black text-white">Programs</h3>
-                <button onclick="window.appActions.closePrograms()" class="p-2 bg-white/5 rounded-full text-slate-400 tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="window.appActions.closePrograms()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div id="programs-list" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain pt-1"></div>
         </div>
@@ -180,9 +180,9 @@
                     <p id="history-modal-title" class="ex-name text-[12px] font-bold text-[#d4af37] mt-1">Exercise Name</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <a id="history-howto" href="#" target="_blank" rel="noopener noreferrer" class="p-2 bg-white/5 rounded-full text-slate-400 hover:text-[#d4af37] tap-feedback" aria-label="How to"><i data-lucide="help-circle" class="w-5 h-5"></i></a>
-                    <button id="history-edit-btn" onclick="window.appActions.toggleHistoryEdit()" class="p-2 bg-white/5 rounded-full text-slate-400 hover:text-[#d4af37] tap-feedback transition-colors"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
-                    <button onclick="window.appActions.closeHistoryModal()" class="p-2 bg-white/5 rounded-full text-slate-400 hover:text-white tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <a id="history-howto" href="#" target="_blank" rel="noopener noreferrer" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-[#d4af37] tap-feedback" aria-label="How to"><i data-lucide="help-circle" class="w-5 h-5"></i></a>
+                    <button id="history-edit-btn" onclick="window.appActions.toggleHistoryEdit()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-[#d4af37] tap-feedback transition-colors" aria-label="Edit"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
+                    <button onclick="window.appActions.closeHistoryModal()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-white tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
             </div>
             <div id="history-modal-content" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
@@ -225,7 +225,7 @@
         <div id="picker-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[85dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
             <div class="flex items-center justify-between px-5 pt-5 pb-3 shrink-0">
                 <h3 id="picker-title" class="text-lg font-black text-white truncate" data-i18n="Add exercises">Add exercises</h3>
-                <button onclick="window.appActions.closePicker()" class="p-2 bg-white/5 rounded-full text-slate-400 hover:text-white tap-feedback shrink-0"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="window.appActions.closePicker()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-white tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div class="px-5 shrink-0">
                 <div class="flex items-center gap-2 bg-black/50 border border-white/10 rounded-xl px-3 focus-within:border-[#d4af37]">

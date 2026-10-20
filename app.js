@@ -509,6 +509,7 @@
         "Upper Body": "الجزء العلوي",
         "Very": "كثير",
         "WEEK {n}": "الأسبوع {n}",
+        "Week {n}": "الأسبوع {n}",
         "Week 1": "الأسبوع 1",
         "Week Active": "الأسبوع النشط",
         "Week starts on {d}": "يبدأ الأسبوع يوم {d}",
@@ -978,7 +979,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '37';
+    const APP_VERSION = '38';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1163,7 +1164,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
         return `<div class="grid grid-cols-7 gap-1 mt-3">${prog.week.map((slot, i) => {
             const rest = slot === 'R' || slot === 'A';
-            return `<div class="rounded-lg py-1.5 px-0.5 text-center ${rest ? 'bg-white/5 text-slate-400' : 'bg-[#d4af37]/15 text-[#d4af37]'}"><div class="text-[12px] font-bold">${esc(dayShort(DAY_NAMES[(start + i) % 7]))}</div><div class="text-[12px] font-bold leading-tight mt-0.5 line-clamp-2">${rest ? '—' : esc(t(WORKOUTS[slot][0]))}</div></div>`;
+            return `<div class="rounded-lg py-1.5 px-0.5 text-center ${rest ? 'bg-white/5 text-slate-400' : 'bg-[#d4af37]/15 text-[#d4af37]'}"><div class="text-[12px] font-bold">${esc(dayShort(DAY_NAMES[(start + i) % 7]))}</div><div class="pv-wo mt-0.5">${rest ? '—' : esc(t(WORKOUTS[slot][0]))}</div></div>`;
         }).join('')}</div>`;
     };
 
@@ -1458,7 +1459,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const x = i => pl + (pts.length === 1 ? (W - pl - pr) / 2 : i * (W - pl - pr) / (pts.length - 1));
         const y = v => pt + (H - pt - pb) * (1 - (v - lo) / (hi - lo));
         let grid = '';
-        for (let v = lo; v <= hi + 1e-9; v += step) grid += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="#262626" stroke-width="1"/><text x="${pl - 6}" y="${y(v) + 3}" text-anchor="end" font-size="9" fill="#64748b" font-weight="700">${Math.round(v * 10) / 10}</text>`;
+        for (let v = lo; v <= hi + 1e-9; v += step) grid += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="#262626" stroke-width="1"/><text x="${pl - 6}" y="${y(v) + 3}" text-anchor="end" font-size="12" fill="#94a3b8" font-weight="600">${Math.round(v * 10) / 10}</text>`;
         const line = pts.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.v).toFixed(1)}`).join(' ');
         const area = `${line} L${x(pts.length - 1).toFixed(1)},${H - pb} L${x(0).toFixed(1)},${H - pb} Z`;
         const dots = pts.map((p, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(p.v).toFixed(1)}" r="4" fill="#d4af37" stroke="#111111" stroke-width="2"/>`).join('');
@@ -1470,9 +1471,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <path d="${area}" fill="#d4af37" fill-opacity="0.1"/>
                 <path d="${line}" fill="none" stroke="#d4af37" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
                 ${dots}
-                <text x="${x(pts.length - 1) + 7}" y="${y(last.v) + 3}" font-size="10" fill="#e2e8f0" font-weight="900">${last.v}${esc(unit)}</text>
-                <text x="${pl}" y="${H - 6}" font-size="9" fill="#64748b" font-weight="700">${esc(fmtDayMonth(new Date(pts[0].t)))}</text>
-                <text x="${W - pr}" y="${H - 6}" text-anchor="end" font-size="9" fill="#64748b" font-weight="700">${esc(fmtDayMonth(new Date(last.t)))}</text>
+                <text x="${x(pts.length - 1) + 7}" y="${y(last.v) + 3}" font-size="14" fill="#e2e8f0" font-weight="700" font-family="Barlow Condensed, Inter, sans-serif">${last.v}${esc(unit)}</text>
+                <text x="${pl}" y="${H - 6}" font-size="12" fill="#94a3b8" font-weight="600">${esc(fmtDayMonth(new Date(pts[0].t)))}</text>
+                <text x="${W - pr}" y="${H - 6}" text-anchor="end" font-size="12" fill="#94a3b8" font-weight="600">${esc(fmtDayMonth(new Date(last.t)))}</text>
                 <line class="chart-cross" x1="0" x2="0" y1="${pt}" y2="${H - pb}" stroke="#94a3b8" stroke-width="1" visibility="hidden"/>
                 <circle class="chart-hot" r="6" fill="#d4af37" stroke="#111111" stroke-width="2" visibility="hidden"/>
             </svg>
@@ -1489,8 +1490,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const cx = pl + slot * (i + 0.5), top = y(b.v), h = H - pb - top, last = i === bars.length - 1;
             const rr = Math.min(4, h); // 4px rounded top, flat on the baseline
             if (b.v > 0) marks += `<path d="M${cx - bw / 2},${H - pb} V${top + rr} q0,-${rr} ${rr},-${rr} h${bw - 2 * rr} q${rr},0 ${rr},${rr} V${H - pb} Z" fill="#d4af37" fill-opacity="${last ? 1 : 0.45}"/>`;
-            if (last) marks += `<text x="${cx}" y="${top - 5}" text-anchor="middle" font-size="10" fill="#e2e8f0" font-weight="900">${b.v}</text>`;
-            if (i === 0 || last) marks += `<text x="${cx}" y="${H - 5}" text-anchor="middle" font-size="9" fill="#64748b" font-weight="700">${esc(b.label)}</text>`;
+            if (last) marks += `<text x="${cx}" y="${top - 5}" text-anchor="middle" font-size="14" fill="#e2e8f0" font-weight="700" font-family="Barlow Condensed, Inter, sans-serif">${b.v}</text>`;
+            if (i === 0 || last) marks += `<text x="${i === 0 && !last ? pl : last ? W - pr : cx}" y="${H - 5}" text-anchor="${i === 0 && !last ? 'start' : 'end'}" font-size="12" fill="#94a3b8" font-weight="600">${esc(b.label)}</text>`;
         });
         const data = esc(JSON.stringify(bars.map((b, i) => ({ x: pl + slot * (i + 0.5), y: y(b.v), v: b.v, d: b.tip }))));
         return `<div class="chart-wrap relative select-none" data-pts="${data}" data-unit="${esc(' ' + t('sets'))}" dir="ltr">
@@ -1637,7 +1638,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const rows = progressExerciseRows(history);
         if (!rows.length) return pEmpty('dumbbell', t('No exercises yet'), t('Finish your first workout to see your progress here.'));
         const f = window.appState.pexF || 'all';
-        const chip = ([id, label]) => `<button onclick="window.appActions.progressFilter(${jsArg(id)})" class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[12px] font-extrabold tap-feedback border ${f === id ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${id === 'up' ? '<i data-lucide="arrow-up-circle" class="w-3.5 h-3.5"></i>' : ''}${esc(t(label))}</button>`;
+        const chip = ([id, label]) => `<button onclick="window.appActions.progressFilter(${jsArg(id)})" class="shrink-0 inline-flex items-center gap-1.5 h-10 px-3.5 rounded-full text-[13px] font-bold tap-feedback border ${f === id ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${id === 'up' ? '<i data-lucide="arrow-up-circle" class="w-3.5 h-3.5"></i>' : ''}${esc(t(label))}</button>`;
         return `<div class="relative mb-3">
                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                 <input id="pex-search" type="search" autocomplete="off" value="${esc(window.appState.pexQ || '')}" placeholder="${esc(t('Search exercises'))}" oninput="window.appActions.progressSearch(this.value)" class="w-full bg-white/5 border border-white/10 rounded-2xl ps-11 pe-4 py-3.5 text-[14px] font-bold text-white outline-none focus:border-[#d4af37]">
@@ -2249,7 +2250,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 ${sg && !full ? `<div class="ex-target ${tgtCls} mt-2"><i data-lucide="target" class="w-[18px] h-[18px] shrink-0"></i><div class="min-w-0"><div class="ex-target-l">${t("Today's target")}${sg.type !== 'build' ? ` · ${t(SUGG[sg.type].label).replace(/[:：]\s*$/, '')}` : ''}</div><div class="text-[16px] font-black text-white">${targetSentence(sg, timed)}</div></div></div>` : ''}
                 <div class="mt-3">
                     <div class="flex justify-between px-0.5 mb-1.5 text-[12px] font-bold text-slate-400"><span>${t('Last time')}</span><span>${lastDay ? esc(isToday(lastDay.ts) ? t('Today') : fmtDate(lastDay.ts, false)) : ''}</span></div>
-                    ${prev.length ? `<table class="ex-last-tbl" dir="ltr"><thead><tr><th>#</th><th>${t('KG')}</th><th>${t(timed ? 'SEC' : 'REPS')}</th></tr></thead><tbody>${prev.map((x, k) => `<tr><td>${t('Set {n}', { n: k + 1 })}</td><td>${x.w > 0 ? x.w : t('BW')}</td><td>${x.r}</td></tr>`).join('')}</tbody></table>`
+                    ${prev.length ? `<table class="ex-last-tbl" dir="ltr"><thead><tr><th>#</th><th>${t('kg')}</th><th>${t(timed ? 'sec' : 'reps')}</th></tr></thead><tbody>${prev.map((x, k) => `<tr><td>${t('Set {n}', { n: k + 1 })}</td><td>${x.w > 0 ? x.w : t('BW')}</td><td>${x.r}</td></tr>`).join('')}</tbody></table>`
                         : `<div class="rounded-2xl bg-white/5 px-3.5 py-3 text-[13px] font-bold text-slate-400">${t('First time doing this exercise')}</div>`}
                 </div>
                 <button onclick="window.appActions.closeExSheet(); window.appActions.startWorkout(${day.id}, null, ${i})" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : full ? t('Log more sets') : shown > 0 ? t('Continue') : t('Start workout')}</button>
@@ -2301,8 +2302,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         openHistoryModal: (k, title) => { window.appState.historyEditMode=false; window.appState.openHistoryKey=k; const b=document.getElementById('history-edit-btn'); if(b){b.classList.remove('text-[#d4af37]','bg-[#d4af37]/10');b.classList.add('text-slate-400','bg-white/5');} document.getElementById('history-modal-title').innerText=title; const hw=document.getElementById('history-howto'); if(hw) hw.href=`https://www.youtube.com/results?search_query=${encodeURIComponent(title+' exercise form')}`; window.appActions.refreshHistoryModal(k); const o=document.getElementById('history-modal-overlay'),bx=document.getElementById('history-modal-box'); o.classList.remove('hidden'); o.classList.add('flex'); requestAnimationFrame(()=>{o.classList.remove('opacity-0');bx.classList.remove('translate-y-full','md:translate-y-0','md:scale-95');}); pushBack('history', () => window.appActions.closeHistoryModal()); },
         closeHistoryModal: () => { popBack('history'); const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{if(o.classList.contains('opacity-0')){o.classList.add('hidden');o.classList.remove('flex');}},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
-        refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-400 text-[12px] font-bold">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('WEEK {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[12px] font-bold text-[#d4af37] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
-         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[12px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[12px] text-slate-400">${t('KG')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[12px] text-slate-400">${h.u==='s'?t('SEC'):t('REPS')}</span></span>`:''}`}</span></div><span class="text-[12px] font-bold text-slate-400 mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=exerciseStatsHTML(hA)+html; bindCharts(c); if(window.lucide) window.lucide.createIcons({root:c}); },
+        refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-400 text-[12px] font-bold">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('Week {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[12px] font-bold text-[#d4af37] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
+         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[12px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[12px] text-slate-400">${t('kg')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[12px] text-slate-400">${h.u==='s'?t('sec'):t('reps')}</span></span>`:''}`}</span></div><span class="text-[12px] font-bold text-slate-400 mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=exerciseStatsHTML(hA)+html; bindCharts(c); if(window.lucide) window.lucide.createIcons({root:c}); },
         deleteHistoryRecord: (k, i) => window.appActions.showConfirm(t("Delete Record"), t("Remove this record?"), () => { let h=StorageManager.getHistory(); if(h[k]&&h[k][i]){const dl=getDeleted(); dl[k]=[...(dl[k]||[]), logSig(h[k][i])].slice(-200); setDeleted(dl); h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast(t("Deleted"),"error");} }, true),
         handleTyping: (k, type, v) => { 
             if (type === 'load') { loggedWeights[k] = v; StorageManager.set(loggedWeights); } 
@@ -2706,7 +2707,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const isSel = (name, muscle) => P.sel.some(x => x.name === name && x.muscle === muscle);
             if (withChips) {
                 document.getElementById('picker-chips').innerHTML = ['All', ...muscleOptions].map(m =>
-                    `<button onclick="window.appActions.pickerMuscle(${jsArg(m)})" class="shrink-0 px-3 py-1.5 rounded-full text-[12px] font-extrabold tap-feedback border ${P.muscle === m ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${esc(m === 'All' ? t('All') : tm(m))}</button>`).join('');
+                    `<button onclick="window.appActions.pickerMuscle(${jsArg(m)})" class="shrink-0 h-10 px-3.5 rounded-full text-[13px] font-bold tap-feedback border ${P.muscle === m ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${esc(m === 'All' ? t('All') : tm(m))}</button>`).join('');
             }
             const row = x => {
                 const sel = isSel(x.name, x.muscle), added = inDay.has(x.name);
@@ -3682,7 +3683,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const sub = { in: '', up: t('Use your email and a strong password.'), reset: t("Enter your account's email. We'll send you a link to choose a new password."), reauth: t('For your safety, enter your password to delete your account.') }[m];
         const inp = 'w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-[#d4af37]';
         const lbl = (txt, html) => `<label class="block"><span class="block text-[12px] font-bold text-slate-400 mb-1.5">${txt}</span>${html}</label>`;
-        const link = (fn, txt) => `<button type="button" onclick="${fn}" class="text-[13px] font-bold text-[#d4af37] tap-feedback">${txt}</button>`;
+        const link = (fn, txt) => `<button type="button" onclick="${fn}" class="inline-flex items-center min-h-[40px] px-1 text-[13px] font-bold text-[#d4af37] tap-feedback">${txt}</button>`;
         const btn = { in: t('Sign in'), up: t('Create account'), reset: t('Send link'), reauth: t('Confirm') }[m];
         document.getElementById('email-body').innerHTML = `
             <div class="relative text-center pt-3 pb-1">

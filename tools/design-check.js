@@ -30,12 +30,16 @@ const audit = smallOk => {
     const out = [];
     const shown = el => { const r = el.getBoundingClientRect(); if (r.width < 1 || r.height < 1) return false; const cs = getComputedStyle(el); return cs.visibility !== 'hidden' && cs.opacity !== '0'; };
     const top = el => { const r = el.getBoundingClientRect(); const x = r.left + r.width / 2, y = r.top + r.height / 2; if (x < 0 || y < 0 || x > innerWidth || y > innerHeight) return false; const hit = document.elementFromPoint(x, y); return !!hit && (el.contains(hit) || hit.contains(el)); };
-    const label = el => (el.innerText || el.getAttribute('aria-label') || el.className.toString()).trim().replace(/\s+/g, ' ').slice(0, 40);
+    const label = el => (el.innerText || el.textContent || el.getAttribute('aria-label') || String(el.className && el.className.baseVal !== undefined ? el.className.baseVal : el.className)).trim().replace(/\s+/g, ' ').slice(0, 40);
     for (const el of document.querySelectorAll('body *')) {
-        const own = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim());
-        if (!own || !shown(el) || !top(el)) continue;
+        const hasText = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim());
+        if (!hasText || !shown(el) || !top(el)) continue;
         const cs = getComputedStyle(el);
         if (cs.textTransform === 'uppercase' && !el.closest('.logo-mark')) out.push(`capitals: "${label(el)}"`);
+        // capitals typed into the text itself (short names like RPE, CSV or BW are fine)
+        const own = [...el.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join(' ');
+        const caps = (own.match(/\b[A-Z]{3,}\b/g) || []).filter(w => !['APEX', 'LIFT', 'RPE', 'CSV', 'PDF', 'UID', 'PHUL', 'PPL'].includes(w));
+        if (caps.length && !el.closest('.logo-mark')) out.push(`typed capitals "${caps.join(' ')}": "${label(el)}"`);
         if (parseFloat(cs.fontSize) < 12 && !el.closest(smallOk)) out.push(`small text ${cs.fontSize}: "${label(el)}"`);
     }
     for (const b of document.querySelectorAll('button, [role="button"], a[onclick]')) {
@@ -60,7 +64,11 @@ const audit = smallOk => {
     await page.route('**/require-sign-in.js', r => r.fulfill({ status: 200, contentType: 'text/javascript', body: '' }));
     await page.route(/firebase|googleapis|gstatic|google\.com/, r => r.abort());
     await page.addInitScript(([lang, theme]) => {
-        try { localStorage.setItem('workoutLang_rakan_final', lang); localStorage.setItem('workoutTheme_rakan_final', theme); } catch (e) {}
+        try {
+            localStorage.setItem('workoutLang_rakan_final', lang); localStorage.setItem('workoutTheme_rakan_final', theme);
+            // About you filled in, so it doesn't cover the app after a reload
+            if (!localStorage.getItem('workoutBody_rakan_final')) localStorage.setItem('workoutBody_rakan_final', JSON.stringify({ birthYear: 1995, sex: 'male', heightCm: 178, weightKg: 80, locked: true }));
+        } catch (e) {}
     }, [LANG, THEME]);
     await page.goto(base + '/index.html');
     await page.waitForTimeout(1500);
@@ -81,6 +89,27 @@ const audit = smallOk => {
     await shot('workout', () => page.click('#ex-sheet-content button[onclick*="startWorkout"]'));
     // tick off the first set: the row turns green and the rest timer shows
     await shot('rest', async () => { await page.fill('#aw-sets-container input[id^="aw-w-"]', '60'); await page.fill('#aw-sets-container input[id^="aw-rep-"]', '8'); await page.click('#aw-title'); });
+    // save the workout: the summary shows, and Progress has data from now on
+    await page.evaluate(() => window.appActions.finishActiveWorkout('yes'));
+    await shot('summary', () => page.evaluate(() => window.appActions.showSummary({ title: 'Upper Body', duration: 3420, sets: 21, volume: 8450, prs: [] })));
+    // every other screen and pop-up, each from a fresh load (the app keeps its data in localStorage)
+    const fresh = async () => { await page.goto(base + '/index.html'); await page.waitForTimeout(1200); };
+    const act = js => async () => { await fresh(); await page.evaluate(js); };
+    for (const p of ['overview', 'exercises', 'volume', 'body'])
+        await shot('progress-' + p, act(`window.appActions.switchTab('progress'); window.appActions.progressTab('${p}')`));
+    await shot('history', act(`window.appActions.openHistoryModal(Object.keys(JSON.parse(localStorage.getItem('workoutHistory_rakan_final') || '{}'))[0] || 'x', 'Bench Press')`));
+    await shot('plan-day', act(`window.appActions.switchTab('plan'); window.appActions.openPlanDay(new Date().getDay() === 6 ? 1 : 1)`));
+    await shot('picker', async () => { await page.evaluate(() => window.appActions.openPicker('add')); });
+    await shot('programs', act(`window.appActions.switchTab('plan'); window.appActions.openPrograms()`));
+    await shot('code', act(`window.appActions.openCodeSheet()`));
+    await shot('email', act(`window.appActions.openEmail('up')`));
+    await shot('confirm', act(`window.appActions.showConfirm('Delete this routine?', 'Your history is kept.', () => {}, true)`));
+    await shot('wizard', act(`window.appActions.startWizard(false)`));
+    // the intro pages and the sign-in page (shown before the app on a new phone)
+    await page.evaluate(() => localStorage.setItem('workoutTestGate', '1'));
+    await shot('welcome', fresh);
+    await shot('welcome-signin', () => page.evaluate(() => { const el = document.getElementById('welcome-slides'); el.scrollTo({ left: el.scrollWidth }); }));
+    await page.evaluate(() => localStorage.removeItem('workoutTestGate'));
     const barlow = await page.evaluate(async () => { await document.fonts.ready; return [...document.fonts].some(f => /Barlow Condensed/.test(f.family) && f.status === 'loaded'); });
     if (!barlow) fails.push('Barlow Condensed is not loaded');
     await browser.close(); server.close();
