@@ -974,7 +974,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '33';
+    const APP_VERSION = '34';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1321,9 +1321,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0], open = !!window.appState.routinesOpen, inDay = window.appState.planDay != null;
         const row = w => `<div class="flex items-center gap-3 bg-black/40 p-3 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold w-full outline-none">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[12px] font-bold shrink-0">${t('Active')}</span>`:`<button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="text-slate-400 hover:text-white text-[12px] font-bold tap-feedback shrink-0 px-2 py-1 bg-white/5 rounded-lg">${t('Select')}</button>`}<button onclick="window.appActions.shareWeek(${jsArg(w.id)})" class="text-[#d4af37] tap-feedback p-1 bg-[#d4af37]/10 rounded-lg shrink-0 border border-[#d4af37]/25" aria-label="${esc(t('Share routine'))}" title="${esc(t('Share routine'))}"><i data-lucide="share-2" class="w-4 h-4"></i></button><button onclick="window.appActions.duplicateWeek(${jsArg(w.id)})" class="text-slate-300 hover:text-white tap-feedback p-1 bg-white/5 rounded-lg shrink-0 border border-white/10" aria-label="${esc(t('Duplicate routine'))}" title="${esc(t('Duplicate routine'))}"><i data-lucide="copy" class="w-4 h-4"></i></button>${appData.weeks.length>1?`<button onclick="window.appActions.deleteWeek(${jsArg(w.id)})" class="text-red-400 hover:text-red-300 tap-feedback p-1 bg-red-500/10 rounded-lg shrink-0 border border-red-500/20" aria-label="${esc(t('Delete routine'))}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`;
         // Plan is where the schedule is edited: a gold strip says so, so it isn't mistaken for Today
-        document.getElementById('weeks-container').innerHTML = `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-[#d4af37]/15 border border-[#d4af37]/45">
+        document.getElementById('weeks-container').innerHTML = `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-white/5 border border-white/10">
             <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
-            <span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-[#d4af37]">${t('Editing your schedule')}</span><span class="block text-[12px] font-semibold text-slate-300 mt-px">${t('Changes here update your Plan page')}</span></span>
+            <span class="flex-1 min-w-0"><span class="block text-[13px] font-bold text-white">${t('Editing your schedule')}</span><span class="block text-[12px] font-semibold text-slate-300 mt-px">${t('Changes here update your Plan page')}</span></span>
         </div>
         ${inDay ? '' : `<div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''}">
             <button onclick="window.appActions.toggleRoutines()" class="w-full p-4 flex items-center gap-3 text-start tap-feedback" aria-expanded="${open}">
@@ -1728,7 +1728,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const r = getReadinessToday(), open = !!window.appState.ciOpen;
         if (!r && window.appState.ciSkipped === dateKey()) return '';
         const L = r ? READY[r.level] : null, c = L ? L.c : '#d4af37';
-        return `<button onclick="window.appActions.toggleCheckIn()" class="ci-chip self-start inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[12px] font-bold tap-feedback" style="color:${c};border-color:${c}55;background:${c}14" aria-expanded="${open}"><i data-lucide="${L ? L.i : 'activity'}" class="w-3.5 h-3.5"></i>${L ? `${t(L.t)} <span class="text-slate-400">• ${r.score}/6</span>` : t('How do you feel?')}<i data-lucide="chevron-${open ? 'up' : 'down'}" class="w-3 h-3 opacity-70"></i></button>`;
+        return `<button onclick="window.appActions.toggleCheckIn()" class="ci-chip self-start inline-flex items-center gap-1.5 h-10 px-3 rounded-xl border text-[12px] font-bold tap-feedback" style="color:${c};border-color:${c}55;background:${c}14" aria-expanded="${open}"><i data-lucide="${L ? L.i : 'activity'}" class="w-3.5 h-3.5"></i>${L ? `${t(L.t)} <span class="text-slate-400">• ${r.score}/6</span>` : t('How do you feel?')}<i data-lucide="chevron-${open ? 'up' : 'down'}" class="w-3 h-3 opacity-70"></i></button>`;
     };
     // Daily check-in card (opened from the button in today's day card)
     const checkInHTML = () => {
@@ -1916,7 +1916,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         return `<span class="font-black ${cls}" title="${esc(t(SUGG[sg.type].label))}" dir="ltr">${{ up: '↑ ', down: '↓ ' }[sg.type] || ''}${fmtW(sg.w)} × ${sg.r}${timed ? 's' : ''}</span>`;
     };
     // Today's edit mode: a gold bar on top (Done / plan the whole week), then the same day editor as Plan
-    const todayEditBar = () => `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-[#d4af37]/15 border border-[#d4af37]/45">
+    const todayEditBar = () => `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-white/5 border border-white/10">
             <i data-lucide="pencil-line" class="w-[18px] h-[18px] text-[#d4af37] shrink-0"></i>
             <span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-[#d4af37]">${t('Editing this day')}</span><button onclick="window.appActions.planWholeWeek()" class="block text-[12px] font-bold text-slate-300 underline underline-offset-2 tap-feedback">${t('Plan the whole week →')}</button></span>
             <button id="today-edit-done" onclick="window.appActions.setTodayEdit(false)" class="shrink-0 h-9 px-4 rounded-full bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4"></i>${t('Done')}</button>
@@ -1926,7 +1926,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const isT = activeDay === getTodayId(), S = window.appState.sess;
         if (window.appState.todayEdit && S) window.appState.todayEdit = false; // never edit the plan while a workout is running
         if (window.appState.todayEdit) return renderPlanDay(todayEditBar());
-        const editBtn = S ? '' : `<button id="today-edit-btn" onclick="window.appActions.setTodayEdit(true)" class="w-9 h-9 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('Edit this day'))}" title="${esc(t('Edit this day'))}"><i data-lucide="pencil" class="w-4 h-4"></i></button>`;
+        const editBtn = S ? '' : `<button id="today-edit-btn" onclick="window.appActions.setTodayEdit(true)" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('Edit this day'))}" title="${esc(t('Edit this day'))}"><i data-lucide="pencil" class="w-4 h-4"></i></button>`;
         const weekTop = `<div id="today-week" class="today-week">${weekNavHTML()}</div>`;
         const dayLabel = `<div class="text-[12px] font-bold text-[#d4af37]">${esc(isT ? t('Today') : dayLong(day.day))}</div>`;
         let html = '';
@@ -1986,8 +1986,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                         <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
                         <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(ex.name)}</h3>
                     </div>
-                    <button onclick="window.appActions.deleteEx(${i})" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-red-400/80 flex items-center justify-center tap-feedback" aria-label="${esc(t('Delete exercise'))}" title="${esc(t('Delete exercise'))}"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i></button>
-                    <button onclick="window.appActions.closeExEdit()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <button onclick="window.appActions.deleteEx(${i})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-red-400/80 flex items-center justify-center tap-feedback" aria-label="${esc(t('Delete exercise'))}" title="${esc(t('Delete exercise'))}"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i></button>
+                    <button onclick="window.appActions.closeExEdit()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <button onclick="window.appActions.openPicker('replace', ${i})" class="w-full mt-4 py-3 rounded-2xl bg-white/5 text-white text-[12px] font-bold tap-feedback flex items-center justify-center gap-2"><i data-lucide="replace" class="w-4 h-4 text-[#d4af37]"></i>${esc(t('Change exercise'))}</button>
                 <div class="${label} mt-4">${esc(t('Sets'))}</div>
@@ -2124,19 +2124,19 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const title = d.isRest ? t(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : empty ? t('Empty') : t(d.title);
             const meta = d.isRest ? '' : empty ? `<span class="text-[#d4af37]">＋ ${t('Add exercises')}</span>` : `${t('{n} exercises', { n: d.exercises.length })} · ${t('{n} sets', { n })}`;
             const open = window.appState.weekMenu === d.id;
-            return `<div class="glass-card plan-ex plan-day ${d.isRest ? 'is-rest' : ''} h-[62px] flex items-center gap-1.5 relative ${open ? 'z-20' : ''}">
+            return `<div class="glass-card plan-ex plan-day ${d.isRest ? 'is-rest' : ''} ${d.id === today ? 'is-today' : ''} h-[62px] flex items-center gap-1.5 relative ${open ? 'z-20' : ''}">
                 <span class="handle w-9 h-11 shrink-0 flex items-center justify-center text-slate-400" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>
                 <button onclick="window.appActions.openPlanDay(${d.id})" class="flex-1 min-w-0 h-full flex items-center gap-2.5 text-start tap-feedback" aria-label="${esc(dayLong(d.day) + ' · ' + title)}">
                     ${d.isRest ? `<i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-4 h-4 text-slate-400 shrink-0"></i>` : empty ? '<span class="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>' : ''}
                     <span class="flex-1 min-w-0"><span class="block text-[15px] font-black leading-tight truncate ${d.isRest || empty ? 'text-slate-400' : 'text-white'}">${esc(title)}</span>${meta ? `<span class="block text-[12px] font-bold text-slate-400 mt-0.5 truncate">${meta}</span>` : ''}</span>
                 </button>
-                <button onclick="window.appActions.toggleWeekMenu(${d.id})" class="w-9 h-11 shrink-0 flex items-center justify-center rounded-xl tap-feedback ${open ? 'text-[#d4af37]' : 'text-slate-400'}" aria-haspopup="menu" aria-expanded="${open}" aria-label="${esc(t('Day options') + ' · ' + dayLong(d.day))}"><i data-lucide="ellipsis-vertical" class="w-[18px] h-[18px]"></i></button>
+                <button onclick="window.appActions.toggleWeekMenu(${d.id})" class="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl tap-feedback ${open ? 'text-[#d4af37]' : 'text-slate-400'}" aria-haspopup="menu" aria-expanded="${open}" aria-label="${esc(t('Day options') + ' · ' + dayLong(d.day))}"><i data-lucide="ellipsis-vertical" class="w-[18px] h-[18px]"></i></button>
                 ${menu(d)}
             </div>`;
         };
         let html = `<div class="flex items-center justify-between gap-2 px-1 mb-2.5">
-                <span class="min-w-0"><span class="block text-[12px] font-bold text-[#d4af37]">${t('This week')}</span><span class="block text-[12px] font-bold text-slate-400">${t('Tap a day to edit it')}</span></span>
-                <button onclick="window.appActions.openPrograms()" class="shrink-0 flex items-center gap-1.5 h-10 px-3.5 rounded-full border text-[12px] font-bold bg-[#d4af37]/10 border-[#d4af37]/40 text-[#d4af37] tap-feedback"><i data-lucide="layout-list" class="w-4 h-4"></i>${t('Programs')}</button>
+                <span class="min-w-0"><span class="block text-[17px] font-black text-white">${t('This week')}</span><span class="block text-[12px] font-bold text-slate-400">${t('Tap a day to edit it')}</span></span>
+                <button onclick="window.appActions.openPrograms()" class="shrink-0 flex items-center gap-1.5 h-11 px-4 rounded-full border text-[13px] font-bold bg-white/5 border-white/10 text-white tap-feedback"><i data-lucide="layout-list" class="w-4 h-4 text-[#d4af37]"></i>${t('Programs')}</button>
             </div>
             <div class="flex gap-2">
                 <div class="w-11 shrink-0 flex flex-col gap-2" aria-hidden="true">${schedule.map(d => `<div class="h-[62px] flex flex-col items-center justify-center rounded-2xl ${d.id === today ? 'bg-[#d4af37]/15 text-[#d4af37]' : 'text-slate-400'}"><span class="text-[12px] font-bold">${esc(dayShort(d.day))}</span><span class="text-[16px] font-black leading-tight ${d.id === today ? '' : 'text-white'}">${dateOf(d.id).getDate()}</span></div>`).join('')}</div>
@@ -2234,8 +2234,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                         <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
                         <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(ex.name)}</h3>
                     </div>
-                    <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
-                    <button onclick="window.appActions.closeExSheet()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
+                    <button onclick="window.appActions.closeExSheet()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <div class="ex-week ${full ? 'is-full' : shown > 0 ? 'is-part' : ''} mt-4">
                     <div class="flex items-baseline justify-between gap-2"><span class="text-[12px] font-bold">${t('Done this week')}</span><b class="text-[15px] font-black">${extra ? `${t('{a} of {b} sets', { a: shown, b: planned })} <span class="ex-extra">${t('+{n} extra', { n: extra })}</span>` : full ? t('All {n} sets', { n: planned }) : t('{a} of {b} sets', { a: shown, b: planned })}</b></div>
@@ -2372,8 +2372,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     <div id="aw-rows-${e}" class="space-y-1.5"></div>
                     <div id="aw-note-${e}" class="hidden px-2 py-2 text-[12px] font-bold text-[#22c55e]"><i data-lucide="check" class="w-3.5 h-3.5 inline -mt-0.5"></i> ${t('Done this week')}</div>
                     <div class="flex gap-2 mt-2 px-1">
-                        <button onclick="window.appActions.removeSetRow(${e})" class="py-2 px-4 rounded-xl bg-white/5 border border-white/10 text-slate-400 tap-feedback" aria-label="${esc(t('Remove set'))}"><i data-lucide="minus" class="w-4 h-4"></i></button>
-                        <button onclick="window.appActions.addSetRow(${e})" class="flex-1 py-2 rounded-xl bg-white/5 border border-white/10 text-[12px] font-bold text-slate-300 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add set')}</button>
+                        <button onclick="window.appActions.removeSetRow(${e})" class="h-11 px-5 rounded-xl bg-white/5 border border-white/10 text-slate-300 tap-feedback" aria-label="${esc(t('Remove set'))}"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                        <button onclick="window.appActions.addSetRow(${e})" class="flex-1 h-11 rounded-xl bg-white/5 border border-white/10 text-[13px] font-bold text-slate-200 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add set')}</button>
                     </div>
                 </section>`).join('');
             if (rows && rows.length) rows.forEach(r => { if (S.exercises[r.e]) window.appActions.addSetRow(r.e, r, true); });
@@ -2773,7 +2773,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                         <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(W.name)}</h3>
                         <p class="text-[12px] font-bold text-slate-400 mt-1">${t('How many sets and reps for this exercise?')}</p>
                     </div>
-                    <button onclick="window.appActions.closeSwapSetup()" class="w-10 h-10 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <button onclick="window.appActions.closeSwapSetup()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <div class="${label} mt-4">${esc(t('Sets'))}</div>
                 <div class="flex items-center gap-3 rounded-2xl bg-white/5 p-2" dir="ltr">
@@ -3072,9 +3072,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const dots = W.steps.map((_, i) => `<span class="h-1.5 rounded-full transition-all ${i === W.step ? 'w-6 bg-[#d4af37]' : i < W.step ? 'w-3 bg-[#d4af37]/50' : 'w-3 bg-white/15'}"></span>`).join('');
             document.getElementById('onboarding-box').innerHTML = `
                 <div class="flex items-center justify-between py-4 shrink-0">
-                    <button onclick="window.appActions.wizBack()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.step === 0 ? 'invisible' : ''}" aria-label="Back"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                    <button onclick="window.appActions.wizBack()" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.step === 0 ? 'invisible' : ''}" aria-label="Back"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
                     <div class="flex gap-1.5" dir="ltr">${dots}</div>
-                    <button onclick="window.appActions.closeWizard()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.firstRun ? 'invisible' : ''}" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <button onclick="window.appActions.closeWizard()" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.firstRun ? 'invisible' : ''}" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <div class="flex-1 fade-in">${body}</div>`;
             if (window.lucide) window.lucide.createIcons({ root: document.getElementById('onboarding-box') });
@@ -3683,7 +3683,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const btn = { in: t('Sign in'), up: t('Create account'), reset: t('Send link'), reauth: t('Confirm') }[m];
         document.getElementById('email-body').innerHTML = `
             <div class="relative text-center pt-3 pb-1">
-                <button type="button" onclick="window.appActions.closeEmail()" class="absolute -top-1 -end-1 p-2 bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button type="button" onclick="window.appActions.closeEmail()" class="absolute -top-1 -end-1 w-11 h-11 flex items-center justify-center bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 <span class="w-14 h-14 mx-auto mb-3 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center"><i data-lucide="${{ in: 'mail', up: 'user-plus', reset: 'key-round', reauth: 'shield-check' }[m]}" class="w-7 h-7"></i></span>
                 <h3 class="text-xl font-black text-white">${title}</h3>
             </div>
@@ -4026,7 +4026,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 ? `<button id="welcome-continue" onclick="window.appActions.welcomeContinue()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback disabled:opacity-40 transition-opacity">${t('Continue')}</button>`
                 : `<button id="welcome-google" onclick="window.appActions.welcomeSignIn()" ${loading ? 'disabled' : ''} class="w-full py-4 rounded-2xl bg-white text-[#1f1f1f] text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity">${GOOGLE_G}${loading ? t('Signing in…') : t('Continue with Google')}</button>
                    <button id="welcome-email" onclick="window.appActions.openEmail('in')" ${loading ? 'disabled' : ''} class="w-full mt-2.5 py-4 rounded-2xl bg-white/5 border border-white/15 text-white text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button>`}
-               <p class="text-[12px] font-bold text-slate-500 text-center mt-4"><a href="terms.html" target="_blank" rel="noopener" class="underline underline-offset-2">${t('Terms of Use')}</a> · <a href="privacy.html" target="_blank" rel="noopener" class="underline underline-offset-2">${t('Privacy Policy')}</a></p>`;
+               <p class="text-[12px] font-bold text-slate-400 text-center mt-4"><a href="terms.html" target="_blank" rel="noopener" class="underline underline-offset-2">${t('Terms of Use')}</a> · <a href="privacy.html" target="_blank" rel="noopener" class="underline underline-offset-2">${t('Privacy Policy')}</a></p>`;
         if (gate && !isSignedIn() && !requireSignIn()) gate.insertAdjacentHTML('beforeend', `<button id="welcome-later" onclick="window.appActions.welcomeLater()" class="w-full mt-3 py-3 text-[13px] font-bold text-slate-400 tap-feedback">${t('Not now')}</button>`);
         document.getElementById('welcome-actions').innerHTML = last ? '' : `<div class="flex gap-3"><button onclick="window.appActions.welcomeGo(${W_SLIDES.length - 1})" class="px-5 py-4 rounded-2xl text-[13px] font-bold text-slate-400 tap-feedback">${t('Skip')}</button><button onclick="window.appActions.welcomeGo(${welcomeIdx + 1})" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button></div>`;
         if (window.lucide) window.lucide.createIcons({ root: document.getElementById('welcome-overlay') });
@@ -4179,7 +4179,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         needAgree: next => {
             if (getAgree()) return next();
             window.appState.agreeNext = next;
-            const link = (href, txt) => `<a href="${href}" target="_blank" rel="noopener" class="flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-[13px] font-black text-white tap-feedback">${txt}<i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 shrink-0"></i></a>`;
+            const link = (href, txt) => `<a href="${href}" target="_blank" rel="noopener" class="flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-[13px] font-bold text-white tap-feedback">${txt}<i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 shrink-0"></i></a>`;
             const box = document.getElementById('agree-box');
             box.innerHTML = `<div class="text-center" dir="${isAR ? 'rtl' : 'ltr'}">
                 <span class="w-14 h-14 mx-auto mb-4 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center"><i data-lucide="shield-check" class="w-7 h-7"></i></span>
