@@ -1115,7 +1115,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '59';
+    const APP_VERSION = '60';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1439,7 +1439,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         });
     };
 
-    // 👈 SWIPE left / right on Today to go to the next / previous day (mirrored in Arabic, like the layout)
+    // 👈 SWIPE left / right on Today to go to the next / previous day (the layout is the same in Arabic, so the swipe is too)
     const enableDaySwipe = el => {
         if (!el) return;
         let x0 = null, y0 = 0, t0 = 0;
@@ -1451,7 +1451,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (x0 === null) return;
             const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
             if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.6 || Date.now() - t0 > 600) return;
-            window.appActions.setActiveDay(((activeDay - 1 + ((dx < 0) !== isAR ? 1 : 6)) % 7) + 1);
+            window.appActions.setActiveDay(((activeDay - 1 + (dx < 0 ? 1 : 6)) % 7) + 1);
         });
     };
 
@@ -5045,8 +5045,8 @@ ${lib}`;
     }
     const applyStaticLanguage = () => {
         document.documentElement.lang = LANG;
-        // Arabic is right-to-left like iOS: the whole layout mirrors (number tables and charts keep dir="ltr")
-        document.documentElement.dir = isAR ? 'rtl' : 'ltr';
+        // Arabic keeps the English layout (nothing moves); only the text lines start from the right (style.css)
+        document.documentElement.dir = 'ltr';
         document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
         document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
         document.querySelectorAll('#setting-start-day option').forEach(o => { o.textContent = tDay(o.value); });

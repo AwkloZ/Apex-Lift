@@ -148,10 +148,11 @@ input[type="number"] {
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
 /* ===== Arabic =====
-   Right-to-left like iOS: the layout mirrors (dir="rtl" on the page), arrows flip, numbers use Arabic digits.
-   Arabic text gets an Arabic font and no letter spacing (letters must stay connected). */
+   The layout is the same as English (nothing is mirrored). Arabic text lines start from the right,
+   numbers use Arabic digits, and the text gets an Arabic font with no letter spacing (letters stay connected). */
 :root[lang="ar"] body { font-family: 'Cairo', 'Inter', sans-serif; }
-:root[dir="rtl"] :is([data-lucide="chevron-right"], [data-lucide="chevron-left"], [data-lucide="arrow-right"], [data-lucide="arrow-left"], .lucide-chevron-right, .lucide-chevron-left, .lucide-arrow-right, .lucide-arrow-left) { transform: scaleX(-1); } /* arrows point the reading way */
+/* each line reads in its own direction: Arabic lines start from the right, inside the same English layout */
+:root[lang="ar"] body :is(div, p, span, h1, h2, h3, button, label, a, li, td, th) { unicode-bidi: plaintext; }
 :root[lang="ar"] * { letter-spacing: 0 !important; }
 :root[lang="ar"] .italic { font-style: normal; }
 
@@ -234,7 +235,6 @@ button:focus-visible, a:focus-visible, select:focus-visible, [role="button"]:foc
 /* Progress tab: rounded section switcher (same corners as the week strip); the gold pill slides to the chosen section */
 .p-seg { padding: 4px; border-radius: 22px; background: rgba(28, 28, 30, 0.6); border: 0.5px solid rgba(255, 255, 255, 0.1); }
 .p-seg-pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 4); border-radius: 18px; background: #d4af37; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); transform: translateX(calc(var(--i, 0) * 100%)); transition: transform 0.4s cubic-bezier(0.34, 1.3, 0.64, 1); }
-:root[dir="rtl"] .p-seg-pill { left: auto; right: 4px; transform: translateX(calc(var(--i, 0) * -100%)); } /* Arabic: the sections run right to left, so the pill slides the other way */
 :root[data-theme="light"] .p-seg { background: #fff; border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(0, 0, 0, 0.04); }
 /* Profile: settings in grouped cards like iPhone Settings: icon, name, value, arrow, with thin lines between rows */
 .pf-h { display: block; margin: 0 6px 8px; font-size: 13px; font-weight: 700; color: var(--text-3); }
@@ -259,8 +259,6 @@ button:focus-visible, a:focus-visible, select:focus-visible, [role="button"]:foc
 .pf-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25); transition: transform 0.25s cubic-bezier(0.34, 1.3, 0.64, 1); }
 .pf-switch:checked { background: #d4af37; }
 .pf-switch:checked::after { transform: translateX(18px); }
-:root[dir="rtl"] .pf-switch::after { left: auto; right: 2px; }
-:root[dir="rtl"] .pf-switch:checked::after { transform: translateX(-18px); }
 /* settings rows and pickers: no gold ring when tapped (phones show focus rings on dropdowns) */
 select:focus, select:focus-visible, .pf-select:focus-visible, .pf-switch:focus-visible, .pf-row:focus-visible, .pf-row:focus-within { outline: none; }
 .pf-val { max-width: 55%; text-align: end; font-size: 15px; font-weight: 700; color: var(--text-2); }
