@@ -346,6 +346,19 @@ input.day-title-input { font-size: 26px !important; }
 @media (prefers-reduced-motion: reduce) { .ai-dots i { animation: none; opacity: 0.7; } }
 .ai-input { max-height: 140px; line-height: 1.4; }
 .ai-err { border-color: rgba(248, 113, 113, 0.35); }
+/* Apex Coach button on Plan: its own colours (violet, pink, blue), a slowly turning border and a glowing icon,
+   so it never looks like the gold "do this" button */
+@property --coach-a { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+.coach-btn { position: relative; display: inline-flex; align-items: center; gap: 7px; height: 44px; padding-inline: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 800; color: #fff;
+    border: 1.5px solid transparent;
+    background: linear-gradient(135deg, #1d1530, #13182b) padding-box, conic-gradient(from var(--coach-a), #8b5cf6, #ec4899, #38bdf8, #8b5cf6) border-box;
+    box-shadow: 0 0 18px rgba(139, 92, 246, 0.35); animation: coach-turn 4s linear infinite; }
+.coach-btn-ic { width: 32px; height: 32px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #fff; background: linear-gradient(135deg, #8b5cf6, #ec4899 60%, #38bdf8); box-shadow: 0 0 12px rgba(236, 72, 153, 0.45); }
+.coach-btn-ic svg { width: 17px; height: 17px; animation: coach-twinkle 2.4s ease-in-out infinite; }
+@keyframes coach-turn { to { --coach-a: 360deg; } }
+@keyframes coach-twinkle { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.15) rotate(12deg); } }
+@media (prefers-reduced-motion: reduce) { .coach-btn, .coach-btn-ic svg { animation: none; } }
+:root[data-theme="light"] .coach-btn { color: #2e1065; background: linear-gradient(135deg, #f5f3ff, #fdf2f8) padding-box, conic-gradient(from var(--coach-a), #8b5cf6, #ec4899, #38bdf8, #8b5cf6) border-box; box-shadow: 0 2px 14px rgba(139, 92, 246, 0.25); }
 /* after 6 seconds of waiting, a short note says a program takes a while */
 .ai-wait { display: block; max-height: 0; overflow: hidden; opacity: 0; font-size: 13px; color: var(--text-3); animation: ai-wait 0.4s ease 6s forwards; }
 @keyframes ai-wait { to { max-height: 80px; opacity: 1; margin-top: 4px; } }

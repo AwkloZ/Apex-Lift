@@ -1115,7 +1115,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '60';
+    const APP_VERSION = '61';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -2351,7 +2351,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         let html = `<div class="flex items-center justify-between gap-2 px-1 mb-2.5">
                 <span class="min-w-0"><span class="block text-[17px] font-black text-white">${t('This week')}</span><span class="block text-[12px] font-bold text-slate-400">${t('Tap a day to edit it')}</span></span>
                 <span class="shrink-0 flex items-center gap-2">
-                    <button onclick="window.appActions.openAI()" class="flex items-center gap-1.5 h-11 px-4 rounded-full border text-[13px] font-bold bg-white/5 border-white/10 text-white tap-feedback"><i data-lucide="sparkles" class="w-4 h-4 text-[#d4af37]"></i>${t('Coach')}</button>
+                    <button onclick="window.appActions.openAI()" class="coach-btn tap-feedback"><span class="coach-btn-ic" aria-hidden="true"><i data-lucide="sparkles"></i></span>${t('Coach')}</button>
                     <button onclick="window.appActions.openPrograms()" class="flex items-center gap-1.5 h-11 px-4 rounded-full border text-[13px] font-bold bg-white/5 border-white/10 text-white tap-feedback"><i data-lucide="layout-list" class="w-4 h-4 text-[#d4af37]"></i>${t('Programs')}</button>
                 </span>
             </div>
