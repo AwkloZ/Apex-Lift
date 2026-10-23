@@ -1095,7 +1095,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '51';
+    const APP_VERSION = '52';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3458,7 +3458,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     })().catch(e => { AI.loading = null; throw e; }));
 
     const sanitizeAiChat = raw => (Array.isArray(raw) ? raw : []).filter(m => isObj(m) && (m.r === 'u' || m.r === 'm') && typeof m.x === 'string')
-        .map(m => ({ r: m.r, x: m.x.slice(0, 3000), ...(isObj(m.rt) && Array.isArray(m.rt.schedule) ? { rt: m.rt } : {}), ...(m.used ? { used: true } : {}) })).slice(-AI_KEEP);
+        .map(m => ({ r: m.r, x: m.x.slice(0, 3000), ...(isObj(m.rt) && Array.isArray(m.rt.schedule) ? { rt: m.rt } : {}), ...(m.used ? { used: true } : {}), ...(Array.isArray(m.ch) && m.ch.length ? { ch: m.ch.filter(c => typeof c === 'string' && c.trim()).slice(0, 6).map(c => c.trim().slice(0, 60)) } : {}) })).slice(-AI_KEEP);
     const getAiChat = () => sanitizeAiChat(readJSON(AI_CHAT_KEY, []));
     const setAiChat = list => writeItem(AI_CHAT_KEY, JSON.stringify(sanitizeAiChat(list)));
     const aiCount = () => { const v = readJSON(AI_COUNT_KEY, null); return isObj(v) && v.d === dateKey() ? (parseInt(v.n) || 0) : 0; };
@@ -3474,9 +3474,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     title: S.string(), rest: S.boolean(),
                     exercises: S.array({ items: S.object({ properties: { name: S.string(), sets: S.integer(), reps: S.string() } }) })
                 } }) })
-            } })
+            } }),
+            choices: S.array({ items: S.string() })
         },
-        optionalProperties: ['routine']
+        optionalProperties: ['routine', 'choices']
     });
     // routine in the app's format ↔ the short format Gemini reads and writes
     const routineToAi = rt => ({ name: rt.name, days: rt.schedule.map(d => ({ title: d.isRest ? (d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : d.title, rest: !!d.isRest, exercises: d.exercises.map(e => ({ name: e.name, sets: parseInt(e.sets) || 3, reps: e.reps })) })) });
@@ -3530,7 +3531,16 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
 Rules:
 - Write "reply" in ${isAR ? 'Arabic (simple, friendly)' : 'English (simple, friendly)'}. Keep it short: at most 120 words, plain text, use "- " for lists. No markdown headings or tables.
 - Only talk about training: programs, exercises, sets, reps, rest, recovery and progression. For pain, injury, illness or pregnancy, tell them to see a doctor or physiotherapist first and don't program around it. Never give medical advice or diet plans.
-- When the user asks for a program, or a change to the program, add "routine". Otherwise leave "routine" out.
+- Be a real coach: before you build a NEW program, get to know what they want. Ask ONE short question per message (with "choices"), up to 4 questions in total, about what "About the user" doesn't tell you yet. Pick the ones that matter most for them:
+  1. Pain, injuries or movements they must avoid.
+  2. Their main focus: muscles they want to grow, lifts to get stronger at, a sport, or looking better overall.
+  3. Exercises they love or hate, and the equipment their gym really has.
+  4. Which days they can train, and anything else in their life that limits training (work shifts, sleep, other sports).
+  Never ask what you already know. Don't send "routine" while you are still asking.
+- Build the program after their answers (or straight away if they say to build it now or skip the questions), and use every answer in it.
+- Changes to a program already in the chat or to their current routine ("shorter", "swap this exercise", "move legs to Monday"): do it straight away, without questions, unless the request is unclear.
+- "choices": with a question, 2 to 5 short answers they can tap (up to 5 words each, in their language, one can be like "No, build it now"). Leave "choices" out when you don't ask anything.
+- When you build or change a program, add "routine". Otherwise leave "routine" out.
 - "routine" has exactly 7 days in this order: ${order}. Rest days: rest true, title "Complete Rest" or "Active Rest", no exercises.
 - Unless the user asks otherwise, use their number of training days, and fit each workout into their workout length (30 min: up to 4 exercises, 45 min: up to 5, 60 min: up to 7, 90 min: up to 8).
 - Sets: 1 to 6. Reps: a range written like "8 - 10", or seconds like "30 - 45s" for holds. Big lifts first.
@@ -3569,7 +3579,8 @@ ${lib}`;
         if (!isObj(o)) return null;
         const rt = o.routine ? routineFromAi(o.routine) : null;
         const x = cut(o.reply, 3000).trim() || (rt ? t('Here is a program for you.') : '');
-        return x || rt ? { r: 'm', x, ...(rt ? { rt } : {}) } : null;
+        const ch = !rt && Array.isArray(o.choices) ? o.choices.filter(c => typeof c === 'string' && c.trim()).slice(0, 6).map(c => c.trim().slice(0, 60)) : [];
+        return x || rt ? { r: 'm', x, ...(rt ? { rt } : {}), ...(ch.length ? { ch } : {}) } : null;
     };
 
     // Chat text: plain text with line breaks, "- " lists and **bold**
@@ -3615,7 +3626,7 @@ ${lib}`;
                     <p class="text-[14px] font-bold text-slate-300">${t('Ask for a program, a change to your routine, or anything about training.')}</p>
                     <div class="flex flex-col gap-2 mt-4">${AI_IDEAS.map(q => `<button onclick="window.appActions.aiSend(${jsArg(t(q))})" class="w-full text-start px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-[14px] font-bold text-slate-200 tap-feedback">${esc(t(q))}</button>`).join('')}</div>
                 </div>`)
-                + `<div class="space-y-3">${msgs.map(bubble).join('')}${AI.busy ? `<div class="flex justify-start"><div class="ai-msg ai-bot" role="status" aria-label="${esc(t('Thinking…'))}"><span class="ai-dots"><i></i><i></i><i></i></span></div></div>` : ''}</div>`;
+                + `<div class="space-y-3">${msgs.map(bubble).join('')}${!AI.busy && msgs.length && msgs[msgs.length - 1].ch ? `<div class="flex flex-wrap gap-2">${msgs[msgs.length - 1].ch.map(c => `<button onclick="window.appActions.aiSend(${jsArg(c)})" dir="auto" class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[14px] font-bold text-slate-200 tap-feedback">${esc(c)}</button>`).join('')}</div>` : ''}${AI.busy ? `<div class="flex justify-start"><div class="ai-msg ai-bot" role="status" aria-label="${esc(t('Thinking…'))}"><span class="ai-dots"><i></i><i></i><i></i></span></div></div>` : ''}</div>`;
         }
         if (window.lucide) window.lucide.createIcons({ root: list });
         if (scroll) list.scrollTop = list.scrollHeight;
