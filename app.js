@@ -113,9 +113,9 @@
         "Your coach forgets the notes it kept about you.": "سينسى مدربك الملاحظات التي حفظها عنك.",
         "This chat is deleted from this phone. What your coach remembers about you is kept.": "ستُحذف هذه المحادثة من هذا الجوال، ويبقى ما يتذكّره مدربك عنك.",
         "Coach": "المدرب",
-        "Apex Coach": "مدرب أبكس",
-        "Meet Apex Coach": "تعرّف على مدرب أبكس",
-        "Build with Apex Coach": "ابنِ برنامجك مع مدرب أبكس",
+        "Apex Coach": "مدرب Apex",
+        "Meet Apex Coach": "تعرّف على مدرب Apex",
+        "Build with Apex Coach": "ابنِ برنامجك مع مدرب Apex",
         "Tell it what you want: it builds a program from your answers and workouts.": "أخبره بما تريد، ويبني لك برنامجًا من إجاباتك وتمارينك.",
         "Build a program that fits you": "برنامج يناسبك أنت",
         "Tell it what you want and it builds a program for you, from your answers and your workouts.": "أخبره بما تريد، ويبني لك برنامجًا من إجاباتك وتمارينك.",
@@ -137,11 +137,11 @@
         "See all days": "عرض كل الأيام",
         "Hide days": "إخفاء الأيام",
         "Use it again": "استخدمه مرة أخرى",
-        "Apex Coach program": "برنامج مدرب أبكس",
+        "Apex Coach program": "برنامج مدرب Apex",
         "Here is a program for you.": "هذا برنامج لك.",
-        "Apex Coach is busy right now. Try again in a minute.": "مدرب أبكس مشغول الآن. حاول بعد دقيقة.",
-        "Apex Coach is not ready yet. Try again later.": "مدرب أبكس غير جاهز بعد. حاول لاحقًا.",
-        "Apex Coach could not answer. Try again.": "لم يستطع مدرب أبكس الإجابة. حاول مرة أخرى.",
+        "Apex Coach is busy right now. Try again in a minute.": "مدرب Apex مشغول الآن. حاول بعد دقيقة.",
+        "Apex Coach is not ready yet. Try again later.": "مدرب Apex غير جاهز بعد. حاول لاحقًا.",
+        "Apex Coach could not answer. Try again.": "لم يستطع مدرب Apex الإجابة. حاول مرة أخرى.",
         "That is all the questions for today. Try again tomorrow.": "انتهت أسئلة اليوم. حاول مرة أخرى غدًا.",
         "It replaces your current routine. Your history is kept.": "سيحل محل جدولك الحالي. سجلك محفوظ.",
         "It is added as a new routine. Your current routine and history are kept.": "سيُضاف كجدول جديد. جدولك الحالي وسجلك محفوظان.",
@@ -1112,7 +1112,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '56';
+    const APP_VERSION = '57';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3609,7 +3609,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const aiSystem = () => {
         const start = StorageManager.getStartDay(), order = [0, 1, 2, 3, 4, 5, 6].map(i => DAY_NAMES[(DAY_NAMES.indexOf(start) + i) % 7]).join(', ');
         const lib = muscleOptions.map(m => `${m}: ${(exerciseDictionary[m] || []).join(', ')}`).concat(getCustomEx().length ? [`Own exercises: ${getCustomEx().map(x => x.name).join(', ')}`] : []).join('\n');
-        return `You are Apex Coach (in Arabic: مدرب أبكس), the personal coach inside Apex Lift, a gym workout app. Talk like a real, experienced coach who knows this person: warm, natural and honest, in your own words. Have a real conversation: react to what they say, ask when you are curious or something matters, share your reasoning, encourage them, and push back kindly when an idea isn't good for them. Don't follow a script or a fixed list of questions.
+        return `You are Apex Coach (in Arabic: مدرب Apex, always with "Apex" in Latin letters), the personal coach inside Apex Lift, a gym workout app. Talk like a real, experienced coach who knows this person: warm, natural and honest, in your own words. Have a real conversation: react to what they say, ask when you are curious or something matters, share your reasoning, encourage them, and push back kindly when an idea isn't good for them. Don't follow a script or a fixed list of questions.
 
 Your only job is coaching: training, programs, exercises and technique, progression, recovery and sleep, motivation and habits, and general nutrition for training (protein, eating enough or less for their goal). If they ask about something else, answer in one friendly sentence that you're only their coach, and bring it back to their training. You are not a doctor: for pain, injury, illness, medicines or pregnancy, tell them to see a doctor or physiotherapist, and don't program around an injury yourself.
 
