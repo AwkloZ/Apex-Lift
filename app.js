@@ -96,6 +96,36 @@
         "Intermediate": "متوسط",
         "Advanced": "متقدم",
         "Use this program": "استخدم هذا البرنامج",
+        "AI coach": "المدرب الذكي",
+        "Your AI coach": "مدربك الذكي",
+        "Build with the AI coach": "ابنِ برنامجك مع المدرب الذكي",
+        "Tell it what you want: it builds a program from your answers and workouts.": "أخبره بما تريد، ويبني لك برنامجًا من إجاباتك وتمارينك.",
+        "Build a program that fits you": "برنامج يناسبك أنت",
+        "Tell it what you want and it builds a program for you, from your answers and your workouts.": "أخبره بما تريد، ويبني لك برنامجًا من إجاباتك وتمارينك.",
+        "To answer, your training answers, age, sex, body weight, routines and workout history are sent to Google Gemini. Your name and email are not sent.": "حتى يجيبك، تُرسل إجابات التمرين والعمر والجنس ووزن الجسم والجداول وسجل التمارين إلى Google Gemini. لا يُرسل اسمك ولا بريدك.",
+        "Its answers can be wrong. It is not medical advice: stop if something hurts and see a doctor.": "قد تكون إجاباته خاطئة، وهي ليست نصيحة طبية: توقّف إذا شعرت بألم وراجع طبيبًا.",
+        "The chat is saved on this phone only. Don't type private details in it.": "المحادثة محفوظة على هذا الجوال فقط. لا تكتب فيها معلومات خاصة.",
+        "Got it, start": "فهمت، لنبدأ",
+        "Ask for a program, a change to your routine, or anything about training.": "اطلب برنامجًا، أو تعديلًا على جدولك، أو اسأل أي سؤال عن التمرين.",
+        "Build the best program for me": "ابنِ لي أفضل برنامج",
+        "My workouts take too long. Make them shorter.": "تمريني يأخذ وقتًا طويلًا. اجعله أقصر.",
+        "I only have dumbbells at home": "عندي دمبلز فقط في البيت",
+        "What should I improve in my current routine?": "ماذا أحسّن في جدولي الحالي؟",
+        "Ask your coach…": "اسأل مدربك…",
+        "Send": "إرسال",
+        "New chat": "محادثة جديدة",
+        "Start a new chat?": "بدء محادثة جديدة؟",
+        "This chat is deleted from this phone.": "ستُحذف هذه المحادثة من هذا الجوال.",
+        "Thinking…": "يفكّر…",
+        "See all days": "عرض كل الأيام",
+        "Hide days": "إخفاء الأيام",
+        "Use it again": "استخدمه مرة أخرى",
+        "AI program": "برنامج المدرب الذكي",
+        "Here is a program for you.": "هذا برنامج لك.",
+        "The AI coach is busy right now. Try again in a minute.": "المدرب الذكي مشغول الآن. حاول بعد دقيقة.",
+        "The AI coach is not ready yet. Try again later.": "المدرب الذكي غير جاهز بعد. حاول لاحقًا.",
+        "The AI coach could not answer. Try again.": "لم يستطع المدرب الذكي الإجابة. حاول مرة أخرى.",
+        "That is all the questions for today. Try again tomorrow.": "انتهت أسئلة اليوم. حاول مرة أخرى غدًا.",
         "It replaces your current routine. Your history is kept.": "سيحل محل جدولك الحالي. سجلك محفوظ.",
         "It is added as a new routine. Your current routine and history are kept.": "سيُضاف كجدول جديد. جدولك الحالي وسجلك محفوظان.",
         "{n} training days": "{n} أيام تمرين",
@@ -993,7 +1023,7 @@
     const getResets = () => { const v = readJSON(RESET_KEY, {}); return isObj(v) ? v : {}; };
     const setResets = d => { try { localStorage.setItem(RESET_KEY, JSON.stringify(d)); } catch (e) {} };
     // Terms of Use & Privacy Policy: which version the user agreed to, and when
-    const TERMS_VERSION = '2026-10.7';
+    const TERMS_VERSION = '2026-10.8';
     const AGREE_KEY = 'workoutAgreed_rakan_final';
     const getAgree = () => { const v = readJSON(AGREE_KEY, null); return isObj(v) && v.v === TERMS_VERSION ? v : null; };
     const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
@@ -1065,7 +1095,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '49';
+    const APP_VERSION = '50';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1278,6 +1308,19 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         if (d <= 3) return a.exp === 'new' ? 'fb3' : 'ppl3';
         return d === 4 ? 'ul4' : d === 5 ? 'hybrid5' : 'ppl6';
     };
+    // Put a routine into the app: as a new routine (keeps your current one) or replacing the current one (always when there are 5)
+    const putRoutine = (name, schedule, { replace = false, undo = false } = {}) => {
+        const snap = { weeks: JSON.stringify(appData.weeks), weekId: currentWeekId, day: activeDay };
+        if (replace || appData.weeks.length >= 5) { const w = appData.weeks.find(x => x.id === currentWeekId); w.schedule = schedule; w.name = name; }
+        else { const wid = 'w_' + Date.now(); appData.weeks.push({ id: wid, name, schedule }); currentWeekId = wid; StorageManager.setActiveWeek(wid); }
+        StorageManager.setPlan(appData);
+        activeDay = getTodayId();
+        window.appActions.switchTab('today');
+        window.appActions.showToast(t('{name} is ready', { name }), 'success', undo ? { label: t('Undo'), fn: () => {
+            appData.weeks = JSON.parse(snap.weeks); currentWeekId = snap.weekId; activeDay = snap.day;
+            StorageManager.setPlan(appData); StorageManager.setActiveWeek(currentWeekId); window.appActions.switchTab('plan');
+        } } : null);
+    };
     // Short week preview: "Sat Push · Sun Pull · ..."
     const programPreviewHTML = prog => {
         const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
@@ -1286,6 +1329,14 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             return `<div class="rounded-lg py-1.5 px-0.5 text-center ${rest ? 'bg-white/5 text-slate-400' : 'bg-[#d4af37]/15 text-[#d4af37]'}"><div class="text-[12px] font-bold">${esc(dayShort(DAY_NAMES[(start + i) % 7]))}</div><div class="pv-wo mt-0.5">${rest ? '—' : esc(t(WORKOUTS[slot][0]))}</div></div>`;
         }).join('')}</div>`;
     };
+
+    // One day of a program preview: rest, or the workout with its exercises, sets and reps
+    const programDayCardHTML = d => d.isRest
+            ? `<div class="glass-card ex-card flex items-center gap-3 opacity-70"><i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-5 h-5 text-slate-400 shrink-0"></i><span class="text-[12px] font-bold text-slate-400 w-10 shrink-0">${esc(dayShort(d.day))}</span><span class="text-[14px] font-black text-slate-300">${t(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest')}</span></div>`
+            : `<div class="glass-card ex-card">
+                <div class="flex items-baseline justify-between gap-2 mb-2"><span class="min-w-0"><span class="block text-[12px] font-bold text-[#d4af37]">${esc(dayLong(d.day))}</span><span class="block text-[17px] font-black text-white leading-tight">${esc(t(d.title))}</span></span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} exercises', { n: d.exercises.length })}</span></div>
+                ${d.exercises.map((ex, k) => `<div class="flex items-center gap-3 py-2 ${k ? 'border-t border-white/5' : ''}"><span class="w-6 text-center text-[12px] font-bold text-slate-400 shrink-0">${k + 1}</span><span class="flex-1 min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(tx(ex.name))}</span><span class="block text-[12px] font-bold text-slate-400 truncate">${esc(tm(ex.muscle))}</span></span><span class="ex-pill" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span></div>`).join('')}
+            </div>`;
 
     // 🔎 EXERCISE PICKER DATA
     const CUSTOM_KEY = 'workoutCustomEx_rakan_final';
@@ -1994,6 +2045,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             <div class="pf-group mb-4">
                 ${pfRow('calendar-range', t('Active routine'), esc(t(active.name)))}
                 <button onclick="window.appActions.closeTraining(); setTimeout(window.appActions.openPrograms, 320)" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="layout-list"></i></span><span class="pf-label">${t('Browse programs')}<span class="pf-sub">${t('Add another ready-made program')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
+                <button onclick="window.appActions.closeTraining(); setTimeout(window.appActions.openAI, 320)" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="sparkles"></i></span><span class="pf-label">${t('AI coach')}<span class="pf-sub">${t('Build a program that fits you')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
             </div>`;
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
@@ -3320,17 +3372,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const prog = PROGRAMS.find(p => p.id === id); if (!prog) return;
             if (window.appState.programBusy === id) return; // double tap: add it only once
             window.appState.programBusy = id; setTimeout(() => { if (window.appState.programBusy === id) window.appState.programBusy = null; }, 1000);
-            const snap = { weeks: JSON.stringify(appData.weeks), weekId: currentWeekId, day: activeDay };
-            const schedule = programSchedule(prog, exp);
-            if (replace || appData.weeks.length >= 5) { const w = appData.weeks.find(x => x.id === currentWeekId); w.schedule = schedule; w.name = t(prog.name); }
-            else { const wid = 'w_' + Date.now(); appData.weeks.push({ id: wid, name: t(prog.name), schedule }); currentWeekId = wid; StorageManager.setActiveWeek(wid); }
-            StorageManager.setPlan(appData);
-            activeDay = getTodayId();
-            window.appActions.switchTab('today');
-            window.appActions.showToast(t('{name} is ready', { name: t(prog.name) }), 'success', undo ? { label: t('Undo'), fn: () => {
-                appData.weeks = JSON.parse(snap.weeks); currentWeekId = snap.weekId; activeDay = snap.day;
-                StorageManager.setPlan(appData); StorageManager.setActiveWeek(currentWeekId); window.appActions.switchTab('plan');
-            } } : null);
+            putRoutine(t(prog.name), programSchedule(prog, exp), { replace, undo });
         },
         // ---------- Program gallery (Plan → Programs): list → preview page (every day and exercise) → use it ----------
         openPrograms: () => {
@@ -3350,7 +3392,11 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const list = document.getElementById('programs-list'), pick = PROGRAMS.find(p => p.id === window.appState.progPick);
             document.getElementById('programs-title').innerText = pick ? t('Program preview') : t('Programs');
             if (!pick) {
-                list.innerHTML = PROGRAMS.map(p => `<button onclick="window.appActions.previewProgram(${jsArg(p.id)})" class="w-[calc(100%-2rem)] mx-4 mb-3 p-4 rounded-2xl border bg-white/5 border-white/10 text-start tap-feedback flex items-center gap-3">
+                list.innerHTML = `<button onclick="window.appActions.closePrograms(); setTimeout(window.appActions.openAI, 320)" class="w-[calc(100%-2rem)] mx-4 mb-3 p-4 rounded-2xl border bg-white/5 border-white/10 text-start tap-feedback flex items-center gap-3">
+                    <span class="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-[#d4af37] shrink-0"><i data-lucide="sparkles" class="w-5 h-5"></i></span>
+                    <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${t('Build with the AI coach')}</span><span class="block text-[12px] font-bold text-slate-400 mt-1">${t('Tell it what you want: it builds a program from your answers and workouts.')}</span></span>
+                    <i data-lucide="${isAR ? 'chevron-left' : 'chevron-right'}" class="w-5 h-5 text-slate-400 shrink-0"></i>
+                </button>` + PROGRAMS.map(p => `<button onclick="window.appActions.previewProgram(${jsArg(p.id)})" class="w-[calc(100%-2rem)] mx-4 mb-3 p-4 rounded-2xl border bg-white/5 border-white/10 text-start tap-feedback flex items-center gap-3">
                     <span class="flex-1 min-w-0">
                         <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} days', { n: p.days })}${p.eq === 'db' ? ' · ' + t('Dumbbells only') : ''}</span></span>
                         <span class="block text-[12px] font-bold text-slate-400 mt-1">${esc(t(p.desc))}</span>
@@ -3361,12 +3407,6 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             } else {
                 const exp = window.appState.progExp || 'mid', sched = programSchedule(pick, exp), full = appData.weeks.length >= 5;
                 const lvl = (v, l) => `<button onclick="window.appActions.setProgramLevel(${jsArg(v)})" class="flex-1 py-2 rounded-xl text-[12px] font-bold tap-feedback ${exp === v ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300'}">${t(l)}</button>`;
-                const dayCard = d => d.isRest
-                    ? `<div class="glass-card ex-card flex items-center gap-3 opacity-70"><i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-5 h-5 text-slate-400 shrink-0"></i><span class="text-[12px] font-bold text-slate-400 w-10 shrink-0">${esc(dayShort(d.day))}</span><span class="text-[14px] font-black text-slate-300">${t(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest')}</span></div>`
-                    : `<div class="glass-card ex-card">
-                        <div class="flex items-baseline justify-between gap-2 mb-2"><span class="min-w-0"><span class="block text-[12px] font-bold text-[#d4af37]">${esc(dayLong(d.day))}</span><span class="block text-[17px] font-black text-white leading-tight">${esc(t(d.title))}</span></span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} exercises', { n: d.exercises.length })}</span></div>
-                        ${d.exercises.map((ex, k) => `<div class="flex items-center gap-3 py-2 ${k ? 'border-t border-white/5' : ''}"><span class="w-6 text-center text-[12px] font-bold text-slate-400 shrink-0">${k + 1}</span><span class="flex-1 min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(tx(ex.name))}</span><span class="block text-[12px] font-bold text-slate-400 truncate">${esc(tm(ex.muscle))}</span></span><span class="ex-pill" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span></div>`).join('')}
-                    </div>`;
                 list.innerHTML = `<div class="px-4 pb-4">
                     <button onclick="window.appActions.previewProgram(null)" class="flex items-center gap-1 mb-3 text-[12px] font-bold text-slate-400 tap-feedback"><i data-lucide="${isAR ? 'chevron-right' : 'chevron-left'}" class="w-4 h-4"></i>${t('All programs')}</button>
                     <h2 class="text-[24px] font-black text-white leading-tight">${esc(t(pick.name))}</h2>
@@ -3375,7 +3415,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     ${programPreviewHTML(pick)}
                     <div class="mt-4 mb-1.5 px-0.5 text-[12px] font-bold text-slate-400">${t('Level')}</div>
                     <div class="flex gap-2 mb-4">${lvl('new', 'Beginner')}${lvl('mid', 'Intermediate')}${lvl('adv', 'Advanced')}</div>
-                    <div class="space-y-2">${sched.map(dayCard).join('')}</div>
+                    <div class="space-y-2">${sched.map(programDayCardHTML).join('')}</div>
                 </div>
                 <div class="sticky bottom-0 bg-[#111] border-t border-white/10 px-4 pt-3" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
                     <p class="text-[12px] font-bold text-slate-400 mb-2 text-center">${full ? t('It replaces your current routine. Your history is kept.') : t('It is added as a new routine. Your current routine and history are kept.')}</p>
@@ -3392,6 +3432,242 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             else go();
         }
     };
+
+    // 🤖 AI COACH: a chat with Google Gemini that builds a routine from your training answers, routine and workout history.
+    // Gemini is reached through Firebase AI Logic, so there is no Gemini key in the app (it stays at Google) and it stays free (Spark).
+    // Firebase setup (once): Firebase console → AI Logic → Get started → Gemini Developer API.
+    // Against misuse: App Check → reCAPTCHA v3 for this site → put the site key in AI_APP_CHECK_KEY → enforce App Check for AI Logic.
+    // Gemini may only name exercises from the library; the app checks the routine (7 days, known exercises, sensible sets) before
+    // it can be used. The chat is kept on this phone only. Its Firebase files are only downloaded when the coach is opened.
+    const AI_MODELS = ['gemini-3.5-flash', 'gemini-2.5-flash']; // the first one that works; the next one if Google retires it
+    const AI_APP_CHECK_KEY = ''; // reCAPTCHA v3 site key (not secret). Empty = no App Check
+    const AI_CHAT_KEY = 'workoutAiChat_rakan_final', AI_OK_KEY = 'workoutAiOk_rakan_final', AI_COUNT_KEY = 'workoutAiCount_rakan_final';
+    const AI_DAILY = 40; // questions a day on one phone, so one person can't use up the free quota
+    const AI_KEEP = 30, AI_CONTEXT = 12; // messages kept on the phone / sent with each question
+    const AI = { loading: null, modelIx: 0, busy: false, open: -1 };
+    const loadAI = () => AI.loading || (AI.loading = (async () => {
+        const [fbApp, fbAI] = await Promise.all([import('./' + FB_DIR + 'firebase-app.js'), import('./' + FB_DIR + 'firebase-ai.js')]);
+        // its own Firebase app (the modular files can't share the sign-in's compat app), same project
+        const app = fbApp.getApps().find(a => a.name === 'apex-ai') || fbApp.initializeApp(FIREBASE_CONFIG, 'apex-ai');
+        if (AI_APP_CHECK_KEY) {
+            const ac = await import('./' + FB_DIR + 'firebase-app-check.js');
+            try { ac.initializeAppCheck(app, { provider: new ac.ReCaptchaV3Provider(AI_APP_CHECK_KEY), isTokenAutoRefreshEnabled: true }); } catch (e) { console.warn('App Check', e); }
+        }
+        return { fbAI, ai: fbAI.getAI(app, { backend: new fbAI.GoogleAIBackend() }) };
+    })().catch(e => { AI.loading = null; throw e; }));
+
+    const sanitizeAiChat = raw => (Array.isArray(raw) ? raw : []).filter(m => isObj(m) && (m.r === 'u' || m.r === 'm') && typeof m.x === 'string')
+        .map(m => ({ r: m.r, x: m.x.slice(0, 3000), ...(isObj(m.rt) && Array.isArray(m.rt.schedule) ? { rt: m.rt } : {}), ...(m.used ? { used: true } : {}) })).slice(-AI_KEEP);
+    const getAiChat = () => sanitizeAiChat(readJSON(AI_CHAT_KEY, []));
+    const setAiChat = list => writeItem(AI_CHAT_KEY, JSON.stringify(sanitizeAiChat(list)));
+    const aiCount = () => { const v = readJSON(AI_COUNT_KEY, null); return isObj(v) && v.d === dateKey() ? (parseInt(v.n) || 0) : 0; };
+    const aiCountUp = () => writeItem(AI_COUNT_KEY, JSON.stringify({ d: dateKey(), n: aiCount() + 1 }));
+
+    // The answer is always JSON: { reply, routine? } (routine = 7 days starting on the user's first day of the week)
+    const aiSchema = S => S.object({
+        properties: {
+            reply: S.string(),
+            routine: S.object({ properties: {
+                name: S.string(),
+                days: S.array({ items: S.object({ properties: {
+                    title: S.string(), rest: S.boolean(),
+                    exercises: S.array({ items: S.object({ properties: { name: S.string(), sets: S.integer(), reps: S.string() } }) })
+                } }) })
+            } })
+        },
+        optionalProperties: ['routine']
+    });
+    // routine in the app's format ↔ the short format Gemini reads and writes
+    const routineToAi = rt => ({ name: rt.name, days: rt.schedule.map(d => ({ title: d.isRest ? (d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : d.title, rest: !!d.isRest, exercises: d.exercises.map(e => ({ name: e.name, sets: parseInt(e.sets) || 3, reps: e.reps })) })) });
+    const routineFromAi = raw => {
+        if (!isObj(raw) || !Array.isArray(raw.days) || raw.days.length !== 7) return null;
+        const known = new Map(); catalogue().forEach(x => { const k = x.name.trim().toLowerCase(); if (!known.has(k)) known.set(k, x); });
+        const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
+        const schedule = raw.days.map((d, i) => {
+            d = isObj(d) ? d : {};
+            const base = { id: i + 1, day: DAY_NAMES[(start + i) % 7], savedTitle: '' };
+            // only exercises from the library (or your own), each once a day
+            const seen = new Set(), exercises = (Array.isArray(d.exercises) ? d.exercises : []).filter(isObj).map(ex => {
+                const hit = known.get(toStr(ex.name).trim().toLowerCase()); if (!hit || seen.has(hit.name)) return null; seen.add(hit.name);
+                const reps = latinDigits(cut(ex.reps, 20)).trim();
+                return { muscle: hit.muscle, name: hit.name, sets: String(Math.min(8, Math.max(1, parseInt(latinDigits(ex.sets)) || 3))), reps: /\d/.test(reps) ? reps : newExercise(hit.name, hit.muscle).reps };
+            }).filter(Boolean).slice(0, 12);
+            if (d.rest === true || !exercises.length) {
+                const active = /active|نشط/i.test(toStr(d.title));
+                return { ...base, title: active ? 'Active Rest' : 'Complete Rest', isRest: true, recoveryType: active ? 'active' : 'complete', exercises: [] };
+            }
+            const title = cut(toStr(d.title).trim(), 40) || 'Workout';
+            return { ...base, title, savedTitle: title, isRest: false, recoveryType: null, exercises };
+        });
+        return schedule.some(d => !d.isRest) ? { name: cut(toStr(raw.name).trim(), 60) || t('AI program'), schedule } : null;
+    };
+
+    // What Gemini knows about you: the setup answers, your active routine and a summary of the last 8 weeks
+    const aiContext = () => {
+        const pr = getProfile(), b = getBody(), age = ageOf(b), lines = [];
+        const GOAL = { muscle: 'build muscle', strength: 'get stronger', fat: 'lose fat' }, EXP = { none: 'never trained', new: 'under 1 year', mid: '1-3 years', adv: '3-5 years', pro: 'over 5 years' };
+        lines.push(`- Goal: ${GOAL[pr.goal] || 'not set'}. Experience: ${EXP[pr.exp] || 'not set'}. Training days a week: ${pr.days || 'not set'}. Workout length: ${pr.session ? pr.session + ' minutes' : 'not set'}. Equipment: ${pr.eq === 'db' ? 'dumbbells only (plus bodyweight)' : pr.eq === 'gym' ? 'full gym' : 'not set'}.`);
+        lines.push(`- Sex: ${b.sex === 'male' ? 'male' : b.sex === 'female' ? 'female' : 'not given'}. Age: ${age || 'not given'}. Body weight: ${b.weightKg ? b.weightKg + ' kg' : 'not given'}.`);
+        const active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0];
+        if (active) lines.push(`- Current routine "${active.name}": ` + active.schedule.map(d => `${d.day}: ` + (d.isRest ? 'rest' : `${d.title} (${d.exercises.map(e => `${e.name} ${e.sets}x${e.reps}`).join(', ')})`)).join('; '));
+        const h = StorageManager.getHistory(), since = Date.now() - 56 * 864e5, map = {};
+        appData.weeks.forEach(w => w.schedule.forEach(d => d.exercises.forEach(e => { map[getExKey(0, 0, 0, e.name)] = e; })));
+        const rows = Object.keys(h).map(k => {
+            const logs = (h[k] || []).filter(l => { const tt = logTime(l); return !isNaN(tt) && tt >= since; });
+            if (!logs.length) return null;
+            const last = logs[logs.length - 1], sets = logs.flatMap(logSetDetails), best = sets.reduce((a, s) => (!a || s.w > a.w || (s.w === a.w && s.r > a.r)) ? s : a, null);
+            const top = l => { const s = logSetDetails(l); return s.length ? `${s[0].w ? s[0].w + 'kg x ' : ''}${s.map(x => x.r).join('/')}` : ''; };
+            return { n: logs.length, text: `${nameOfKey(k, map)}: ${logs.length} sessions, last ${dateKey(logTime(last))} ${top(last)}${best && best.w ? `, best set ${best.w}kg x ${best.r}` : ''}` };
+        }).filter(Boolean).sort((a, c) => c.n - a.n).slice(0, 40);
+        lines.push(rows.length ? `- Workouts in the last 8 weeks (${countWorkouts(h)} workout days in total):\n  ` + rows.map(r => r.text).join('\n  ') : '- No workouts logged in the last 8 weeks.');
+        return lines.join('\n');
+    };
+    const aiSystem = () => {
+        const start = StorageManager.getStartDay(), order = [0, 1, 2, 3, 4, 5, 6].map(i => DAY_NAMES[(DAY_NAMES.indexOf(start) + i) % 7]).join(', ');
+        const lib = muscleOptions.map(m => `${m}: ${(exerciseDictionary[m] || []).join(', ')}`).concat(getCustomEx().length ? [`Own exercises: ${getCustomEx().map(x => x.name).join(', ')}`] : []).join('\n');
+        return `You are the AI coach inside Apex Lift, a gym workout app. You help the user build the best weekly training program for them and answer their training questions.
+Rules:
+- Write "reply" in ${isAR ? 'Arabic (simple, friendly)' : 'English (simple, friendly)'}. Keep it short: at most 120 words, plain text, use "- " for lists. No markdown headings or tables.
+- Only talk about training: programs, exercises, sets, reps, rest, recovery and progression. For pain, injury, illness or pregnancy, tell them to see a doctor or physiotherapist first and don't program around it. Never give medical advice or diet plans.
+- When the user asks for a program, or a change to the program, add "routine". Otherwise leave "routine" out.
+- "routine" has exactly 7 days in this order: ${order}. Rest days: rest true, title "Complete Rest" or "Active Rest", no exercises.
+- Unless the user asks otherwise, use their number of training days, and fit each workout into their workout length (30 min: up to 4 exercises, 45 min: up to 5, 60 min: up to 7, 90 min: up to 8).
+- Sets: 1 to 6. Reps: a range written like "8 - 10", or seconds like "30 - 45s" for holds. Big lifts first.
+- Use ONLY exercise names from the list below, written exactly the same. With dumbbells only, use only dumbbell and bodyweight exercises.
+- Prefer exercises they already do (see their workouts) and use their history to say what to progress. Never invent numbers they didn't log.
+- Day titles: short (1 to 3 words), in ${isAR ? 'Arabic' : 'English'}, like ${isAR ? '"دفع", "سحب", "أرجل", "الجزء العلوي"' : '"Push", "Pull", "Legs", "Upper Body"'}. Routine name: short (up to 4 words), in ${isAR ? 'Arabic' : 'English'}.
+- When you send a routine, say in "reply" in 1 to 3 sentences why it fits them. They can see the days and exercises themselves.
+- Today is ${dateKey()} (${DAY_NAMES[new Date().getDay()]}).
+About the user:
+${aiContext()}
+Exercises you may use (by muscle):
+${lib}`;
+    };
+
+    // Firebase AI errors → a message for the user
+    const aiErrStatus = e => (e && e.customErrorData && e.customErrorData.status) || 0;
+    const aiModelGone = e => aiErrStatus(e) === 404 || /model.*(not found|not supported)|is not found/i.test((e && e.message) || '');
+    const aiErrorText = e => {
+        const s = aiErrStatus(e), m = (e && e.message) || '';
+        if (navigator.onLine === false || (e && e.code === 'fetch-error' && !s)) return t('No internet connection. Try again when online.');
+        if (s === 429 || /quota|exhausted|rate/i.test(m)) return t('The AI coach is busy right now. Try again in a minute.');
+        if ((e && e.code === 'api-not-enabled') || s === 401 || s === 403) return t('The AI coach is not ready yet. Try again later.');
+        return t('The AI coach could not answer. Try again.');
+    };
+    const aiAsk = async contents => {
+        const { fbAI, ai } = await loadAI();
+        for (;;) {
+            const model = fbAI.getGenerativeModel(ai, { model: AI_MODELS[AI.modelIx], systemInstruction: aiSystem(),
+                generationConfig: { responseMimeType: 'application/json', responseSchema: aiSchema(fbAI.Schema), temperature: 0.6, maxOutputTokens: 8192 } });
+            try { return (await model.generateContent({ contents })).response.text(); }
+            catch (e) { if (aiModelGone(e) && AI.modelIx < AI_MODELS.length - 1) { AI.modelIx++; continue; } throw e; }
+        }
+    };
+    const aiParse = text => {
+        let o = null; try { o = JSON.parse(String(text || '').trim().replace(/^```(?:json)?\s*|\s*```$/g, '')); } catch (e) {}
+        if (!isObj(o)) return null;
+        const rt = o.routine ? routineFromAi(o.routine) : null;
+        const x = cut(o.reply, 3000).trim() || (rt ? t('Here is a program for you.') : '');
+        return x || rt ? { r: 'm', x, ...(rt ? { rt } : {}) } : null;
+    };
+
+    // Chat text: plain text with line breaks, "- " lists and **bold**
+    const aiTextHTML = s => esc(s).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').split('\n').map(l => /^\s*[-•*]\s+/.test(l) ? `<span class="ai-li">${l.replace(/^\s*[-•*]\s+/, '')}</span>` : l).join('<br>').replace(/<\/span><br>/g, '</span>');
+    const aiWeekHTML = sched => `<div class="grid grid-cols-7 gap-1 mt-3">${sched.map(d => `<div class="rounded-lg py-1.5 px-0.5 text-center ${d.isRest ? 'bg-white/5 text-slate-400' : 'bg-[#d4af37]/15 text-[#d4af37]'}"><div class="text-[12px] font-bold">${esc(dayShort(d.day))}</div><div class="pv-wo mt-0.5">${d.isRest ? '—' : esc(t(d.title))}</div></div>`).join('')}</div>`;
+    const AI_IDEAS = ['Build the best program for me', 'My workouts take too long. Make them shorter.', 'I only have dumbbells at home', 'What should I improve in my current routine?'];
+    const renderAI = (scroll = true) => {
+        const list = document.getElementById('ai-list'), input = document.getElementById('ai-input'), send = document.getElementById('ai-send');
+        if (!list) return;
+        const ok = localStorage.getItem(AI_OK_KEY) === '1', msgs = getAiChat(), full = appData.weeks.length >= 5;
+        document.getElementById('ai-compose').classList.toggle('hidden', !ok);
+        document.getElementById('ai-new').classList.toggle('hidden', !ok || !msgs.length);
+        if (input) input.disabled = AI.busy;
+        if (send) { send.disabled = AI.busy; send.classList.toggle('opacity-50', AI.busy); }
+        if (!ok) {
+            list.innerHTML = `<div class="pt-4 pb-6 text-center">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-white/5 flex items-center justify-center text-[#d4af37]"><i data-lucide="sparkles" class="w-7 h-7"></i></div>
+                <h2 class="text-[22px] font-black text-white mt-4">${t('Your AI coach')}</h2>
+                <p class="text-[14px] font-bold text-slate-300 mt-2">${t('Tell it what you want and it builds a program for you, from your answers and your workouts.')}</p>
+            </div>
+            <div class="glass-card ex-card text-[13px] font-bold text-slate-300 space-y-2">
+                <p class="flex gap-2"><i data-lucide="send" class="w-4 h-4 shrink-0 mt-0.5 text-slate-400"></i><span>${t('To answer, your training answers, age, sex, body weight, routines and workout history are sent to Google Gemini. Your name and email are not sent.')}</span></p>
+                <p class="flex gap-2"><i data-lucide="shield-alert" class="w-4 h-4 shrink-0 mt-0.5 text-slate-400"></i><span>${t('Its answers can be wrong. It is not medical advice: stop if something hurts and see a doctor.')}</span></p>
+                <p class="flex gap-2"><i data-lucide="smartphone" class="w-4 h-4 shrink-0 mt-0.5 text-slate-400"></i><span>${t('The chat is saved on this phone only. Don\'t type private details in it.')}</span></p>
+            </div>
+            <a href="privacy.html${isAR ? '#ar' : ''}" target="_blank" rel="noopener" class="block text-center text-[13px] font-bold text-slate-400 underline py-3 mt-1">${t('Privacy Policy')}</a>
+            <button onclick="window.appActions.aiAgree()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 mt-2"><i data-lucide="check" class="w-5 h-5"></i>${t('Got it, start')}</button>`;
+        } else {
+            const bubble = (m, i) => m.r === 'u'
+                ? `<div class="flex justify-end"><div class="ai-msg ai-me" dir="auto">${aiTextHTML(m.x)}</div></div>`
+                : `<div class="flex justify-start"><div class="ai-msg ai-bot"><div dir="auto">${aiTextHTML(m.x)}</div>${m.rt ? `
+                    <div class="mt-3 pt-3 border-t border-white/10">
+                        <div class="flex items-center justify-between gap-2"><span class="text-[15px] font-black text-white min-w-0 truncate">${esc(m.rt.name)}</span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} training days', { n: m.rt.schedule.filter(d => !d.isRest).length })}</span></div>
+                        ${aiWeekHTML(m.rt.schedule)}
+                        ${AI.open === i ? `<div class="space-y-2 mt-3">${m.rt.schedule.map(programDayCardHTML).join('')}</div>` : ''}
+                        <div class="flex gap-2 mt-3">
+                            <button onclick="window.appActions.aiToggle(${i})" class="flex-1 py-3 rounded-xl bg-white/5 border border-white/10 text-[13px] font-bold text-slate-200 tap-feedback">${t(AI.open === i ? 'Hide days' : 'See all days')}</button>
+                            <button onclick="window.appActions.aiUse(${i})" class="flex-1 py-3 rounded-xl ${m.used ? 'bg-white/5 border border-white/10 text-slate-300' : 'bg-[#d4af37] text-black'} text-[13px] font-black tap-feedback">${t(m.used ? 'Use it again' : 'Use this program')}</button>
+                        </div>
+                        <p class="text-[12px] font-bold text-slate-400 mt-2">${full ? t('It replaces your current routine. Your history is kept.') : t('It is added as a new routine. Your current routine and history are kept.')}</p>
+                    </div>` : ''}</div></div>`;
+            list.innerHTML = (msgs.length ? '' : `<div class="pt-2 pb-4">
+                    <p class="text-[14px] font-bold text-slate-300">${t('Ask for a program, a change to your routine, or anything about training.')}</p>
+                    <div class="flex flex-col gap-2 mt-4">${AI_IDEAS.map(q => `<button onclick="window.appActions.aiSend(${jsArg(t(q))})" class="w-full text-start px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-[14px] font-bold text-slate-200 tap-feedback">${esc(t(q))}</button>`).join('')}</div>
+                </div>`)
+                + `<div class="space-y-3">${msgs.map(bubble).join('')}${AI.busy ? `<div class="flex justify-start"><div class="ai-msg ai-bot" role="status" aria-label="${esc(t('Thinking…'))}"><span class="ai-dots"><i></i><i></i><i></i></span></div></div>` : ''}</div>`;
+        }
+        if (window.lucide) window.lucide.createIcons({ root: list });
+        if (scroll) list.scrollTop = list.scrollHeight;
+    };
+    Object.assign(window.appActions, {
+        openAI: () => {
+            AI.open = -1;
+            const box = document.getElementById('ai-box');
+            box.querySelectorAll('[data-ai-label]').forEach(el => el.setAttribute('aria-label', t(el.dataset.aiLabel)));
+            renderAI();
+            openSheet('ai-overlay', 'ai-box');
+            pushBack('ai', () => window.appActions.closeAI());
+        },
+        closeAI: () => { popBack('ai'); closeSheet('ai-overlay', 'ai-box'); },
+        aiAgree: () => { try { localStorage.setItem(AI_OK_KEY, '1'); } catch (e) {} renderAI(); loadAI().catch(() => {}); },
+        aiNew: () => {
+            if (AI.busy || !getAiChat().length) return;
+            window.appActions.showConfirm(t('Start a new chat?'), t('This chat is deleted from this phone.'), () => { setAiChat([]); AI.open = -1; renderAI(); }, true);
+        },
+        aiToggle: i => { AI.open = AI.open === i ? -1 : i; const list = document.getElementById('ai-list'), top = list.scrollTop; renderAI(false); list.scrollTop = top; },
+        aiSend: async preset => {
+            const input = document.getElementById('ai-input');
+            const text = cut(typeof preset === 'string' ? preset : (input ? input.value : ''), 500).trim();
+            if (!text || AI.busy) return;
+            if (navigator.onLine === false) return window.appActions.showToast(t('No internet connection. Try again when online.'), 'error');
+            if (aiCount() >= AI_DAILY) return window.appActions.showToast(t('That is all the questions for today. Try again tomorrow.'), 'error');
+            const msgs = [...getAiChat(), { r: 'u', x: text }];
+            setAiChat(msgs);
+            if (input) { input.value = ''; input.style.height = ''; }
+            AI.busy = true; renderAI();
+            try {
+                aiCountUp();
+                const contents = msgs.slice(-AI_CONTEXT).map(m => ({ role: m.r === 'u' ? 'user' : 'model', parts: [{ text: m.r === 'u' ? m.x : JSON.stringify({ reply: m.x, ...(m.rt ? { routine: routineToAi(m.rt) } : {}) }) }] }));
+                while (contents.length && contents[0].role !== 'user') contents.shift(); // a chat starts with a question
+                const reply = aiParse(await aiAsk(contents));
+                setAiChat([...getAiChat(), reply || { r: 'm', x: t('The AI coach could not answer. Try again.') }]);
+            } catch (e) {
+                console.warn('AI coach', e);
+                setAiChat([...getAiChat(), { r: 'm', x: aiErrorText(e) }]);
+            } finally { AI.busy = false; renderAI(); }
+        },
+        aiUse: (i, sure = false) => {
+            const msgs = getAiChat(), m = msgs[i]; if (!m || !m.rt) return;
+            if (!sure && appData.weeks.length >= 5)
+                return window.appActions.showConfirm(t('Replace current routine?'), t('You have 5 routines (the most). The current one will be replaced; your history is kept.'), () => window.appActions.aiUse(i, true), true);
+            const clean = sanitizePlan({ weeks: [{ id: 'w_' + Date.now(), name: m.rt.name, schedule: m.rt.schedule }] });
+            if (!clean) return;
+            m.used = true; setAiChat(msgs);
+            window.appActions.closeAI();
+            putRoutine(clean.weeks[0].name, clean.weeks[0].schedule, { undo: true });
+        },
+        aiGrow: el => { el.style.height = ''; el.style.height = Math.min(el.scrollHeight, 140) + 'px'; }
+    });
 
     // ☁️ CLOUD BACKUP & SYNC (optional): sign in with Google; data is kept in Firebase (Firestore).
     // The phone stays the main copy and keeps working offline; the cloud mirrors it and brings it to your other phones.
@@ -4655,6 +4931,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     enableSwipeDown(document.getElementById('picker-box'), () => window.appActions.closePicker());
     enableSwipeDown(document.getElementById('history-modal-box'), () => window.appActions.closeHistoryModal());
     enableSwipeDown(document.getElementById('programs-box'), () => window.appActions.closePrograms());
+    enableSwipeDown(document.getElementById('ai-box'), () => window.appActions.closeAI());
     enableDaySwipe(document.querySelector('.scrollable-content')); // the whole Today screen, so rest days (one small card) swipe too
     // An unfinished Log/Focus session (e.g. the phone closed the app during rest) comes back minimized
     (() => {

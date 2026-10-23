@@ -85,7 +85,8 @@ const audit = smallOk => {
     for (const t of ['plan', 'progress', 'profile']) await shot(t, () => page.evaluate(t => window.appActions.switchTab(t), t));
     await page.evaluate(() => window.appActions.switchTab('today'));
     await page.waitForTimeout(600);
-    await shot('exercise', () => page.click('.ex-card'));
+    // on a rest day Today has no exercises: open the first training day of the week
+    await shot('exercise', async () => { if (!(await page.$('.ex-card'))) await page.evaluate(() => [...document.querySelectorAll('.wk-day:not(.is-rest)')].find(b => b.offsetParent).click()); await page.waitForTimeout(400); await page.click('.ex-card'); });
     await shot('workout', () => page.click('#ex-sheet-content button[onclick*="startWorkout"]'));
     // tick off the first set: the row turns green and the rest timer shows
     await shot('rest', async () => { await page.fill('#aw-sets-container input[id^="aw-w-"]', '60'); await page.fill('#aw-sets-container input[id^="aw-rep-"]', '8'); await page.click('#aw-title'); });
@@ -101,6 +102,12 @@ const audit = smallOk => {
     await shot('plan-day', act(`window.appActions.switchTab('plan'); window.appActions.openPlanDay(new Date().getDay() === 6 ? 1 : 1)`));
     await shot('picker', async () => { await page.evaluate(() => window.appActions.openPicker('add')); });
     await shot('programs', act(`window.appActions.switchTab('plan'); window.appActions.openPrograms()`));
+    // AI coach: the first-time notice, then a chat with a routine (written straight into the phone's chat, no Gemini needed)
+    await shot('ai-start', act(`localStorage.removeItem('workoutAiOk_rakan_final'); localStorage.removeItem('workoutAiChat_rakan_final'); window.appActions.openAI()`));
+    await shot('ai', act(`const w = JSON.parse(localStorage.getItem('workoutPlan_rakan_final_v3')).weeks[0];
+        localStorage.setItem('workoutAiOk_rakan_final', '1');
+        localStorage.setItem('workoutAiChat_rakan_final', JSON.stringify([{ r: 'u', x: 'Build the best program for me' }, { r: 'm', x: 'Here is a 4 day program.\\n- Big lifts first\\n- Add weight when you reach the top of the reps', rt: { name: 'Upper / Lower', schedule: w.schedule } }]));
+        window.appActions.openAI(); window.appActions.aiToggle(1)`));
     await shot('code', act(`window.appActions.openCodeSheet()`));
     await shot('email', act(`window.appActions.openEmail('up')`));
     await shot('confirm', act(`window.appActions.showConfirm('Delete this routine?', 'Your history is kept.', () => {}, true)`));
