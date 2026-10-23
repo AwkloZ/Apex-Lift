@@ -113,9 +113,9 @@
         "Your coach forgets the notes it kept about you.": "سينسى مدربك الملاحظات التي حفظها عنك.",
         "This chat is deleted from this phone. What your coach remembers about you is kept.": "ستُحذف هذه المحادثة من هذا الجوال، ويبقى ما يتذكّره مدربك عنك.",
         "Coach": "المدرب",
-        "AI coach": "المدرب الذكي",
-        "Your AI coach": "مدربك الذكي",
-        "Build with the AI coach": "ابنِ برنامجك مع المدرب الذكي",
+        "Apex Coach": "مدرب أبكس",
+        "Meet Apex Coach": "تعرّف على مدرب أبكس",
+        "Build with Apex Coach": "ابنِ برنامجك مع مدرب أبكس",
         "Tell it what you want: it builds a program from your answers and workouts.": "أخبره بما تريد، ويبني لك برنامجًا من إجاباتك وتمارينك.",
         "Build a program that fits you": "برنامج يناسبك أنت",
         "Tell it what you want and it builds a program for you, from your answers and your workouts.": "أخبره بما تريد، ويبني لك برنامجًا من إجاباتك وتمارينك.",
@@ -137,11 +137,11 @@
         "See all days": "عرض كل الأيام",
         "Hide days": "إخفاء الأيام",
         "Use it again": "استخدمه مرة أخرى",
-        "AI program": "برنامج المدرب الذكي",
+        "Apex Coach program": "برنامج مدرب أبكس",
         "Here is a program for you.": "هذا برنامج لك.",
-        "The AI coach is busy right now. Try again in a minute.": "المدرب الذكي مشغول الآن. حاول بعد دقيقة.",
-        "The AI coach is not ready yet. Try again later.": "المدرب الذكي غير جاهز بعد. حاول لاحقًا.",
-        "The AI coach could not answer. Try again.": "لم يستطع المدرب الذكي الإجابة. حاول مرة أخرى.",
+        "Apex Coach is busy right now. Try again in a minute.": "مدرب أبكس مشغول الآن. حاول بعد دقيقة.",
+        "Apex Coach is not ready yet. Try again later.": "مدرب أبكس غير جاهز بعد. حاول لاحقًا.",
+        "Apex Coach could not answer. Try again.": "لم يستطع مدرب أبكس الإجابة. حاول مرة أخرى.",
         "That is all the questions for today. Try again tomorrow.": "انتهت أسئلة اليوم. حاول مرة أخرى غدًا.",
         "It replaces your current routine. Your history is kept.": "سيحل محل جدولك الحالي. سجلك محفوظ.",
         "It is added as a new routine. Your current routine and history are kept.": "سيُضاف كجدول جديد. جدولك الحالي وسجلك محفوظان.",
@@ -1112,7 +1112,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '55';
+    const APP_VERSION = '56';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -2063,7 +2063,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             <div class="pf-group mb-4">
                 ${pfRow('calendar-range', t('Active routine'), esc(t(active.name)))}
                 <button onclick="window.appActions.closeTraining(); setTimeout(window.appActions.openPrograms, 320)" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="layout-list"></i></span><span class="pf-label">${t('Browse programs')}<span class="pf-sub">${t('Add another ready-made program')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
-                <button onclick="window.appActions.closeTraining(); setTimeout(window.appActions.openAI, 320)" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="sparkles"></i></span><span class="pf-label">${t('AI coach')}<span class="pf-sub">${t('Build a program that fits you')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
+                <button onclick="window.appActions.closeTraining(); setTimeout(window.appActions.openAI, 320)" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="sparkles"></i></span><span class="pf-label">${t('Apex Coach')}<span class="pf-sub">${t('Build a program that fits you')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
             </div>`;
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
@@ -3415,7 +3415,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (!pick) {
                 list.innerHTML = `<button onclick="window.appActions.closePrograms(); setTimeout(window.appActions.openAI, 320)" class="w-[calc(100%-2rem)] mx-4 mb-3 p-4 rounded-2xl border bg-white/5 border-white/10 text-start tap-feedback flex items-center gap-3">
                     <span class="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-[#d4af37] shrink-0"><i data-lucide="sparkles" class="w-5 h-5"></i></span>
-                    <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${t('Build with the AI coach')}</span><span class="block text-[12px] font-bold text-slate-400 mt-1">${t('Tell it what you want: it builds a program from your answers and workouts.')}</span></span>
+                    <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${t('Build with Apex Coach')}</span><span class="block text-[12px] font-bold text-slate-400 mt-1">${t('Tell it what you want: it builds a program from your answers and workouts.')}</span></span>
                     <i data-lucide="${isAR ? 'chevron-left' : 'chevron-right'}" class="w-5 h-5 text-slate-400 shrink-0"></i>
                 </button>` + PROGRAMS.map(p => `<button onclick="window.appActions.previewProgram(${jsArg(p.id)})" class="w-[calc(100%-2rem)] mx-4 mb-3 p-4 rounded-2xl border bg-white/5 border-white/10 text-start tap-feedback flex items-center gap-3">
                     <span class="flex-1 min-w-0">
@@ -3461,7 +3461,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // registered in Firebase → App Check → Apps. Then App Check → APIs → Firebase AI Logic → Enforce.
     // Gemini may only name exercises from the library; the app checks the routine (7 days, known exercises, sensible sets) before
     // it can be used. The chat is kept on this phone only. Its Firebase files are only downloaded when the coach is opened.
-    const AI_MODELS = ['gemini-3.5-flash', 'gemini-2.5-flash']; // the first one that works; the next one if Google retires it
+    const AI_MODELS = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-2.5-flash-lite']; // the first one that works; the next one if Google retires it or it is busy
     const AI_APP_CHECK_KEY = '6LdWE_0tAAAAAJvI8b37jqVxj9-0aACe2WFj_VDJ'; // Fraud Defense key ID (not secret). Empty = no App Check
     const AI_CHAT_KEY = 'workoutAiChat_rakan_final', AI_OK_KEY = 'workoutAiOk_rakan_final', AI_COUNT_KEY = 'workoutAiCount_rakan_final';
     // what the coach remembers about you (injuries, likes, schedule...): short notes it writes itself, kept on this phone after "New chat"
@@ -3533,7 +3533,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         });
         if (!schedule.some(d => !d.isRest)) return null;
         // a change to their routine keeps its name, and lists what changes
-        return orig ? { name: orig.name, schedule, edit: orig.id, chg: aiChanges(orig.schedule, schedule) } : { name: cut(toStr(raw.name).trim(), 60) || t('AI program'), schedule };
+        return orig ? { name: orig.name, schedule, edit: orig.id, chg: aiChanges(orig.schedule, schedule) } : { name: cut(toStr(raw.name).trim(), 60) || t('Apex Coach program'), schedule };
     };
     // What a change does, day by day: exercises added, removed, or with other sets/reps; a day that becomes rest or training
     const aiChanges = (before, after) => after.map((d, i) => {
@@ -3609,7 +3609,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const aiSystem = () => {
         const start = StorageManager.getStartDay(), order = [0, 1, 2, 3, 4, 5, 6].map(i => DAY_NAMES[(DAY_NAMES.indexOf(start) + i) % 7]).join(', ');
         const lib = muscleOptions.map(m => `${m}: ${(exerciseDictionary[m] || []).join(', ')}`).concat(getCustomEx().length ? [`Own exercises: ${getCustomEx().map(x => x.name).join(', ')}`] : []).join('\n');
-        return `You are the personal coach inside Apex Lift, a gym workout app. Talk like a real, experienced coach who knows this person: warm, natural and honest, in your own words. Have a real conversation: react to what they say, ask when you are curious or something matters, share your reasoning, encourage them, and push back kindly when an idea isn't good for them. Don't follow a script or a fixed list of questions.
+        return `You are Apex Coach (in Arabic: مدرب أبكس), the personal coach inside Apex Lift, a gym workout app. Talk like a real, experienced coach who knows this person: warm, natural and honest, in your own words. Have a real conversation: react to what they say, ask when you are curious or something matters, share your reasoning, encourage them, and push back kindly when an idea isn't good for them. Don't follow a script or a fixed list of questions.
 
 Your only job is coaching: training, programs, exercises and technique, progression, recovery and sleep, motivation and habits, and general nutrition for training (protein, eating enough or less for their goal). If they ask about something else, answer in one friendly sentence that you're only their coach, and bring it back to their training. You are not a doctor: for pain, injury, illness, medicines or pregnancy, tell them to see a doctor or physiotherapist, and don't program around an injury yourself.
 
@@ -3637,20 +3637,29 @@ ${lib}`;
     // Firebase AI errors → a message for the user
     const aiErrStatus = e => (e && e.customErrorData && e.customErrorData.status) || 0;
     const aiModelGone = e => aiErrStatus(e) === 404 || /model.*(not found|not supported)|is not found/i.test((e && e.message) || '');
+    // Google is busy: the free limit for the minute/day (429) or its servers are overloaded (5xx). The error text holds the
+    // request address (…:generateContent), so only status codes and whole words are checked.
+    const aiBusy = e => { const st = aiErrStatus(e); return st === 429 || st >= 500 || /\b(quota|exhausted|overloaded|too many requests|rate limit)\b/i.test((e && e.message) || ''); };
     const aiErrorText = e => {
-        const s = aiErrStatus(e), m = (e && e.message) || '';
-        if (navigator.onLine === false || (e && e.code === 'fetch-error' && !s)) return t('No internet connection. Try again when online.');
-        if (s === 429 || /quota|exhausted|rate/i.test(m)) return t('The AI coach is busy right now. Try again in a minute.');
-        if ((e && e.code === 'api-not-enabled') || s === 401 || s === 403) return t('The AI coach is not ready yet. Try again later.');
-        return t('The AI coach could not answer. Try again.');
+        const st = aiErrStatus(e), code = st ? ` (${st})` : '';
+        if (navigator.onLine === false || (e && e.code === 'fetch-error' && !st)) return t('No internet connection. Try again when online.');
+        if (aiBusy(e)) return t('Apex Coach is busy right now. Try again in a minute.') + code;
+        if ((e && e.code === 'api-not-enabled') || st === 401 || st === 403) return t('Apex Coach is not ready yet. Try again later.') + code;
+        return t('Apex Coach could not answer. Try again.') + code;
     };
     const aiAsk = async contents => {
         const { fbAI, ai } = await loadAI();
+        let tries = 0;
         for (;;) {
             const model = fbAI.getGenerativeModel(ai, { model: AI_MODELS[AI.modelIx], systemInstruction: aiSystem(),
                 generationConfig: { responseMimeType: 'application/json', responseSchema: aiSchema(fbAI.Schema), temperature: 0.9, maxOutputTokens: 8192 } });
             try { return (await model.generateContent({ contents })).response.text(); }
-            catch (e) { if (aiModelGone(e) && AI.modelIx < AI_MODELS.length - 1) { AI.modelIx++; continue; } throw e; }
+            catch (e) {
+                // retired or busy model: the next one (each has its own free limit); the last one: wait and try twice more
+                if ((aiModelGone(e) || aiBusy(e)) && AI.modelIx < AI_MODELS.length - 1) { AI.modelIx++; continue; }
+                if (aiBusy(e) && tries < 2) { tries++; await new Promise(ok => setTimeout(ok, 3000 * tries)); continue; }
+                throw e;
+            }
         }
     };
     const aiParse = text => {
@@ -3678,7 +3687,7 @@ ${lib}`;
         if (!ok) {
             list.innerHTML = `<div class="pt-4 pb-6 text-center">
                 <div class="w-14 h-14 mx-auto rounded-2xl bg-white/5 flex items-center justify-center text-[#d4af37]"><i data-lucide="sparkles" class="w-7 h-7"></i></div>
-                <h2 class="text-[22px] font-black text-white mt-4">${t('Your AI coach')}</h2>
+                <h2 class="text-[22px] font-black text-white mt-4">${t('Meet Apex Coach')}</h2>
                 <p class="text-[14px] font-bold text-slate-300 mt-2">${t('Tell it what you want and it builds a program for you, from your answers and your workouts.')}</p>
             </div>
             <div class="glass-card ex-card text-[13px] font-bold text-slate-300 space-y-2">
@@ -3744,7 +3753,7 @@ ${lib}`;
                 const contents = msgs.slice(-AI_CONTEXT).map(m => ({ role: m.r === 'u' ? 'user' : 'model', parts: [{ text: m.r === 'u' ? m.x : JSON.stringify({ reply: m.x, ...(m.rt ? { routine: routineToAi(m.rt) } : {}) }) }] }));
                 while (contents.length && contents[0].role !== 'user') contents.shift(); // a chat starts with a question
                 const reply = aiParse(await aiAsk(contents));
-                setAiChat([...getAiChat(), reply || { r: 'm', x: t('The AI coach could not answer. Try again.') }]);
+                setAiChat([...getAiChat(), reply || { r: 'm', x: t('Apex Coach could not answer. Try again.') }]);
             } catch (e) {
                 console.warn('AI coach', e);
                 setAiChat([...getAiChat(), { r: 'm', x: aiErrorText(e) }]);
