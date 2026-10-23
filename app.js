@@ -96,6 +96,9 @@
         "Intermediate": "متوسط",
         "Advanced": "متقدم",
         "Use this program": "استخدم هذا البرنامج",
+        "Finish your workout first, then change your plan.": "أنهِ تمرينك أولًا، ثم عدّل برنامجك.",
+        "Try again": "حاول مرة أخرى",
+        "Apex Coach is thinking. A full program can take up to 30 seconds.": "مدرب Apex يفكّر. قد يستغرق البرنامج الكامل حتى ٣٠ ثانية.",
         "How is my progress?": "كيف تقدّمي؟",
         "I don't like one exercise in my routine": "لا أرتاح لتمرين في جدولي",
         "Which muscle is my weakest?": "ما أضعف عضلة عندي؟",
@@ -121,7 +124,7 @@
         "Tell it what you want and it builds a program for you, from your answers and your workouts.": "أخبره بما تريد، ويبني لك برنامجًا من إجاباتك وتمارينك.",
         "To answer, your training answers, age, sex, body weight, routines, workout history and check-ins are sent to Google Gemini. Your name and email are not sent.": "حتى يجيبك، تُرسل إجابات التمرين والعمر والجنس ووزن الجسم والجداول وسجل التمارين والتقييمات اليومية إلى Google Gemini. لا يُرسل اسمك ولا بريدك.",
         "Its answers can be wrong. It is not medical advice: stop if something hurts and see a doctor.": "قد تكون إجاباته خاطئة، وهي ليست نصيحة طبية: توقّف إذا شعرت بألم وراجع طبيبًا.",
-        "The chat is saved on this phone only. Don't type private details in it.": "المحادثة محفوظة على هذا الجوال فقط. لا تكتب فيها معلومات خاصة.",
+        "The chat is saved on this phone. Google and the Apex Lift team can see the questions for a limited time, so don't type private details.": "المحادثة محفوظة على هذا الجوال، ويمكن لـ Google وفريق Apex Lift الاطلاع على الأسئلة لمدة محدودة، لذا لا تكتب معلومات خاصة.",
         "Got it, start": "فهمت، لنبدأ",
         "Ask for a program, a change to your routine, or anything about training.": "اطلب برنامجًا، أو تعديلًا على جدولك، أو اسأل أي سؤال عن التمرين.",
         "Build the best program for me": "ابنِ لي أفضل برنامج",
@@ -1040,7 +1043,7 @@
     const getResets = () => { const v = readJSON(RESET_KEY, {}); return isObj(v) ? v : {}; };
     const setResets = d => { try { localStorage.setItem(RESET_KEY, JSON.stringify(d)); } catch (e) {} };
     // Terms of Use & Privacy Policy: which version the user agreed to, and when
-    const TERMS_VERSION = '2026-10.9';
+    const TERMS_VERSION = '2026-10.10';
     const AGREE_KEY = 'workoutAgreed_rakan_final';
     const getAgree = () => { const v = readJSON(AGREE_KEY, null); return isObj(v) && v.v === TERMS_VERSION ? v : null; };
     const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
@@ -1112,7 +1115,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '57';
+    const APP_VERSION = '59';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3461,15 +3464,16 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // registered in Firebase → App Check → Apps. Then App Check → APIs → Firebase AI Logic → Enforce.
     // Gemini may only name exercises from the library; the app checks the routine (7 days, known exercises, sensible sets) before
     // it can be used. The chat is kept on this phone only. Its Firebase files are only downloaded when the coach is opened.
-    const AI_MODELS = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-2.5-flash-lite']; // the first one that works; the next one if Google retires it or it is busy
+    // tried in this order for every question: the next one only when Google fails (busy, server error) or has retired the model
+    const AI_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3-flash-preview', 'gemini-2.5-flash'];
     const AI_APP_CHECK_KEY = '6LdWE_0tAAAAAJvI8b37jqVxj9-0aACe2WFj_VDJ'; // Fraud Defense key ID (not secret). Empty = no App Check
     const AI_CHAT_KEY = 'workoutAiChat_rakan_final', AI_OK_KEY = 'workoutAiOk_rakan_final', AI_COUNT_KEY = 'workoutAiCount_rakan_final';
     // what the coach remembers about you (injuries, likes, schedule...): short notes it writes itself, kept on this phone after "New chat"
     const AI_MEM_KEY = 'workoutAiMemory_rakan_final';
     const getAiMemory = () => { const v = readJSON(AI_MEM_KEY, []); return Array.isArray(v) ? v.filter(x => typeof x === 'string' && x.trim()).map(x => x.trim().slice(0, 160)).slice(0, 20) : []; };
     const AI_DAILY = 40; // questions a day on one phone, so one person can't use up the free quota
-    const AI_KEEP = 30, AI_CONTEXT = 12; // messages kept on the phone / sent with each question
-    const AI = { loading: null, modelIx: 0, busy: false, open: -1 };
+    const AI_KEEP = 30, AI_CONTEXT = 10; // messages kept on the phone / sent with each question
+    const AI = { loading: null, gone: new Set(), noThink: new Set(), busy: false, open: -1 }; // gone: models Google said don't exist (this visit)
     const loadAI = () => AI.loading || (AI.loading = (async () => {
         const [fbApp, fbAI] = await Promise.all([import('./' + FB_DIR + 'firebase-app.js'), import('./' + FB_DIR + 'firebase-ai.js')]);
         // its own Firebase app (the modular files can't share the sign-in's compat app), same project
@@ -3482,8 +3486,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     })().catch(e => { AI.loading = null; throw e; }));
 
     const sanitizeAiChat = raw => (Array.isArray(raw) ? raw : []).filter(m => isObj(m) && (m.r === 'u' || m.r === 'm') && typeof m.x === 'string')
-        .map(m => ({ r: m.r, x: m.x.slice(0, 3000), ...(isObj(m.rt) && Array.isArray(m.rt.schedule) ? { rt: m.rt } : {}), ...(m.used ? { used: true } : {}), ...(Array.isArray(m.ch) && m.ch.length ? { ch: m.ch.filter(c => typeof c === 'string' && c.trim()).slice(0, 6).map(c => c.trim().slice(0, 60)) } : {}) })).slice(-AI_KEEP);
-    const getAiChat = () => sanitizeAiChat(readJSON(AI_CHAT_KEY, []));
+        .map(m => ({ r: m.r, x: m.x.slice(0, 3000), ...(isObj(m.rt) && Array.isArray(m.rt.schedule) ? { rt: m.rt } : {}), ...(m.used ? { used: true } : {}), ...(m.err ? { err: true } : {}), ...(Array.isArray(m.ch) && m.ch.length ? { ch: m.ch.filter(c => typeof c === 'string' && c.trim()).slice(0, 6).map(c => c.trim().slice(0, 60)) } : {}) })).slice(-AI_KEEP);
+    const AI_ERRS = ['Apex Coach is busy right now. Try again in a minute.', 'Apex Coach is not ready yet. Try again later.', 'Apex Coach could not answer. Try again.', 'No internet connection. Try again when online.',
+        'The AI coach is busy right now. Try again in a minute.', 'The AI coach is not ready yet. Try again later.', 'The AI coach could not answer. Try again.'];
+    const getAiChat = () => sanitizeAiChat(readJSON(AI_CHAT_KEY, [])).map(m => m.r === 'm' && !m.err && !m.rt && AI_ERRS.some(e => m.x.startsWith(e) || m.x.startsWith(t(e))) ? { ...m, err: true } : m);
     const setAiChat = list => writeItem(AI_CHAT_KEY, JSON.stringify(sanitizeAiChat(list)));
     const aiCount = () => { const v = readJSON(AI_COUNT_KEY, null); return isObj(v) && v.d === dateKey() ? (parseInt(v.n) || 0) : 0; };
     const aiCountUp = () => writeItem(AI_COUNT_KEY, JSON.stringify({ d: dateKey(), n: aiCount() + 1 }));
@@ -3623,7 +3629,7 @@ How you coach:
 
 How the app reads your answer (follow this exactly):
 - "reply": what you say, in ${isAR ? 'Arabic' : 'English'}, written like a chat message on a phone: usually short, longer only when they ask for detail. Plain text; "- " for lists and **bold** are fine; no headings or tables.
-- "memory": the things worth remembering about them for later chats (injuries or pain, likes and dislikes, schedule and life, goals and weak points they told you), as short notes in English. Send the full updated list (up to 15 notes) only when you learned something new or something changed; leave it out otherwise.
+- "memory": the things worth remembering about them for later chats (injuries or pain, likes and dislikes, schedule and life, goals and weak points they told you), as short notes in ${isAR ? 'Arabic' : 'English'}. Send the full updated list (up to 15 notes) only when you learned something new or something changed; leave it out otherwise.
 - "choices": when you ask something, 2 to 5 short answers they can tap (up to 5 words each, in their language). Leave it out otherwise.
 - "routine": only when you build or change a program ("edit": true when it is their current routine with changes, then keep its days and only change what they asked). Exactly 7 days in this order: ${order}. Rest days: rest true, title "Complete Rest" or "Active Rest", no exercises. Use their number of training days and workout length unless they ask otherwise (about 4 exercises for 30 min, 5 for 45, 7 for 60, 8 for 90). Sets 1 to 6; reps like "8 - 10", or seconds like "30 - 45s" for holds; big lifts first. Use ONLY exercise names from the list below, written exactly the same (with dumbbells only: dumbbell and bodyweight exercises). Day titles 1 to 3 words and the routine name up to 4 words, in ${isAR ? 'Arabic' : 'English'}, like ${isAR ? '"دفع", "سحب", "أرجل", "الجزء العلوي"' : '"Push", "Pull", "Legs", "Upper Body"'}. With a routine, "reply" says briefly why it fits them; they can see the days themselves.
 - Today is ${dateKey()} (${DAY_NAMES[new Date().getDay()]}).
@@ -3649,18 +3655,21 @@ ${lib}`;
     };
     const aiAsk = async contents => {
         const { fbAI, ai } = await loadAI();
-        let tries = 0;
-        for (;;) {
-            const model = fbAI.getGenerativeModel(ai, { model: AI_MODELS[AI.modelIx], systemInstruction: aiSystem(),
-                generationConfig: { responseMimeType: 'application/json', responseSchema: aiSchema(fbAI.Schema), temperature: 0.9, maxOutputTokens: 8192 } });
+        const models = AI_MODELS.filter(m => !AI.gone.has(m)), list = models.length ? models : AI_MODELS; let last = null;
+        for (let i = 0; i < list.length; i++) {
+            const name = list[i], think = /^gemini-3/.test(name) && !AI.noThink.has(name) ? { thinkingConfig: { thinkingLevel: 'LOW' } } : {};
+            const model = fbAI.getGenerativeModel(ai, { model: name, systemInstruction: aiSystem(),
+                generationConfig: { responseMimeType: 'application/json', responseSchema: aiSchema(fbAI.Schema), temperature: 0.9, maxOutputTokens: 8192, ...think } });
             try { return (await model.generateContent({ contents })).response.text(); }
             catch (e) {
-                // retired or busy model: the next one (each has its own free limit); the last one: wait and try twice more
-                if ((aiModelGone(e) || aiBusy(e)) && AI.modelIx < AI_MODELS.length - 1) { AI.modelIx++; continue; }
-                if (aiBusy(e) && tries < 2) { tries++; await new Promise(ok => setTimeout(ok, 3000 * tries)); continue; }
+                last = e; console.warn('Apex Coach', name, e);
+                if (think.thinkingConfig && aiErrStatus(e) === 400) { AI.noThink.add(name); i--; continue; } // same model, without the setting
+                if (aiModelGone(e)) { AI.gone.add(name); continue; } // retired: never again this visit
+                if (aiBusy(e)) continue; // busy or a server error at Google: the next model (each has its own free limit)
                 throw e;
             }
         }
+        throw last;
     };
     const aiParse = text => {
         let o = null; try { o = JSON.parse(String(text || '').trim().replace(/^```(?:json)?\s*|\s*```$/g, '')); } catch (e) {}
@@ -3693,13 +3702,14 @@ ${lib}`;
             <div class="glass-card ex-card text-[13px] font-bold text-slate-300 space-y-2">
                 <p class="flex gap-2"><i data-lucide="send" class="w-4 h-4 shrink-0 mt-0.5 text-slate-400"></i><span>${t('To answer, your training answers, age, sex, body weight, routines, workout history and check-ins are sent to Google Gemini. Your name and email are not sent.')}</span></p>
                 <p class="flex gap-2"><i data-lucide="shield-alert" class="w-4 h-4 shrink-0 mt-0.5 text-slate-400"></i><span>${t('Its answers can be wrong. It is not medical advice: stop if something hurts and see a doctor.')}</span></p>
-                <p class="flex gap-2"><i data-lucide="smartphone" class="w-4 h-4 shrink-0 mt-0.5 text-slate-400"></i><span>${t('The chat is saved on this phone only. Don\'t type private details in it.')}</span></p>
+                <p class="flex gap-2"><i data-lucide="smartphone" class="w-4 h-4 shrink-0 mt-0.5 text-slate-400"></i><span>${t('The chat is saved on this phone. Google and the Apex Lift team can see the questions for a limited time, so don\'t type private details.')}</span></p>
             </div>
             <a href="privacy.html${isAR ? '#ar' : ''}" target="_blank" rel="noopener" class="block text-center text-[13px] font-bold text-slate-400 underline py-3 mt-1">${t('Privacy Policy')}</a>
             <button onclick="window.appActions.aiAgree()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 mt-2"><i data-lucide="check" class="w-5 h-5"></i>${t('Got it, start')}</button>`;
         } else {
             const bubble = (m, i) => m.r === 'u'
                 ? `<div class="flex justify-end"><div class="ai-msg ai-me" dir="auto">${aiTextHTML(m.x)}</div></div>`
+                : m.err ? `<div class="flex justify-start"><div class="ai-msg ai-bot ai-err" role="alert"><div class="flex gap-2"><i data-lucide="cloud-off" class="w-4 h-4 shrink-0 mt-1 text-slate-400"></i><span dir="auto">${aiTextHTML(m.x)}</span></div>${i === msgs.length - 1 && !AI.busy ? `<button onclick="window.appActions.aiRetry()" class="mt-3 w-full py-3 rounded-xl bg-white/5 border border-white/10 text-[13px] font-black text-white tap-feedback flex items-center justify-center gap-2"><i data-lucide="rotate-cw" class="w-4 h-4"></i>${t('Try again')}</button>` : ''}</div></div>`
                 : `<div class="flex justify-start"><div class="ai-msg ai-bot"><div dir="auto">${aiTextHTML(m.x)}</div>${m.rt ? `
                     <div class="mt-3 pt-3 border-t border-white/10">
                         <div class="flex items-center justify-between gap-2"><span class="text-[15px] font-black text-white min-w-0 truncate">${esc(m.rt.name)}</span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} training days', { n: m.rt.schedule.filter(d => !d.isRest).length })}</span></div>
@@ -3717,10 +3727,10 @@ ${lib}`;
                     ${getAiMemory().length ? `<div class="glass-card ex-card mt-4"><div class="flex items-center justify-between gap-2"><span class="text-[13px] font-black text-white">${t('Your coach remembers')}</span><button onclick="window.appActions.aiForget()" class="text-[13px] font-bold text-slate-400 underline px-2 py-2.5 tap-feedback">${t('Forget all')}</button></div>${getAiMemory().map(n => `<span class="ai-li text-[13px] font-bold text-slate-300 mt-1" dir="auto">${esc(n)}</span>`).join('')}</div>` : ''}
                     <div class="flex flex-col gap-2 mt-4">${AI_IDEAS.map(q => `<button onclick="window.appActions.aiSend(${jsArg(t(q))})" class="w-full text-start px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-[14px] font-bold text-slate-200 tap-feedback">${esc(t(q))}</button>`).join('')}</div>
                 </div>`)
-                + `<div class="space-y-3">${msgs.map(bubble).join('')}${!AI.busy && msgs.length && msgs[msgs.length - 1].ch ? `<div class="flex flex-wrap gap-2">${msgs[msgs.length - 1].ch.map(c => `<button onclick="window.appActions.aiSend(${jsArg(c)})" dir="auto" class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[14px] font-bold text-slate-200 tap-feedback">${esc(c)}</button>`).join('')}</div>` : ''}${AI.busy ? `<div class="flex justify-start"><div class="ai-msg ai-bot" role="status" aria-label="${esc(t('Thinking…'))}"><span class="ai-dots"><i></i><i></i><i></i></span></div></div>` : ''}</div>`;
+                + `<div class="space-y-3">${msgs.map(bubble).join('')}${!AI.busy && msgs.length && msgs[msgs.length - 1].ch ? `<div class="flex flex-wrap gap-2">${msgs[msgs.length - 1].ch.map(c => `<button onclick="window.appActions.aiSend(${jsArg(c)})" dir="auto" class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[14px] font-bold text-slate-200 tap-feedback">${esc(c)}</button>`).join('')}</div>` : ''}${AI.busy ? `<div class="flex justify-start"><div class="ai-msg ai-bot" role="status" aria-label="${esc(t('Thinking…'))}"><span class="ai-dots"><i></i><i></i><i></i></span><span class="ai-wait">${t('Apex Coach is thinking. A full program can take up to 30 seconds.')}</span></div></div>` : ''}</div>`;
         }
         if (window.lucide) window.lucide.createIcons({ root: list });
-        if (scroll) list.scrollTop = list.scrollHeight;
+        if (scroll) { const msgEls = list.querySelectorAll('.ai-msg'), lastEl = msgEls[msgEls.length - 1]; list.scrollTop = lastEl ? Math.min(list.scrollHeight, lastEl.parentElement.offsetTop - 12) : list.scrollHeight; }
     };
     Object.assign(window.appActions, {
         openAI: () => {
@@ -3749,18 +3759,30 @@ ${lib}`;
             if (input) { input.value = ''; input.style.height = ''; }
             AI.busy = true; renderAI();
             try {
-                aiCountUp();
-                const contents = msgs.slice(-AI_CONTEXT).map(m => ({ role: m.r === 'u' ? 'user' : 'model', parts: [{ text: m.r === 'u' ? m.x : JSON.stringify({ reply: m.x, ...(m.rt ? { routine: routineToAi(m.rt) } : {}) }) }] }));
+                const ok = msgs.filter(m => !m.err).slice(-AI_CONTEXT), lastRt = ok.map(m => !!m.rt).lastIndexOf(true), contents = [];
+                ok.forEach((m, i) => {
+                    const role = m.r === 'u' ? 'user' : 'model';
+                    const text = m.r === 'u' ? m.x : JSON.stringify({ reply: m.x, ...(m.rt && i === lastRt ? { routine: routineToAi(m.rt) } : {}) }) + (m.rt && i !== lastRt ? ` [sent the program "${m.rt.name}"]` : '');
+                    const prev = contents[contents.length - 1];
+                    if (prev && prev.role === role) prev.parts[0].text += '\n' + text; else contents.push({ role, parts: [{ text }] }); // turns take turns
+                });
                 while (contents.length && contents[0].role !== 'user') contents.shift(); // a chat starts with a question
                 const reply = aiParse(await aiAsk(contents));
-                setAiChat([...getAiChat(), reply || { r: 'm', x: t('Apex Coach could not answer. Try again.') }]);
+                if (reply) aiCountUp(); // only answers count towards the daily limit
+                setAiChat([...getAiChat(), reply || { r: 'm', x: t('Apex Coach could not answer. Try again.'), err: true }]);
             } catch (e) {
-                console.warn('AI coach', e);
-                setAiChat([...getAiChat(), { r: 'm', x: aiErrorText(e) }]);
+                setAiChat([...getAiChat(), { r: 'm', x: aiErrorText(e), err: true }]);
             } finally { AI.busy = false; renderAI(); }
+        },
+        aiRetry: () => {
+            if (AI.busy) return;
+            const msgs = getAiChat(); while (msgs.length && msgs[msgs.length - 1].err) msgs.pop();
+            const q = msgs.length && msgs[msgs.length - 1].r === 'u' ? msgs.pop() : null;
+            setAiChat(msgs); if (q) window.appActions.aiSend(q.x); else renderAI();
         },
         aiUse: (i, sure = false) => {
             const msgs = getAiChat(), m = msgs[i]; if (!m || !m.rt) return;
+            if (window.appState.sess) return window.appActions.showToast(t('Finish your workout first, then change your plan.'), 'error');
             const target = m.rt.edit && appData.weeks.find(w => w.id === m.rt.edit);
             if (!sure && !target && appData.weeks.length >= 5)
                 return window.appActions.showConfirm(t('Replace current routine?'), t('You have 5 routines (the most). The current one will be replaced; your history is kept.'), () => window.appActions.aiUse(i, true), true);
@@ -3771,6 +3793,7 @@ ${lib}`;
             putRoutine(target ? target.name : clean.weeks[0].name, clean.weeks[0].schedule, { undo: true, targetId: target ? target.id : null });
         },
         aiForget: () => window.appActions.showConfirm(t('Forget everything?'), t('Your coach forgets the notes it kept about you.'), () => { try { localStorage.removeItem(AI_MEM_KEY); } catch (e) {} renderAI(false); }, true),
+        aiKey: e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && window.matchMedia('(pointer: fine)').matches) { e.preventDefault(); window.appActions.aiSend(); } },
         aiGrow: el => { el.style.height = ''; el.style.height = Math.min(el.scrollHeight, 140) + 'px'; }
     });
 

@@ -149,9 +149,9 @@
                     <button onclick="window.appActions.closeAI()" data-ai-label="Close" aria-label="Close" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
             </div>
-            <div id="ai-list" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-4 pt-1 pb-4"></div>
+            <div id="ai-list" class="sheet-scroll relative flex-1 overflow-y-auto overscroll-contain px-4 pt-1 pb-4"></div>
             <div id="ai-compose" class="shrink-0 border-t border-white/10 px-4 pt-3 flex items-end gap-2" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
-                <textarea id="ai-input" rows="1" maxlength="500" oninput="window.appActions.aiGrow(this)" data-i18n-ph="Ask your coach…" placeholder="Ask your coach…" data-ai-label="Ask your coach…" aria-label="Ask your coach…" class="ai-input flex-1 min-w-0 resize-none bg-white/5 border border-white/10 rounded-2xl px-4 py-2.5 text-[16px] font-bold text-white outline-none"></textarea>
+                <textarea id="ai-input" rows="1" maxlength="500" oninput="window.appActions.aiGrow(this)" onkeydown="window.appActions.aiKey(event)" data-i18n-ph="Ask your coach…" placeholder="Ask your coach…" data-ai-label="Ask your coach…" aria-label="Ask your coach…" class="ai-input flex-1 min-w-0 resize-none bg-white/5 border border-white/10 rounded-2xl px-4 py-2.5 text-[16px] font-bold text-white outline-none"></textarea>
                 <button id="ai-send" onclick="window.appActions.aiSend()" data-ai-label="Send" aria-label="Send" class="w-11 h-11 shrink-0 flex items-center justify-center bg-[#d4af37] rounded-full text-black tap-feedback"><i data-lucide="arrow-up" class="w-5 h-5"></i></button>
             </div>
         </div>
