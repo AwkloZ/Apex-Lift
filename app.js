@@ -96,13 +96,30 @@
         "Intermediate": "متوسط",
         "Advanced": "متقدم",
         "Use this program": "استخدم هذا البرنامج",
+        "How is my progress?": "كيف تقدّمي؟",
+        "I don't like one exercise in my routine": "لا أرتاح لتمرين في جدولي",
+        "Which muscle is my weakest?": "ما أضعف عضلة عندي؟",
+        "Here are the changes.": "هذه التعديلات.",
+        "No changes to your routine.": "لا تعديلات على جدولك.",
+        "What changes": "ما الذي يتغيّر",
+        "Becomes a rest day": "يصبح يوم راحة",
+        "Becomes a training day": "يصبح يوم تمرين",
+        "Apply changes": "طبّق التعديلات",
+        "Applied": "تم التطبيق",
+        "Only these changes are made to {name}. Your history is kept.": "تُطبَّق هذه التعديلات فقط على {name}. سجلك محفوظ.",
+        "Your coach remembers": "ما يتذكّره مدربك",
+        "Forget all": "انسَ الكل",
+        "Forget everything?": "نسيان كل شيء؟",
+        "Your coach forgets the notes it kept about you.": "سينسى مدربك الملاحظات التي حفظها عنك.",
+        "This chat is deleted from this phone. What your coach remembers about you is kept.": "ستُحذف هذه المحادثة من هذا الجوال، ويبقى ما يتذكّره مدربك عنك.",
+        "Coach": "المدرب",
         "AI coach": "المدرب الذكي",
         "Your AI coach": "مدربك الذكي",
         "Build with the AI coach": "ابنِ برنامجك مع المدرب الذكي",
         "Tell it what you want: it builds a program from your answers and workouts.": "أخبره بما تريد، ويبني لك برنامجًا من إجاباتك وتمارينك.",
         "Build a program that fits you": "برنامج يناسبك أنت",
         "Tell it what you want and it builds a program for you, from your answers and your workouts.": "أخبره بما تريد، ويبني لك برنامجًا من إجاباتك وتمارينك.",
-        "To answer, your training answers, age, sex, body weight, routines and workout history are sent to Google Gemini. Your name and email are not sent.": "حتى يجيبك، تُرسل إجابات التمرين والعمر والجنس ووزن الجسم والجداول وسجل التمارين إلى Google Gemini. لا يُرسل اسمك ولا بريدك.",
+        "To answer, your training answers, age, sex, body weight, routines, workout history and check-ins are sent to Google Gemini. Your name and email are not sent.": "حتى يجيبك، تُرسل إجابات التمرين والعمر والجنس ووزن الجسم والجداول وسجل التمارين والتقييمات اليومية إلى Google Gemini. لا يُرسل اسمك ولا بريدك.",
         "Its answers can be wrong. It is not medical advice: stop if something hurts and see a doctor.": "قد تكون إجاباته خاطئة، وهي ليست نصيحة طبية: توقّف إذا شعرت بألم وراجع طبيبًا.",
         "The chat is saved on this phone only. Don't type private details in it.": "المحادثة محفوظة على هذا الجوال فقط. لا تكتب فيها معلومات خاصة.",
         "Got it, start": "فهمت، لنبدأ",
@@ -1023,7 +1040,7 @@
     const getResets = () => { const v = readJSON(RESET_KEY, {}); return isObj(v) ? v : {}; };
     const setResets = d => { try { localStorage.setItem(RESET_KEY, JSON.stringify(d)); } catch (e) {} };
     // Terms of Use & Privacy Policy: which version the user agreed to, and when
-    const TERMS_VERSION = '2026-10.8';
+    const TERMS_VERSION = '2026-10.9';
     const AGREE_KEY = 'workoutAgreed_rakan_final';
     const getAgree = () => { const v = readJSON(AGREE_KEY, null); return isObj(v) && v.v === TERMS_VERSION ? v : null; };
     const startOfDay = t => { const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
@@ -1095,7 +1112,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '54';
+    const APP_VERSION = '55';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1309,9 +1326,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         return d === 4 ? 'ul4' : d === 5 ? 'hybrid5' : 'ppl6';
     };
     // Put a routine into the app: as a new routine (keeps your current one) or replacing the current one (always when there are 5)
-    const putRoutine = (name, schedule, { replace = false, undo = false } = {}) => {
-        const snap = { weeks: JSON.stringify(appData.weeks), weekId: currentWeekId, day: activeDay };
-        if (replace || appData.weeks.length >= 5) { const w = appData.weeks.find(x => x.id === currentWeekId); w.schedule = schedule; w.name = name; }
+    const putRoutine = (name, schedule, { replace = false, undo = false, targetId = null } = {}) => {
+        const snap = { weeks: JSON.stringify(appData.weeks), weekId: currentWeekId, day: activeDay }, target = targetId && appData.weeks.find(x => x.id === targetId);
+        if (target) { target.schedule = schedule; target.name = name; currentWeekId = target.id; StorageManager.setActiveWeek(target.id); }
+        else if (replace || appData.weeks.length >= 5) { const w = appData.weeks.find(x => x.id === currentWeekId); w.schedule = schedule; w.name = name; }
         else { const wid = 'w_' + Date.now(); appData.weeks.push({ id: wid, name, schedule }); currentWeekId = wid; StorageManager.setActiveWeek(wid); }
         StorageManager.setPlan(appData);
         activeDay = getTodayId();
@@ -2329,7 +2347,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         };
         let html = `<div class="flex items-center justify-between gap-2 px-1 mb-2.5">
                 <span class="min-w-0"><span class="block text-[17px] font-black text-white">${t('This week')}</span><span class="block text-[12px] font-bold text-slate-400">${t('Tap a day to edit it')}</span></span>
-                <button onclick="window.appActions.openPrograms()" class="shrink-0 flex items-center gap-1.5 h-11 px-4 rounded-full border text-[13px] font-bold bg-white/5 border-white/10 text-white tap-feedback"><i data-lucide="layout-list" class="w-4 h-4 text-[#d4af37]"></i>${t('Programs')}</button>
+                <span class="shrink-0 flex items-center gap-2">
+                    <button onclick="window.appActions.openAI()" class="flex items-center gap-1.5 h-11 px-4 rounded-full border text-[13px] font-bold bg-white/5 border-white/10 text-white tap-feedback"><i data-lucide="sparkles" class="w-4 h-4 text-[#d4af37]"></i>${t('Coach')}</button>
+                    <button onclick="window.appActions.openPrograms()" class="flex items-center gap-1.5 h-11 px-4 rounded-full border text-[13px] font-bold bg-white/5 border-white/10 text-white tap-feedback"><i data-lucide="layout-list" class="w-4 h-4 text-[#d4af37]"></i>${t('Programs')}</button>
+                </span>
             </div>
             <div class="flex gap-2">
                 <div class="w-11 shrink-0 flex flex-col gap-2" aria-hidden="true">${schedule.map(d => `<div class="h-[62px] flex flex-col items-center justify-center rounded-2xl ${d.id === today ? 'bg-[#d4af37]/15 text-[#d4af37]' : 'text-slate-400'}"><span class="text-[12px] font-bold">${esc(dayShort(d.day))}</span><span class="text-[16px] font-black leading-tight ${d.id === today ? '' : 'text-white'}">${dateOf(d.id).getDate()}</span></div>`).join('')}</div>
@@ -3443,6 +3464,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const AI_MODELS = ['gemini-3.5-flash', 'gemini-2.5-flash']; // the first one that works; the next one if Google retires it
     const AI_APP_CHECK_KEY = '6LdWE_0tAAAAAJvI8b37jqVxj9-0aACe2WFj_VDJ'; // Fraud Defense key ID (not secret). Empty = no App Check
     const AI_CHAT_KEY = 'workoutAiChat_rakan_final', AI_OK_KEY = 'workoutAiOk_rakan_final', AI_COUNT_KEY = 'workoutAiCount_rakan_final';
+    // what the coach remembers about you (injuries, likes, schedule...): short notes it writes itself, kept on this phone after "New chat"
+    const AI_MEM_KEY = 'workoutAiMemory_rakan_final';
+    const getAiMemory = () => { const v = readJSON(AI_MEM_KEY, []); return Array.isArray(v) ? v.filter(x => typeof x === 'string' && x.trim()).map(x => x.trim().slice(0, 160)).slice(0, 20) : []; };
     const AI_DAILY = 40; // questions a day on one phone, so one person can't use up the free quota
     const AI_KEEP = 30, AI_CONTEXT = 12; // messages kept on the phone / sent with each question
     const AI = { loading: null, modelIx: 0, busy: false, open: -1 };
@@ -3469,30 +3493,36 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         properties: {
             reply: S.string(),
             routine: S.object({ properties: {
+                edit: S.boolean(),
                 name: S.string(),
                 days: S.array({ items: S.object({ properties: {
                     title: S.string(), rest: S.boolean(),
                     exercises: S.array({ items: S.object({ properties: { name: S.string(), sets: S.integer(), reps: S.string() } }) })
                 } }) })
-            } }),
-            choices: S.array({ items: S.string() })
+            }, optionalProperties: ['edit'] }),
+            choices: S.array({ items: S.string() }),
+            memory: S.array({ items: S.string() })
         },
-        optionalProperties: ['routine', 'choices']
+        optionalProperties: ['routine', 'choices', 'memory']
     });
     // routine in the app's format ↔ the short format Gemini reads and writes
     const routineToAi = rt => ({ name: rt.name, days: rt.schedule.map(d => ({ title: d.isRest ? (d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : d.title, rest: !!d.isRest, exercises: d.exercises.map(e => ({ name: e.name, sets: parseInt(e.sets) || 3, reps: e.reps })) })) });
+    const aiActive = () => appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0];
     const routineFromAi = raw => {
         if (!isObj(raw) || !Array.isArray(raw.days) || raw.days.length !== 7) return null;
+        const orig = raw.edit === true ? aiActive() : null;
         const known = new Map(); catalogue().forEach(x => { const k = x.name.trim().toLowerCase(); if (!known.has(k)) known.set(k, x); });
-        const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
+        const start = DAY_NAMES.indexOf(StorageManager.getStartDay()), baseDays = orig ? orig.schedule : [];
         const schedule = raw.days.map((d, i) => {
             d = isObj(d) ? d : {};
             const base = { id: i + 1, day: DAY_NAMES[(start + i) % 7], savedTitle: '' };
+            if (baseDays[i]) { base.id = baseDays[i].id; base.day = baseDays[i].day; }
             // only exercises from the library (or your own), each once a day
             const seen = new Set(), exercises = (Array.isArray(d.exercises) ? d.exercises : []).filter(isObj).map(ex => {
                 const hit = known.get(toStr(ex.name).trim().toLowerCase()); if (!hit || seen.has(hit.name)) return null; seen.add(hit.name);
                 const reps = latinDigits(cut(ex.reps, 20)).trim();
-                return { muscle: hit.muscle, name: hit.name, sets: String(Math.min(8, Math.max(1, parseInt(latinDigits(ex.sets)) || 3))), reps: /\d/.test(reps) ? reps : newExercise(hit.name, hit.muscle).reps };
+                const kept = baseDays[i] && (baseDays[i].exercises || []).find(e => e.name === hit.name); // unchanged exercises keep their muscle
+                return { muscle: kept ? kept.muscle : hit.muscle, name: hit.name, sets: String(Math.min(8, Math.max(1, parseInt(latinDigits(ex.sets)) || 3))), reps: /\d/.test(reps) ? reps : newExercise(hit.name, hit.muscle).reps };
             }).filter(Boolean).slice(0, 12);
             if (d.rest === true || !exercises.length) {
                 const active = /active|نشط/i.test(toStr(d.title));
@@ -3501,8 +3531,28 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const title = cut(toStr(d.title).trim(), 40) || 'Workout';
             return { ...base, title, savedTitle: title, isRest: false, recoveryType: null, exercises };
         });
-        return schedule.some(d => !d.isRest) ? { name: cut(toStr(raw.name).trim(), 60) || t('AI program'), schedule } : null;
+        if (!schedule.some(d => !d.isRest)) return null;
+        // a change to their routine keeps its name, and lists what changes
+        return orig ? { name: orig.name, schedule, edit: orig.id, chg: aiChanges(orig.schedule, schedule) } : { name: cut(toStr(raw.name).trim(), 60) || t('AI program'), schedule };
     };
+    // What a change does, day by day: exercises added, removed, or with other sets/reps; a day that becomes rest or training
+    const aiChanges = (before, after) => after.map((d, i) => {
+        const b = before[i] || { exercises: [], isRest: true }, old = new Map(b.exercises.map(e => [e.name, e])), now = new Set(d.exercises.map(e => e.name));
+        const c = { day: d.day, title: d.isRest ? '' : d.title,
+            add: d.exercises.filter(e => !old.has(e.name)).map(e => [e.name, e.sets, e.reps]),
+            del: b.exercises.filter(e => !now.has(e.name)).map(e => e.name),
+            mod: d.exercises.filter(e => old.has(e.name) && (old.get(e.name).sets !== e.sets || old.get(e.name).reps !== e.reps)).map(e => [e.name, e.sets, e.reps]),
+            rest: !!d.isRest !== !!b.isRest ? (d.isRest ? 'rest' : 'train') : '' };
+        return c.add.length || c.del.length || c.mod.length || c.rest ? c : null;
+    }).filter(Boolean);
+    const aiChangesHTML = chg => !chg.length ? `<p class="text-[13px] font-bold text-slate-400 mt-3">${t('No changes to your routine.')}</p>`
+        : `<div class="mt-3 space-y-2"><div class="text-[12px] font-bold text-slate-400">${t('What changes')}</div>${chg.map(c => `<div class="rounded-xl bg-white/5 px-3 py-2.5">
+            <div class="text-[13px] font-black text-white">${esc(dayLong(c.day))}${c.title ? ' · ' + esc(t(c.title)) : ''}</div>
+            ${c.rest ? `<div class="text-[13px] font-bold text-slate-300 mt-1">${t(c.rest === 'rest' ? 'Becomes a rest day' : 'Becomes a training day')}</div>` : ''}
+            ${c.del.map(n => `<div class="text-[13px] font-bold text-slate-400 mt-1 flex gap-2"><span aria-hidden="true">−</span><span class="line-through">${esc(tx(n))}</span></div>`).join('')}
+            ${c.add.map(([n, se, r]) => `<div class="text-[13px] font-bold text-slate-200 mt-1 flex gap-2"><span class="text-[#22c55e]" aria-hidden="true">+</span><span class="flex-1 min-w-0">${esc(tx(n))}</span><span dir="ltr" class="shrink-0">${esc(se)} × ${esc(fmtReps(r))}</span></div>`).join('')}
+            ${c.mod.map(([n, se, r]) => `<div class="text-[13px] font-bold text-slate-300 mt-1 flex gap-2"><span aria-hidden="true">•</span><span class="flex-1 min-w-0">${esc(tx(n))}</span><span dir="ltr" class="shrink-0">${esc(se)} × ${esc(fmtReps(r))}</span></div>`).join('')}
+        </div>`).join('')}</div>`;
 
     // What Gemini knows about you: the setup answers, your active routine and a summary of the last 8 weeks
     const aiContext = () => {
@@ -3510,8 +3560,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const GOAL = { muscle: 'build muscle', strength: 'get stronger', fat: 'lose fat' }, EXP = { none: 'never trained', new: 'under 1 year', mid: '1-3 years', adv: '3-5 years', pro: 'over 5 years' };
         lines.push(`- Goal: ${GOAL[pr.goal] || 'not set'}. Experience: ${EXP[pr.exp] || 'not set'}. Training days a week: ${pr.days || 'not set'}. Workout length: ${pr.session ? pr.session + ' minutes' : 'not set'}. Equipment: ${pr.eq === 'db' ? 'dumbbells only (plus bodyweight)' : pr.eq === 'gym' ? 'full gym' : 'not set'}.`);
         lines.push(`- Sex: ${b.sex === 'male' ? 'male' : b.sex === 'female' ? 'female' : 'not given'}. Age: ${age || 'not given'}. Body weight: ${b.weightKg ? b.weightKg + ' kg' : 'not given'}.`);
-        const active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0];
-        if (active) lines.push(`- Current routine "${active.name}": ` + active.schedule.map(d => `${d.day}: ` + (d.isRest ? 'rest' : `${d.title} (${d.exercises.map(e => `${e.name} ${e.sets}x${e.reps}`).join(', ')})`)).join('; '));
+        const active = aiActive();
+        // exactly as the app stores it, so a small change can copy the rest unchanged
+        if (active) lines.push(`- Current routine (the active one${appData.weeks.length > 1 ? `, of ${appData.weeks.length} routines` : ''}): ${JSON.stringify(routineToAi(active))}`);
+        const mem = getAiMemory(); if (mem.length) lines.push(`- What you remember about them from earlier chats:\n  ` + mem.join('\n  '));
         const h = StorageManager.getHistory(), since = Date.now() - 56 * 864e5, map = {};
         appData.weeks.forEach(w => w.schedule.forEach(d => d.exercises.forEach(e => { map[getExKey(0, 0, 0, e.name)] = e; })));
         const rows = Object.keys(h).map(k => {
@@ -3519,7 +3571,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             if (!logs.length) return null;
             const last = logs[logs.length - 1], sets = logs.flatMap(logSetDetails), best = sets.reduce((a, s) => (!a || s.w > a.w || (s.w === a.w && s.r > a.r)) ? s : a, null);
             const top = l => { const s = logSetDetails(l); return s.length ? `${s[0].w ? s[0].w + 'kg x ' : ''}${s.map(x => x.r).join('/')}` : ''; };
-            return { n: logs.length, text: `${nameOfKey(k, map)}: ${logs.length} sessions, last ${dateKey(logTime(last))} ${top(last)}${best && best.w ? `, best set ${best.w}kg x ${best.r}` : ''}` };
+            const e1 = l => Math.round(Math.max(0, ...logSetDetails(l).map(e1rmOf))), a = e1(logs[0]), z = e1(last);
+            return { n: logs.length, text: `${nameOfKey(k, map)}: ${logs.length} sessions, last ${dateKey(logTime(last))} ${top(last)}${best && best.w ? `, best set ${best.w}kg x ${best.r}` : ''}${logs.length > 1 && a && z ? `, estimated 1RM ${a} → ${z} kg` : ''}` };
         }).filter(Boolean).sort((a, c) => c.n - a.n).slice(0, 40);
         lines.push(rows.length ? `- Workouts in the last 8 weeks (${countWorkouts(h)} workout days in total):\n  ` + rows.map(r => r.text).join('\n  ') : '- No workouts logged in the last 8 weeks.');
         // weak points: sets a week for each muscle (last 4 weeks), muscles not trained, and lifts that stopped going up (8 weeks)
@@ -3530,6 +3583,20 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const best = l => Math.max(0, ...logSetDetails(l).map(e1rmOf));
             if (logs.length >= 4 && best(logs[0]) > 0) { const half = Math.floor(logs.length / 2), a = Math.max(...logs.slice(0, half).map(best)), b = Math.max(...logs.slice(half).map(best)); if (b <= a) stuck.push(nameOfKey(k, names)); }
         });
+        // how regular they are, body weight and daily check-ins
+        const days = new Set(); Object.values(h).forEach(list => (list || []).forEach(l => { const tt = logTime(l); if (!isNaN(tt)) days.add(dateKey(tt)); }));
+        const all = [...days].sort();
+        if (all.length) {
+            const wk = [7, 6, 5, 4, 3, 2, 1, 0].map(n => { const a = dateKey(Date.now() - (n + 1) * 7 * 864e5), z = dateKey(Date.now() - n * 7 * 864e5); return all.filter(d => d > a && d <= z).length; });
+            lines.push(`- Training since ${all[0]}. Last workout ${all[all.length - 1]} (${Math.round((startOfDay(Date.now()) - startOfDay(Date.parse(all[all.length - 1] + 'T12:00'))) / 864e5)} days ago). Workouts per week, last 8 weeks (oldest first): ${wk.join(', ')}.`);
+        }
+        const bl = (b.log || []).filter(x => x.t >= Date.now() - 84 * 864e5);
+        if (bl.length > 1) lines.push(`- Body weight, last 12 weeks: ${bl[0].kg} kg on ${dateKey(bl[0].t)} → ${bl[bl.length - 1].kg} kg on ${dateKey(bl[bl.length - 1].t)}.`);
+        const rd = getReadinessAll(), rk = Object.keys(rd).filter(k => k >= dateKey(Date.now() - 14 * 864e5)).sort();
+        if (rk.length) {
+            const avg = f => round1(rk.reduce((x, k) => x + (rd[k][f] || 0), 0) / rk.length);
+            lines.push(`- Daily check-ins, last 2 weeks (${rk.length}; 0 = bad, 2 = good): sleep ${avg('sleep')}, soreness ${avg('soreness')} (2 = fresh), energy ${avg('energy')}. Latest ${rk[rk.length - 1]}: sleep ${rd[rk[rk.length - 1]].sleep}, soreness ${rd[rk[rk.length - 1]].soreness}, energy ${rd[rk[rk.length - 1]].energy}.`);
+        }
         if (rows.length) {
             const MAIN = ['Chest', 'Lats', 'Back', 'Side Delts', 'Rear Delts', 'Biceps', 'Triceps', 'Quads', 'Hamstrings', 'Glutes', 'Calves', 'Abs'];
             const list = Object.keys(weekSets).sort((a, c) => weekSets[a] - weekSets[c]).map(m => `${m} ${round1(weekSets[m])}`);
@@ -3550,13 +3617,15 @@ How you coach:
 - Get to know them before you build a new program, like a coach at a first meeting: what they want most, their weak or lagging muscles, pain or movements to avoid, exercises they love or hate, their schedule and life. Ask what you really need, in a natural way (one thing at a time is easiest on a phone), and skip what you already know below. If they want the program right away, build it with what you know.
 - Use their data like a coach who has watched them train: notice muscles that get few sets or none, lifts that stopped going up, and what they do often. Mention what you see when it helps, and ask if it matches how they feel.
 - Give their weakest muscles more attention (the ones they name, or the lagging ones in their data): about twice a week, early in the workout, a few more sets, while each workout still fits their time. Say which muscle you focused on and why.
-- Small changes ("shorter", "swap this exercise", "move legs to Monday") you just do.
+- Be flexible. When they want a small change to their current routine (an exercise they don't like or that hurts, a muscle they want more or less of, a shorter day, another day), change only that: send their current routine with "edit": true, every other day and exercise copied exactly as it is, and only the asked change made. If it's unclear what to swap in, suggest one or two options and ask. A new program only when they ask for one.
+- Follow their progress like a coach who sees every workout: how regular they are, lifts going up or stuck, body weight, sleep, soreness and energy from their check-ins. When they ask how they are doing, be specific with their numbers. If something needs attention (missed weeks, stuck lifts, poor sleep or recovery), bring it up kindly and suggest what to do.
 - Prefer exercises they already do, and use their history to say what to progress. Never invent numbers they didn't log.
 
 How the app reads your answer (follow this exactly):
 - "reply": what you say, in ${isAR ? 'Arabic' : 'English'}, written like a chat message on a phone: usually short, longer only when they ask for detail. Plain text; "- " for lists and **bold** are fine; no headings or tables.
+- "memory": the things worth remembering about them for later chats (injuries or pain, likes and dislikes, schedule and life, goals and weak points they told you), as short notes in English. Send the full updated list (up to 15 notes) only when you learned something new or something changed; leave it out otherwise.
 - "choices": when you ask something, 2 to 5 short answers they can tap (up to 5 words each, in their language). Leave it out otherwise.
-- "routine": only when you build or change a program. Exactly 7 days in this order: ${order}. Rest days: rest true, title "Complete Rest" or "Active Rest", no exercises. Use their number of training days and workout length unless they ask otherwise (about 4 exercises for 30 min, 5 for 45, 7 for 60, 8 for 90). Sets 1 to 6; reps like "8 - 10", or seconds like "30 - 45s" for holds; big lifts first. Use ONLY exercise names from the list below, written exactly the same (with dumbbells only: dumbbell and bodyweight exercises). Day titles 1 to 3 words and the routine name up to 4 words, in ${isAR ? 'Arabic' : 'English'}, like ${isAR ? '"دفع", "سحب", "أرجل", "الجزء العلوي"' : '"Push", "Pull", "Legs", "Upper Body"'}. With a routine, "reply" says briefly why it fits them; they can see the days themselves.
+- "routine": only when you build or change a program ("edit": true when it is their current routine with changes, then keep its days and only change what they asked). Exactly 7 days in this order: ${order}. Rest days: rest true, title "Complete Rest" or "Active Rest", no exercises. Use their number of training days and workout length unless they ask otherwise (about 4 exercises for 30 min, 5 for 45, 7 for 60, 8 for 90). Sets 1 to 6; reps like "8 - 10", or seconds like "30 - 45s" for holds; big lifts first. Use ONLY exercise names from the list below, written exactly the same (with dumbbells only: dumbbell and bodyweight exercises). Day titles 1 to 3 words and the routine name up to 4 words, in ${isAR ? 'Arabic' : 'English'}, like ${isAR ? '"دفع", "سحب", "أرجل", "الجزء العلوي"' : '"Push", "Pull", "Legs", "Upper Body"'}. With a routine, "reply" says briefly why it fits them; they can see the days themselves.
 - Today is ${dateKey()} (${DAY_NAMES[new Date().getDay()]}).
 
 About the user:
@@ -3588,7 +3657,8 @@ ${lib}`;
         let o = null; try { o = JSON.parse(String(text || '').trim().replace(/^```(?:json)?\s*|\s*```$/g, '')); } catch (e) {}
         if (!isObj(o)) return null;
         const rt = o.routine ? routineFromAi(o.routine) : null;
-        const x = cut(o.reply, 3000).trim() || (rt ? t('Here is a program for you.') : '');
+        const x = cut(o.reply, 3000).trim() || (rt ? t(rt.edit ? 'Here are the changes.' : 'Here is a program for you.') : '');
+        if (Array.isArray(o.memory)) writeItem(AI_MEM_KEY, JSON.stringify(o.memory.filter(x => typeof x === 'string' && x.trim()).map(x => x.trim().slice(0, 160)).slice(0, 20)));
         const ch = !rt && Array.isArray(o.choices) ? o.choices.filter(c => typeof c === 'string' && c.trim()).slice(0, 6).map(c => c.trim().slice(0, 60)) : [];
         return x || rt ? { r: 'm', x, ...(rt ? { rt } : {}), ...(ch.length ? { ch } : {}) } : null;
     };
@@ -3596,7 +3666,7 @@ ${lib}`;
     // Chat text: plain text with line breaks, "- " lists and **bold**
     const aiTextHTML = s => esc(s).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').split('\n').map(l => /^\s*[-•*]\s+/.test(l) ? `<span class="ai-li">${l.replace(/^\s*[-•*]\s+/, '')}</span>` : l).join('<br>').replace(/<\/span><br>/g, '</span>');
     const aiWeekHTML = sched => `<div class="grid grid-cols-7 gap-1 mt-3">${sched.map(d => `<div class="rounded-lg py-1.5 px-0.5 text-center ${d.isRest ? 'bg-white/5 text-slate-400' : 'bg-[#d4af37]/15 text-[#d4af37]'}"><div class="text-[12px] font-bold">${esc(dayShort(d.day))}</div><div class="pv-wo mt-0.5">${d.isRest ? '—' : esc(t(d.title))}</div></div>`).join('')}</div>`;
-    const AI_IDEAS = ['Build the best program for me', 'My workouts take too long. Make them shorter.', 'I only have dumbbells at home', 'What should I improve in my current routine?'];
+    const AI_IDEAS = ['How is my progress?', 'Build the best program for me', 'I don\'t like one exercise in my routine', 'My workouts take too long. Make them shorter.', 'Which muscle is my weakest?'];
     const renderAI = (scroll = true) => {
         const list = document.getElementById('ai-list'), input = document.getElementById('ai-input'), send = document.getElementById('ai-send');
         if (!list) return;
@@ -3612,7 +3682,7 @@ ${lib}`;
                 <p class="text-[14px] font-bold text-slate-300 mt-2">${t('Tell it what you want and it builds a program for you, from your answers and your workouts.')}</p>
             </div>
             <div class="glass-card ex-card text-[13px] font-bold text-slate-300 space-y-2">
-                <p class="flex gap-2"><i data-lucide="send" class="w-4 h-4 shrink-0 mt-0.5 text-slate-400"></i><span>${t('To answer, your training answers, age, sex, body weight, routines and workout history are sent to Google Gemini. Your name and email are not sent.')}</span></p>
+                <p class="flex gap-2"><i data-lucide="send" class="w-4 h-4 shrink-0 mt-0.5 text-slate-400"></i><span>${t('To answer, your training answers, age, sex, body weight, routines, workout history and check-ins are sent to Google Gemini. Your name and email are not sent.')}</span></p>
                 <p class="flex gap-2"><i data-lucide="shield-alert" class="w-4 h-4 shrink-0 mt-0.5 text-slate-400"></i><span>${t('Its answers can be wrong. It is not medical advice: stop if something hurts and see a doctor.')}</span></p>
                 <p class="flex gap-2"><i data-lucide="smartphone" class="w-4 h-4 shrink-0 mt-0.5 text-slate-400"></i><span>${t('The chat is saved on this phone only. Don\'t type private details in it.')}</span></p>
             </div>
@@ -3625,15 +3695,17 @@ ${lib}`;
                     <div class="mt-3 pt-3 border-t border-white/10">
                         <div class="flex items-center justify-between gap-2"><span class="text-[15px] font-black text-white min-w-0 truncate">${esc(m.rt.name)}</span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} training days', { n: m.rt.schedule.filter(d => !d.isRest).length })}</span></div>
                         ${aiWeekHTML(m.rt.schedule)}
+                        ${m.rt.edit ? aiChangesHTML(m.rt.chg || []) : ''}
                         ${AI.open === i ? `<div class="space-y-2 mt-3">${m.rt.schedule.map(programDayCardHTML).join('')}</div>` : ''}
                         <div class="flex gap-2 mt-3">
                             <button onclick="window.appActions.aiToggle(${i})" class="flex-1 py-3 rounded-xl bg-white/5 border border-white/10 text-[13px] font-bold text-slate-200 tap-feedback">${t(AI.open === i ? 'Hide days' : 'See all days')}</button>
-                            <button onclick="window.appActions.aiUse(${i})" class="flex-1 py-3 rounded-xl ${m.used ? 'bg-white/5 border border-white/10 text-slate-300' : 'bg-[#d4af37] text-black'} text-[13px] font-black tap-feedback">${t(m.used ? 'Use it again' : 'Use this program')}</button>
+                            <button onclick="window.appActions.aiUse(${i})" class="flex-1 py-3 rounded-xl ${m.used ? 'bg-white/5 border border-white/10 text-slate-300' : 'bg-[#d4af37] text-black'} text-[13px] font-black tap-feedback">${t(m.rt.edit ? (m.used ? 'Applied' : 'Apply changes') : m.used ? 'Use it again' : 'Use this program')}</button>
                         </div>
-                        <p class="text-[12px] font-bold text-slate-400 mt-2">${full ? t('It replaces your current routine. Your history is kept.') : t('It is added as a new routine. Your current routine and history are kept.')}</p>
+                        <p class="text-[12px] font-bold text-slate-400 mt-2">${m.rt.edit ? t('Only these changes are made to {name}. Your history is kept.', { name: m.rt.name }) : full ? t('It replaces your current routine. Your history is kept.') : t('It is added as a new routine. Your current routine and history are kept.')}</p>
                     </div>` : ''}</div></div>`;
             list.innerHTML = (msgs.length ? '' : `<div class="pt-2 pb-4">
                     <p class="text-[14px] font-bold text-slate-300">${t('Ask for a program, a change to your routine, or anything about training.')}</p>
+                    ${getAiMemory().length ? `<div class="glass-card ex-card mt-4"><div class="flex items-center justify-between gap-2"><span class="text-[13px] font-black text-white">${t('Your coach remembers')}</span><button onclick="window.appActions.aiForget()" class="text-[13px] font-bold text-slate-400 underline px-2 py-2.5 tap-feedback">${t('Forget all')}</button></div>${getAiMemory().map(n => `<span class="ai-li text-[13px] font-bold text-slate-300 mt-1" dir="auto">${esc(n)}</span>`).join('')}</div>` : ''}
                     <div class="flex flex-col gap-2 mt-4">${AI_IDEAS.map(q => `<button onclick="window.appActions.aiSend(${jsArg(t(q))})" class="w-full text-start px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-[14px] font-bold text-slate-200 tap-feedback">${esc(t(q))}</button>`).join('')}</div>
                 </div>`)
                 + `<div class="space-y-3">${msgs.map(bubble).join('')}${!AI.busy && msgs.length && msgs[msgs.length - 1].ch ? `<div class="flex flex-wrap gap-2">${msgs[msgs.length - 1].ch.map(c => `<button onclick="window.appActions.aiSend(${jsArg(c)})" dir="auto" class="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[14px] font-bold text-slate-200 tap-feedback">${esc(c)}</button>`).join('')}</div>` : ''}${AI.busy ? `<div class="flex justify-start"><div class="ai-msg ai-bot" role="status" aria-label="${esc(t('Thinking…'))}"><span class="ai-dots"><i></i><i></i><i></i></span></div></div>` : ''}</div>`;
@@ -3654,7 +3726,7 @@ ${lib}`;
         aiAgree: () => { try { localStorage.setItem(AI_OK_KEY, '1'); } catch (e) {} renderAI(); loadAI().catch(() => {}); },
         aiNew: () => {
             if (AI.busy || !getAiChat().length) return;
-            window.appActions.showConfirm(t('Start a new chat?'), t('This chat is deleted from this phone.'), () => { setAiChat([]); AI.open = -1; renderAI(); }, true);
+            window.appActions.showConfirm(t('Start a new chat?'), t('This chat is deleted from this phone. What your coach remembers about you is kept.'), () => { setAiChat([]); AI.open = -1; renderAI(); }, true);
         },
         aiToggle: i => { AI.open = AI.open === i ? -1 : i; const list = document.getElementById('ai-list'), top = list.scrollTop; renderAI(false); list.scrollTop = top; },
         aiSend: async preset => {
@@ -3680,14 +3752,16 @@ ${lib}`;
         },
         aiUse: (i, sure = false) => {
             const msgs = getAiChat(), m = msgs[i]; if (!m || !m.rt) return;
-            if (!sure && appData.weeks.length >= 5)
+            const target = m.rt.edit && appData.weeks.find(w => w.id === m.rt.edit);
+            if (!sure && !target && appData.weeks.length >= 5)
                 return window.appActions.showConfirm(t('Replace current routine?'), t('You have 5 routines (the most). The current one will be replaced; your history is kept.'), () => window.appActions.aiUse(i, true), true);
             const clean = sanitizePlan({ weeks: [{ id: 'w_' + Date.now(), name: m.rt.name, schedule: m.rt.schedule }] });
             if (!clean) return;
             m.used = true; setAiChat(msgs);
             window.appActions.closeAI();
-            putRoutine(clean.weeks[0].name, clean.weeks[0].schedule, { undo: true });
+            putRoutine(target ? target.name : clean.weeks[0].name, clean.weeks[0].schedule, { undo: true, targetId: target ? target.id : null });
         },
+        aiForget: () => window.appActions.showConfirm(t('Forget everything?'), t('Your coach forgets the notes it kept about you.'), () => { try { localStorage.removeItem(AI_MEM_KEY); } catch (e) {} renderAI(false); }, true),
         aiGrow: el => { el.style.height = ''; el.style.height = Math.min(el.scrollHeight, 140) + 'px'; }
     });
 
