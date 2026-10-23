@@ -1,6 +1,6 @@
 # Netlify security headers for Apex Lift.
 # - Content-Security-Policy: the pages may only load code from this site, Tailwind, Google sign-in and Firebase,
-#   and only talk to Google/Firebase servers. The app pages also allow www.google.com for reCAPTCHA (App Check of the AI coach). Not applied to /__/auth/* (Google's sign-in pages, passed through by _redirects).
+#   and only talk to Google/Firebase servers. The app pages also allow www.google.com for reCAPTCHA Enterprise / Fraud Defense (App Check of the AI coach). Not applied to /__/auth/* (Google's sign-in pages, passed through by _redirects).
 # - The other headers: no framing by other sites, no MIME sniffing, HTTPS only, no camera/mic/location.
 # If Google sign-in ever stops working right after a deploy, remove the Content-Security-Policy lines and tell Claude.
 

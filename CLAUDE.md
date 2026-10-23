@@ -22,7 +22,7 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 - `privacy.html`, `terms.html`: policy pages (English and Arabic sections).
 - `sw.js`: offline cache. Add new app files to `APP_FILES`.
 - `_headers`, `_redirects`: Netlify settings (security headers, sign-in pass-through).
-- AI coach (AI COACH in `app.js`): a chat with Google Gemini through Firebase AI Logic (free Gemini Developer API, no key in the app). Uses `vendor/firebase-12.19.0/firebase-app.js`, `firebase-ai.js` and `firebase-app-check.js` (modular files; their import of `firebase-app.js` points to `./firebase-app.js`). Models in `AI_MODELS`, App Check site key in `AI_APP_CHECK_KEY`. The chat stays on the phone; routines from Gemini are checked by `routineFromAi` (library exercises only).
+- AI coach (AI COACH in `app.js`): a chat with Google Gemini through Firebase AI Logic (free Gemini Developer API, no key in the app). Uses `vendor/firebase-12.19.0/firebase-app.js`, `firebase-ai.js` and `firebase-app-check.js` (modular files; their import of `firebase-app.js` points to `./firebase-app.js`). Models in `AI_MODELS`, App Check (Fraud Defense / reCAPTCHA Enterprise) key ID in `AI_APP_CHECK_KEY`. The chat stays on the phone; routines from Gemini are checked by `routineFromAi` (library exercises only).
 
 ## Conventions
 

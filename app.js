@@ -1095,7 +1095,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '50';
+    const APP_VERSION = '51';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3436,11 +3436,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // 🤖 AI COACH: a chat with Google Gemini that builds a routine from your training answers, routine and workout history.
     // Gemini is reached through Firebase AI Logic, so there is no Gemini key in the app (it stays at Google) and it stays free (Spark).
     // Firebase setup (once): Firebase console → AI Logic → Get started → Gemini Developer API.
-    // Against misuse: App Check → reCAPTCHA v3 for this site → put the site key in AI_APP_CHECK_KEY → enforce App Check for AI Logic.
+    // Against misuse: App Check with Fraud Defense (reCAPTCHA Enterprise): the key ID is in AI_APP_CHECK_KEY (Google Cloud → Fraud Defense → Keys),
+    // registered in Firebase → App Check → Apps. Then App Check → APIs → Firebase AI Logic → Enforce.
     // Gemini may only name exercises from the library; the app checks the routine (7 days, known exercises, sensible sets) before
     // it can be used. The chat is kept on this phone only. Its Firebase files are only downloaded when the coach is opened.
     const AI_MODELS = ['gemini-3.5-flash', 'gemini-2.5-flash']; // the first one that works; the next one if Google retires it
-    const AI_APP_CHECK_KEY = ''; // reCAPTCHA v3 site key (not secret). Empty = no App Check
+    const AI_APP_CHECK_KEY = '6LdWE_0tAAAAAJvI8b37jqVxj9-0aACe2WFj_VDJ'; // Fraud Defense key ID (not secret). Empty = no App Check
     const AI_CHAT_KEY = 'workoutAiChat_rakan_final', AI_OK_KEY = 'workoutAiOk_rakan_final', AI_COUNT_KEY = 'workoutAiCount_rakan_final';
     const AI_DAILY = 40; // questions a day on one phone, so one person can't use up the free quota
     const AI_KEEP = 30, AI_CONTEXT = 12; // messages kept on the phone / sent with each question
@@ -3451,7 +3452,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const app = fbApp.getApps().find(a => a.name === 'apex-ai') || fbApp.initializeApp(FIREBASE_CONFIG, 'apex-ai');
         if (AI_APP_CHECK_KEY) {
             const ac = await import('./' + FB_DIR + 'firebase-app-check.js');
-            try { ac.initializeAppCheck(app, { provider: new ac.ReCaptchaV3Provider(AI_APP_CHECK_KEY), isTokenAutoRefreshEnabled: true }); } catch (e) { console.warn('App Check', e); }
+            try { ac.initializeAppCheck(app, { provider: new ac.ReCaptchaEnterpriseProvider(AI_APP_CHECK_KEY), isTokenAutoRefreshEnabled: true }); } catch (e) { console.warn('App Check', e); }
         }
         return { fbAI, ai: fbAI.getAI(app, { backend: new fbAI.GoogleAIBackend() }) };
     })().catch(e => { AI.loading = null; throw e; }));
