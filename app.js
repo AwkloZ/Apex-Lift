@@ -1095,7 +1095,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '52';
+    const APP_VERSION = '53';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3522,6 +3522,21 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             return { n: logs.length, text: `${nameOfKey(k, map)}: ${logs.length} sessions, last ${dateKey(logTime(last))} ${top(last)}${best && best.w ? `, best set ${best.w}kg x ${best.r}` : ''}` };
         }).filter(Boolean).sort((a, c) => c.n - a.n).slice(0, 40);
         lines.push(rows.length ? `- Workouts in the last 8 weeks (${countWorkouts(h)} workout days in total):\n  ` + rows.map(r => r.text).join('\n  ') : '- No workouts logged in the last 8 weeks.');
+        // weak points: sets a week for each muscle (last 4 weeks), muscles not trained, and lifts that stopped going up (8 weeks)
+        const names = exerciseNameMap(), weekSets = {}, since4 = Date.now() - 28 * 864e5, stuck = [];
+        Object.keys(h).forEach(k => {
+            const muscle = (names[k] || map[k] || {}).muscle, logs = (h[k] || []).filter(l => { const tt = logTime(l); return !isNaN(tt) && tt >= since; });
+            if (muscle) logs.forEach(l => { if (logTime(l) >= since4) weekSets[muscle] = (weekSets[muscle] || 0) + logSetDetails(l).length / 4; });
+            const best = l => Math.max(0, ...logSetDetails(l).map(e1rmOf));
+            if (logs.length >= 4 && best(logs[0]) > 0) { const half = Math.floor(logs.length / 2), a = Math.max(...logs.slice(0, half).map(best)), b = Math.max(...logs.slice(half).map(best)); if (b <= a) stuck.push(nameOfKey(k, names)); }
+        });
+        if (rows.length) {
+            const MAIN = ['Chest', 'Lats', 'Back', 'Side Delts', 'Rear Delts', 'Biceps', 'Triceps', 'Quads', 'Hamstrings', 'Glutes', 'Calves', 'Abs'];
+            const list = Object.keys(weekSets).sort((a, c) => weekSets[a] - weekSets[c]).map(m => `${m} ${round1(weekSets[m])}`);
+            lines.push(`- Sets a week by muscle (last 4 weeks, fewest first): ${list.join(', ') || 'none'}.`);
+            const none = MAIN.filter(m => !weekSets[m]); if (none.length) lines.push(`- Not trained in the last 4 weeks: ${none.join(', ')}.`);
+            if (stuck.length) lines.push(`- Lifts with no progress in 8 weeks: ${stuck.slice(0, 10).join(', ')}.`);
+        }
         return lines.join('\n');
     };
     const aiSystem = () => {
@@ -3533,11 +3548,12 @@ Rules:
 - Only talk about training: programs, exercises, sets, reps, rest, recovery and progression. For pain, injury, illness or pregnancy, tell them to see a doctor or physiotherapist first and don't program around it. Never give medical advice or diet plans.
 - Be a real coach: before you build a NEW program, get to know what they want. Ask ONE short question per message (with "choices"), up to 4 questions in total, about what "About the user" doesn't tell you yet. Pick the ones that matter most for them:
   1. Pain, injuries or movements they must avoid.
-  2. Their main focus: muscles they want to grow, lifts to get stronger at, a sport, or looking better overall.
+  2. Their weakest or lagging muscle (if their data shows one, ask if that's right), and their main focus: muscles they want to grow, lifts to get stronger at, a sport, or looking better overall.
   3. Exercises they love or hate, and the equipment their gym really has.
   4. Which days they can train, and anything else in their life that limits training (work shifts, sleep, other sports).
   Never ask what you already know. Don't send "routine" while you are still asking.
 - Build the program after their answers (or straight away if they say to build it now or skip the questions), and use every answer in it.
+- Weak points: give the weakest muscles more work: the ones they name, otherwise the ones lagging in their data (fewest sets a week compared with the others, not trained at all, or lifts with no progress). Train them about twice a week, early in the workout, with 2 to 4 more sets a week than now, and keep each workout inside their workout length. In "reply", name the muscle you focused on and why. With no data and no answer, keep the program balanced.
 - Changes to a program already in the chat or to their current routine ("shorter", "swap this exercise", "move legs to Monday"): do it straight away, without questions, unless the request is unclear.
 - "choices": with a question, 2 to 5 short answers they can tap (up to 5 words each, in their language, one can be like "No, build it now"). Leave "choices" out when you don't ask anything.
 - When you build or change a program, add "routine". Otherwise leave "routine" out.
