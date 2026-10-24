@@ -428,7 +428,8 @@ input.day-title-input { font-size: 26px !important; }
 /* Second pages (Account, Workout, App, Account backups, the workout): full screen, slide in from the side.
    A round back button on the left and the title in the middle; no header line */
 .page-overlay { background: transparent; }
-.page-box { background: var(--bg); padding-top: env(safe-area-inset-top); }
+.page-box { background-color: #000; background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000000 70%); padding-top: env(safe-area-inset-top); } /* same glow as the app behind it */
+:root[data-theme="light"] .page-box { background-color: #f3f3f0; background-image: radial-gradient(circle at 50% 0%, #ffffff 0%, #f3f3f0 70%); }
 .page-bar { width: 100%; max-width: 42rem; margin: 0 auto; display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; padding: 10px 16px 8px; }
 .page-bar-title { text-align: center; font-size: 19px; font-weight: 900; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .page-body { width: 100%; max-width: 42rem; margin: 0 auto; }
@@ -439,11 +440,11 @@ input.day-title-input { font-size: 26px !important; }
 :root[data-theme="light"] .back-btn { background: #ffffff; border-color: rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
 
 /* Floating dock: a rounded glass bar above the bottom edge; the open tab sits on a light pill */
-#tab-bar { left: 16px; right: 16px; bottom: max(12px, env(safe-area-inset-bottom)); max-width: 480px; margin: 0 auto; padding: 6px !important; border-radius: 999px;
+#tab-bar { left: 0; right: 0; bottom: max(12px, env(safe-area-inset-bottom)); width: min(300px, calc(100% - 64px)); margin: 0 auto; padding: 4px !important; border-radius: 999px;
   background: rgba(24, 24, 27, 0.72); -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6);
   border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06); }
-#tab-bar .tab-btn { height: 52px; padding: 0 !important; border-radius: 999px; justify-content: center; transition: background-color 0.2s, color 0.2s; }
-#tab-bar .tab-btn svg { width: 26px; height: 26px; }
+#tab-bar .tab-btn { height: 44px; padding: 0 !important; border-radius: 999px; justify-content: center; transition: background-color 0.2s, color 0.2s; }
+#tab-bar .tab-btn svg { width: 22px; height: 22px; }
 #tab-bar .tab-btn.text-\[\#d4af37\] { background: rgba(255, 255, 255, 0.12); }
 :root[data-theme="light"] #tab-bar { background: rgba(255, 255, 255, 0.78); border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12); }
 :root[data-theme="light"] #tab-bar .tab-btn.text-\[\#d4af37\] { background: rgba(0, 0, 0, 0.06); }

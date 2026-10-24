@@ -287,31 +287,28 @@
     </div>
 
     <!-- Minimized session: stays at the bottom while you look at your schedule; tap to go back -->
-    <button id="aw-mini" onclick="window.appActions.expandSession()" style="bottom: calc(84px + env(safe-area-inset-bottom));" class="hidden fixed left-4 right-4 z-[250] max-w-xl mx-auto bg-[#161616]/95 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl px-4 py-3 items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] tap-feedback text-start">
+    <button id="aw-mini" onclick="window.appActions.expandSession()" style="bottom: calc(78px + env(safe-area-inset-bottom));" class="hidden fixed left-4 right-4 z-[250] max-w-xl mx-auto bg-[#161616]/95 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl px-4 py-3 items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] tap-feedback text-start">
         <span id="aw-mini-dot" class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shrink-0"></span>
         <span class="flex-1 min-w-0">
             <span id="aw-mini-name" class="ex-name block text-[14px] font-black text-white truncate"></span>
             <span id="aw-mini-sub" class="block text-[12px] font-bold text-slate-400 truncate"></span>
         </span>
         <span id="aw-mini-time" class="text-xl font-black text-white tabular-nums shrink-0 num">00:00</span>
-        <i data-lucide="chevron-up" class="w-5 h-5 text-[#d4af37] shrink-0"></i>
     </button>
 
-        <div id="history-modal-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[200] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeHistoryModal()">
-        <div id="history-modal-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div class="flex items-center justify-between gap-2 px-5 pb-3 border-b border-white/10 shrink-0">
-                <div>
-                    <h3 class="text-xl font-black text-white"><span data-i18n="Exercise history">Exercise history</span></h3>
-                    <p id="history-modal-title" class="ex-name text-[12px] font-bold text-[#d4af37] mt-1">Exercise Name</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <a id="history-howto" href="#" target="_blank" rel="noopener noreferrer" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-[#d4af37] tap-feedback" aria-label="How to"><i data-lucide="help-circle" class="w-5 h-5"></i></a>
-                    <button id="history-edit-btn" onclick="window.appActions.toggleHistoryEdit()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-[#d4af37] tap-feedback transition-colors" aria-label="Edit"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
-                    <button onclick="window.appActions.closeHistoryModal()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-white tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
-                </div>
+        <div id="history-modal-overlay" class="sheet-overlay page-overlay fixed inset-0 z-[200] hidden flex-col opacity-0 transition-opacity duration-300">
+        <div id="history-modal-box" role="dialog" aria-modal="true" class="page-box w-full h-full flex flex-col transform translate-x-full transition-transform duration-300">
+            <div class="page-bar shrink-0">
+                <button onclick="window.appActions.closeHistoryModal()" class="back-btn tap-feedback" aria-label="Go back" data-i18n-label="Go back"><i data-lucide="chevron-left" class="rtl-flip"></i></button>
+                <h2 class="page-bar-title" data-i18n="Exercise history">Exercise history</h2>
+                <span class="w-11 shrink-0" aria-hidden="true"></span>
             </div>
-            <div id="history-modal-content" class="flex-1 overflow-y-auto overscroll-contain p-4 space-y-2" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+            <div class="page-body flex items-center gap-2 px-5 pb-2 shrink-0">
+                <p id="history-modal-title" class="ex-name flex-1 min-w-0 truncate text-[17px] font-black text-[#d4af37]">Exercise Name</p>
+                <a id="history-howto" href="#" target="_blank" rel="noopener noreferrer" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-300 tap-feedback" aria-label="How to"><i data-lucide="help-circle" class="w-5 h-5"></i></a>
+                <button id="history-edit-btn" onclick="window.appActions.toggleHistoryEdit()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-300 tap-feedback transition-colors" aria-label="Edit"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
+            </div>
+            <div id="history-modal-content" class="sheet-scroll page-body flex-1 overflow-y-auto overscroll-contain p-4 space-y-2" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
         </div>
     </div>
 
