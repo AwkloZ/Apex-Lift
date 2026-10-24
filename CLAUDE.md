@@ -46,7 +46,8 @@ Design check: `node tools/design-check.js [--lang en|ar] [--theme dark|light]` (
 
 ## Screens and navigation (keep every screen in one of these)
 
-- **Tabs**: the floating dock (Today, Plan, Progress, Profile): icons, the open tab on a light pill; the labels are for screen readers.
+- **Tabs**: the dock (Today, Plan, Progress, Profile), like Instagram's: a full-width bar on the bottom edge (50px plus the phone's bottom area, thin line on top, the app background), icons only, the open tab has a bolder icon; the labels are for screen readers.
+- **Background**: one solid colour, `--bg` (`#1c1b17` in dark), no gradient.
 - **Full pages** (second pages): Account, Account backups, Workout, App, and the workout itself. They slide in from the side, fill the screen, and have the round back button on the left with the title in the middle (no header line). The back button, the phone's back and a swipe from the left edge all go back. Back on the workout keeps it running in the small bar.
 - **Pop-up cards** (middle of the screen): the details of one thing: the exercise on Today, the exercise on Plan, sets & reps when changing an exercise, confirmations, short edits. Close by tapping outside, the phone's back, or their own button.
 - **Bottom sheets**: lists and tools: add / change exercise, exercise history, Coach, Add a routine by code, programs. Close with ✕, a swipe down, a tap outside or the phone's back.
