@@ -84,6 +84,80 @@
         </div>
     </div>
 
+    <!-- Profile → Workout settings and App settings: one page each -->
+    <div id="workset-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSettings()">
+        <div id="workset-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[92dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="flex items-center justify-between px-5 pb-2 shrink-0">
+                <h3 class="text-lg font-black text-white" data-i18n="Workout settings">Workout settings</h3>
+                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-2" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
+                <div class="pf-group">
+                    <label class="pf-row">
+                        <span class="pf-ic"><i data-lucide="timer"></i></span><span class="pf-label" data-i18n="Rest Timer">Rest Timer</span>
+                        <select id="setting-rest" onchange="window.appActions.updateRest(this.value)" class="pf-select" dir="ltr">
+                            <option value="45">0:45</option>
+                            <option value="60">1:00</option>
+                            <option value="90">1:30</option>
+                            <option value="120">2:00</option>
+                            <option value="150">2:30</option>
+                            <option value="180">3:00</option>
+                            <option value="240">4:00</option>
+                            <option value="300">5:00</option>
+                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
+                    </label>
+                    <label class="pf-row">
+                        <span class="pf-ic"><i data-lucide="gauge"></i></span>
+                        <span class="pf-label"><span data-i18n="Show RPE">Show RPE</span><span class="pf-sub" data-i18n="How hard each set felt">How hard each set felt</span></span>
+                        <input type="checkbox" id="setting-rpe" role="switch" onchange="window.appActions.toggleRpe(this.checked)" class="pf-switch">
+                    </label>
+                    <label class="pf-row">
+                        <span class="pf-ic"><i data-lucide="calendar"></i></span><span class="pf-label" data-i18n="Week starts on">Week starts on</span>
+                        <select id="setting-start-day" onchange="window.appActions.updateStartOfWeek(this.value)" class="pf-select">
+                            <option value="SUN">SUN</option>
+                            <option value="MON">MON</option>
+                            <option value="TUE">TUE</option>
+                            <option value="WED">WED</option>
+                            <option value="THU">THU</option>
+                            <option value="FRI">FRI</option>
+                            <option value="SAT">SAT</option>
+                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="appset-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSettings()">
+        <div id="appset-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[92dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="flex items-center justify-between px-5 pb-2 shrink-0">
+                <h3 class="text-lg font-black text-white" data-i18n="App settings">App settings</h3>
+                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-2" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
+                <div class="pf-group">
+                    <label class="pf-row">
+                        <span class="pf-ic"><i data-lucide="languages"></i></span><span class="pf-label" data-i18n="Language">Language</span>
+                        <select id="setting-lang" onchange="window.appActions.setLanguage(this.value)" class="pf-select">
+                            <option value="en">English</option>
+                            <option value="ar">العربية</option>
+                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
+                    </label>
+                    <label class="pf-row">
+                        <span class="pf-ic"><i data-lucide="sun-moon"></i></span><span class="pf-label" data-i18n="Theme">Theme</span>
+                        <select id="setting-theme" onchange="window.appActions.setTheme(this.value)" class="pf-select">
+                            <option value="dark" data-i18n="Dark">Dark</option>
+                            <option value="light" data-i18n="Light">Light</option>
+                            <option value="system" data-i18n="Same as phone">Same as phone</option>
+                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="backups-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeBackups()">
         <div id="backups-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[80dvh] transform translate-y-full transition-transform duration-300">
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
@@ -297,8 +371,8 @@
                 <h1 dir="ltr" class="text-3xl font-black italic tracking-tighter uppercase leading-none text-white flex items-end gap-2 logo-mark">
                     APEX <span class="text-[#d4af37]">LIFT</span>
                 </h1>
-                <div class="flex items-center gap-1.5 text-[#22c55e] text-[12px] font-bold max-w-[45%]">
-                    <i data-lucide="calendar-days" class="w-3.5 h-3.5 shrink-0"></i>
+                <div class="flex items-center gap-2 text-[#d4af37] text-[16px] font-black max-w-[50%]">
+                    <i data-lucide="calendar-days" class="w-[18px] h-[18px] shrink-0"></i>
                     <p id="active-week-label" class="truncate leading-normal py-0.5"><span data-i18n="Week Active">Week Active</span></p>
                 </div>
             </header>
@@ -315,80 +389,22 @@
             <section id="profile-view" class="hidden pb-6">
                 <div id="account-card" class="mb-6"></div>
 
-                <h3 class="pf-h" data-i18n="Workout">Workout</h3>
+                <h3 class="pf-h" data-i18n="Settings">Settings</h3>
                 <div class="pf-group mb-6">
-                    <label class="pf-row">
-                        <span class="pf-ic"><i data-lucide="timer"></i></span><span class="pf-label" data-i18n="Rest Timer">Rest Timer</span>
-                        <select id="setting-rest" onchange="window.appActions.updateRest(this.value)" class="pf-select" dir="ltr">
-                            <option value="45">0:45</option>
-                            <option value="60">1:00</option>
-                            <option value="90">1:30</option>
-                            <option value="120">2:00</option>
-                            <option value="150">2:30</option>
-                            <option value="180">3:00</option>
-                            <option value="240">4:00</option>
-                            <option value="300">5:00</option>
-                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
-                    </label>
-                    <label class="pf-row">
-                        <span class="pf-ic"><i data-lucide="gauge"></i></span>
-                        <span class="pf-label"><span data-i18n="Show RPE">Show RPE</span><span class="pf-sub" data-i18n="How hard each set felt">How hard each set felt</span></span>
-                        <input type="checkbox" id="setting-rpe" role="switch" onchange="window.appActions.toggleRpe(this.checked)" class="pf-switch">
-                    </label>
-                    <label class="pf-row">
-                        <span class="pf-ic"><i data-lucide="calendar"></i></span><span class="pf-label" data-i18n="Week starts on">Week starts on</span>
-                        <select id="setting-start-day" onchange="window.appActions.updateStartOfWeek(this.value)" class="pf-select">
-                            <option value="SUN">SUN</option>
-                            <option value="MON">MON</option>
-                            <option value="TUE">TUE</option>
-                            <option value="WED">WED</option>
-                            <option value="THU">THU</option>
-                            <option value="FRI">FRI</option>
-                            <option value="SAT">SAT</option>
-                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
-                    </label>
-                </div>
-
-                <h3 class="pf-h" data-i18n="App">App</h3>
-                <div class="pf-group mb-6">
-                    <label class="pf-row">
-                        <span class="pf-ic"><i data-lucide="languages"></i></span><span class="pf-label" data-i18n="Language">Language</span>
-                        <select id="setting-lang" onchange="window.appActions.setLanguage(this.value)" class="pf-select">
-                            <option value="en">English</option>
-                            <option value="ar">العربية</option>
-                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
-                    </label>
-                    <label class="pf-row">
-                        <span class="pf-ic"><i data-lucide="sun-moon"></i></span><span class="pf-label" data-i18n="Theme">Theme</span>
-                        <select id="setting-theme" onchange="window.appActions.setTheme(this.value)" class="pf-select">
-                            <option value="dark" data-i18n="Dark">Dark</option>
-                            <option value="light" data-i18n="Light">Light</option>
-                            <option value="system" data-i18n="Same as phone">Same as phone</option>
-                        </select><i data-lucide="chevrons-up-down" class="pf-chev"></i>
-                    </label>
-                </div>
-
-                <h3 class="pf-h" data-i18n="Program & data">Program & data</h3>
-                <div class="pf-group mb-6">
-                    <button onclick="window.appActions.openTraining()" class="pf-row tap-feedback">
-                        <span class="pf-ic"><i data-lucide="target"></i></span>
-                        <span class="pf-label"><span data-i18n="Your training">Your training</span><span id="pf-training-sub" class="pf-sub"></span></span>
+                    <button onclick="window.appActions.openSettings('workout')" class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="dumbbell"></i></span>
+                        <span class="pf-label"><span data-i18n="Workout settings">Workout settings</span><span class="pf-sub" data-i18n="Rest timer, RPE, start of the week">Rest timer, RPE, start of the week</span></span>
                         <i data-lucide="chevron-right" class="pf-chev"></i>
                     </button>
-                    <button onclick="window.appActions.openBackupModal()" class="pf-row tap-feedback">
-                        <span class="pf-ic"><i data-lucide="share"></i></span>
-                        <span class="pf-label"><span data-i18n="Export data">Export data</span><span id="backup-age" class="pf-sub"></span></span>
+                    <button onclick="window.appActions.openSettings('app')" class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="smartphone"></i></span>
+                        <span class="pf-label"><span data-i18n="App settings">App settings</span><span class="pf-sub" data-i18n="Language and theme">Language and theme</span></span>
                         <i data-lucide="chevron-right" class="pf-chev"></i>
                     </button>
-                    <label class="pf-row tap-feedback">
-                        <span class="pf-ic"><i data-lucide="file-down"></i></span>
-                        <span class="pf-label"><span data-i18n="Import data">Import data</span><span class="pf-sub" data-i18n="From an Apex Lift file">From an Apex Lift file</span></span>
+                    <button onclick="window.appActions.openCodeSheet()" class="pf-row tap-feedback">
+                        <span class="pf-ic"><i data-lucide="ticket"></i></span>
+                        <span class="pf-label"><span data-i18n="Add a routine by code">Add a routine by code</span><span class="pf-sub" data-i18n="From a friend's code">From a friend's code</span></span>
                         <i data-lucide="chevron-right" class="pf-chev"></i>
-                        <input type="file" class="hidden" accept=".json,application/json" onchange="window.appActions.importData(event)">
-                    </label>
-                    <button onclick="window.appActions.restoreDefaults()" class="pf-row tap-feedback">
-                        <span class="pf-ic"><i data-lucide="rotate-ccw"></i></span>
-                        <span class="pf-label"><span data-i18n="Reset routines">Reset routines</span><span class="pf-sub" data-i18n="Back to the default routine. History is kept.">Back to the default routine. History is kept.</span></span>
                     </button>
                 </div>
 

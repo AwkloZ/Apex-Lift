@@ -2,7 +2,8 @@
 // Shared by the app (app.js) and the coach builder on the admin page (admin-coach.js), so both always use the same names.
 window.APEX_LIB = (() => {
     'use strict';
-    const muscleOptions = ["Abductors","Abs","Adductors","Back","Biceps","Calves","Chest","Forearms","Front Delts","Glutes","Hamstrings","Lats","Lower Back","Lower Chest","Neck","Quads","Rear Delts","Shoulders","Side Delts","Traps","Triceps","Upper Chest"];
+    // upper body to lower body (the order of the muscle chips and lists)
+    const muscleOptions = ["Chest","Upper Chest","Lower Chest","Shoulders","Front Delts","Side Delts","Rear Delts","Traps","Neck","Back","Lats","Lower Back","Biceps","Triceps","Forearms","Abs","Glutes","Abductors","Adductors","Quads","Hamstrings","Calves"];
     // Arabic names shown in the app (the English name stays the key for history and plans)
     const exerciseAR = {
         "Ab Wheel Rollout": "دحرجة عجلة البطن",

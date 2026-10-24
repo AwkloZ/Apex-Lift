@@ -72,6 +72,17 @@
         "Tap ✏️ to change this day's exercises.": "اضغط ✏️ لتغيير تمارين هذا اليوم.",
         "Add exercises to start training on this day.": "أضف تمارين لتبدأ التمرين في هذا اليوم.",
         "Tap a day to edit it": "اضغط على يوم لتعديله",
+        "Tap a day to edit it. Tap ✏️ next to Coach to move days.": "اضغط على يوم لتعديله. اضغط ✏️ بجانب المدرب لنقل الأيام.",
+        "Drag the days to move them": "اسحب الأيام لنقلها",
+        "Move days": "نقل الأيام",
+        "Rename routine": "إعادة تسمية الجدول",
+        "Settings": "الإعدادات",
+        "Workout settings": "إعدادات التمرين",
+        "App settings": "إعدادات التطبيق",
+        "Rest timer, RPE, start of the week": "مؤقت الراحة، RPE، بداية الأسبوع",
+        "Language and theme": "اللغة والمظهر",
+        "From a friend's code": "من رمز صديق",
+        "Your information": "معلوماتك",
         "Go to today's workout": "اذهب إلى حصة اليوم",
         "Edit": "تعديل",
         "More": "المزيد",
@@ -1115,7 +1126,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '61';
+    const APP_VERSION = '62';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1411,19 +1422,22 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         if (top) { top.fn(); if (backStack.length) { try { history.pushState({ apexGuard: 1 }, ''); backGuard = true; } catch (e) {} } }
     });
 
-    // 👇 SWIPE DOWN to close a bottom sheet (from its top, or when its list is scrolled to the top)
+    // 👇 SWIPE DOWN to close a bottom sheet (from its top, or when its list is scrolled to the top).
+    // Sideways swipes (the muscle chips row) never move the sheet.
     const enableSwipeDown = (box, onClose) => {
         if (!box) return;
-        let y0 = null, dy = 0, t0 = 0, scroller = null;
+        let x0 = 0, y0 = null, dy = 0, t0 = 0, scroller = null, down = false;
         box.addEventListener('touchstart', e => {
-            if (e.target.closest('input, select, textarea')) { y0 = null; return; }
+            if (e.target.closest('input, select, textarea, .scrollbar-hide, .overflow-x-auto')) { y0 = null; return; }
             scroller = e.target.closest('.sheet-scroll, #picker-list, #history-modal-content');
             if (scroller && scroller.scrollTop > 0) { y0 = null; return; }
-            y0 = e.touches[0].clientY; dy = 0; t0 = Date.now();
+            x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; dy = 0; t0 = Date.now(); down = false;
         }, { passive: true });
         box.addEventListener('touchmove', e => {
             if (y0 === null) return;
             dy = e.touches[0].clientY - y0;
+            const dx = e.touches[0].clientX - x0;
+            if (!down) { if (Math.abs(dx) > 8 && Math.abs(dx) >= Math.abs(dy)) { y0 = null; dy = 0; return; } if (dy > 8) down = true; }
             if (dy <= 0 || (scroller && scroller.scrollTop > 0)) { box.style.transition = ''; box.style.transform = ''; if (dy < -10) y0 = null; return; }
             box.style.transition = 'none'; box.style.transform = `translateY(${dy}px)`;
         }, { passive: true });
@@ -1518,12 +1532,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         // each routine: its name (tap to rename) and one ⋮ button with Use / Share / Duplicate / Delete
         const mItem = 'w-full flex items-center gap-2.5 px-3 py-3 rounded-xl text-start text-[13px] font-extrabold tap-feedback';
         const rMenu = w => window.appState.routineMenu !== w.id ? '' : `<div class="absolute end-2 top-full mt-1 z-[61] w-[220px] p-1.5 rounded-2xl bg-[#111] border border-white/15 shadow-[0_20px_40px_rgba(0,0,0,0.7)]" role="menu">
-                ${w.id !== currentWeekId ? `<button onclick="window.appState.routineMenu=null;window.appActions.switchWeek(${jsArg(w.id)})" class="${mItem} text-white" role="menuitem"><i data-lucide="check-circle" class="w-4 h-4 text-[#22c55e]"></i>${t('Use this routine')}</button>` : ''}
+                <button onclick="window.appState.routineMenu=null;window.appActions.editRoutineName(${jsArg(w.id)})" class="${mItem} text-white" role="menuitem"><i data-lucide="pencil" class="w-4 h-4 text-slate-400"></i>${t('Rename routine')}</button>
                 <button onclick="window.appState.routineMenu=null;window.appActions.shareWeek(${jsArg(w.id)})" class="${mItem} text-slate-200" role="menuitem"><i data-lucide="share-2" class="w-4 h-4 text-[#d4af37]"></i>${t('Share routine')}</button>
                 <button onclick="window.appState.routineMenu=null;window.appActions.duplicateWeek(${jsArg(w.id)})" class="${mItem} text-slate-200" role="menuitem"><i data-lucide="copy" class="w-4 h-4 text-slate-400"></i>${t('Duplicate routine')}</button>
                 ${appData.weeks.length > 1 ? `<button onclick="window.appState.routineMenu=null;window.appActions.deleteWeek(${jsArg(w.id)})" class="${mItem} text-red-400" role="menuitem"><i data-lucide="trash-2" class="w-4 h-4"></i>${t('Delete routine')}</button>` : ''}
             </div>`;
-        const row = w => { const on = window.appState.routineMenu === w.id; return `<div class="relative ${on ? 'z-20' : ''} flex items-center gap-3 bg-black/40 ps-3 pe-1 py-1.5 rounded-xl border ${w.id===currentWeekId?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><input type="text" value="${esc(w.name)}" onchange="window.appActions.renameWeek(${jsArg(w.id)}, this.value)" class="bg-transparent text-white text-[13px] font-bold w-full outline-none py-1.5">${w.id===currentWeekId?`<span class="text-[#22c55e] text-[12px] font-bold shrink-0">${t('Active')}</span>`:''}<button onclick="window.appActions.toggleRoutineMenu(${jsArg(w.id)})" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-lg tap-feedback ${on ? 'text-[#d4af37]' : 'text-slate-300'}" aria-haspopup="menu" aria-expanded="${on}" aria-label="${esc(t('Routine options') + ' · ' + w.name)}"><i data-lucide="ellipsis-vertical" class="w-[18px] h-[18px]"></i></button>${rMenu(w)}</div>`; };
+        const row = w => { const on = window.appState.routineMenu === w.id, cur = w.id === currentWeekId; return `<div class="relative ${on ? 'z-20' : ''} flex items-center gap-1 bg-black/40 pe-1 rounded-xl border ${cur?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="flex-1 min-w-0 min-h-[52px] ps-3 flex items-center gap-3 text-start tap-feedback" aria-pressed="${cur}"><span class="flex-1 min-w-0 text-white text-[13px] font-bold truncate">${esc(t(w.name))}</span>${cur?`<span class="text-[#22c55e] text-[12px] font-bold shrink-0">${t('Active')}</span>`:''}</button><button onclick="window.appActions.toggleRoutineMenu(${jsArg(w.id)})" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-lg tap-feedback ${on ? 'text-[#d4af37]' : 'text-slate-300'}" aria-haspopup="menu" aria-expanded="${on}" aria-label="${esc(t('Routine options') + ' · ' + w.name)}"><i data-lucide="ellipsis-vertical" class="w-[18px] h-[18px]"></i></button>${rMenu(w)}</div>`; };
         document.getElementById('weeks-container').innerHTML = inDay ? '' : `<div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''} ${window.appState.routineMenu != null ? 'relative z-30' : ''}">
             <button onclick="window.appActions.toggleRoutines()" class="w-full p-4 flex items-center gap-3 text-start tap-feedback" aria-expanded="${open}">
                 <span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-range" class="w-5 h-5"></i></span>
@@ -1533,7 +1547,6 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             </button>
             ${open ? `<div class="px-4 pb-4 space-y-2.5">${appData.weeks.map(row).join('')}
                 <button onclick="window.appActions.addWeek()" class="w-full py-3 flex items-center justify-center gap-2 text-[#d4af37] font-bold text-[12px] tap-feedback border border-dashed border-[#d4af37]/40 bg-[#d4af37]/5 rounded-xl"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i>${t('New routine')}</button>
-                <button onclick="window.appActions.openCodeSheet()" class="w-full py-3 flex items-center justify-center gap-2 text-slate-300 font-bold text-[12px] tap-feedback border border-white/10 bg-white/5 rounded-xl"><i data-lucide="ticket" class="w-4 h-4 shrink-0"></i>${t('Add a routine by code')}</button>
             </div>` : ''}
         </div>`;
         document.getElementById('active-week-label').innerText = t(active.name);
@@ -2003,9 +2016,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     }
 
 
-    // 👤 PROFILE. Tapping your photo opens Account: your personal details (age, sex and height are fixed after the setup;
-    // name and weight can change) and everything about the account (sign-in, backups, sign out, delete).
-    // Your training (Profile → Program & data) shows the setup answers the program was built from (they are set in the setup only).
+    // 👤 PROFILE. Tapping your photo opens Account: your information (name and date of birth can change; sex and height
+    // are set in the setup) and everything about the account (sign-in, backups, sign out, delete).
     const GOAL_LABEL = { muscle: 'Build muscle', strength: 'Get stronger', fat: 'Lose fat' };
     const EXP_LABEL = { none: 'Just starting', new: 'Less than 1 year', mid: '1 to 3 years', adv: '3 to 5 years', pro: 'More than 5 years' };
     const EQ_LABEL = { gym: 'Full gym', db: 'Dumbbells only' };
@@ -2018,7 +2030,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
     const renderAccountSheet = () => {
         const el = document.getElementById('account-body'); if (!el || !Cloud.user) return;
-        const u = Cloud.user, flag = getCloudFlag() || {}, b = getBody(), age = ageOf(b), lock = `<i data-lucide="lock" class="pf-lock" aria-label="${esc(t('Locked'))}"></i>`;
+        const u = Cloud.user, flag = getCloudFlag() || {}, b = getBody(), age = ageOf(b);
         const since = Number(flag.since) > 0 ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { month: 'long', year: 'numeric', numberingSystem: 'latn' }).format(Number(flag.since)) : '';
         const born = b.birthDate ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric', numberingSystem: 'latn' }).format(new Date(b.birthDate + 'T12:00:00')) : b.birthYear ? String(b.birthYear) : '';
         const sexL = { male: t('Male'), female: t('Female'), na: t('Prefer not to say') }[b.sex] || '';
@@ -2029,14 +2041,14 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <div class="text-[13px] font-bold text-slate-400 max-w-full truncate" dir="ltr">${esc(u.email || '')}</div>
                 ${since ? `<div class="text-[12px] font-bold text-slate-400 mt-1">${t('Member since {date}', { date: esc(since) })}</div>` : ''}
             </div>
-            <h3 class="pf-h">${t('Personal details')}</h3>
+            <h3 class="pf-h">${t('Your information')}</h3>
             <div class="pf-group">
                 <button onclick="window.appActions.editName()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="user-round"></i></span><span class="pf-label">${t('Name')}</span><span class="pf-val truncate">${esc(u.displayName || '—')}</span><i data-lucide="pencil" class="pf-chev"></i></button>
-                ${pfRow('cake', t('Age'), age !== null ? `<span class="num">${age}</span>` : '', born ? t('Born {date}', { date: esc(born) }) : '', lock)}
-                ${pfRow('users', t('Sex'), esc(sexL), '', lock)}
-                ${pfRow('ruler', t('Height'), b.heightCm ? `<span class="num" dir="ltr">${b.heightCm} cm</span>` : '', '', lock)}
+                <button onclick="window.appActions.editBirth()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="cake"></i></span><span class="pf-label">${t('Age')}${born ? `<span class="pf-sub">${t('Born {date}', { date: esc(born) })}</span>` : ''}</span><span class="pf-val">${age !== null ? `<span class="num">${age}</span>` : '—'}</span><i data-lucide="pencil" class="pf-chev"></i></button>
+                ${pfRow('users', t('Sex'), esc(sexL))}
+                ${pfRow('ruler', t('Height'), b.heightCm ? `<span class="num" dir="ltr">${b.heightCm} cm</span>` : '')}
             </div>
-            <p class="pf-note">${t('Age, sex and height are set during setup. Contact us to correct them.')}</p>
+            <div class="h-6"></div>
             <h3 class="pf-h">${t('Account')}</h3>
             <div class="pf-group mb-4">
                 ${pfRow(google ? 'log-in' : 'mail', t('Signed in with'), google ? 'Google' : t('Email'), !google && !u.emailVerified ? `<span class="text-[#f87171]">${t('Email not confirmed')}</span>` : '')}
@@ -2120,6 +2132,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         ? t(timed ? '{w} kg for {r} sec' : '{w} kg for {r} reps', { w: fmtW(sg.w).replace('kg', ''), r: sg.r })
         : t(timed ? '{r} sec' : '{r} reps', { r: sg.r });
     // Number circle on a Today card with a ring that fills as this week's sets get done (all done = green with a tick)
+    // a long exercise name gets a smaller font (down to 12px) so it stays on one line without "…"
+    const fitNames = root => requestAnimationFrame(() => (root ? root.querySelectorAll('.ex-fit') : []).forEach(el => {
+        el.style.fontSize = ''; let size = parseFloat(getComputedStyle(el).fontSize) || 15;
+        while (el.scrollWidth > el.clientWidth + 1 && size > 12) { size -= 0.5; el.style.fontSize = size + 'px'; }
+        el.classList.toggle('truncate', el.scrollWidth > el.clientWidth + 1);
+    }));
+    window.addEventListener('resize', () => fitNames(document.getElementById('workout-container')));
     const progressRing = (done, total, n) => {
         const r = 16, c = 2 * Math.PI * r, p = total > 0 ? Math.min(1, done / total) : 0, full = p >= 1;
         return `<span class="ex-ring ${full ? 'is-full' : ''}"><svg viewBox="0 0 38 38" aria-hidden="true"><circle cx="19" cy="19" r="${r}" class="ex-ring-bg"/>${p > 0 && !full ? `<circle cx="19" cy="19" r="${r}" class="ex-ring-fg" stroke-dasharray="${(c * p).toFixed(1)} ${c.toFixed(1)}"/>` : ''}</svg><span class="ex-ring-n">${full ? '<i data-lucide="check" class="w-4 h-4"></i>' : n}</span></span>`;
@@ -2140,7 +2159,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const isT = activeDay === getTodayId(), S = window.appState.sess;
         if (window.appState.todayEdit && S) window.appState.todayEdit = false; // never edit the plan while a workout is running
         if (window.appState.todayEdit) return renderPlanDay(todayEditBar());
-        const editBtn = S ? '' : `<button id="today-edit-btn" onclick="window.appActions.setTodayEdit(true)" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('Edit this day'))}" title="${esc(t('Edit this day'))}"><i data-lucide="pencil" class="w-4 h-4"></i></button>`;
+        const editBtn = ''; // Today is for training: days and exercises are edited in Plan
         const weekTop = `<div id="today-week" class="today-week">${weekNavHTML()}</div>`;
         const dayLabel = `<div class="text-[12px] font-bold text-[#d4af37]">${esc(isT ? t('Today') : dayLong(day.day))}</div>`;
         let html = '';
@@ -2150,7 +2169,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const nextDay = [1, 2, 3, 4, 5, 6].map(o => schedule.find(d => d.id === ((activeDay - 1 + o) % 7) + 1)).find(d => d && !d.isRest && d.exercises.length);
             if (nextDay) html += `<button onclick="window.appActions.setActiveDay(${nextDay.id})" class="w-full glass-card p-4 mt-3 flex items-center gap-3 text-start tap-feedback"><span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-clock" class="w-5 h-5"></i></span><span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-slate-400">${t('Next workout')}</span><span class="block text-[15px] font-black text-white truncate">${esc(dayLong(nextDay.day))} · ${esc(t(nextDay.title))}</span></span><i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 shrink-0"></i></button>`;
         } else if (!day.exercises.length) {
-            html += `<div class="glass-card today-card">${weekTop}<div class="today-body"><div class="flex items-start gap-2"><div class="flex-1 min-w-0">${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${t('No exercises yet')}</h2></div>${editBtn}</div><div class="text-[12px] font-bold text-slate-400">${t('Add exercises to start training on this day.')}</div><button onclick="window.appActions.setTodayEdit(true)" class="self-start px-5 py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback">${t('Plan this day')}</button></div></div>` + coachCardHTML();
+            html += `<div class="glass-card today-card">${weekTop}<div class="today-body"><div class="flex items-start gap-2"><div class="flex-1 min-w-0">${dayLabel}<h2 class="text-[21px] font-black text-white leading-tight mt-0.5">${t('No exercises yet')}</h2></div>${editBtn}</div><div class="text-[12px] font-bold text-slate-400">${t('Add exercises to start training on this day.')}</div><button onclick="window.appActions.switchTab('plan'); window.appActions.openPlanDay(${day.id})" class="self-start px-5 py-2.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback">${t('Plan this day')}</button></div></div>` + coachCardHTML();
         } else {
             const pr = dayProgress(day, history), fin = exercisesFinished(day, history);
             const finished = (pr.planned > 0 && pr.done >= pr.planned) || fin.every(Boolean);
@@ -2174,19 +2193,20 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 const isRun = running && (S.exIdx === i || S.exIdx == null), planned = parseInt(ex.sets) || 0;
                 const doneSets = setsThisWeekForDay(history[getExKey(currentWeekId, day.id, i, ex.name)] || [], day.id), extra = Math.max(0, doneSets - planned);
                 const full = planned > 0 && doneSets >= planned, part = doneSets > 0 && !full;
-                const plan = `${t('{n} sets', { n: planned })} · ${t(isTimed(ex.reps) ? '{r} sec' : '{r} reps', { r: `<span dir="ltr">${esc(fmtReps(ex.reps))}</span>` })}`;
-                return `<button id="ex-card-${i}" onclick="window.appActions.openExSheet(${i})" class="w-full glass-card ex-card ${full ? 'is-full' : part ? 'is-part' : ''} flex items-center gap-3 text-start tap-feedback">
+                // one line: ring (number) · name (shrinks to fit, never cut) · sets × reps, or sets done once started
+                const pill = doneSets > 0 ? `${doneSets}/${planned}` : `${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}`;
+                return `<button id="ex-card-${i}" onclick="window.appActions.openExSheet(${i})" class="w-full glass-card ex-card acc-${i % 5} ${full ? 'is-full' : part ? 'is-part' : ''} flex items-center gap-2.5 text-start tap-feedback" aria-label="${esc(tx(ex.name) + ' · ' + t('{n} sets', { n: planned }))}">
                     ${progressRing(doneSets, planned, i + 1)}
                     ${isRun ? '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>' : ''}
-                    <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(tx(ex.name))}</span><span class="block text-[12px] font-bold mt-0.5 truncate ${full ? 'text-[#22c55e]' : 'text-slate-400'}">${full ? t('Done this week') : plan}</span></span>
-                    <span class="flex items-center gap-1.5 shrink-0" dir="ltr">${extra ? `<span class="ex-pill-extra">+${extra}</span>` : ''}<span class="ex-pill" dir="auto">${t('{n} sets', { n: `<span dir="ltr">${doneSets}/${planned}</span>` })}</span></span>
+                    <span class="ex-name ex-fit flex-1 min-w-0 font-black text-white leading-tight whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</span>
+                    <span class="flex items-center gap-1.5 shrink-0" dir="ltr">${extra ? `<span class="ex-pill-extra">+${extra}</span>` : ''}<span class="ex-pill num">${pill}</span></span>
                 </button>`;
             }).join('') + `</div>`;
         }
         document.getElementById('workout-container').innerHTML = `<div class="${enterClass()}">${html}</div>`;
         if (window.lucide) window.lucide.createIcons();
+        fitNames(document.getElementById('workout-container'));
         if (typeof todayHints === 'function' && !day.isRest && day.exercises.length && !S) todayHints();
-        if (typeof hint === 'function' && !S && hintSeen('today-days')) hint('today-edit', '#today-edit-btn', t("Tap ✏️ to change this day's exercises."));
     };
 
     // Contents of the "Edit exercise" pop-up (Plan tab), same look as the exercise pop-up on Today:
@@ -2323,6 +2343,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
     const renderPlanWeek = () => {
         const schedule = getActiveSchedule(), today = getTodayId();
+        const editing = !!window.appState.weekEdit; // the ✏️ next to Coach: days can be moved only while it's on
         const ws = getWeekStart(), dateOf = id => new Date(ws.getFullYear(), ws.getMonth(), ws.getDate() + id - 1);
         const grip = `<svg width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true"><circle cx="5" cy="4" r="1.8"/><circle cx="11" cy="4" r="1.8"/><circle cx="5" cy="10" r="1.8"/><circle cx="11" cy="10" r="1.8"/><circle cx="5" cy="16" r="1.8"/><circle cx="11" cy="16" r="1.8"/></svg>`;
         const dayOpts = id => schedule.filter(d => d.id !== id).map(d => `<option value="${d.id}">${esc(dayLong(d.day))}</option>`).join('');
@@ -2338,8 +2359,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const title = d.isRest ? t(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : empty ? t('Empty') : t(d.title);
             const meta = d.isRest ? '' : empty ? `<span class="text-[#d4af37]">＋ ${t('Add exercises')}</span>` : `${t('{n} exercises', { n: d.exercises.length })} · ${t('{n} sets', { n })}`;
             const open = window.appState.weekMenu === d.id;
-            return `<div class="glass-card plan-ex plan-day ${d.isRest ? 'is-rest' : ''} ${d.id === today ? 'is-today' : ''} h-[62px] flex items-center gap-1.5 relative ${open ? 'z-20' : ''}">
-                <span class="handle w-9 h-11 shrink-0 flex items-center justify-center text-slate-400" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>
+            return `<div class="glass-card plan-ex plan-day ${d.isRest ? 'is-rest' : ''} ${d.id === today ? 'is-today' : ''} ${editing ? 'is-editing' : 'ps-3.5'} h-[62px] flex items-center gap-1.5 relative ${open ? 'z-20' : ''}">
+                ${editing ? `<span class="handle w-9 h-11 shrink-0 flex items-center justify-center" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>` : ''}
                 <button onclick="window.appActions.openPlanDay(${d.id})" class="flex-1 min-w-0 h-full flex items-center gap-2.5 text-start tap-feedback" aria-label="${esc(dayLong(d.day) + ' · ' + title)}">
                     ${d.isRest ? `<i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-4 h-4 text-slate-400 shrink-0"></i>` : empty ? '<span class="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>' : ''}
                     <span class="flex-1 min-w-0"><span class="block text-[15px] font-black leading-tight truncate ${d.isRest || empty ? 'text-slate-400' : 'text-white'}">${esc(title)}</span>${meta ? `<span class="block text-[12px] font-bold text-slate-400 mt-0.5 truncate">${meta}</span>` : ''}</span>
@@ -2349,10 +2370,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             </div>`;
         };
         let html = `<div class="flex items-center justify-between gap-2 px-1 mb-2.5">
-                <span class="min-w-0"><span class="block text-[17px] font-black text-white">${t('This week')}</span><span class="block text-[12px] font-bold text-slate-400">${t('Tap a day to edit it')}</span></span>
+                <span class="min-w-0"><span class="block text-[17px] font-black text-white">${t('This week')}</span><span class="block text-[12px] font-bold ${editing ? 'text-[#d4af37]' : 'text-slate-400'}">${t(editing ? 'Drag the days to move them' : 'Tap a day to edit it')}</span></span>
                 <span class="shrink-0 flex items-center gap-2">
                     <button onclick="window.appActions.openAI()" class="coach-btn tap-feedback"><span class="coach-btn-ic" aria-hidden="true"><i data-lucide="sparkles"></i></span>${t('Coach')}</button>
-                    <button onclick="window.appActions.openPrograms()" class="flex items-center gap-1.5 h-11 px-4 rounded-full border text-[13px] font-bold bg-white/5 border-white/10 text-white tap-feedback"><i data-lucide="layout-list" class="w-4 h-4 text-[#d4af37]"></i>${t('Programs')}</button>
+                    <button onclick="window.appActions.toggleWeekEdit()" class="week-edit-btn ${editing ? 'is-on' : ''} tap-feedback" aria-pressed="${editing}" aria-label="${esc(t(editing ? 'Done' : 'Move days'))}">${editing ? `<i data-lucide="check"></i><span>${t('Done')}</span>` : '<i data-lucide="pencil"></i>'}</button>
                 </span>
             </div>
             <div class="flex gap-2">
@@ -2361,10 +2382,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             </div>
             ${muscleBalanceHTML(schedule)}
             <div class="h-10"></div>`;
-        document.getElementById('workout-container').innerHTML = `<div class="plan-scope ${enterClass('week')}">${html}</div>`;
+        document.getElementById('workout-container').innerHTML = `<div class="plan-scope ${editing ? 'is-editing' : ''} ${enterClass('week')}">${html}</div>`;
         if (window.appState.sortableInstance) { window.appState.sortableInstance.destroy(); window.appState.sortableInstance = null; }
         const listEl = document.getElementById('week-list');
-        if (listEl && window.Sortable) {
+        if (listEl && window.Sortable && editing) {
             window.appState.sortableInstance = new Sortable(listEl, {
                 handle: '.handle', animation: 220, forceFallback: true, fallbackOnBody: true, fallbackTolerance: 3,
                 scroll: document.querySelector('.scrollable-content'), scrollSensitivity: 50, scrollSpeed: 8, bubbleScroll: false,
@@ -2383,7 +2404,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             });
         }
         if (window.lucide) window.lucide.createIcons();
-        if (typeof hint === 'function') hint('plan-week', '#week-list > div', t('Tap a day to edit it. Hold ⋮⋮ and drag to move it to another day.'));
+        if (typeof hint === 'function') hint('plan-week', '#week-list > div', t('Tap a day to edit it. Tap ✏️ next to Coach to move days.'));
     };
 
     // ⚙️ 5. GLOBAL ACTIONS
@@ -2455,17 +2476,17 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
                     <button onclick="window.appActions.closeExSheet()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
-                <div class="ex-week ${full ? 'is-full' : shown > 0 ? 'is-part' : ''} mt-4">
+                ${shown === 0 ? (hA.length ? '' : `<div class="ex-first mt-4"><i data-lucide="sparkles" class="w-4 h-4 shrink-0"></i>${t('First time')}</div>`) : `<div class="ex-week ${full ? 'is-full' : 'is-part'} mt-4">
                     <div class="flex items-baseline justify-between gap-2"><span class="text-[12px] font-bold">${t('Done this week')}</span><b class="text-[15px] font-black">${extra ? `${t('{a} of {b} sets', { a: shown, b: planned })} <span class="ex-extra">${t('+{n} extra', { n: extra })}</span>` : full ? t('All {n} sets', { n: planned }) : t('{a} of {b} sets', { a: shown, b: planned })}</b></div>
                     <div class="ex-segs" dir="ltr">${Array.from({ length: Math.max(planned, shown) }, (_, k) => `<i class="${k >= planned ? 'is-extra' : k < shown ? 'is-on' : ''}"></i>`).join('')}</div>
-                </div>
+                </div>`}
                 <div class="grid grid-cols-2 gap-2 mt-2.5">${tile(t('Sets'), esc(ex.sets))}${tile(t(timed ? 'Seconds per set' : 'Reps per set'), esc(fmtReps(ex.reps)))}</div>
                 ${sg && !full ? `<div class="ex-target ${tgtCls} mt-2"><i data-lucide="target" class="w-[18px] h-[18px] shrink-0"></i><div class="min-w-0"><div class="ex-target-l">${t("Today's target")}${sg.type !== 'build' ? ` · ${t(SUGG[sg.type].label).replace(/[:：]\s*$/, '')}` : ''}</div><div class="text-[16px] font-black text-white">${targetSentence(sg, timed)}</div></div></div>` : ''}
-                <div class="mt-3">
+                ${!hA.length ? '' : `<div class="mt-3">
                     <div class="flex justify-between px-0.5 mb-1.5 text-[12px] font-bold text-slate-400"><span>${t('Last time')}</span><span>${lastDay ? esc(isToday(lastDay.ts) ? t('Today') : fmtDate(lastDay.ts, false)) : ''}</span></div>
                     ${prev.length ? `<table class="ex-last-tbl" dir="ltr"><thead><tr><th>#</th><th>${t('kg')}</th><th>${t(timed ? 'sec' : 'reps')}</th></tr></thead><tbody>${prev.map((x, k) => `<tr><td>${t('Set {n}', { n: k + 1 })}</td><td>${x.w > 0 ? x.w : t('BW')}</td><td>${x.r}</td></tr>`).join('')}</tbody></table>`
                         : `<div class="rounded-2xl bg-white/5 px-3.5 py-3 text-[13px] font-bold text-slate-400">${t('First time doing this exercise')}</div>`}
-                </div>
+                </div>`}
                 <button onclick="window.appActions.closeExSheet(); window.appActions.startWorkout(${day.id}, null, ${i})" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : full ? t('Log more sets') : shown > 0 ? t('Continue') : t('Start workout')}</button>
             </div>`;
             if (window.lucide) window.lucide.createIcons({ root: document.getElementById('ex-sheet-box') });
@@ -2611,7 +2632,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         updateSessionInfo: () => {
             const S = window.appState.sess; if (!S) return;
             const all = document.querySelectorAll('#aw-sets-container .aw-row'), done = document.querySelectorAll('#aw-sets-container .aw-row[data-done="1"]');
-            const rowsAll = [...all], nextI = rowsAll.findIndex(r => r.dataset.done !== '1');
+            // the line stays empty until the first set is logged; then the next set is marked
+            const rowsAll = [...all], nextI = done.length ? rowsAll.findIndex(r => r.dataset.done !== '1') : -1;
             const segs = rowsAll.length <= 40 ? rowsAll.map((r, j) => `<i class="${r.dataset.done === '1' ? 'is-on' : j === nextI ? 'is-now' : ''}"></i>`).join('') : `<i class="is-on" style="flex:${done.length}"></i><i style="flex:${all.length - done.length}"></i>`;
             document.getElementById('aw-info').innerHTML = `<div class="w-full"><div class="flex justify-between items-baseline text-[12px] font-bold mb-2"><span class="text-slate-400">${S.exercises.length > 1 ? t('{n} exercises', { n: S.exercises.length }) : ''}</span><span class="text-slate-400" dir="ltr"><b class="num text-[20px] font-bold text-white">${done.length}</b> / ${all.length} ${t('sets')}</span></div><div class="aw-segs" dir="ltr" role="progressbar" aria-valuemin="0" aria-valuemax="${all.length}" aria-valuenow="${done.length}">${segs}</div></div>`;
         },
@@ -2910,6 +2932,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             window.appActions.renderPicker();
             openSheet('picker-overlay', 'picker-box');
             pushBack('picker', () => window.appActions.closePicker());
+            // the chips row starts at the highlighted muscle (changing a Chest exercise shows Chest), not at "All"
+            const chips = document.getElementById('picker-chips'), on = chips.querySelector('[data-on]');
+            chips.scrollLeft = 0;
+            if (on && on.previousElementSibling) requestAnimationFrame(() => { const r = chips.getBoundingClientRect(), c = on.getBoundingClientRect(); chips.scrollLeft += (c.left + c.width / 2) - (r.left + r.width / 2); });
         },
         closePicker: () => { popBack('picker'); closeSheet('picker-overlay', 'picker-box'); },
         pickerSearch: v => { window.appState.picker.q = v; window.appActions.renderPicker(false); },
@@ -2920,7 +2946,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const isSel = (name, muscle) => P.sel.some(x => x.name === name && x.muscle === muscle);
             if (withChips) {
                 document.getElementById('picker-chips').innerHTML = ['All', ...muscleOptions].map(m =>
-                    `<button onclick="window.appActions.pickerMuscle(${jsArg(m)})" class="shrink-0 h-10 px-3.5 rounded-full text-[13px] font-bold tap-feedback border ${P.muscle === m ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${esc(m === 'All' ? t('All') : tm(m))}</button>`).join('');
+                    `<button onclick="window.appActions.pickerMuscle(${jsArg(m)})" ${P.muscle === m ? 'data-on="1"' : ''} class="shrink-0 h-10 px-3.5 rounded-full text-[13px] font-bold tap-feedback border ${P.muscle === m ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${esc(m === 'All' ? t('All') : tm(m))}</button>`).join('');
             }
             const row = x => {
                 const sel = isSel(x.name, x.muscle), added = inDay.has(x.name);
@@ -3079,7 +3105,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         switchTab: tab => {
             if (tab === 'workout') tab = 'today'; if (tab === 'analytics') tab = 'progress';
             if (window.appState.currentView !== tab) dropHint();
-            window.appState.inlineEdit = null; window.appState.weekMenu = null; window.appState.todayEdit = false; window.appState.planDay = null; popBack('planday'); window.appState.currentView = tab;
+            window.appState.inlineEdit = null; window.appState.weekMenu = null; window.appState.todayEdit = false; window.appState.weekEdit = false; window.appState.planDay = null; popBack('planday'); window.appState.currentView = tab;
             const prevTab = document.querySelector('.tab-btn.text-\\[\\#d4af37\\]');
             ['today', 'plan', 'progress', 'profile'].forEach(v => { const b = document.getElementById('tabbtn-' + v); if (b) b.className = `tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative ${v === tab ? 'text-[#d4af37]' : 'text-slate-400'}`; });
             const ic = document.querySelector(`#tabbtn-${tab} svg`);
@@ -3137,8 +3163,16 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             setTimeout(() => document.addEventListener('pointerdown', away, true), 0);
         },
         clearDayFrom: id => { activeDay = id; window.appActions.clearDay(); },
-        toggleRoutines: () => { window.appState.routinesOpen = !window.appState.routinesOpen; renderSidePanel(); },
-        renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=v||t('Unnamed'); StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=appData.weeks.find(x=>x.id===currentWeekId).name; },
+        toggleRoutines: (open = !window.appState.routinesOpen) => { window.appState.routinesOpen = open === true; renderSidePanel(); },
+        renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=String(v||'').trim().slice(0,40)||t('Unnamed'); StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=t(appData.weeks.find(x=>x.id===currentWeekId).name); },
+        editRoutineName: id => {
+            const w = appData.weeks.find(x => x.id === id); if (!w) return;
+            openEdit(editHead(t('Rename routine')) + `<form onsubmit="event.preventDefault(); window.appActions.renameWeek(${jsArg(id)}, document.getElementById('edit-routine').value); window.appActions.closeEdit(); window.appActions.toggleRoutines(true)">
+                <input id="edit-routine" type="text" maxlength="40" value="${esc(t(w.name))}" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-white/30" dir="auto" aria-label="${esc(t('Rename routine'))}">
+                <button type="submit" class="w-full mt-4 py-4 rounded-xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Save')}</button></form>`);
+            setTimeout(() => { const i = document.getElementById('edit-routine'); if (i) { i.focus(); i.select(); } }, 320);
+        },
+        toggleWeekEdit: () => { window.appState.weekEdit = !window.appState.weekEdit; window.appState.weekMenu = null; renderWorkout(); },
         switchWeek: id => { currentWeekId=id; StorageManager.setActiveWeek(id); activeDay=getTodayId(); window.appState.inlineEdit=null; window.appState.planDay=null; renderNav(); renderWorkout(); },
         setActiveDay: id => { window.appState.inlineEdit=null; window.appState.weekMenu=null; if (window.appState.currentView==='today') window.appState.todayEdit=false; else if (window.appState.planDay!=null) window.appState.planDay=id; activeDay=id; renderNav(); renderWorkout(); },
         toggleRpe: v => { StorageManager.setShowRpe(v); window.appActions.showToast(t(v ? 'RPE column on' : 'RPE column off'), 'success'); },
@@ -3307,10 +3341,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} days', { n: p.days })}</span></span>
                     ${isRec ? `<span class="inline-block mt-1 text-[12px] font-bold text-[#22c55e]">★ ${t('Recommended for you')}</span>` : ''}
                     <span class="block text-[12px] font-bold text-slate-400 mt-1">${esc(t(p.desc))}</span>${pick.id === p.id ? programPreviewHTML(p) : ''}</button>`;
-                const others = PROGRAMS.filter(p => p.id !== rec.id).sort((a, c) => (c.days === parseInt(W.days)) - (a.days === parseInt(W.days)));
+                // the program made for you, or an empty week to fill in yourself
                 body = head(t('Your program'), t('Tap a program to see its week.')) + card(rec, true)
-                    + (W.showAll ? `<div class="text-[12px] font-bold text-slate-400 mt-5 mb-2">${t('Other programs')}</div>` + others.map(p => card(p, false)).join('')
-                        : `<button onclick="window.appState.wiz.showAll=true;window.appActions.renderWizard()" class="w-full py-3 mb-3 rounded-xl bg-white/5 border border-white/10 text-[12px] font-bold text-slate-300 tap-feedback">${t('See all {n} programs', { n: PROGRAMS.length })}</button>`)
+                    + `<button onclick="window.appActions.wizFinish('own')" class="w-full py-3.5 mb-3 rounded-xl bg-white/5 border border-white/10 text-[13px] font-bold text-white tap-feedback flex items-center justify-center gap-2"><i data-lucide="pencil-ruler" class="w-4 h-4 text-slate-400"></i>${t("I'll build my own")}</button>`
                     + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#050505]"><button onclick="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Start with this program')}</button>
                        <p class="text-[12px] font-bold text-slate-400 text-center mt-2">${t('You can change any day or exercise later in Plan.')}</p></div>`;
             }
@@ -3379,7 +3412,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 if (window.appState.currentView === 'profile') renderProfile();
                 return window.appActions.showToast(t('Profile updated'), 'success');
             }
-            if (mode !== 'program') return;
+            if (mode !== 'program' && mode !== 'own') return;
             // already 5 routines: the current one would be replaced, so ask first
             if (!sure && !W.firstRun && appData.weeks.length >= 5)
                 return window.appActions.showConfirm(t('Replace current routine?'), t('You have 5 routines (the most). The current one will be replaced; your history is kept.'), () => window.appActions.wizFinish(mode, true), true);
@@ -3389,6 +3422,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             StorageManager.setOnboard();
             popBack('wizard');
             closeModal('onboarding-overlay', 'onboarding-box', 300);
+            if (mode === 'own') {
+                // an empty week (every day empty), then Plan to fill it in
+                const start = DAY_NAMES.indexOf(StorageManager.getStartDay());
+                const empty = Array.from({ length: 7 }, (_, i) => ({ id: i + 1, day: DAY_NAMES[(start + i) % 7], title: 'New Day', isRest: false, recoveryType: null, exercises: [] }));
+                putRoutine(t('My routine'), empty, { replace: W.firstRun });
+                return window.appActions.switchTab('plan');
+            }
             window.appActions.applyProgram(W.pick || recommendProgram({ ...W, sex: getBody().sex }), { exp: W.exp, replace: W.firstRun });
         },
         // Put a program into the app: as a new routine (keeps your current one) or replacing the current one
@@ -4174,10 +4214,8 @@ ${lib}`;
                 <button onclick="window.appActions.openEmail('in')" class="w-full mt-2 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button></div>`;
         } else {
             const name = u.displayName || u.name || '', email = u.email || '', photo = u.photoURL || u.photo || '';
-            // sync runs by itself: this only says how it is going
-            const st = { off: ['bg-slate-500', t('Connecting…')], loading: ['bg-slate-500', t('Connecting…')], syncing: ['bg-[#d4af37] animate-pulse', t('Syncing…')],
-                synced: ['bg-[#22c55e]', t('Synced {time}', { time: Cloud.lastSync ? new Intl.DateTimeFormat(isAR ? 'ar' : 'en-GB', { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(Cloud.lastSync) : '' })],
-                offline: ['bg-slate-400', t('Offline')], error: ['bg-red-500', t('Sync problem')] }[Cloud.status] || ['bg-slate-500', ''];
+            // sync runs by itself: nothing is shown while it works, only when it can't
+            const st = { offline: ['bg-slate-400', t('Offline')], error: ['bg-red-500', t('Sync problem')] }[Cloud.status];
             // the whole card opens Account (personal details and account settings)
             el.innerHTML = `<div class="glass-card border border-white/10">
                 <button onclick="window.appActions.openAccount()" ${Cloud.user ? '' : 'disabled'} class="w-full px-4 py-3.5 flex items-center gap-3 text-start tap-feedback" aria-label="${esc(t('Account'))}">
@@ -4186,7 +4224,7 @@ ${lib}`;
                         <span class="block text-[16px] font-black text-white truncate leading-tight">${esc(name || email)}</span>
                         ${name && email ? `<span class="block text-[12px] font-bold text-slate-400 truncate mt-0.5">${esc(email)}</span>` : ''}
                     </span>
-                    <span class="shrink-0 flex items-center gap-1.5 text-[12px] font-bold text-slate-400" title="${esc(Cloud.err)}"><span class="w-1.5 h-1.5 rounded-full ${st[0]}"></span><span class="max-w-[110px] truncate">${esc(st[1])}</span></span>
+                    ${st ? `<span class="shrink-0 flex items-center gap-1.5 text-[12px] font-bold text-slate-400" title="${esc(Cloud.err)}"><span class="w-1.5 h-1.5 rounded-full ${st[0]}"></span><span class="max-w-[110px] truncate">${esc(st[1])}</span></span>` : ''}
                     <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
                 </button></div>`;
         }
@@ -4200,6 +4238,9 @@ ${lib}`;
         closeAccount: () => { popBack('account'); closeSheet('account-overlay', 'account-box'); },
         openTraining: () => { renderTrainingSheet(); openSheet('training-overlay', 'training-box'); pushBack('training', () => window.appActions.closeTraining()); },
         closeTraining: () => { popBack('training'); closeSheet('training-overlay', 'training-box'); },
+        // Profile → Workout settings / App settings (one page each)
+        openSettings: which => { const id = which === 'app' ? 'appset' : 'workset'; window.appState.settingsOpen = id; openSheet(id + '-overlay', id + '-box'); pushBack('settings', () => window.appActions.closeSettings()); },
+        closeSettings: () => { const id = window.appState.settingsOpen; if (!id) return; window.appState.settingsOpen = null; popBack('settings'); closeSheet(id + '-overlay', id + '-box'); },
         closeEdit: () => { popBack('edit'); if (document.activeElement) document.activeElement.blur(); closeModal('edit-overlay', 'edit-box'); },
         editName: () => {
             if (!Cloud.user) return;
@@ -4207,6 +4248,24 @@ ${lib}`;
                 <input id="edit-name" type="text" autocomplete="name" maxlength="60" value="${esc(Cloud.user.displayName || '')}" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-white/30" dir="auto" aria-label="${esc(t('Name'))}">
                 <button type="submit" class="w-full mt-4 py-4 rounded-xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Save')}</button></form>`);
             setTimeout(() => { const i = document.getElementById('edit-name'); if (i) { i.focus(); i.select(); } }, 320);
+        },
+        // date of birth (the age shown comes from it): same limits as the setup
+        editBirth: () => {
+            const b = getBody(), n = new Date(), iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            const max = iso(new Date(n.getFullYear() - MIN_AGE, n.getMonth(), n.getDate())), min = iso(new Date(n.getFullYear() - 100, 0, 1));
+            openEdit(editHead(t('Date of birth')) + `<form onsubmit="event.preventDefault(); window.appActions.saveBirth(document.getElementById('edit-birth').value)">
+                <input id="edit-birth" type="date" min="${min}" max="${max}" value="${esc(b.birthDate || '')}" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-white/30 num" dir="ltr" aria-label="${esc(t('Date of birth'))}">
+                <button type="submit" class="w-full mt-4 py-4 rounded-xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Save')}</button></form>`);
+        },
+        saveBirth: v => {
+            const err = m => window.appActions.showToast(m, 'error');
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(v || '')) return err(t('Enter your date of birth.'));
+            const age = ageOf({ birthDate: v });
+            if (age < MIN_AGE) return err(t('Apex Lift is for ages {n} and up.', { n: MIN_AGE }));
+            if (age > 100) return err(t('Check your date of birth.'));
+            setBody({ ...getBody(), birthDate: v });
+            window.appActions.closeEdit(); renderAccountSheet();
+            window.appActions.showToast(t('Saved'));
         },
         editTraining: k => {
             const row = TRAINING_EDIT[k]; if (!row) return;
@@ -5086,7 +5145,6 @@ ${lib}`;
         let lB = StorageManager.getBackupDate();
         if (!lB) { StorageManager.setBackupDate(); lB = Date.now(); }
         const days = Math.floor((Date.now() - lB) / 86400000), old = days >= 7 && !Cloud.user && !getCloudFlag();
-        const dot = document.getElementById('backup-dot'); if (dot) dot.classList.toggle('hidden', !old);
         const age = document.getElementById('backup-age');
         // signed in, everything is already kept in the account: the file is for sharing or for an AI
         const synced = !!(Cloud.user || getCloudFlag());

@@ -301,7 +301,7 @@ select:focus, select:focus-visible, .pf-select:focus-visible, .pf-switch:focus-v
 input.day-title-input { font-size: 26px !important; }
 
 /* Arabic: the routine name at the top gets a little more size and line height so letters aren't cut */
-:root[lang="ar"] #active-week-label { font-size: 12px; }
+:root[lang="ar"] #active-week-label { font-size: 16px; line-height: 1.6; }
 
 /* Bottom tab bar sized like iPhone's own apps: ~50pt of buttons, then a slim strip for the home bar */
 #tab-bar { padding-bottom: max(4px, calc(env(safe-area-inset-bottom) - 12px)); }
@@ -358,6 +358,19 @@ input.day-title-input { font-size: 26px !important; }
 @keyframes coach-turn { to { --coach-a: 360deg; } }
 @keyframes coach-twinkle { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.15) rotate(12deg); } }
 @media (prefers-reduced-motion: reduce) { .coach-btn, .coach-btn-ic svg { animation: none; } }
+/* Plan → the edit button next to Coach: days can only be moved while it is on. It glows so it is easy to find,
+   and in edit mode the day rows glow too */
+.week-edit-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; height: 44px; padding-inline: 12px; border-radius: 999px; font-size: 13px; font-weight: 800;
+  color: #d4af37; background: rgba(212, 175, 55, 0.12); border: 1.5px solid rgba(212, 175, 55, 0.7); box-shadow: 0 0 14px rgba(212, 175, 55, 0.35); }
+.week-edit-btn svg { width: 18px; height: 18px; }
+.week-edit-btn.is-on { color: #000; background: #d4af37; border-color: #d4af37; box-shadow: 0 0 22px rgba(212, 175, 55, 0.7); animation: edit-glow 1.8s ease-in-out infinite; }
+@keyframes edit-glow { 50% { box-shadow: 0 0 8px rgba(212, 175, 55, 0.35); } }
+.glass-card.plan-ex.plan-day.is-editing { border-color: rgba(212, 175, 55, 0.65); box-shadow: 0 0 14px rgba(212, 175, 55, 0.28); }
+.plan-day.is-editing .handle { color: #d4af37; }
+@media (prefers-reduced-motion: reduce) { .week-edit-btn.is-on { animation: none; } }
+:root[data-theme="light"] .week-edit-btn { color: #8a6d0b; background: rgba(212, 175, 55, 0.14); border-color: rgba(160, 125, 15, 0.7); box-shadow: 0 0 12px rgba(180, 140, 20, 0.3); }
+:root[data-theme="light"] .week-edit-btn.is-on { color: #000; background: #d4af37; }
+:root[data-theme="light"] .glass-card.plan-ex.plan-day.is-editing { border-color: rgba(160, 125, 15, 0.7); box-shadow: 0 0 12px rgba(180, 140, 20, 0.25); }
 :root[data-theme="light"] .coach-btn { color: #2e1065; background: linear-gradient(135deg, #f5f3ff, #fdf2f8) padding-box, conic-gradient(from var(--coach-a), #8b5cf6, #ec4899, #38bdf8, #8b5cf6) border-box; box-shadow: 0 2px 14px rgba(139, 92, 246, 0.25); }
 /* after 6 seconds of waiting, a short note says a program takes a while */
 .ai-wait { display: block; max-height: 0; overflow: hidden; opacity: 0; font-size: 13px; color: var(--text-3); animation: ai-wait 0.4s ease 6s forwards; }
@@ -399,8 +412,16 @@ input.day-title-input { font-size: 26px !important; }
 .today-week .wk-strip { background: transparent; border: 0; padding: 0; border-radius: 0; box-shadow: none; }
 .today-body { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; padding: 12px 4px 0; border-top: 1px solid rgba(255, 255, 255, 0.08); }
 .today-body.is-row { flex-direction: row; align-items: center; gap: 12px; }
-.glass-card.ex-card { border-radius: 22px; padding: 17px 14px; }
-.ex-card .ex-name { font-size: 16.5px; }
+.glass-card.ex-card { border-radius: 20px; padding: 10px 12px; }
+.ex-card .ex-name { font-size: 15.5px; }
+/* Today cards: each exercise gets its own bright colour (ring, tint and edge); done = green */
+.ex-card.acc-0 { --acc: 139 92 246; } .ex-card.acc-1 { --acc: 236 72 153; } .ex-card.acc-2 { --acc: 56 189 248; } .ex-card.acc-3 { --acc: 249 115 22; } .ex-card.acc-4 { --acc: 20 184 166; }
+.glass-card.ex-card[class*="acc-"]:not(.is-full) { background: linear-gradient(90deg, rgb(var(--acc) / 0.2), rgb(var(--acc) / 0.05) 70%); border: 1px solid rgb(var(--acc) / 0.4); border-inline-start: 4px solid rgb(var(--acc)); }
+.ex-card[class*="acc-"]:not(.is-full) .ex-ring-bg { fill: rgb(var(--acc) / 0.18); stroke: rgb(var(--acc) / 0.45); }
+.ex-card[class*="acc-"]:not(.is-full) .ex-ring-fg { stroke: rgb(var(--acc)); }
+.ex-card[class*="acc-"]:not(.is-full) .ex-ring-n { color: rgb(var(--acc)); }
+.ex-card[class*="acc-"]:not(.is-full) .ex-pill { background: rgb(var(--acc) / 0.18); color: #fff; font-size: 14px; padding: 4px 10px; }
+.ex-card .ex-ring { width: 34px; height: 34px; }
 
 /* Today cards: a ring around the number fills as this week's sets get done; pill shows "2/4 sets" */
 .ex-ring { position: relative; width: 38px; height: 38px; flex-shrink: 0; display: grid; place-items: center; }
@@ -415,6 +436,9 @@ input.day-title-input { font-size: 26px !important; }
 .glass-card.ex-card.is-full { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.45); }
 .ex-card.is-full .ex-pill { background: #22c55e; color: #000; }
 /* bonus sets sit next to the pill, outside it */
+/* exercise pop-up: shown instead of "Done this week" before the very first set of an exercise */
+.ex-first { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 800; color: #c4b5fd; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); }
+:root[data-theme="light"] .ex-first { color: #5b21b6; background: rgba(139, 92, 246, 0.1); }
 .ex-pill-extra { flex-shrink: 0; font-size: 12px; font-weight: 700; padding: 5px 8px; border-radius: 999px; background: #d4af37; color: #000; }
 .ex-extra { font-size: 12px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: #d4af37; color: #000; vertical-align: 2px; }
 
@@ -498,6 +522,8 @@ input.day-title-input { font-size: 26px !important; }
 :root[data-theme="light"] .ex-pill { background: rgba(0, 0, 0, 0.05); color: #556273; }
 :root[data-theme="light"] .ex-card.is-part .ex-pill { background: rgba(212, 175, 55, 0.18); color: #8a6a0c; }
 :root[data-theme="light"] .ex-card.is-full .ex-pill { background: #22c55e; color: #000; }
+:root[data-theme="light"] .glass-card.ex-card[class*="acc-"]:not(.is-full) { background: linear-gradient(90deg, rgb(var(--acc) / 0.16), rgb(var(--acc) / 0.04) 70%); }
+:root[data-theme="light"] .ex-card[class*="acc-"]:not(.is-full) .ex-pill { color: #1e293b; }
 :root[data-theme="light"] .glass-card.ex-card.is-full { background: rgba(34, 197, 94, 0.1); border-color: rgba(22, 163, 74, 0.45); }
 :root[data-theme="light"] .ex-week { background: rgba(0, 0, 0, 0.04); color: #334155; }
 :root[data-theme="light"] .ex-week b { color: #111318; }
