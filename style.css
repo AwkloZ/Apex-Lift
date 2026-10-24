@@ -15,7 +15,7 @@
     --gold-ink: #d4af37;      /* gold text */
     --gold-soft: rgba(212, 175, 55, 0.14);
     --on-gold: #111111;
-    --bg: #1c1b17;            /* the app background: one solid colour */
+    --bg: #14130e;            /* the app background: one solid colour */
     --surface-1: rgba(28, 28, 30, 0.6);   /* cards */
     --surface-2: #161618;                 /* sheets and pop-ups */
     --inset: rgba(255, 255, 255, 0.05);   /* boxes inside a card, inputs */
@@ -157,11 +157,11 @@ input[type="number"] {
 
 /* A minimized Log/Focus session bar sits at the bottom: keep room for it */
 /* Room for the bottom tab bar (and the minimized workout bar above it) */
-.scrollable-content { padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important; }
+.scrollable-content { padding-bottom: calc(110px + env(safe-area-inset-bottom)) !important; }
 /* no sideways drift or bounce of the whole screen while swiping (Plan and the day editor only scroll up and down) */
 .scrollable-content { overflow-x: hidden; overscroll-behavior: contain; }
 #plan-routines, .plan-scope { touch-action: pan-y; }
-#toast-container { bottom: calc(92px + env(safe-area-inset-bottom)) !important; }
+#toast-container { bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
 body.has-mini .scrollable-content { padding-bottom: calc(180px + env(safe-area-inset-bottom)) !important; }
 body.has-mini #toast-container { bottom: calc(160px + env(safe-area-inset-bottom)) !important; }
 
@@ -437,19 +437,24 @@ input.day-title-input { font-size: 26px !important; }
 .back-btn svg { width: 24px; height: 24px; stroke-width: 2.2; }
 :root[data-theme="light"] .back-btn { background: #ffffff; border-color: rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
 
-/* Dock (like Instagram): a full-width bar on the bottom edge, 50px tall plus the phone's bottom area, a thin line on top,
-   the app's background colour; icons only, the open tab has a bolder icon (no pill, no colour) */
-#tab-bar { left: 0; right: 0; bottom: 0; width: 100%; padding: 0 0 env(safe-area-inset-bottom) !important;
-  background: var(--bg); border-top: 0.5px solid rgba(255, 255, 255, 0.12); }
-#tab-bar > div { max-width: 42rem; margin: 0 auto; }
-#tab-bar .tab-btn { height: 50px; padding: 0 !important; justify-content: center; color: var(--text) !important; }
+/* Dock (like the new Instagram): a floating glass capsule above the bottom edge, almost the full width;
+   icons only, the open tab sits on a soft round pill with a bolder icon (no colour) */
+#tab-bar { left: 16px; right: 16px; bottom: max(14px, env(safe-area-inset-bottom)); max-width: 420px; margin: 0 auto; padding: 5px !important; border-radius: 999px;
+  background: rgba(44, 42, 34, 0.55); -webkit-backdrop-filter: blur(28px) saturate(1.8); backdrop-filter: blur(28px) saturate(1.8);
+  border: 0.5px solid rgba(255, 255, 255, 0.16); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+#tab-bar .tab-btn { height: 52px; padding: 0 !important; border-radius: 999px; justify-content: center; color: var(--text) !important; transition: background-color 0.2s; }
 #tab-bar .tab-btn svg { width: 26px; height: 26px; stroke-width: 1.7; transition: stroke-width 0.15s; }
-#tab-bar .tab-btn.text-\[\#d4af37\] svg { stroke-width: 2.6; }
-:root[data-theme="light"] #tab-bar { border-top-color: rgba(0, 0, 0, 0.12); }
-#tab-bar #backup-dot { border-color: var(--bg); }
+#tab-bar .tab-btn.text-\[\#d4af37\] { background: rgba(255, 255, 255, 0.14); }
+#tab-bar .tab-btn.text-\[\#d4af37\] svg { stroke-width: 2.5; }
+:root[data-theme="light"] #tab-bar { background: rgba(255, 255, 255, 0.7); border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12); }
+:root[data-theme="light"] #tab-bar .tab-btn.text-\[\#d4af37\] { background: rgba(0, 0, 0, 0.07); }
+#tab-bar #backup-dot { border-color: #2c2a22; }
 /* exercise pop-up on Today: a little see-through, the screen behind shows blurred */
 .ex-pop { background: rgba(17, 17, 17, 0.78); -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4); }
 :root[data-theme="light"] .ex-pop { background: rgba(255, 255, 255, 0.82); }
+/* bottom sheet without a header: a small grab handle on top (swipe down to close) */
+.sheet-grab { width: 40px; height: 5px; border-radius: 999px; margin: 10px auto 4px; background: rgba(255, 255, 255, 0.25); }
+:root[data-theme="light"] .sheet-grab { background: rgba(0, 0, 0, 0.18); }
 /* Plan → a day: no week bar, so the card starts at the day name */
 .today-body.no-week { margin-top: 0; padding-top: 4px; border-top: 0; }
 
@@ -499,7 +504,7 @@ input.day-title-input { font-size: 26px !important; }
 :root[data-theme="light"] body { color: #111318; }
 :root[data-theme="light"] .glass-card { background: rgba(255, 255, 255, 0.92); border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(0, 0, 0, 0.04); }
 /* surfaces */
-:root[data-theme="light"] :is(.bg-\[\#111\], .bg-\[\#0f0f0f\], .bg-\[\#1a1a1a\], .bg-\[\#050505\], .bg-\[\#1c1b17\], .bg-\[\#161616\], .bg-black) { background-color: #ffffff; }
+:root[data-theme="light"] :is(.bg-\[\#111\], .bg-\[\#0f0f0f\], .bg-\[\#1a1a1a\], .bg-\[\#050505\], .bg-\[\#14130e\], .bg-\[\#161616\], .bg-black) { background-color: #ffffff; }
 :root[data-theme="light"] .bg-\[\#161616\]\/95, :root[data-theme="light"] .bg-\[\#0b0b0b\]\/95 { background-color: rgba(255, 255, 255, 0.95); }
 :root[data-theme="light"] .bg-white\/5 { background-color: rgba(0, 0, 0, 0.04); }
 :root[data-theme="light"] :is(.bg-white\/10, .hover\:bg-white\/5:hover) { background-color: rgba(0, 0, 0, 0.07); }

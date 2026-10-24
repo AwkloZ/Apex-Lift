@@ -46,11 +46,11 @@ Design check: `node tools/design-check.js [--lang en|ar] [--theme dark|light]` (
 
 ## Screens and navigation (keep every screen in one of these)
 
-- **Tabs**: the dock (Today, Plan, Progress, Profile), like Instagram's: a full-width bar on the bottom edge (50px plus the phone's bottom area, thin line on top, the app background), icons only, the open tab has a bolder icon; the labels are for screen readers.
-- **Background**: one solid colour, `--bg` (`#1c1b17` in dark), no gradient.
+- **Tabs**: the floating dock (Today, Plan, Progress, Profile), like the new Instagram: a glass capsule above the bottom edge, almost the full width, icons only, the open tab on a soft round pill with a bolder icon; the labels are for screen readers.
+- **Background**: one solid colour, `--bg` (`#14130e` in dark), no gradient.
 - **Full pages** (second pages): Account, Account backups, Workout, App, and the workout itself. They slide in from the side, fill the screen, and have the round back button on the left with the title in the middle (no header line). The back button, the phone's back and a swipe from the left edge all go back. Back on the workout keeps it running in the small bar.
 - **Pop-up cards** (middle of the screen): the details of one thing: the exercise on Today, the exercise on Plan, sets & reps when changing an exercise, confirmations, short edits. Close by tapping outside, the phone's back, or their own button.
-- **Bottom sheets**: lists and tools: add / change exercise, exercise history, Coach, Add a routine by code, programs. Close with ✕, a swipe down, a tap outside or the phone's back.
+- **Bottom sheets**: lists and tools: add / change exercise, exercise history, Coach, Add a routine by code, programs. Close with ✕, a swipe down, a tap outside or the phone's back. The exercise list (add / change exercise) has no header: a grab handle on top, no ✕.
 - **One back button** everywhere: `backBtn()` in `app.js` / `.back-btn` (round, ‹), also Plan → This week and the setup.
 - Today is for training, Plan is for editing (delete an exercise by swiping its card left).
 

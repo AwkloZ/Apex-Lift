@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <!-- No zooming: pinch is blocked (iPhone ignores user-scalable=0), double-tap zoom is off in the CSS (touch-action) -->
     <script>document.addEventListener('gesturestart', function (e) { e.preventDefault(); }); document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });</script>
-    <meta name="theme-color" content="#1c1b17">
+    <meta name="theme-color" content="#14130e">
     <script>try { const th = localStorage.getItem('workoutTheme_rakan_final'); if (th === 'light' || (th === 'system' && matchMedia('(prefers-color-scheme: light)').matches)) { document.documentElement.setAttribute('data-theme', 'light'); document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f3f3f0'); } } catch (e) {}</script>
     <title>Apex Lift</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -41,13 +41,13 @@
     <div id="toast-container" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center justify-end gap-3 w-full max-w-sm px-4 pointer-events-none pb-4"></div>
 
 <!-- First-launch setup (full screen) -->
-    <div id="onboarding-overlay" class="fixed inset-0 bg-[#1c1b17] z-[99999] hidden flex-col opacity-0 transition-opacity duration-300">
+    <div id="onboarding-overlay" class="fixed inset-0 bg-[#14130e] z-[99999] hidden flex-col opacity-0 transition-opacity duration-300">
         <div id="onboarding-box" class="w-full max-w-md mx-auto h-full flex flex-col px-6 pb-6 overflow-y-auto" style="padding-top: env(safe-area-inset-top);"></div>
     </div>
 
     <!-- Program gallery (Plan → Programs) -->
     <!-- First launch: intro pages you swipe through, then sign in with Google or email (required to use the app) -->
-    <div id="welcome-overlay" class="fixed inset-0 z-[9990] bg-[#1c1b17] hidden flex-col">
+    <div id="welcome-overlay" class="fixed inset-0 z-[9990] bg-[#14130e] hidden flex-col">
         <div class="flex items-center justify-between px-5 shrink-0" style="padding-top: calc(env(safe-area-inset-top) + 14px);">
             <div dir="ltr" class="text-xl font-black italic tracking-tighter uppercase text-white logo-mark">APEX <span class="text-[#d4af37]">LIFT</span></div>
             <button id="welcome-lang" class="h-10 px-4 rounded-full bg-white/5 border border-white/10 text-[12px] font-bold text-slate-200 tap-feedback"></button>
@@ -287,7 +287,7 @@
     </div>
 
     <!-- Minimized session: stays at the bottom while you look at your schedule; tap to go back -->
-    <button id="aw-mini" onclick="window.appActions.expandSession()" style="bottom: calc(62px + env(safe-area-inset-bottom));" class="hidden fixed left-4 right-4 z-[250] max-w-xl mx-auto bg-[#161616]/95 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl px-4 py-3 items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] tap-feedback text-start">
+    <button id="aw-mini" onclick="window.appActions.expandSession()" style="bottom: calc(86px + env(safe-area-inset-bottom));" class="hidden fixed left-4 right-4 z-[250] max-w-xl mx-auto bg-[#161616]/95 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl px-4 py-3 items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] tap-feedback text-start">
         <span id="aw-mini-dot" class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shrink-0"></span>
         <span class="flex-1 min-w-0">
             <span id="aw-mini-name" class="ex-name block text-[14px] font-black text-white truncate"></span>
@@ -346,10 +346,8 @@
     <!-- Exercise picker (slides up from the bottom) -->
     <div id="picker-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closePicker()">
         <div id="picker-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
-            <div class="pop-head is-end is-sheet shrink-0">
-                <button onclick="window.appActions.closePicker()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-white tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <h3 id="picker-title" class="ex-fit px-5 pt-4 pb-3 text-[22px] font-black text-white leading-tight whitespace-nowrap overflow-hidden shrink-0" data-i18n="Add exercises">Add exercises</h3>
+            <div class="sheet-grab shrink-0" aria-hidden="true"></div>
+            <h3 id="picker-title" class="ex-fit px-5 pt-2 pb-3 text-[22px] font-black text-white leading-tight whitespace-nowrap overflow-hidden shrink-0" data-i18n="Add exercises">Add exercises</h3>
             <div class="px-5 shrink-0">
                 <div class="flex items-center gap-2 bg-black/50 border border-white/10 rounded-xl px-3 focus-within:border-[#d4af37]">
                     <i data-lucide="search" class="w-4 h-4 text-slate-400 shrink-0"></i>
