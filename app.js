@@ -1133,7 +1133,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '68';
+    const APP_VERSION = '69';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -2268,7 +2268,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const renderWorkout = () => {
         const v = window.appState.currentView;
         if (v === 'today') renderToday();
-        else if (v === 'plan') { if (window.appState.planDay == null) renderPlanWeek(); else renderPlanDay(planBackBar()); }
+        else if (v === 'plan') { if (window.appState.planDay == null) renderPlanWeek(); else renderPlanDay(planBackBar(), false); }
         else if (v === 'progress') renderAnalytics();
     };
 
@@ -2277,13 +2277,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     // the app's one back button: a round button with ‹ (pages, Plan → This week, the setup)
     const backBtn = (onclick, label = t('Go back'), cls = '') => `<button onclick="${onclick}" class="back-btn tap-feedback ${cls}" aria-label="${esc(label)}"><i data-lucide="chevron-left" class="rtl-flip"></i></button>`;
     const planBackBar = () => `<div class="flex items-center gap-3 mb-3 ps-0.5">${backBtn('window.appActions.openPlanDay(null)', t('This week'))}<button onclick="window.appActions.openPlanDay(null)" class="text-[16px] font-black text-white tap-feedback py-2.5">${t('This week')}</button></div>`;
-    const renderPlanDay = (top = '') => {
+    const renderPlanDay = (top = '', week = true) => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), S = window.appState;
         const planned = day.exercises.reduce((a, ex) => a + (parseInt(ex.sets) || 0), 0);
         const mins = Math.max(10, Math.round(planned * 2.5 / 5) * 5), hasEx = !day.isRest && day.exercises.length > 0;
         const pill = 'flex items-center justify-center gap-1.5 h-10 px-3.5 rounded-full border text-[12px] font-black whitespace-nowrap';
         const dayLabel = `<div class="text-[12px] font-bold text-[#d4af37]">${esc(dayLong(day.day))}</div>`;
-        let html = `<div class="glass-card today-card plan-card"><div id="today-week" class="today-week">${weekNavHTML()}</div><div class="today-body">
+        let html = `<div class="glass-card today-card plan-card">${week ? `<div id="today-week" class="today-week">${weekNavHTML()}</div>` : ''}<div class="today-body${week ? '' : ' no-week'}">
             ${!day.isRest
                 ? `<div>${dayLabel}<input type="text" value="${esc(day.title === 'New Day' ? '' : t(day.title))}" placeholder="${esc(t('Name this day'))}" onchange="window.appActions.updateDayTitle(this.value)" aria-label="${esc(t('Name this day'))}" class="day-title-input w-full mt-0.5 pb-1 bg-transparent border-b-[1.5px] border-dashed border-white/25 focus:border-solid focus:border-[#d4af37] text-[21px] font-black text-white placeholder:text-slate-600 outline-none leading-tight transition-colors"></div>
                    <div class="text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: day.exercises.length })} · ${t('{n} sets', { n: planned })}${planned ? ` · ${t('~{n} min', { n: mins })}` : ''}</div>`
@@ -2517,15 +2517,16 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const lastDay = lastDaySets(hA, day.id), prev = lastDay ? lastDay.sets : [], full = planned > 0 && doneSets >= planned, shown = doneSets, extra = Math.max(0, doneSets - planned);
             const tile = (label, value) => `<div class="rounded-2xl bg-white/5 px-3.5 py-2 min-w-0"><div class="text-[12px] font-bold text-slate-400">${label}</div><div class="text-[19px] font-black text-white leading-tight mt-0.5"><span dir="ltr">${value}</span></div></div>`;
             const tgtCls = sg ? { up: 'is-up', down: 'is-down' }[sg.type] || '' : '';
-            // header: the three buttons on the right; under it the exercise name gets the whole width
-            document.getElementById('ex-sheet-content').innerHTML = `<div class="pop-head is-end">
+            // no header bar: the muscle with How to and History on its right, then the name on the whole width (close: tap outside or back)
+            document.getElementById('ex-sheet-content').innerHTML = `<div class="px-5">
+                <div class="flex items-center justify-between gap-2 -mt-1">
+                <div class="text-[12px] font-bold text-[#d4af37] min-w-0 truncate">${esc(tm(ex.muscle))}</div>
+                <div class="flex items-center gap-1.5 shrink-0 -me-1">
                     <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}" target="_blank" rel="noopener" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('How to do it (YouTube)'))}" title="${esc(t('How to do it (YouTube)'))}"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i></a>
                     <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
-                    <button onclick="window.appActions.closeExSheet()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
-                <div class="px-5">
-                <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
-                <h3 class="ex-name ex-fit text-[24px] font-black text-white leading-tight mt-0.5 whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</h3>
+                </div>
+                <h3 class="ex-name ex-fit text-[24px] font-black text-white leading-tight whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</h3>
                 ${shown === 0 ? (hA.length ? '' : `<div class="ex-first mt-4"><i data-lucide="sparkles" class="w-4 h-4 shrink-0"></i>${t('First time')}</div>`) : `<div class="ex-week ${full ? 'is-full' : 'is-part'} mt-4">
                     <div class="flex items-baseline justify-between gap-2"><span class="text-[12px] font-bold">${t('Done this week')}</span><b class="text-[15px] font-black">${extra ? `${t('{a} of {b} sets', { a: shown, b: planned })} <span class="ex-extra">${t('+{n} extra', { n: extra })}</span>` : full ? t('All {n} sets', { n: planned }) : t('{a} of {b} sets', { a: shown, b: planned })}</b></div>
                     <div class="ex-segs" dir="ltr">${Array.from({ length: Math.max(planned, shown) }, (_, k) => `<i class="${k >= planned ? 'is-extra' : k < shown ? 'is-on' : ''}"></i>`).join('')}</div>
@@ -3394,7 +3395,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 // the program made for you, or an empty week to fill in yourself
                 body = head(t('Your program'), t('Tap a program to see its week.')) + card(rec, true)
                     + `<button onclick="window.appActions.wizFinish('own')" class="w-full py-3.5 mb-3 rounded-xl bg-white/5 border border-white/10 text-[13px] font-bold text-white tap-feedback flex items-center justify-center gap-2"><i data-lucide="pencil-ruler" class="w-4 h-4 text-slate-400"></i>${t("I'll build my own")}</button>`
-                    + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#050505]"><button onclick="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Start with this program')}</button>
+                    + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#1c1b17]"><button onclick="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Start with this program')}</button>
                        <p class="text-[12px] font-bold text-slate-400 text-center mt-2">${t('You can change any day or exercise later in Plan.')}</p></div>`;
             }
             const dots = W.steps.map((_, i) => `<span class="h-1.5 rounded-full transition-all ${i === W.step ? 'w-6 bg-[#d4af37]' : i < W.step ? 'w-3 bg-[#d4af37]/50' : 'w-3 bg-white/15'}"></span>`).join('');
@@ -5130,7 +5131,7 @@ ${lib}`;
     const applyTheme = () => {
         const v = themeChoice(), light = v === 'light' || (v === 'system' && !!phoneLight && phoneLight.matches);
         if (light) document.documentElement.setAttribute('data-theme', 'light'); else document.documentElement.removeAttribute('data-theme');
-        const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', light ? '#f3f3f0' : '#000000');
+        const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', light ? '#f3f3f0' : '#1c1b17');
     };
     if (phoneLight && phoneLight.addEventListener) phoneLight.addEventListener('change', () => { if (themeChoice() === 'system') applyTheme(); });
     // Apply the language to the fixed parts of the page (index.html) and set right-to-left for Arabic
