@@ -428,6 +428,14 @@ input.day-title-input { font-size: 26px !important; }
 .glass-card.ex-card.is-full { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.45); }
 .ex-card.is-full .ex-pill { background: #22c55e; color: #000; }
 /* bonus sets sit next to the pill, outside it */
+/* Pop-ups and settings pages: a header bar with the buttons and a line under it; the title gets the whole width below */
+.pop-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 16px 12px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
+.pop-head.is-end { justify-content: flex-end; }
+.pop-head.is-page { padding-top: 12px; margin-bottom: 0; }
+.pop-head.is-sheet { padding-top: 16px; margin-bottom: 0; }
+:root[lang="ar"] .rtl-flip { transform: scaleX(-1); }
+.page-title { font-size: 26px; font-weight: 900; line-height: 1.2; color: #fff; margin: 0 0 16px; }
+:root[data-theme="light"] .page-title { color: #111; }
 /* exercise pop-up: shown instead of "Done this week" before the very first set of an exercise */
 .ex-first { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 800; color: #c4b5fd; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); }
 :root[data-theme="light"] .ex-first { color: #5b21b6; background: rgba(139, 92, 246, 0.1); }
@@ -541,6 +549,8 @@ input.day-title-input { font-size: 26px !important; }
 .glass-card.plan-ex { border-radius: 22px; padding: 11px 12px 11px 4px; border: 1px solid var(--line); }
 .glass-card.plan-ex.plan-day.is-today { border-color: rgba(212, 175, 55, 0.6); }
 .glass-card.plan-ex.plan-day { padding-top: 0; padding-bottom: 0; }
+/* outside edit mode there's no drag handle, so the text gets its own space from the edge */
+.glass-card.plan-ex.plan-day:not(.is-editing) { padding-left: 16px; }
 .glass-card.plan-ex.plan-day.is-rest { background: transparent; border-style: dashed; }
 .plan-ex .handle { cursor: grab; touch-action: none; -webkit-touch-callout: none; }
 .plan-ex .handle:active { cursor: grabbing; color: #d4af37; }

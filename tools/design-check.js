@@ -101,7 +101,10 @@ const audit = smallOk => {
     await shot('history', act(`window.appActions.openHistoryModal(Object.keys(JSON.parse(localStorage.getItem('workoutHistory_rakan_final') || '{}'))[0] || 'x', 'Bench Press')`));
     await shot('plan-day', act(`window.appActions.switchTab('plan'); window.appActions.openPlanDay(new Date().getDay() === 6 ? 1 : 1)`));
     await shot('picker', async () => { await page.evaluate(() => window.appActions.openPicker('add')); });
-    await shot('programs', act(`window.appActions.switchTab('plan'); window.appActions.openPrograms()`));
+    await shot('plan-edit', act(`window.appActions.switchTab('plan'); window.appActions.toggleWeekEdit()`));
+    await shot('picker-change', act(`window.appActions.switchTab('plan'); window.appActions.openPlanDay(getActiveFirstDay()); window.appActions.openPicker('replace', 0)`.replace('getActiveFirstDay()', `(JSON.parse(localStorage.getItem('workoutPlan_rakan_final_v3')).weeks[0].schedule.find(d => !d.isRest && d.exercises.length) || {}).id`)));
+    await shot('settings-workout', act(`window.appActions.openSettings('workout')`));
+    await shot('settings-app', act(`window.appActions.openSettings('app')`));
     // AI coach: the first-time notice, then a chat with a routine (written straight into the phone's chat, no Gemini needed)
     await shot('ai-start', act(`localStorage.removeItem('workoutAiOk_rakan_final'); localStorage.removeItem('workoutAiChat_rakan_final'); window.appActions.openAI()`));
     await shot('ai', act(`const w = JSON.parse(localStorage.getItem('workoutPlan_rakan_final_v3')).weeks[0];

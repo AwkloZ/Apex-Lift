@@ -87,11 +87,11 @@
     <!-- Profile → Workout settings and App settings: one full-screen page each -->
     <div id="workset-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSettings()">
         <div id="workset-box" role="dialog" aria-modal="true" class="w-full h-[100dvh] bg-[#111] flex flex-col transform translate-y-full transition-transform duration-300" style="padding-top: env(safe-area-inset-top);">
-            <div class="w-full max-w-2xl mx-auto flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
-                <h3 class="text-lg font-black text-white" data-i18n="Workout settings">Workout settings</h3>
-                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <div class="pop-head is-page w-full max-w-2xl mx-auto shrink-0">
+                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-300 tap-feedback flex items-center justify-center" aria-label="Back"><i data-lucide="arrow-left" class="w-5 h-5 rtl-flip"></i></button>
             </div>
-            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-2 w-full max-w-2xl mx-auto" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
+            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-5 w-full max-w-2xl mx-auto" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
+                <h2 class="page-title" data-i18n="Workout settings">Workout settings</h2>
                 <div class="pf-group">
                     <label class="pf-row">
                         <span class="pf-ic"><i data-lucide="timer"></i></span><span class="pf-label" data-i18n="Rest Timer">Rest Timer</span>
@@ -130,11 +130,11 @@
 
     <div id="appset-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSettings()">
         <div id="appset-box" role="dialog" aria-modal="true" class="w-full h-[100dvh] bg-[#111] flex flex-col transform translate-y-full transition-transform duration-300" style="padding-top: env(safe-area-inset-top);">
-            <div class="w-full max-w-2xl mx-auto flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
-                <h3 class="text-lg font-black text-white" data-i18n="App settings">App settings</h3>
-                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <div class="pop-head is-page w-full max-w-2xl mx-auto shrink-0">
+                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-300 tap-feedback flex items-center justify-center" aria-label="Back"><i data-lucide="arrow-left" class="w-5 h-5 rtl-flip"></i></button>
             </div>
-            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-2 w-full max-w-2xl mx-auto" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
+            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-5 w-full max-w-2xl mx-auto" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
+                <h2 class="page-title" data-i18n="App settings">App settings</h2>
                 <div class="pf-group">
                     <label class="pf-row">
                         <span class="pf-ic"><i data-lucide="languages"></i></span><span class="pf-label" data-i18n="Language">Language</span>
@@ -345,10 +345,10 @@
     <!-- Exercise picker (slides up from the bottom) -->
     <div id="picker-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closePicker()">
         <div id="picker-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[85dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
-            <div class="flex items-center justify-between px-5 pt-5 pb-3 shrink-0">
-                <h3 id="picker-title" class="text-lg font-black text-white truncate" data-i18n="Add exercises">Add exercises</h3>
+            <div class="pop-head is-end is-sheet shrink-0">
                 <button onclick="window.appActions.closePicker()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-white tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
+            <h3 id="picker-title" class="ex-fit px-5 pt-4 pb-3 text-[22px] font-black text-white leading-tight whitespace-nowrap overflow-hidden shrink-0" data-i18n="Add exercises">Add exercises</h3>
             <div class="px-5 shrink-0">
                 <div class="flex items-center gap-2 bg-black/50 border border-white/10 rounded-xl px-3 focus-within:border-[#d4af37]">
                     <i data-lucide="search" class="w-4 h-4 text-slate-400 shrink-0"></i>

@@ -1126,7 +1126,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '64';
+    const APP_VERSION = '65';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -2212,15 +2212,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const exEditHTML = (i, ex) => {
         const sets = parseInt(ex.sets) || 0, custom = !REPS_PRESETS.includes(ex.reps);
         const label = 'px-0.5 mb-1.5 text-[12px] font-bold text-slate-400';
-        return `<div class="px-5 pt-1">
-                <div class="flex items-start gap-2">
-                    <div class="flex-1 min-w-0">
-                        <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
-                        <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(tx(ex.name))}</h3>
-                    </div>
+        return `<div class="pop-head">
                     <button onclick="window.appActions.deleteEx(${i})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-red-400/80 flex items-center justify-center tap-feedback" aria-label="${esc(t('Delete exercise'))}" title="${esc(t('Delete exercise'))}"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i></button>
                     <button onclick="window.appActions.closeExEdit()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
+                <div class="px-5">
+                <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
+                <h3 class="ex-name ex-fit text-[24px] font-black text-white leading-tight mt-0.5 whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</h3>
                 <button onclick="window.appActions.openPicker('replace', ${i})" class="w-full mt-4 py-3 rounded-2xl bg-white/5 text-white text-[12px] font-bold tap-feedback flex items-center justify-center gap-2"><i data-lucide="replace" class="w-4 h-4 text-[#d4af37]"></i>${esc(t('Change exercise'))}</button>
                 <div class="${label} mt-4">${esc(t('Sets'))}</div>
                 <div class="flex items-center gap-3 rounded-2xl bg-white/5 p-2" dir="ltr">
@@ -2241,6 +2239,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         const c = document.getElementById('exedit-content');
         c.innerHTML = exEditHTML(i, ex);
         if (window.lucide) window.lucide.createIcons({ root: c });
+        fitNames(c);
         const ci = document.getElementById('exedit-custom'); if (ci && document.activeElement !== ci) ci.focus();
     };
 
@@ -2357,7 +2356,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const title = d.isRest ? t(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : empty ? t('Empty') : t(d.title);
             const meta = d.isRest ? '' : empty ? `<span class="text-[#d4af37]">＋ ${t('Add exercises')}</span>` : `${t('{n} exercises', { n: d.exercises.length })} · ${t('{n} sets', { n })}`;
             const open = window.appState.weekMenu === d.id;
-            return `<div class="glass-card plan-ex plan-day ${d.isRest ? 'is-rest' : ''} ${d.id === today ? 'is-today' : ''} ${editing ? 'is-editing' : 'ps-3.5'} h-[62px] flex items-center gap-1.5 relative ${open ? 'z-20' : ''}">
+            return `<div class="glass-card plan-ex plan-day ${d.isRest ? 'is-rest' : ''} ${d.id === today ? 'is-today' : ''} ${editing ? 'is-editing' : ''} h-[62px] flex items-center gap-1.5 relative ${open ? 'z-20' : ''}">
                 ${editing ? `<span class="handle w-9 h-11 shrink-0 flex items-center justify-center" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>` : ''}
                 <button onclick="window.appActions.openPlanDay(${d.id})" class="flex-1 min-w-0 h-full flex items-center gap-2.5 text-start tap-feedback" aria-label="${esc(dayLong(d.day) + ' · ' + title)}">
                     ${d.isRest ? `<i data-lucide="${d.recoveryType === 'active' ? 'footprints' : 'moon'}" class="w-4 h-4 text-slate-400 shrink-0"></i>` : empty ? '<span class="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>' : ''}
@@ -2464,16 +2463,17 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const lastDay = lastDaySets(hA, day.id), prev = lastDay ? lastDay.sets : [], full = planned > 0 && doneSets >= planned, shown = doneSets, extra = Math.max(0, doneSets - planned);
             const tile = (label, value) => `<div class="rounded-2xl bg-white/5 px-3.5 py-2 min-w-0"><div class="text-[12px] font-bold text-slate-400">${label}</div><div class="text-[19px] font-black text-white leading-tight mt-0.5"><span dir="ltr">${value}</span></div></div>`;
             const tgtCls = sg ? { up: 'is-up', down: 'is-down' }[sg.type] || '' : '';
-            document.getElementById('ex-sheet-content').innerHTML = `<div class="px-5 pt-1">
-                <div class="flex items-start gap-2">
-                    <div class="flex-1 min-w-0">
-                        <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
-                        <h3 class="ex-name ex-fit text-[20px] font-black text-white leading-tight mt-0.5 whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</h3>
-                    </div>
+            // header: the three buttons; under it the exercise name gets the whole width
+            document.getElementById('ex-sheet-content').innerHTML = `<div class="pop-head">
+                    <span class="flex items-center gap-2">
                     <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}" target="_blank" rel="noopener" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('How to do it (YouTube)'))}" title="${esc(t('How to do it (YouTube)'))}"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i></a>
                     <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
+                    </span>
                     <button onclick="window.appActions.closeExSheet()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
+                <div class="px-5">
+                <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
+                <h3 class="ex-name ex-fit text-[24px] font-black text-white leading-tight mt-0.5 whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</h3>
                 ${shown === 0 ? (hA.length ? '' : `<div class="ex-first mt-4"><i data-lucide="sparkles" class="w-4 h-4 shrink-0"></i>${t('First time')}</div>`) : `<div class="ex-week ${full ? 'is-full' : 'is-part'} mt-4">
                     <div class="flex items-baseline justify-between gap-2"><span class="text-[12px] font-bold">${t('Done this week')}</span><b class="text-[15px] font-black">${extra ? `${t('{a} of {b} sets', { a: shown, b: planned })} <span class="ex-extra">${t('+{n} extra', { n: extra })}</span>` : full ? t('All {n} sets', { n: planned }) : t('{a} of {b} sets', { a: shown, b: planned })}</b></div>
                     <div class="ex-segs" dir="ltr">${Array.from({ length: Math.max(planned, shown) }, (_, k) => `<i class="${k >= planned ? 'is-extra' : k < shown ? 'is-on' : ''}"></i>`).join('')}</div>
@@ -2930,6 +2930,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const search = document.getElementById('picker-search'); search.value = '';
             window.appActions.renderPicker();
             openSheet('picker-overlay', 'picker-box');
+            fitNames(document.getElementById('picker-box'));
             pushBack('picker', () => window.appActions.closePicker());
             // the chips row starts at the highlighted muscle (changing a Chest exercise shows Chest), not at "All"
             const chips = document.getElementById('picker-chips'), on = chips.querySelector('[data-on]');
@@ -3008,15 +3009,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const W = window.appState.swapSetup; if (!W) return;
             const label = 'px-0.5 mb-1.5 text-[12px] font-bold text-slate-400';
             const c = document.getElementById('swapsetup-content');
-            c.innerHTML = `<div class="px-5 pt-1">
-                <div class="flex items-start gap-2">
-                    <div class="flex-1 min-w-0">
-                        <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(W.muscle))}</div>
-                        <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(tx(W.name))}</h3>
-                        <p class="text-[12px] font-bold text-slate-400 mt-1">${t('How many sets and reps for this exercise?')}</p>
-                    </div>
+            c.innerHTML = `<div class="pop-head is-end">
                     <button onclick="window.appActions.closeSwapSetup()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
+                <div class="px-5">
+                <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(W.muscle))}</div>
+                <h3 class="ex-name ex-fit text-[24px] font-black text-white leading-tight mt-0.5 whitespace-nowrap overflow-hidden">${esc(tx(W.name))}</h3>
+                <p class="text-[12px] font-bold text-slate-400 mt-1">${t('How many sets and reps for this exercise?')}</p>
                 <div class="${label} mt-4">${esc(t('Sets'))}</div>
                 <div class="flex items-center gap-3 rounded-2xl bg-white/5 p-2" dir="ltr">
                     <button onclick="window.appActions.swapSetSets(-1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="−">−</button>
@@ -3027,7 +3026,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <div class="grid grid-cols-4 gap-2" dir="ltr">${REPS_PRESETS.map(r => `<button onclick="window.appActions.swapSetReps(${jsArg(r)})" class="py-2.5 rounded-xl text-[12px] font-bold tap-feedback ${W.reps === r ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-white'}">${esc(fmtReps(r))}</button>`).join('')}</div>
                 <button onclick="window.appActions.swapSetupNext()" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button>
             </div>`;
-            if (window.lucide) window.lucide.createIcons({ root: c });
+            fitNames(c); if (window.lucide) window.lucide.createIcons({ root: c });
         },
         closeSwapSetup: () => { popBack('swapsetup'); window.appState.swapSetup = null; closeModal('swapsetup-overlay', 'swapsetup-box'); },
         swapSetSets: dlt => { const W = window.appState.swapSetup; if (!W) return; W.sets = String(Math.min(10, Math.max(1, (parseInt(W.sets) || 3) + dlt))); window.appActions.renderSwapSetup(); },
