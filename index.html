@@ -62,7 +62,7 @@
     <!-- Account backups: dated copies kept in your Google account -->
     <!-- Profile → Account (filled by app.js) -->
     <div id="account-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeAccount()">
-        <div id="account-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[92dvh] transform translate-y-full transition-transform duration-300">
+        <div id="account-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
             <div class="flex items-center justify-between px-5 pb-2 shrink-0">
                 <h3 class="text-lg font-black text-white" data-i18n="Account">Account</h3>
@@ -74,7 +74,7 @@
 
     <!-- Profile → Your training (filled by app.js) -->
     <div id="training-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeTraining()">
-        <div id="training-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[92dvh] transform translate-y-full transition-transform duration-300">
+        <div id="training-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
             <div class="flex items-center justify-between px-5 pb-2 shrink-0">
                 <h3 class="text-lg font-black text-white" data-i18n="Your training">Your training</h3>
@@ -84,13 +84,14 @@
         </div>
     </div>
 
-    <!-- Profile → Workout settings and App settings: one full-screen page each -->
+    <!-- Profile → Workout settings and App settings: one page each (same sheet as Account) -->
     <div id="workset-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSettings()">
-        <div id="workset-box" role="dialog" aria-modal="true" class="w-full h-[100dvh] bg-[#111] flex flex-col transform translate-y-full transition-transform duration-300" style="padding-top: env(safe-area-inset-top);">
-            <div class="pop-head is-page w-full max-w-2xl mx-auto shrink-0">
-                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-300 tap-feedback flex items-center justify-center" aria-label="Back"><i data-lucide="arrow-left" class="w-5 h-5 rtl-flip"></i></button>
+        <div id="workset-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="pop-head is-end shrink-0 !mb-0">
+                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-5 w-full max-w-2xl mx-auto" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
+            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
                 <h2 class="page-title" data-i18n="Workout settings">Workout settings</h2>
                 <div class="pf-group">
                     <label class="pf-row">
@@ -129,11 +130,12 @@
     </div>
 
     <div id="appset-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSettings()">
-        <div id="appset-box" role="dialog" aria-modal="true" class="w-full h-[100dvh] bg-[#111] flex flex-col transform translate-y-full transition-transform duration-300" style="padding-top: env(safe-area-inset-top);">
-            <div class="pop-head is-page w-full max-w-2xl mx-auto shrink-0">
-                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-300 tap-feedback flex items-center justify-center" aria-label="Back"><i data-lucide="arrow-left" class="w-5 h-5 rtl-flip"></i></button>
+        <div id="appset-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="pop-head is-end shrink-0 !mb-0">
+                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-5 w-full max-w-2xl mx-auto" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
+            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
                 <h2 class="page-title" data-i18n="App settings">App settings</h2>
                 <div class="pf-group">
                     <label class="pf-row">
@@ -157,7 +159,7 @@
     </div>
 
     <div id="backups-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeBackups()">
-        <div id="backups-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[80dvh] transform translate-y-full transition-transform duration-300">
+        <div id="backups-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
             <div class="flex items-center justify-between px-5 pb-2 shrink-0">
                 <h3 class="text-lg font-black text-white" data-i18n="Account backups">Account backups</h3>
@@ -189,7 +191,7 @@
 
     <!-- Routine codes: share a routine with a code, or add one from a friend's code (filled by app.js) -->
     <div id="code-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeCodeSheet()">
-        <div id="code-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[90dvh] transform translate-y-full transition-transform duration-300">
+        <div id="code-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
             <div class="flex items-center justify-between px-5 pb-2 shrink-0">
                 <h3 id="code-title" class="text-lg font-black text-white"></h3>
@@ -200,7 +202,7 @@
     </div>
 
     <div id="programs-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closePrograms()">
-        <div id="programs-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[90dvh] transform translate-y-full transition-transform duration-300">
+        <div id="programs-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
             <div class="flex items-center justify-between px-5 pb-3 shrink-0">
                 <h3 id="programs-title" class="text-lg font-black text-white">Programs</h3>
@@ -212,7 +214,7 @@
 
     <!-- AI coach (Google Gemini through Firebase AI Logic): a chat that builds a program, see AI COACH in app.js -->
     <div id="ai-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeAI()">
-        <div id="ai-box" role="dialog" aria-modal="true" aria-labelledby="ai-title" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[90dvh] transform translate-y-full transition-transform duration-300">
+        <div id="ai-box" role="dialog" aria-modal="true" aria-labelledby="ai-title" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
             <div class="flex items-center justify-between gap-2 px-5 pb-3 shrink-0">
                 <h3 id="ai-title" class="flex items-center gap-2 text-lg font-black text-white"><i data-lucide="sparkles" class="w-5 h-5 text-slate-400"></i><span data-i18n="Apex Coach">Apex Coach</span></h3>
@@ -230,15 +232,16 @@
     </div>
 
     <!-- Exercise pop-up on Today (middle of the screen): details, Start workout, History -->
-    <div id="ex-sheet-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExSheet()">
-        <div id="ex-sheet-box" class="w-full max-w-[400px] max-h-[85dvh] overflow-y-auto bg-[#111] rounded-3xl border border-white/10 pt-4 pb-4 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-            <div id="ex-sheet-content"></div>
+    <div id="ex-sheet-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExSheet()">
+        <div id="ex-sheet-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div id="ex-sheet-content" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain pt-1" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
         </div>
     </div>
 
     <!-- Workout (slides up and stays open until you finish or discard it) -->
     <div id="active-workout-overlay" class="sheet-overlay fixed inset-0 bg-black/80 backdrop-blur-sm z-[300] hidden flex-col justify-end opacity-0 transition-opacity duration-300">
-        <div id="active-workout-box" class="w-full max-w-2xl mx-auto bg-[#0f0f0f] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[86dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
+        <div id="active-workout-box" class="w-full max-w-2xl mx-auto bg-[#0f0f0f] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
             <div class="pt-4 shrink-0"></div>
             <div class="flex items-center gap-3 px-5 pb-3 pt-1 shrink-0">
                 <div class="flex-1 min-w-0">
@@ -294,9 +297,10 @@
         <i data-lucide="chevron-up" class="w-5 h-5 text-[#d4af37] shrink-0"></i>
     </button>
 
-        <div id="history-modal-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] hidden flex-col items-center justify-end md:justify-center opacity-0 transition-all duration-300">
-        <div id="history-modal-box" class="glass-card w-full max-w-md h-[75vh] md:h-auto md:max-h-[80vh] rounded-t-3xl md:rounded-3xl flex flex-col transform translate-y-full md:translate-y-0 md:scale-95 transition-transform duration-300 border border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
-            <div class="flex items-center justify-between p-6 border-b border-white/10 bg-black/40 rounded-t-3xl">
+        <div id="history-modal-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[200] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeHistoryModal()">
+        <div id="history-modal-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div class="flex items-center justify-between gap-2 px-5 pb-3 border-b border-white/10 shrink-0">
                 <div>
                     <h3 class="text-xl font-black text-white"><span data-i18n="Exercise history">Exercise history</span></h3>
                     <p id="history-modal-title" class="ex-name text-[12px] font-bold text-[#d4af37] mt-1">Exercise Name</p>
@@ -307,21 +311,23 @@
                     <button onclick="window.appActions.closeHistoryModal()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-white tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
             </div>
-            <div id="history-modal-content" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
+            <div id="history-modal-content" class="flex-1 overflow-y-auto overscroll-contain p-4 space-y-2" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
         </div>
     </div>
 
-    <!-- Plan: edit one exercise (middle of the screen, same look as the exercise pop-up on Today) -->
-    <div id="exedit-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExEdit()">
-        <div id="exedit-box" class="w-full max-w-md max-h-[88dvh] overflow-y-auto bg-[#111] rounded-3xl border border-white/10 pt-5 pb-5 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-            <div id="exedit-content"></div>
+    <!-- Plan: edit one exercise (a sheet like the exercise pop-up on Today; delete = swipe the exercise left in the list) -->
+    <div id="exedit-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExEdit()">
+        <div id="exedit-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div id="exedit-content" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain pt-1" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
         </div>
     </div>
 
     <!-- Plan: sets & reps for the new exercise when changing one (above the exercise list, below the confirmation) -->
-    <div id="swapsetup-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[500] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSwapSetup()">
-        <div id="swapsetup-box" class="w-full max-w-md max-h-[88dvh] overflow-y-auto bg-[#111] rounded-3xl border border-white/10 pt-5 pb-5 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-            <div id="swapsetup-content"></div>
+    <div id="swapsetup-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[500] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSwapSetup()">
+        <div id="swapsetup-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
+            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <div id="swapsetup-content" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain pt-1" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
         </div>
     </div>
 
@@ -344,7 +350,7 @@
     </div>
     <!-- Exercise picker (slides up from the bottom) -->
     <div id="picker-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closePicker()">
-        <div id="picker-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[85dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
+        <div id="picker-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
             <div class="pop-head is-end is-sheet shrink-0">
                 <button onclick="window.appActions.closePicker()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-white tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>

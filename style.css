@@ -171,7 +171,7 @@ body.has-mini #toast-container { bottom: calc(150px + env(safe-area-inset-bottom
 #aw-sets-container input[type=number] { -moz-appearance: textfield; }
 /* the numbers you type in the workout use the condensed number font */
 #aw-sets-container input { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
-#aw-sets-container .aw-in { font-size: 26px !important; font-weight: 700; }
+#aw-sets-container .aw-in { font-size: 22px !important; font-weight: 700; }
 #aw-sets-container .aw-in::placeholder { font-family: var(--font-text); font-size: 15px; font-weight: 600; color: #8a96a8; opacity: 1; }
 /* Workout: one segment per set (done = green, the next set = gold) */
 .aw-segs { display: flex; gap: 3px; height: 6px; }
@@ -546,6 +546,13 @@ input.day-title-input { font-size: 26px !important; }
 
 /* Plan tab = the editor: dashed gold day card, exercise cards with a ⋮⋮ grip */
 .glass-card.plan-card { border: 1.5px dashed rgba(212, 175, 55, 0.55); }
+/* Plan → a day: swipe an exercise card from right to left to delete it (the red strip shows under the card) */
+.swipe-row { position: relative; border-radius: 22px; }
+.swipe-del { position: absolute; inset: 0; border-radius: 22px; background: rgba(239, 68, 68, 0.18); color: #f87171; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding-right: 20px; font-size: 13px; font-weight: 800; opacity: 0; transition: background-color 0.15s, opacity 0.15s; }
+.swipe-row:has(.swipe-fg[style*="translateX"]) .swipe-del { opacity: 1; }
+.swipe-row.is-armed .swipe-del { background: #ef4444; color: #fff; }
+.swipe-fg { position: relative; touch-action: pan-y; }
+.plan-drag .swipe-del, .plan-ghost .swipe-del { display: none; }
 .glass-card.plan-ex { border-radius: 22px; padding: 11px 12px 11px 4px; border: 1px solid var(--line); }
 .glass-card.plan-ex.plan-day.is-today { border-color: rgba(212, 175, 55, 0.6); }
 .glass-card.plan-ex.plan-day { padding-top: 0; padding-bottom: 0; }

@@ -372,6 +372,9 @@
         "Data Merged Successfully!": "تم دمج البيانات بنجاح!",
         "Day {n}": "اليوم {n}",
         "Delete": "حذف",
+        "Hold ⋮⋮ to move · swipe left to delete": "اضغط مطولًا على ⋮⋮ للنقل · اسحب لليسار للحذف",
+        "Swipe left to delete": "اسحب لليسار للحذف",
+        "Tap an exercise to edit it. Swipe it left to delete it. Hold ⋮⋮ and drag to change the order.": "اضغط على التمرين لتعديله. اسحبه لليسار لحذفه. اضغط مطولًا على ⋮⋮ واسحب لتغيير الترتيب.",
         "Delete Record": "حذف السجل",
         "Delete all exercises?": "حذف كل التمارين؟",
         "Deleted": "تم الحذف",
@@ -1126,7 +1129,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '65';
+    const APP_VERSION = '66';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -2212,11 +2215,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const exEditHTML = (i, ex) => {
         const sets = parseInt(ex.sets) || 0, custom = !REPS_PRESETS.includes(ex.reps);
         const label = 'px-0.5 mb-1.5 text-[12px] font-bold text-slate-400';
-        return `<div class="pop-head">
-                    <button onclick="window.appActions.deleteEx(${i})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-red-400/80 flex items-center justify-center tap-feedback" aria-label="${esc(t('Delete exercise'))}" title="${esc(t('Delete exercise'))}"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i></button>
-                    <button onclick="window.appActions.closeExEdit()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
-                </div>
-                <div class="px-5">
+        return `<div class="px-5 pt-2">
                 <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
                 <h3 class="ex-name ex-fit text-[24px] font-black text-white leading-tight mt-0.5 whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</h3>
                 <button onclick="window.appActions.openPicker('replace', ${i})" class="w-full mt-4 py-3 rounded-2xl bg-white/5 text-white text-[12px] font-bold tap-feedback flex items-center justify-center gap-2"><i data-lucide="replace" class="w-4 h-4 text-[#d4af37]"></i>${esc(t('Change exercise'))}</button>
@@ -2282,16 +2281,17 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
 
         if (!day.isRest) {
             const grip = `<svg width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true"><circle cx="5" cy="4" r="1.8"/><circle cx="11" cy="4" r="1.8"/><circle cx="5" cy="10" r="1.8"/><circle cx="11" cy="10" r="1.8"/><circle cx="5" cy="16" r="1.8"/><circle cx="11" cy="16" r="1.8"/></svg>`;
-            if (day.exercises.length > 1) html += `<div class="px-1.5 mb-2 text-[12px] font-extrabold text-slate-400">${t('Hold ⋮⋮ and drag to change the order')}</div>`;
+            if (day.exercises.length) html += `<div class="px-1.5 mb-2 text-[12px] font-extrabold text-slate-400">${t(day.exercises.length > 1 ? 'Hold ⋮⋮ to move · swipe left to delete' : 'Swipe left to delete')}</div>`;
             // ⋮⋮ drags straight away (no waiting, no fight with scrolling); the rest of the card opens the editor
-            html += `<div id="sortable-list" class="space-y-2">${day.exercises.map((ex, i) => `<div class="glass-card plan-ex flex items-center gap-1.5" data-i="${i}">
+            // each card sits on a red "Delete" strip: swipe the card from right to left to delete the exercise
+            html += `<div id="sortable-list" class="space-y-2">${day.exercises.map((ex, i) => `<div class="swipe-row" data-i="${i}"><div class="swipe-del" aria-hidden="true"><i data-lucide="trash-2" class="w-5 h-5"></i>${t('Delete')}</div><div class="swipe-fg glass-card plan-ex flex items-center gap-1.5">
                     <span class="handle w-9 h-11 shrink-0 flex items-center justify-center text-slate-400" aria-label="${esc(t('Drag to reorder'))}" role="img">${grip}</span>
                     <button onclick="window.appActions.openExEdit(${i})" class="flex-1 min-w-0 flex items-center gap-2.5 text-start tap-feedback py-0.5">
                         <span class="plan-ex-n w-[26px] h-[26px] shrink-0 rounded-full bg-white/5 flex items-center justify-center text-[12px] font-bold text-slate-300">${i + 1}</span>
                         <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(tx(ex.name))}</span><span class="block text-[12px] font-bold mt-0.5 truncate text-slate-400">${esc(tm(ex.muscle))}</span></span>
                         <span class="shrink-0 me-1 text-[12px] font-bold px-2.5 py-1 rounded-full bg-[#d4af37]/15 text-[#d4af37]" dir="ltr">${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}</span>
                     </button>
-                </div>`).join('')}</div>`;
+                </div></div>`).join('')}</div>`;
             html += `<button onclick="window.appActions.openPicker('add')" class="w-full p-4 mt-2.5 mb-10 rounded-[20px] flex items-center justify-center gap-2 text-[#d4af37] font-bold text-[12px] tap-feedback border-[1.5px] border-dashed border-[#d4af37]/50 bg-[#d4af37]/5"><i data-lucide="plus" class="w-4 h-4"></i> ${t('Add Exercise')}</button>`;
         }
 
@@ -2314,11 +2314,41 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             });
         }
         if (window.lucide) window.lucide.createIcons();
+        enableSwipeDelete(listEl);
         renderExEdit();
         if (typeof hint === 'function' && !day.isRest && day.exercises.length) {
-            hint('plan-edit', '#sortable-list > div', t('Tap an exercise to edit it. Hold ⋮⋮ and drag to change the order.'));
+            hint('plan-edit', '#sortable-list > div', t('Tap an exercise to edit it. Swipe it left to delete it. Hold ⋮⋮ and drag to change the order.'));
             if (hintSeen('plan-edit')) hint('plan-add', '#workout-container button[onclick*="openPicker(\'add\')"]', t('Add more exercises from the full library here.'));
         }
+    };
+
+    // 👈 SWIPE an exercise card from right to left (Plan → a day) to delete it; a short swipe springs back
+    const enableSwipeDelete = list => {
+        if (!list) return;
+        let row = null, fg = null, x0 = 0, y0 = 0, dx = 0, mode = null;
+        list.addEventListener('touchstart', e => {
+            row = e.target.closest('.swipe-row'); mode = null; dx = 0;
+            if (!row || e.touches.length > 1 || e.target.closest('.handle')) { row = null; return; }
+            fg = row.querySelector('.swipe-fg'); x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+        }, { passive: true });
+        list.addEventListener('touchmove', e => {
+            if (!row) return;
+            const mx = e.touches[0].clientX - x0, my = e.touches[0].clientY - y0;
+            if (!mode) { if (Math.abs(mx) > 10 && Math.abs(mx) > Math.abs(my)) mode = 'x'; else if (Math.abs(my) > 10) { row = null; return; } else return; }
+            dx = Math.min(0, mx); fg.style.transition = 'none'; fg.style.transform = `translateX(${dx}px)`;
+            row.classList.toggle('is-armed', dx < -row.offsetWidth * 0.35);
+        }, { passive: true });
+        const end = () => {
+            if (!row) return;
+            const r = row, f = fg, del = mode === 'x' && dx < -r.offsetWidth * 0.35; row = null;
+            if (mode === 'x') { list.dataset.swiped = '1'; setTimeout(() => { delete list.dataset.swiped; }, 350); }
+            f.style.transition = 'transform 0.22s ease';
+            if (del) { f.style.transform = 'translateX(-110%)'; try { if (navigator.vibrate) navigator.vibrate(15); } catch (e) {} setTimeout(() => window.appActions.deleteEx(parseInt(r.dataset.i)), 200); }
+            else { f.style.transform = ''; r.classList.remove('is-armed'); }
+        };
+        list.addEventListener('touchend', end); list.addEventListener('touchcancel', end);
+        // the tap that ends a swipe doesn't open the exercise
+        list.addEventListener('click', e => { if (list.dataset.swiped) { e.stopPropagation(); e.preventDefault(); } }, true);
     };
 
     // 🗓️ PLAN (whole week): one row per day (drag ⋮⋮ to move a day, tap to edit it), then the week's muscle balance.
@@ -2463,12 +2493,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const lastDay = lastDaySets(hA, day.id), prev = lastDay ? lastDay.sets : [], full = planned > 0 && doneSets >= planned, shown = doneSets, extra = Math.max(0, doneSets - planned);
             const tile = (label, value) => `<div class="rounded-2xl bg-white/5 px-3.5 py-2 min-w-0"><div class="text-[12px] font-bold text-slate-400">${label}</div><div class="text-[19px] font-black text-white leading-tight mt-0.5"><span dir="ltr">${value}</span></div></div>`;
             const tgtCls = sg ? { up: 'is-up', down: 'is-down' }[sg.type] || '' : '';
-            // header: the three buttons; under it the exercise name gets the whole width
-            document.getElementById('ex-sheet-content').innerHTML = `<div class="pop-head">
-                    <span class="flex items-center gap-2">
+            // header: the three buttons on the right; under it the exercise name gets the whole width
+            document.getElementById('ex-sheet-content').innerHTML = `<div class="pop-head is-end">
                     <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}" target="_blank" rel="noopener" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('How to do it (YouTube)'))}" title="${esc(t('How to do it (YouTube)'))}"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i></a>
                     <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
-                    </span>
                     <button onclick="window.appActions.closeExSheet()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <div class="px-5">
@@ -2488,11 +2516,11 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <button onclick="window.appActions.closeExSheet(); window.appActions.startWorkout(${day.id}, null, ${i})" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : full ? t('Log more sets') : shown > 0 ? t('Continue') : t('Start workout')}</button>
             </div>`;
             if (window.lucide) window.lucide.createIcons({ root: document.getElementById('ex-sheet-box') });
-            openModal('ex-sheet-overlay', 'ex-sheet-box');
+            openSheet('ex-sheet-overlay', 'ex-sheet-box');
             fitNames(document.getElementById('ex-sheet-content')); // the name stays on one line (smaller font if it's long)
             pushBack('exsheet', () => window.appActions.closeExSheet());
         },
-        closeExSheet: () => { popBack('exsheet'); closeModal('ex-sheet-overlay', 'ex-sheet-box'); },
+        closeExSheet: () => { popBack('exsheet'); closeSheet('ex-sheet-overlay', 'ex-sheet-box'); },
         // Dark (default), light, or the same as the phone ('system'); remembered on this phone
         setTheme: v => {
             v = ['light', 'system'].includes(v) ? v : 'dark';
@@ -2598,12 +2626,12 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const head = ex => `<div class="grid items-center gap-1.5 px-2 pb-1.5 text-[12px] font-bold text-slate-400" dir="ltr" style="grid-template-columns:${S.cols}"><span class="text-center">#</span><span class="text-center">${t('kg')}</span><span class="text-center">${ex.timed ? t('sec') : t('reps')}</span>${showRpe ? '<span class="text-center">RPE</span>' : ''}</div>`;
             document.getElementById('aw-sets-container').innerHTML = S.exercises.map((ex, e) => `
                 <section class="mb-6" id="aw-ex-${e}">
-                    <div class="flex items-start justify-between gap-2 px-1 mb-2">
+                    <div class="px-1 mb-2">
                         <div class="min-w-0">
                             <div class="ex-name text-[17px] font-black text-white leading-tight">${esc(tx(ex.name))}</div>
                             <div class="text-[12px] font-bold text-slate-400 mt-0.5">${esc(tm(ex.muscle))} · ${t('{n} sets', { n: ex.sets })} · ${t(ex.timed ? '{r} sec' : '{r} reps', { r: `<span dir="ltr">${esc(fmtReps(ex.repsStr))}</span>` })}</div>
                         </div>
-                        <span class="shrink-0">${suggestionChip(ex.sg, ex.timed)}</span>
+                        ${ex.sg ? `<div class="aw-sg mt-2">${suggestionChip(ex.sg, ex.timed)}</div>` : ''}
                     </div>
                     ${(() => { const last = lastSessionText(StorageManager.getHistory()[ex.k] || [], ex.timed); return `<div class="flex items-center gap-2 mx-1 mb-3 px-3 py-2.5 rounded-xl bg-white/5 border border-white/5 text-[12px] font-bold text-slate-400"><i data-lucide="history" class="w-4 h-4 shrink-0 text-slate-400"></i>${last ? `<span class="min-w-0">${t('Last time')} · ${esc(last.when)}<span class="block text-[14px] font-black text-white mt-0.5" dir="ltr">${last.body}</span></span>` : `<span>${t('First time')}</span>`}</div>`; })()}
                     ${head(ex)}
@@ -2652,7 +2680,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             S.rowSeq = (S.rowSeq || 0) + 1;
             const i = S.rowSeq;
             const showRpe = S.showRpe;
-            const inCls = 'aw-in w-full h-14 rounded-xl bg-black/50 border border-white/10 text-center text-[26px] font-bold text-white outline-none focus:border-[#d4af37]';
+            const inCls = 'aw-in w-full h-11 rounded-xl bg-black/50 border border-white/10 text-center text-[26px] font-bold text-white outline-none focus:border-[#d4af37]';
             box.insertAdjacentHTML('beforeend', `
                 <div class="aw-row grid items-center gap-1.5 px-2 py-1 rounded-xl transition-colors ${r.done ? 'is-done' : ''} ${r.logged ? 'is-logged' : ''}" data-i="${i}" data-e="${e}" data-done="${r.done ? 1 : 0}" ${r.logged ? 'data-logged="1"' : ''} id="aw-row-${i}" dir="ltr" style="grid-template-columns:${S.cols}">
                     <span class="num w-8 h-8 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[16px] font-bold flex items-center justify-center" id="aw-num-${i}">${n}</span>
@@ -2994,7 +3022,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 const reps = timedNew && !timedOld ? '30 - 45s' : !timedNew && timedOld ? '10 - 12' : ex.reps;
                 window.appState.swapSetup = { idx: P.idx, name, muscle, sets: String(parseInt(ex.sets) || 3), reps };
                 window.appActions.renderSwapSetup();
-                openModal('swapsetup-overlay', 'swapsetup-box');
+                openSheet('swapsetup-overlay', 'swapsetup-box');
                 pushBack('swapsetup', () => window.appActions.closeSwapSetup());
                 return;
             }
@@ -3028,7 +3056,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             </div>`;
             fitNames(c); if (window.lucide) window.lucide.createIcons({ root: c });
         },
-        closeSwapSetup: () => { popBack('swapsetup'); window.appState.swapSetup = null; closeModal('swapsetup-overlay', 'swapsetup-box'); },
+        closeSwapSetup: () => { popBack('swapsetup'); window.appState.swapSetup = null; closeSheet('swapsetup-overlay', 'swapsetup-box'); },
         swapSetSets: dlt => { const W = window.appState.swapSetup; if (!W) return; W.sets = String(Math.min(10, Math.max(1, (parseInt(W.sets) || 3) + dlt))); window.appActions.renderSwapSetup(); },
         swapSetReps: v => { const W = window.appState.swapSetup; v = latinDigits(String(v)).trim(); if (!W || !v) return; W.reps = v.slice(0, 20); window.appActions.renderSwapSetup(); },
         swapSetupNext: () => {
@@ -3075,13 +3103,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         // ---------- Edit one exercise in a pop-up (Plan tab) ----------
         openExEdit: i => {
             window.appState.inlineEdit = i; window.appState.customReps = false; renderExEdit();
-            openModal('exedit-overlay', 'exedit-box');
+            openSheet('exedit-overlay', 'exedit-box');
             pushBack('exedit', () => window.appActions.closeExEdit());
         },
         refreshExEdit: () => renderExEdit(),
         closeExEdit: () => {
             window.appState.inlineEdit = null; popBack('exedit');
-            if (document.getElementById('exedit-overlay').classList.contains('flex')) closeModal('exedit-overlay', 'exedit-box');
+            if (document.getElementById('exedit-overlay').classList.contains('flex')) closeSheet('exedit-overlay', 'exedit-box');
         },
         exEditSets: dlt => {
             const ex = getActiveSchedule().find(x => x.id === activeDay).exercises[window.appState.inlineEdit];
@@ -5115,6 +5143,11 @@ ${lib}`;
     window.appActions.switchTab('today');
     enableSwipeDown(document.getElementById('picker-box'), () => window.appActions.closePicker());
     enableSwipeDown(document.getElementById('history-modal-box'), () => window.appActions.closeHistoryModal());
+    enableSwipeDown(document.getElementById('ex-sheet-box'), () => window.appActions.closeExSheet());
+    enableSwipeDown(document.getElementById('exedit-box'), () => window.appActions.closeExEdit());
+    enableSwipeDown(document.getElementById('swapsetup-box'), () => window.appActions.closeSwapSetup());
+    enableSwipeDown(document.getElementById('workset-box'), () => window.appActions.closeSettings());
+    enableSwipeDown(document.getElementById('appset-box'), () => window.appActions.closeSettings());
     enableSwipeDown(document.getElementById('programs-box'), () => window.appActions.closePrograms());
     enableSwipeDown(document.getElementById('ai-box'), () => window.appActions.closeAI());
     enableDaySwipe(document.querySelector('.scrollable-content')); // the whole Today screen, so rest days (one small card) swipe too
