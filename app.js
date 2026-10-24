@@ -1133,7 +1133,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '70';
+    const APP_VERSION = '71';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -2526,7 +2526,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                     <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
                 </div>
                 </div>
-                <h3 class="ex-name ex-fit text-[24px] font-black text-white leading-tight whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</h3>
+                <h3 class="ex-name ex-fit text-[24px] font-black text-white leading-tight mt-2.5 whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</h3>
                 ${shown === 0 ? (hA.length ? '' : `<div class="ex-first mt-4"><i data-lucide="sparkles" class="w-4 h-4 shrink-0"></i>${t('First time')}</div>`) : `<div class="ex-week ${full ? 'is-full' : 'is-part'} mt-4">
                     <div class="flex items-baseline justify-between gap-2"><span class="text-[12px] font-bold">${t('Done this week')}</span><b class="text-[15px] font-black">${extra ? `${t('{a} of {b} sets', { a: shown, b: planned })} <span class="ex-extra">${t('+{n} extra', { n: extra })}</span>` : full ? t('All {n} sets', { n: planned }) : t('{a} of {b} sets', { a: shown, b: planned })}</b></div>
                     <div class="ex-segs" dir="ltr">${Array.from({ length: Math.max(planned, shown) }, (_, k) => `<i class="${k >= planned ? 'is-extra' : k < shown ? 'is-on' : ''}"></i>`).join('')}</div>
@@ -2651,14 +2651,19 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const head = ex => `<div class="grid items-center gap-1.5 px-2 pb-1.5 text-[12px] font-bold text-slate-400" dir="ltr" style="grid-template-columns:${S.cols}"><span class="text-center">#</span><span class="text-center">${t('kg')}</span><span class="text-center">${ex.timed ? t('sec') : t('reps')}</span>${showRpe ? '<span class="text-center">RPE</span>' : ''}</div>`;
             document.getElementById('aw-sets-container').innerHTML = S.exercises.map((ex, e) => `
                 <section class="mb-6" id="aw-ex-${e}">
-                    <div class="px-1 mb-2">
-                        <div class="min-w-0">
-                            <div class="ex-name text-[17px] font-black text-white leading-tight">${esc(tx(ex.name))}</div>
-                            <div class="text-[12px] font-bold text-slate-400 mt-0.5">${esc(tm(ex.muscle))} · ${t('{n} sets', { n: ex.sets })} · ${t(ex.timed ? '{r} sec' : '{r} reps', { r: `<span dir="ltr">${esc(fmtReps(ex.repsStr))}</span>` })}</div>
+                    <div class="px-1 mb-2.5">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="ex-name text-[17px] font-black text-white leading-tight truncate">${esc(tx(ex.name))}</div>
+                                <div class="text-[12px] font-bold text-slate-400 truncate">${esc(tm(ex.muscle))}</div>
+                            </div>
+                            <span class="num shrink-0 text-[16px] font-bold px-2.5 py-1 rounded-full bg-white/5 text-slate-200" dir="ltr" aria-label="${esc(t('{n} sets', { n: ex.sets }) + ' · ' + t(ex.timed ? '{r} sec' : '{r} reps', { r: fmtReps(ex.repsStr) }))}">${esc(ex.sets)} × ${esc(fmtReps(ex.repsStr))}${ex.timed ? 's' : ''}</span>
                         </div>
-                        ${ex.sg ? `<div class="aw-sg mt-2">${suggestionChip(ex.sg, ex.timed)}</div>` : ''}
+                        ${(() => { const last = lastSessionText(StorageManager.getHistory()[ex.k] || [], ex.timed); return `<div class="flex flex-wrap items-center gap-1.5 mt-2">
+                            <span class="inline-flex items-center gap-1 min-w-0 max-w-full text-[12px] font-bold px-2 py-1 rounded-md bg-white/5 text-slate-400"><i data-lucide="history" class="w-3 h-3 shrink-0"></i>${last ? `<span class="min-w-0">${t('Last time')} · ${esc(last.when)}: <b class="text-white" dir="ltr">${last.body}</b></span>` : t('First time')}</span>
+                            ${ex.sg ? `<span class="aw-sg">${suggestionChip(ex.sg, ex.timed)}</span>` : ''}
+                        </div>`; })()}
                     </div>
-                    ${(() => { const last = lastSessionText(StorageManager.getHistory()[ex.k] || [], ex.timed); return `<div class="flex items-center gap-2 mx-1 mb-3 px-3 py-2.5 rounded-xl bg-white/5 border border-white/5 text-[12px] font-bold text-slate-400"><i data-lucide="history" class="w-4 h-4 shrink-0 text-slate-400"></i>${last ? `<span class="min-w-0">${t('Last time')} · ${esc(last.when)}<span class="block text-[14px] font-black text-white mt-0.5" dir="ltr">${last.body}</span></span>` : `<span>${t('First time')}</span>`}</div>`; })()}
                     ${head(ex)}
                     <div id="aw-rows-${e}" class="space-y-1.5"></div>
                     <div id="aw-note-${e}" class="hidden px-2 py-2 text-[12px] font-bold text-[#22c55e]"><i data-lucide="check" class="w-3.5 h-3.5 inline -mt-0.5"></i> ${t('Done this week')}</div>
@@ -3395,7 +3400,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 // the program made for you, or an empty week to fill in yourself
                 body = head(t('Your program'), t('Tap a program to see its week.')) + card(rec, true)
                     + `<button onclick="window.appActions.wizFinish('own')" class="w-full py-3.5 mb-3 rounded-xl bg-white/5 border border-white/10 text-[13px] font-bold text-white tap-feedback flex items-center justify-center gap-2"><i data-lucide="pencil-ruler" class="w-4 h-4 text-slate-400"></i>${t("I'll build my own")}</button>`
-                    + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#14130e]"><button onclick="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Start with this program')}</button>
+                    + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#12100d]"><button onclick="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Start with this program')}</button>
                        <p class="text-[12px] font-bold text-slate-400 text-center mt-2">${t('You can change any day or exercise later in Plan.')}</p></div>`;
             }
             const dots = W.steps.map((_, i) => `<span class="h-1.5 rounded-full transition-all ${i === W.step ? 'w-6 bg-[#d4af37]' : i < W.step ? 'w-3 bg-[#d4af37]/50' : 'w-3 bg-white/15'}"></span>`).join('');
@@ -5131,7 +5136,7 @@ ${lib}`;
     const applyTheme = () => {
         const v = themeChoice(), light = v === 'light' || (v === 'system' && !!phoneLight && phoneLight.matches);
         if (light) document.documentElement.setAttribute('data-theme', 'light'); else document.documentElement.removeAttribute('data-theme');
-        const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', light ? '#f3f3f0' : '#14130e');
+        const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', light ? '#f3f3f0' : '#12100d');
     };
     if (phoneLight && phoneLight.addEventListener) phoneLight.addEventListener('change', () => { if (themeChoice() === 'system') applyTheme(); });
     // Apply the language to the fixed parts of the page (index.html) and set right-to-left for Arabic

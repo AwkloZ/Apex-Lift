@@ -15,7 +15,7 @@
     --gold-ink: #d4af37;      /* gold text */
     --gold-soft: rgba(212, 175, 55, 0.14);
     --on-gold: #111111;
-    --bg: #14130e;            /* the app background: one solid colour */
+    --bg: #12100d;            /* the app background: one solid colour */
     --surface-1: rgba(28, 28, 30, 0.6);   /* cards */
     --surface-2: #161618;                 /* sheets and pop-ups */
     --inset: rgba(255, 255, 255, 0.05);   /* boxes inside a card, inputs */
@@ -504,7 +504,7 @@ input.day-title-input { font-size: 26px !important; }
 :root[data-theme="light"] body { color: #111318; }
 :root[data-theme="light"] .glass-card { background: rgba(255, 255, 255, 0.92); border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(0, 0, 0, 0.04); }
 /* surfaces */
-:root[data-theme="light"] :is(.bg-\[\#111\], .bg-\[\#0f0f0f\], .bg-\[\#1a1a1a\], .bg-\[\#050505\], .bg-\[\#14130e\], .bg-\[\#161616\], .bg-black) { background-color: #ffffff; }
+:root[data-theme="light"] :is(.bg-\[\#111\], .bg-\[\#0f0f0f\], .bg-\[\#1a1a1a\], .bg-\[\#050505\], .bg-\[\#12100d\], .bg-\[\#161616\], .bg-black) { background-color: #ffffff; }
 :root[data-theme="light"] .bg-\[\#161616\]\/95, :root[data-theme="light"] .bg-\[\#0b0b0b\]\/95 { background-color: rgba(255, 255, 255, 0.95); }
 :root[data-theme="light"] .bg-white\/5 { background-color: rgba(0, 0, 0, 0.04); }
 :root[data-theme="light"] :is(.bg-white\/10, .hover\:bg-white\/5:hover) { background-color: rgba(0, 0, 0, 0.07); }

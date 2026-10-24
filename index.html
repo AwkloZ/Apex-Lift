@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <!-- No zooming: pinch is blocked (iPhone ignores user-scalable=0), double-tap zoom is off in the CSS (touch-action) -->
     <script>document.addEventListener('gesturestart', function (e) { e.preventDefault(); }); document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });</script>
-    <meta name="theme-color" content="#14130e">
+    <meta name="theme-color" content="#12100d">
     <script>try { const th = localStorage.getItem('workoutTheme_rakan_final'); if (th === 'light' || (th === 'system' && matchMedia('(prefers-color-scheme: light)').matches)) { document.documentElement.setAttribute('data-theme', 'light'); document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f3f3f0'); } } catch (e) {}</script>
     <title>Apex Lift</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -41,13 +41,13 @@
     <div id="toast-container" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center justify-end gap-3 w-full max-w-sm px-4 pointer-events-none pb-4"></div>
 
 <!-- First-launch setup (full screen) -->
-    <div id="onboarding-overlay" class="fixed inset-0 bg-[#14130e] z-[99999] hidden flex-col opacity-0 transition-opacity duration-300">
+    <div id="onboarding-overlay" class="fixed inset-0 bg-[#12100d] z-[99999] hidden flex-col opacity-0 transition-opacity duration-300">
         <div id="onboarding-box" class="w-full max-w-md mx-auto h-full flex flex-col px-6 pb-6 overflow-y-auto" style="padding-top: env(safe-area-inset-top);"></div>
     </div>
 
     <!-- Program gallery (Plan → Programs) -->
     <!-- First launch: intro pages you swipe through, then sign in with Google or email (required to use the app) -->
-    <div id="welcome-overlay" class="fixed inset-0 z-[9990] bg-[#14130e] hidden flex-col">
+    <div id="welcome-overlay" class="fixed inset-0 z-[9990] bg-[#12100d] hidden flex-col">
         <div class="flex items-center justify-between px-5 shrink-0" style="padding-top: calc(env(safe-area-inset-top) + 14px);">
             <div dir="ltr" class="text-xl font-black italic tracking-tighter uppercase text-white logo-mark">APEX <span class="text-[#d4af37]">LIFT</span></div>
             <button id="welcome-lang" class="h-10 px-4 rounded-full bg-white/5 border border-white/10 text-[12px] font-bold text-slate-200 tap-feedback"></button>
@@ -257,7 +257,6 @@
             <div id="aw-scroll" class="sheet-scroll page-body flex-1 overflow-y-auto overscroll-contain px-3 pb-4">
                 <div id="aw-table-head" class="grid items-center gap-1.5 px-2 pb-2 text-[12px] font-bold text-slate-400"></div>
                 <div id="aw-sets-container" class="space-y-1.5"></div>
-                <p class="text-[12px] font-bold text-slate-400 leading-relaxed px-2 mt-3"><span data-i18n="Type the KG and reps you did: the set turns green by itself. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.">Type the KG and reps you did: the set turns green by itself. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.</span></p>
                 <div id="aw-next" class="mt-4"></div>
             </div>
             <div class="p-4 shrink-0 border-t border-white/5" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
