@@ -412,16 +412,8 @@ input.day-title-input { font-size: 26px !important; }
 .today-week .wk-strip { background: transparent; border: 0; padding: 0; border-radius: 0; box-shadow: none; }
 .today-body { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; padding: 12px 4px 0; border-top: 1px solid rgba(255, 255, 255, 0.08); }
 .today-body.is-row { flex-direction: row; align-items: center; gap: 12px; }
-.glass-card.ex-card { border-radius: 20px; padding: 10px 12px; }
-.ex-card .ex-name { font-size: 15.5px; }
-/* Today cards: each exercise gets its own bright colour (ring, tint and edge); done = green */
-.ex-card.acc-0 { --acc: 139 92 246; } .ex-card.acc-1 { --acc: 236 72 153; } .ex-card.acc-2 { --acc: 56 189 248; } .ex-card.acc-3 { --acc: 249 115 22; } .ex-card.acc-4 { --acc: 20 184 166; }
-.glass-card.ex-card[class*="acc-"]:not(.is-full) { background: linear-gradient(90deg, rgb(var(--acc) / 0.2), rgb(var(--acc) / 0.05) 70%); border: 1px solid rgb(var(--acc) / 0.4); border-inline-start: 4px solid rgb(var(--acc)); }
-.ex-card[class*="acc-"]:not(.is-full) .ex-ring-bg { fill: rgb(var(--acc) / 0.18); stroke: rgb(var(--acc) / 0.45); }
-.ex-card[class*="acc-"]:not(.is-full) .ex-ring-fg { stroke: rgb(var(--acc)); }
-.ex-card[class*="acc-"]:not(.is-full) .ex-ring-n { color: rgb(var(--acc)); }
-.ex-card[class*="acc-"]:not(.is-full) .ex-pill { background: rgb(var(--acc) / 0.18); color: #fff; font-size: 14px; padding: 4px 10px; }
-.ex-card .ex-ring { width: 34px; height: 34px; }
+.glass-card.ex-card { border-radius: 22px; padding: 17px 14px; }
+.ex-card .ex-name { font-size: 16.5px; }
 
 /* Today cards: a ring around the number fills as this week's sets get done; pill shows "2/4 sets" */
 .ex-ring { position: relative; width: 38px; height: 38px; flex-shrink: 0; display: grid; place-items: center; }
@@ -522,8 +514,6 @@ input.day-title-input { font-size: 26px !important; }
 :root[data-theme="light"] .ex-pill { background: rgba(0, 0, 0, 0.05); color: #556273; }
 :root[data-theme="light"] .ex-card.is-part .ex-pill { background: rgba(212, 175, 55, 0.18); color: #8a6a0c; }
 :root[data-theme="light"] .ex-card.is-full .ex-pill { background: #22c55e; color: #000; }
-:root[data-theme="light"] .glass-card.ex-card[class*="acc-"]:not(.is-full) { background: linear-gradient(90deg, rgb(var(--acc) / 0.16), rgb(var(--acc) / 0.04) 70%); }
-:root[data-theme="light"] .ex-card[class*="acc-"]:not(.is-full) .ex-pill { color: #1e293b; }
 :root[data-theme="light"] .glass-card.ex-card.is-full { background: rgba(34, 197, 94, 0.1); border-color: rgba(22, 163, 74, 0.45); }
 :root[data-theme="light"] .ex-week { background: rgba(0, 0, 0, 0.04); color: #334155; }
 :root[data-theme="light"] .ex-week b { color: #111318; }

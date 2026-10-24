@@ -1126,7 +1126,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '62';
+    const APP_VERSION = '63';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -2138,7 +2138,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         while (el.scrollWidth > el.clientWidth + 1 && size > 12) { size -= 0.5; el.style.fontSize = size + 'px'; }
         el.classList.toggle('truncate', el.scrollWidth > el.clientWidth + 1);
     }));
-    window.addEventListener('resize', () => fitNames(document.getElementById('workout-container')));
+    window.addEventListener('resize', () => fitNames(document.getElementById('ex-sheet-content')));
     const progressRing = (done, total, n) => {
         const r = 16, c = 2 * Math.PI * r, p = total > 0 ? Math.min(1, done / total) : 0, full = p >= 1;
         return `<span class="ex-ring ${full ? 'is-full' : ''}"><svg viewBox="0 0 38 38" aria-hidden="true"><circle cx="19" cy="19" r="${r}" class="ex-ring-bg"/>${p > 0 && !full ? `<circle cx="19" cy="19" r="${r}" class="ex-ring-fg" stroke-dasharray="${(c * p).toFixed(1)} ${c.toFixed(1)}"/>` : ''}</svg><span class="ex-ring-n">${full ? '<i data-lucide="check" class="w-4 h-4"></i>' : n}</span></span>`;
@@ -2193,19 +2193,17 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 const isRun = running && (S.exIdx === i || S.exIdx == null), planned = parseInt(ex.sets) || 0;
                 const doneSets = setsThisWeekForDay(history[getExKey(currentWeekId, day.id, i, ex.name)] || [], day.id), extra = Math.max(0, doneSets - planned);
                 const full = planned > 0 && doneSets >= planned, part = doneSets > 0 && !full;
-                // one line: ring (number) · name (shrinks to fit, never cut) · sets × reps, or sets done once started
-                const pill = doneSets > 0 ? `${doneSets}/${planned}` : `${esc(ex.sets)} × ${esc(fmtReps(ex.reps))}`;
-                return `<button id="ex-card-${i}" onclick="window.appActions.openExSheet(${i})" class="w-full glass-card ex-card acc-${i % 5} ${full ? 'is-full' : part ? 'is-part' : ''} flex items-center gap-2.5 text-start tap-feedback" aria-label="${esc(tx(ex.name) + ' · ' + t('{n} sets', { n: planned }))}">
+                const plan = `${t('{n} sets', { n: planned })} · ${t(isTimed(ex.reps) ? '{r} sec' : '{r} reps', { r: `<span dir="ltr">${esc(fmtReps(ex.reps))}</span>` })}`;
+                return `<button id="ex-card-${i}" onclick="window.appActions.openExSheet(${i})" class="w-full glass-card ex-card ${full ? 'is-full' : part ? 'is-part' : ''} flex items-center gap-3 text-start tap-feedback">
                     ${progressRing(doneSets, planned, i + 1)}
                     ${isRun ? '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>' : ''}
-                    <span class="ex-name ex-fit flex-1 min-w-0 font-black text-white leading-tight whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</span>
-                    <span class="flex items-center gap-1.5 shrink-0" dir="ltr">${extra ? `<span class="ex-pill-extra">+${extra}</span>` : ''}<span class="ex-pill num">${pill}</span></span>
+                    <span class="flex-1 min-w-0"><span class="ex-name block text-[15px] font-black text-white leading-tight truncate">${esc(tx(ex.name))}</span><span class="block text-[12px] font-bold mt-0.5 truncate ${full ? 'text-[#22c55e]' : 'text-slate-400'}">${full ? t('Done this week') : plan}</span></span>
+                    <span class="flex items-center gap-1.5 shrink-0" dir="ltr">${extra ? `<span class="ex-pill-extra">+${extra}</span>` : ''}<span class="ex-pill" dir="auto">${t('{n} sets', { n: `<span dir="ltr">${doneSets}/${planned}</span>` })}</span></span>
                 </button>`;
             }).join('') + `</div>`;
         }
         document.getElementById('workout-container').innerHTML = `<div class="${enterClass()}">${html}</div>`;
         if (window.lucide) window.lucide.createIcons();
-        fitNames(document.getElementById('workout-container'));
         if (typeof todayHints === 'function' && !day.isRest && day.exercises.length && !S) todayHints();
     };
 
@@ -2464,13 +2462,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const isRun = S && S.dayId === day.id && (!S.weekId || S.weekId === currentWeekId) && (S.exIdx === i || S.exIdx == null);
             // sets past the plan count too (4 of 3 = +1 extra); the target only shows while sets are left this week
             const lastDay = lastDaySets(hA, day.id), prev = lastDay ? lastDay.sets : [], full = planned > 0 && doneSets >= planned, shown = doneSets, extra = Math.max(0, doneSets - planned);
-            const tile = (label, value) => `<div class="rounded-2xl bg-white/5 px-3.5 py-2.5 min-w-0"><div class="text-[12px] font-bold text-slate-400">${label}</div><div class="text-[22px] font-black text-white leading-tight mt-0.5"><span dir="ltr">${value}</span></div></div>`;
+            const tile = (label, value) => `<div class="rounded-2xl bg-white/5 px-3.5 py-2 min-w-0"><div class="text-[12px] font-bold text-slate-400">${label}</div><div class="text-[19px] font-black text-white leading-tight mt-0.5"><span dir="ltr">${value}</span></div></div>`;
             const tgtCls = sg ? { up: 'is-up', down: 'is-down' }[sg.type] || '' : '';
             document.getElementById('ex-sheet-content').innerHTML = `<div class="px-5 pt-1">
                 <div class="flex items-start gap-2">
                     <div class="flex-1 min-w-0">
                         <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(ex.muscle))}</div>
-                        <h3 class="ex-name text-[22px] font-black text-white leading-tight mt-0.5">${esc(tx(ex.name))}</h3>
+                        <h3 class="ex-name ex-fit text-[20px] font-black text-white leading-tight mt-0.5 whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</h3>
                     </div>
                     <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}" target="_blank" rel="noopener" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('How to do it (YouTube)'))}" title="${esc(t('How to do it (YouTube)'))}"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i></a>
                     <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
@@ -2491,6 +2489,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             </div>`;
             if (window.lucide) window.lucide.createIcons({ root: document.getElementById('ex-sheet-box') });
             openModal('ex-sheet-overlay', 'ex-sheet-box');
+            fitNames(document.getElementById('ex-sheet-content')); // the name stays on one line (smaller font if it's long)
             pushBack('exsheet', () => window.appActions.closeExSheet());
         },
         closeExSheet: () => { popBack('exsheet'); closeModal('ex-sheet-overlay', 'ex-sheet-box'); },
