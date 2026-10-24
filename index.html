@@ -84,15 +84,14 @@
         </div>
     </div>
 
-    <!-- Profile → Workout settings and App settings: one page each -->
+    <!-- Profile → Workout settings and App settings: one full-screen page each -->
     <div id="workset-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSettings()">
-        <div id="workset-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div class="flex items-center justify-between px-5 pb-2 shrink-0">
+        <div id="workset-box" role="dialog" aria-modal="true" class="w-full h-[100dvh] bg-[#111] flex flex-col transform translate-y-full transition-transform duration-300" style="padding-top: env(safe-area-inset-top);">
+            <div class="w-full max-w-2xl mx-auto flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
                 <h3 class="text-lg font-black text-white" data-i18n="Workout settings">Workout settings</h3>
                 <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-2" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
+            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-2 w-full max-w-2xl mx-auto" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
                 <div class="pf-group">
                     <label class="pf-row">
                         <span class="pf-ic"><i data-lucide="timer"></i></span><span class="pf-label" data-i18n="Rest Timer">Rest Timer</span>
@@ -130,13 +129,12 @@
     </div>
 
     <div id="appset-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSettings()">
-        <div id="appset-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div class="flex items-center justify-between px-5 pb-2 shrink-0">
+        <div id="appset-box" role="dialog" aria-modal="true" class="w-full h-[100dvh] bg-[#111] flex flex-col transform translate-y-full transition-transform duration-300" style="padding-top: env(safe-area-inset-top);">
+            <div class="w-full max-w-2xl mx-auto flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
                 <h3 class="text-lg font-black text-white" data-i18n="App settings">App settings</h3>
                 <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-2" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
+            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-2 w-full max-w-2xl mx-auto" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
                 <div class="pf-group">
                     <label class="pf-row">
                         <span class="pf-ic"><i data-lucide="languages"></i></span><span class="pf-label" data-i18n="Language">Language</span>
