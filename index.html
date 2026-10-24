@@ -61,14 +61,14 @@
 
     <!-- Account backups: dated copies kept in your Google account -->
     <!-- Profile → Account (filled by app.js) -->
-    <div id="account-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeAccount()">
-        <div id="account-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div class="flex items-center justify-between px-5 pb-2 shrink-0">
-                <h3 class="text-lg font-black text-white" data-i18n="Account">Account</h3>
-                <button onclick="window.appActions.closeAccount()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <div id="account-overlay" class="sheet-overlay page-overlay fixed inset-0 z-[400] hidden flex-col opacity-0 transition-opacity duration-300">
+        <div id="account-box" role="dialog" aria-modal="true" class="page-box w-full h-full flex flex-col transform translate-x-full transition-transform duration-300">
+            <div class="page-bar shrink-0">
+                <button onclick="window.appActions.closeAccount()" class="back-btn tap-feedback" aria-label="Go back" data-i18n-label="Go back"><i data-lucide="chevron-left" class="rtl-flip"></i></button>
+                <h2 class="page-bar-title" data-i18n="Account">Account</h2>
+                <span class="w-11 shrink-0" aria-hidden="true"></span>
             </div>
-            <div id="account-body" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+            <div id="account-body" class="sheet-scroll page-body flex-1 overflow-y-auto overscroll-contain px-5 pt-2" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
         </div>
     </div>
 
@@ -84,15 +84,15 @@
         </div>
     </div>
 
-    <!-- Profile → Workout settings and App settings: one page each (same sheet as Account) -->
-    <div id="workset-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSettings()">
-        <div id="workset-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div class="pop-head is-end shrink-0 !mb-0">
-                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <!-- Profile → Workout and App: full pages (back button, title in the middle) -->
+    <div id="workset-overlay" class="sheet-overlay page-overlay fixed inset-0 z-[400] hidden flex-col opacity-0 transition-opacity duration-300">
+        <div id="workset-box" role="dialog" aria-modal="true" class="page-box w-full h-full flex flex-col transform translate-x-full transition-transform duration-300">
+            <div class="page-bar shrink-0">
+                <button onclick="window.appActions.closeSettings()" class="back-btn tap-feedback" aria-label="Go back" data-i18n-label="Go back"><i data-lucide="chevron-left" class="rtl-flip"></i></button>
+                <h2 class="page-bar-title" data-i18n="Workout">Workout</h2>
+                <span class="w-11 shrink-0" aria-hidden="true"></span>
             </div>
-            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
-                <h2 class="page-title" data-i18n="Workout settings">Workout settings</h2>
+            <div class="sheet-scroll page-body flex-1 overflow-y-auto overscroll-contain px-5 pt-2" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
                 <div class="pf-group">
                     <label class="pf-row">
                         <span class="pf-ic"><i data-lucide="timer"></i></span><span class="pf-label" data-i18n="Rest Timer">Rest Timer</span>
@@ -129,14 +129,14 @@
         </div>
     </div>
 
-    <div id="appset-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSettings()">
-        <div id="appset-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div class="pop-head is-end shrink-0 !mb-0">
-                <button onclick="window.appActions.closeSettings()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <div id="appset-overlay" class="sheet-overlay page-overlay fixed inset-0 z-[400] hidden flex-col opacity-0 transition-opacity duration-300">
+        <div id="appset-box" role="dialog" aria-modal="true" class="page-box w-full h-full flex flex-col transform translate-x-full transition-transform duration-300">
+            <div class="page-bar shrink-0">
+                <button onclick="window.appActions.closeSettings()" class="back-btn tap-feedback" aria-label="Go back" data-i18n-label="Go back"><i data-lucide="chevron-left" class="rtl-flip"></i></button>
+                <h2 class="page-bar-title" data-i18n="App">App</h2>
+                <span class="w-11 shrink-0" aria-hidden="true"></span>
             </div>
-            <div class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5 pt-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
-                <h2 class="page-title" data-i18n="App settings">App settings</h2>
+            <div class="sheet-scroll page-body flex-1 overflow-y-auto overscroll-contain px-5 pt-2" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));">
                 <div class="pf-group">
                     <label class="pf-row">
                         <span class="pf-ic"><i data-lucide="languages"></i></span><span class="pf-label" data-i18n="Language">Language</span>
@@ -158,16 +158,16 @@
         </div>
     </div>
 
-    <div id="backups-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeBackups()">
-        <div id="backups-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div class="flex items-center justify-between px-5 pb-2 shrink-0">
-                <h3 class="text-lg font-black text-white" data-i18n="Account backups">Account backups</h3>
-                <button onclick="window.appActions.closeBackups()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <div id="backups-overlay" class="sheet-overlay page-overlay fixed inset-0 z-[410] hidden flex-col opacity-0 transition-opacity duration-300">
+        <div id="backups-box" role="dialog" aria-modal="true" class="page-box w-full h-full flex flex-col transform translate-x-full transition-transform duration-300">
+            <div class="page-bar shrink-0">
+                <button onclick="window.appActions.closeBackups()" class="back-btn tap-feedback" aria-label="Go back" data-i18n-label="Go back"><i data-lucide="chevron-left" class="rtl-flip"></i></button>
+                <h2 class="page-bar-title" data-i18n="Account backups">Account backups</h2>
+                <span class="w-11 shrink-0" aria-hidden="true"></span>
             </div>
             <p class="px-5 pb-3 text-[12px] font-bold text-slate-400 leading-snug shrink-0" data-i18n="A copy of everything is saved in your account once a day. Restore one to go back to how things were.">A copy of everything is saved in your account once a day. Restore one to go back to how things were.</p>
             <div class="px-5 pb-3 shrink-0"><button id="backups-now" onclick="window.appActions.backupNow()" class="w-full py-3 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i><span data-i18n="Back up now">Back up now</span></button></div>
-            <div id="backups-list" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain border-t border-white/5 pb-6" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+            <div id="backups-list" class="sheet-scroll page-body flex-1 overflow-y-auto overscroll-contain border-t border-white/5 pb-6" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
         </div>
     </div>
 
@@ -191,7 +191,7 @@
 
     <!-- Routine codes: share a routine with a code, or add one from a friend's code (filled by app.js) -->
     <div id="code-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeCodeSheet()">
-        <div id="code-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
+        <div id="code-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[90dvh] transform translate-y-full transition-transform duration-300">
             <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
             <div class="flex items-center justify-between px-5 pb-2 shrink-0">
                 <h3 id="code-title" class="text-lg font-black text-white"></h3>
@@ -232,29 +232,29 @@
     </div>
 
     <!-- Exercise pop-up on Today (middle of the screen): details, Start workout, History -->
-    <div id="ex-sheet-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExSheet()">
-        <div id="ex-sheet-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div id="ex-sheet-content" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain pt-1" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+    <div id="ex-sheet-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExSheet()">
+        <div id="ex-sheet-box" class="w-full max-w-[400px] max-h-[85dvh] overflow-y-auto bg-[#111] rounded-3xl border border-white/10 pt-4 pb-4 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+            <div id="ex-sheet-content"></div>
         </div>
     </div>
 
-    <!-- Workout (slides up and stays open until you finish or discard it) -->
-    <div id="active-workout-overlay" class="sheet-overlay fixed inset-0 bg-black/80 backdrop-blur-sm z-[300] hidden flex-col justify-end opacity-0 transition-opacity duration-300">
-        <div id="active-workout-box" class="w-full max-w-2xl mx-auto bg-[#0f0f0f] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
-            <div class="pt-4 shrink-0"></div>
-            <div class="flex items-center gap-3 px-5 pb-3 pt-1 shrink-0">
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2">
-                        <span id="aw-pulse-dot" class="w-2 h-2 rounded-full bg-[#d4af37] shrink-0"></span>
-                        <span id="aw-status-text" class="text-[12px] font-bold text-[#d4af37] truncate">Log</span>
-                    </div>
-                    <h3 id="aw-title" class="ex-name text-[19px] font-black text-white leading-tight truncate">Exercise</h3>
+    <!-- Workout: a full page. Back keeps it running (small bar at the bottom); finish or discard with ✕ -->
+    <div id="active-workout-overlay" class="sheet-overlay page-overlay fixed inset-0 z-[300] hidden flex-col opacity-0 transition-opacity duration-300">
+        <div id="active-workout-box" role="dialog" aria-modal="true" class="page-box w-full h-full flex flex-col transform translate-x-full transition-transform duration-300">
+            <div class="page-bar shrink-0">
+                <button onclick="window.appActions.minimizeSession()" class="back-btn tap-feedback" aria-label="Go back" data-i18n-label="Go back"><i data-lucide="chevron-left" class="rtl-flip"></i></button>
+                <h2 id="aw-title" class="page-bar-title ex-name">Workout</h2>
+                <span class="w-11 shrink-0" aria-hidden="true"></span>
+            </div>
+            <div class="w-full max-w-2xl mx-auto flex items-center justify-between gap-3 px-5 pb-3 pt-1 shrink-0">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span id="aw-pulse-dot" class="w-2 h-2 rounded-full bg-[#d4af37] shrink-0"></span>
+                    <span id="aw-status-text" class="text-[12px] font-bold text-[#d4af37] truncate">Log</span>
                 </div>
                 <div id="aw-timer" class="text-[34px] font-bold text-white tabular-nums leading-none shrink-0 num">00:00</div>
             </div>
-            <div id="aw-info" class="px-4 pb-3 flex flex-wrap gap-2 shrink-0"></div>
-            <div id="aw-scroll" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-3 pb-4">
+            <div id="aw-info" class="w-full max-w-2xl mx-auto px-4 pb-3 flex flex-wrap gap-2 shrink-0"></div>
+            <div id="aw-scroll" class="sheet-scroll page-body flex-1 overflow-y-auto overscroll-contain px-3 pb-4">
                 <div id="aw-table-head" class="grid items-center gap-1.5 px-2 pb-2 text-[12px] font-bold text-slate-400"></div>
                 <div id="aw-sets-container" class="space-y-1.5"></div>
                 <p class="text-[12px] font-bold text-slate-400 leading-relaxed px-2 mt-3"><span data-i18n="Type the KG and reps you did: the set turns green by itself. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.">Type the KG and reps you did: the set turns green by itself. RPE (optional): 10 = no reps left, 9 = 1 left, 8 = 2 left.</span></p>
@@ -287,7 +287,7 @@
     </div>
 
     <!-- Minimized session: stays at the bottom while you look at your schedule; tap to go back -->
-    <button id="aw-mini" onclick="window.appActions.expandSession()" style="bottom: calc(62px + max(4px, env(safe-area-inset-bottom) - 12px));" class="hidden fixed left-4 right-4 z-[250] max-w-xl mx-auto bg-[#161616]/95 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl px-4 py-3 items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] tap-feedback text-start">
+    <button id="aw-mini" onclick="window.appActions.expandSession()" style="bottom: calc(84px + env(safe-area-inset-bottom));" class="hidden fixed left-4 right-4 z-[250] max-w-xl mx-auto bg-[#161616]/95 backdrop-blur-xl border border-[#d4af37]/40 rounded-2xl px-4 py-3 items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.8)] tap-feedback text-start">
         <span id="aw-mini-dot" class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shrink-0"></span>
         <span class="flex-1 min-w-0">
             <span id="aw-mini-name" class="ex-name block text-[14px] font-black text-white truncate"></span>
@@ -315,19 +315,17 @@
         </div>
     </div>
 
-    <!-- Plan: edit one exercise (a sheet like the exercise pop-up on Today; delete = swipe the exercise left in the list) -->
-    <div id="exedit-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExEdit()">
-        <div id="exedit-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div id="exedit-content" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain pt-1" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+    <!-- Plan: edit one exercise (middle of the screen, like the exercise pop-up on Today; delete = swipe the exercise left in the list) -->
+    <div id="exedit-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[180] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeExEdit()">
+        <div id="exedit-box" class="w-full max-w-md max-h-[88dvh] overflow-y-auto bg-[#111] rounded-3xl border border-white/10 pt-5 pb-5 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+            <div id="exedit-content"></div>
         </div>
     </div>
 
     <!-- Plan: sets & reps for the new exercise when changing one (above the exercise list, below the confirmation) -->
-    <div id="swapsetup-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[500] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSwapSetup()">
-        <div id="swapsetup-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
-            <div id="swapsetup-content" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain pt-1" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
+    <div id="swapsetup-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[500] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeSwapSetup()">
+        <div id="swapsetup-box" class="w-full max-w-md max-h-[88dvh] overflow-y-auto bg-[#111] rounded-3xl border border-white/10 pt-5 pb-5 transform scale-95 transition-transform duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+            <div id="swapsetup-content"></div>
         </div>
     </div>
 
@@ -397,12 +395,12 @@
                 <div class="pf-group mb-6">
                     <button onclick="window.appActions.openSettings('workout')" class="pf-row tap-feedback">
                         <span class="pf-ic"><i data-lucide="dumbbell"></i></span>
-                        <span class="pf-label"><span data-i18n="Workout settings">Workout settings</span><span class="pf-sub" data-i18n="Rest timer, RPE, start of the week">Rest timer, RPE, start of the week</span></span>
+                        <span class="pf-label"><span data-i18n="Workout">Workout</span><span class="pf-sub" data-i18n="Rest timer, RPE, start of the week">Rest timer, RPE, start of the week</span></span>
                         <i data-lucide="chevron-right" class="pf-chev"></i>
                     </button>
                     <button onclick="window.appActions.openSettings('app')" class="pf-row tap-feedback">
                         <span class="pf-ic"><i data-lucide="smartphone"></i></span>
-                        <span class="pf-label"><span data-i18n="App settings">App settings</span><span class="pf-sub" data-i18n="Language and theme">Language and theme</span></span>
+                        <span class="pf-label"><span data-i18n="App">App</span><span class="pf-sub" data-i18n="Language and theme">Language and theme</span></span>
                         <i data-lucide="chevron-right" class="pf-chev"></i>
                     </button>
                     <button onclick="window.appActions.openCodeSheet()" class="pf-row tap-feedback">
@@ -435,13 +433,13 @@
         </div>
     </div>
 
-    <!-- Bottom tab bar: Today (the day you train, view "today"), Plan (the week editor, view "plan"), Progress, Profile -->
-    <nav id="tab-bar" dir="ltr" class="fixed bottom-0 inset-x-0 z-[150] bg-[#0b0b0b]/95 backdrop-blur-xl border-t border-white/10">
-        <div class="max-w-2xl mx-auto grid grid-cols-4">
-            <button id="tabbtn-today" onclick="window.appActions.switchTab('today')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="dumbbell" class="w-6 h-6"></i><span class="text-[12px] font-bold" data-i18n="Today">Today</span></button>
-            <button id="tabbtn-plan" onclick="window.appActions.switchTab('plan')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="calendar-days" class="w-6 h-6"></i><span class="text-[12px] font-bold" data-i18n="Plan">Plan</span></button>
-            <button id="tabbtn-progress" onclick="window.appActions.switchTab('progress')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="trending-up" class="w-6 h-6"></i><span class="text-[12px] font-bold" data-i18n="Progress">Progress</span></button>
-            <button id="tabbtn-profile" onclick="window.appActions.switchTab('profile')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative"><i data-lucide="user" class="w-6 h-6"></i><span class="text-[12px] font-bold" data-i18n="Profile">Profile</span><span id="backup-dot" class="hidden absolute top-1.5 left-1/2 ml-2 w-3 h-3 rounded-full bg-red-500 border-2 border-black pointer-events-none"></span></button>
+    <!-- Floating dock: Today (the day you train, view "today"), Plan (the week editor, view "plan"), Progress, Profile -->
+    <nav id="tab-bar" dir="ltr" class="fixed z-[150]">
+        <div class="grid grid-cols-4">
+            <button id="tabbtn-today" onclick="window.appActions.switchTab('today')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="dumbbell" class="w-6 h-6"></i><span class="sr-only" data-i18n="Today">Today</span></button>
+            <button id="tabbtn-plan" onclick="window.appActions.switchTab('plan')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="calendar-days" class="w-6 h-6"></i><span class="sr-only" data-i18n="Plan">Plan</span></button>
+            <button id="tabbtn-progress" onclick="window.appActions.switchTab('progress')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="trending-up" class="w-6 h-6"></i><span class="sr-only" data-i18n="Progress">Progress</span></button>
+            <button id="tabbtn-profile" onclick="window.appActions.switchTab('profile')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative"><i data-lucide="user" class="w-6 h-6"></i><span class="sr-only" data-i18n="Profile">Profile</span><span id="backup-dot" class="hidden absolute top-1.5 left-1/2 ml-2 w-3 h-3 rounded-full bg-red-500 border-2 border-black pointer-events-none"></span></button>
         </div>
     </nav>
 

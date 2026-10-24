@@ -162,9 +162,9 @@ input[type="number"] {
 /* no sideways drift or bounce of the whole screen while swiping (Plan and the day editor only scroll up and down) */
 .scrollable-content { overflow-x: hidden; overscroll-behavior: contain; }
 #plan-routines, .plan-scope { touch-action: pan-y; }
-#toast-container { bottom: calc(80px + env(safe-area-inset-bottom)) !important; }
+#toast-container { bottom: calc(92px + env(safe-area-inset-bottom)) !important; }
 body.has-mini .scrollable-content { padding-bottom: calc(180px + env(safe-area-inset-bottom)) !important; }
-body.has-mini #toast-container { bottom: calc(150px + env(safe-area-inset-bottom)) !important; }
+body.has-mini #toast-container { bottom: calc(160px + env(safe-area-inset-bottom)) !important; }
 
 /* Number inputs in the sets table: no spin arrows */
 #aw-sets-container input::-webkit-outer-spin-button, #aw-sets-container input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -304,9 +304,6 @@ input.day-title-input { font-size: 26px !important; }
 :root[lang="ar"] #active-week-label { font-size: 16px; line-height: 1.6; }
 
 /* Bottom tab bar sized like iPhone's own apps: ~50pt of buttons, then a slim strip for the home bar */
-#tab-bar { padding-bottom: max(4px, calc(env(safe-area-inset-bottom) - 12px)); }
-#tab-bar .tab-btn { padding-top: 7px !important; padding-bottom: 3px !important; gap: 2px !important; }
-#tab-bar .tab-btn svg { width: 23px; height: 23px; }
 
 /* ===== Welcome pages ===== */
 @keyframes float-y { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
@@ -428,6 +425,29 @@ input.day-title-input { font-size: 26px !important; }
 .glass-card.ex-card.is-full { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.45); }
 .ex-card.is-full .ex-pill { background: #22c55e; color: #000; }
 /* bonus sets sit next to the pill, outside it */
+/* Second pages (Account, Workout, App, Account backups, the workout): full screen, slide in from the side.
+   A round back button on the left and the title in the middle; no header line */
+.page-overlay { background: transparent; }
+.page-box { background: var(--bg); padding-top: env(safe-area-inset-top); }
+.page-bar { width: 100%; max-width: 42rem; margin: 0 auto; display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; padding: 10px 16px 8px; }
+.page-bar-title { text-align: center; font-size: 19px; font-weight: 900; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.page-body { width: 100%; max-width: 42rem; margin: 0 auto; }
+/* The one back button of the app (pages, Plan → This week, setup) */
+.back-btn { width: 44px; height: 44px; flex-shrink: 0; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--text);
+  background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+.back-btn svg { width: 24px; height: 24px; stroke-width: 2.2; }
+:root[data-theme="light"] .back-btn { background: #ffffff; border-color: rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+
+/* Floating dock: a rounded glass bar above the bottom edge; the open tab sits on a light pill */
+#tab-bar { left: 16px; right: 16px; bottom: max(12px, env(safe-area-inset-bottom)); max-width: 480px; margin: 0 auto; padding: 6px !important; border-radius: 999px;
+  background: rgba(24, 24, 27, 0.72); -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06); }
+#tab-bar .tab-btn { height: 52px; padding: 0 !important; border-radius: 999px; justify-content: center; transition: background-color 0.2s, color 0.2s; }
+#tab-bar .tab-btn svg { width: 26px; height: 26px; }
+#tab-bar .tab-btn.text-\[\#d4af37\] { background: rgba(255, 255, 255, 0.12); }
+:root[data-theme="light"] #tab-bar { background: rgba(255, 255, 255, 0.78); border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12); }
+:root[data-theme="light"] #tab-bar .tab-btn.text-\[\#d4af37\] { background: rgba(0, 0, 0, 0.06); }
+
 /* Pop-ups and settings pages: a header bar with the buttons and a line under it; the title gets the whole width below */
 .pop-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 16px 12px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
 .pop-head.is-end { justify-content: flex-end; }

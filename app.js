@@ -267,6 +267,7 @@
         "Only dumbbells needed. Good for home or a small gym.": "يكفيك زوج دمبل. مناسب للمنزل أو نادٍ صغير.",
         "Arms": "الذراعان",
         "Back": "الظهر",
+        "Go back": "رجوع",
         "Chest": "الصدر",
         "Chest & Back": "صدر وظهر",
         "Glutes": "الألوية",
@@ -1129,7 +1130,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '66';
+    const APP_VERSION = '67';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -1390,16 +1391,18 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const REPS_PRESETS = ['6 - 8', '8 - 10', '8 - 12', '10 - 12', '12 - 15', '15 - 20', '30 - 45s'];
 
     // Bottom sheets slide up from the bottom; the page behind them is frozen so nothing jumps
+    // a full page (.page-box) slides in from the side; a sheet slides up from the bottom
+    const hiddenCls = b => b.classList.contains('page-box') ? 'translate-x-full' : 'translate-y-full';
     const openSheet = (overlayId, boxId) => {
         const o = document.getElementById(overlayId), b = document.getElementById(boxId);
         const sc = document.querySelector('.scrollable-content'); if (sc) sc.style.overflow = 'hidden';
         o.classList.remove('hidden'); o.classList.add('flex');
-        requestAnimationFrame(() => { o.classList.remove('opacity-0'); b.classList.remove('translate-y-full'); });
+        requestAnimationFrame(() => { o.classList.remove('opacity-0'); b.classList.remove(hiddenCls(b)); });
     };
     const closeSheet = (overlayId, boxId) => {
         const o = document.getElementById(overlayId), b = document.getElementById(boxId);
         if (document.activeElement) document.activeElement.blur();
-        o.classList.add('opacity-0'); b.classList.add('translate-y-full');
+        o.classList.add('opacity-0'); b.classList.add(hiddenCls(b));
         setTimeout(() => {
             if (!o.classList.contains('opacity-0')) return; // opened again in the meantime: leave it open
             o.classList.add('hidden'); o.classList.remove('flex');
@@ -1417,7 +1420,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         if (!backGuard) { try { history.pushState({ apexGuard: 1 }, ''); backGuard = true; } catch (e) {} }
     };
     // Phone back button during a workout: the workout stays open (finish it or discard it with ✕ to leave)
-    const sessionBack = () => { backStack.push({ id: 'session', fn: sessionBack }); window.appActions.showToast(t('Finish the workout or discard it with ✕ to leave.'), 'error'); };
+    const sessionBack = () => window.appActions.minimizeSession(); // back = keep the workout running in the small bar
     const popBack = id => { const i = backStack.map(x => x.id).lastIndexOf(id); if (i >= 0) backStack.splice(i, 1); };
     window.addEventListener('popstate', () => {
         backGuard = false;
@@ -1453,6 +1456,24 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 setTimeout(() => { box.style.transform = ''; }, 350);
             } else box.style.transform = '';
             y0 = null; dy = 0;
+        });
+    };
+
+    // 👉 SWIPE from the left edge of a full page to go back (like the back button)
+    const enableEdgeBack = (box, onBack) => {
+        if (!box) return;
+        let x0 = null, y0 = 0, dx = 0;
+        box.addEventListener('touchstart', e => { const x = e.touches[0].clientX; x0 = x < 28 && e.touches.length === 1 ? x : null; y0 = e.touches[0].clientY; dx = 0; }, { passive: true });
+        box.addEventListener('touchmove', e => {
+            if (x0 === null) return;
+            dx = e.touches[0].clientX - x0;
+            if (Math.abs(e.touches[0].clientY - y0) > Math.abs(dx) && dx < 30) { x0 = null; box.style.transform = ''; return; }
+            box.style.transition = 'none'; box.style.transform = `translateX(${Math.max(0, dx)}px)`;
+        }, { passive: true });
+        box.addEventListener('touchend', () => {
+            if (x0 === null) return;
+            box.style.transition = ''; x0 = null;
+            if (dx > 90) { onBack(); setTimeout(() => { box.style.transform = ''; }, 320); } else box.style.transform = '';
         });
     };
 
@@ -2252,7 +2273,9 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
 
     // 🗓️ DAY EDITOR (Today ✏️ and Plan → a day): dashed gold day card with Day type and Same sets & reps for all,
     // a dashed underline on the day name (tap to rename), and gold-edged exercise cards with a ⋮⋮ grip (drag); tap a card to edit it
-    const planBackBar = () => `<button onclick="window.appActions.openPlanDay(null)" class="flex items-center gap-3 mb-3 ps-0.5 pe-3 py-0.5 tap-feedback" aria-label="${esc(t('This week'))}"><span class="w-11 h-11 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white shrink-0"><i data-lucide="${isAR ? 'arrow-right' : 'arrow-left'}" class="w-6 h-6"></i></span><span class="text-[16px] font-black text-white">${t('This week')}</span></button>`;
+    // the app's one back button: a round button with ‹ (pages, Plan → This week, the setup)
+    const backBtn = (onclick, label = t('Go back'), cls = '') => `<button onclick="${onclick}" class="back-btn tap-feedback ${cls}" aria-label="${esc(label)}"><i data-lucide="chevron-left" class="rtl-flip"></i></button>`;
+    const planBackBar = () => `<div class="flex items-center gap-3 mb-3 ps-0.5">${backBtn('window.appActions.openPlanDay(null)', t('This week'))}<button onclick="window.appActions.openPlanDay(null)" class="text-[16px] font-black text-white tap-feedback py-2.5">${t('This week')}</button></div>`;
     const renderPlanDay = (top = '') => {
         const schedule = getActiveSchedule(), day = schedule.find(d => d.id === activeDay), S = window.appState;
         const planned = day.exercises.reduce((a, ex) => a + (parseInt(ex.sets) || 0), 0);
@@ -2516,11 +2539,11 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 <button onclick="window.appActions.closeExSheet(); window.appActions.startWorkout(${day.id}, null, ${i})" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : full ? t('Log more sets') : shown > 0 ? t('Continue') : t('Start workout')}</button>
             </div>`;
             if (window.lucide) window.lucide.createIcons({ root: document.getElementById('ex-sheet-box') });
-            openSheet('ex-sheet-overlay', 'ex-sheet-box');
+            openModal('ex-sheet-overlay', 'ex-sheet-box');
             fitNames(document.getElementById('ex-sheet-content')); // the name stays on one line (smaller font if it's long)
             pushBack('exsheet', () => window.appActions.closeExSheet());
         },
-        closeExSheet: () => { popBack('exsheet'); closeSheet('ex-sheet-overlay', 'ex-sheet-box'); },
+        closeExSheet: () => { popBack('exsheet'); closeModal('ex-sheet-overlay', 'ex-sheet-box'); },
         // Dark (default), light, or the same as the phone ('system'); remembered on this phone
         setTheme: v => {
             v = ['light', 'system'].includes(v) ? v : 'dark';
@@ -3022,7 +3045,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 const reps = timedNew && !timedOld ? '30 - 45s' : !timedNew && timedOld ? '10 - 12' : ex.reps;
                 window.appState.swapSetup = { idx: P.idx, name, muscle, sets: String(parseInt(ex.sets) || 3), reps };
                 window.appActions.renderSwapSetup();
-                openSheet('swapsetup-overlay', 'swapsetup-box');
+                openModal('swapsetup-overlay', 'swapsetup-box');
                 pushBack('swapsetup', () => window.appActions.closeSwapSetup());
                 return;
             }
@@ -3056,7 +3079,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             </div>`;
             fitNames(c); if (window.lucide) window.lucide.createIcons({ root: c });
         },
-        closeSwapSetup: () => { popBack('swapsetup'); window.appState.swapSetup = null; closeSheet('swapsetup-overlay', 'swapsetup-box'); },
+        closeSwapSetup: () => { popBack('swapsetup'); window.appState.swapSetup = null; closeModal('swapsetup-overlay', 'swapsetup-box'); },
         swapSetSets: dlt => { const W = window.appState.swapSetup; if (!W) return; W.sets = String(Math.min(10, Math.max(1, (parseInt(W.sets) || 3) + dlt))); window.appActions.renderSwapSetup(); },
         swapSetReps: v => { const W = window.appState.swapSetup; v = latinDigits(String(v)).trim(); if (!W || !v) return; W.reps = v.slice(0, 20); window.appActions.renderSwapSetup(); },
         swapSetupNext: () => {
@@ -3103,13 +3126,13 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         // ---------- Edit one exercise in a pop-up (Plan tab) ----------
         openExEdit: i => {
             window.appState.inlineEdit = i; window.appState.customReps = false; renderExEdit();
-            openSheet('exedit-overlay', 'exedit-box');
+            openModal('exedit-overlay', 'exedit-box');
             pushBack('exedit', () => window.appActions.closeExEdit());
         },
         refreshExEdit: () => renderExEdit(),
         closeExEdit: () => {
             window.appState.inlineEdit = null; popBack('exedit');
-            if (document.getElementById('exedit-overlay').classList.contains('flex')) closeSheet('exedit-overlay', 'exedit-box');
+            if (document.getElementById('exedit-overlay').classList.contains('flex')) closeModal('exedit-overlay', 'exedit-box');
         },
         exEditSets: dlt => {
             const ex = getActiveSchedule().find(x => x.id === activeDay).exercises[window.appState.inlineEdit];
@@ -3376,7 +3399,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             const dots = W.steps.map((_, i) => `<span class="h-1.5 rounded-full transition-all ${i === W.step ? 'w-6 bg-[#d4af37]' : i < W.step ? 'w-3 bg-[#d4af37]/50' : 'w-3 bg-white/15'}"></span>`).join('');
             document.getElementById('onboarding-box').innerHTML = `
                 <div class="flex items-center justify-between py-4 shrink-0">
-                    <button onclick="window.appActions.wizBack()" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.step === 0 ? 'invisible' : ''}" aria-label="${esc(t('Back'))}"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                    ${backBtn('window.appActions.wizBack()', t('Go back'), W.step === 0 ? 'invisible' : '')}
                     <div class="flex gap-1.5 flex-wrap justify-center max-w-[70%]" dir="ltr">${dots}</div>
                     <button onclick="window.appActions.closeWizard()" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.firstRun ? 'invisible' : ''}" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
@@ -4264,7 +4287,7 @@ ${lib}`;
         closeAccount: () => { popBack('account'); closeSheet('account-overlay', 'account-box'); },
         openTraining: () => { renderTrainingSheet(); openSheet('training-overlay', 'training-box'); pushBack('training', () => window.appActions.closeTraining()); },
         closeTraining: () => { popBack('training'); closeSheet('training-overlay', 'training-box'); },
-        // Profile → Workout settings / App settings (one page each)
+        // Profile → Workout / App (full pages)
         openSettings: which => { const id = which === 'app' ? 'appset' : 'workset'; window.appState.settingsOpen = id; openSheet(id + '-overlay', id + '-box'); pushBack('settings', () => window.appActions.closeSettings()); },
         closeSettings: () => { const id = window.appState.settingsOpen; if (!id) return; window.appState.settingsOpen = null; popBack('settings'); closeSheet(id + '-overlay', id + '-box'); },
         closeEdit: () => { popBack('edit'); if (document.activeElement) document.activeElement.blur(); closeModal('edit-overlay', 'edit-box'); },
@@ -5134,6 +5157,7 @@ ${lib}`;
         document.documentElement.dir = 'ltr';
         document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
         document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+        document.querySelectorAll('[data-i18n-label]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nLabel)));
         document.querySelectorAll('#setting-start-day option').forEach(o => { o.textContent = tDay(o.value); });
         const ls = document.getElementById('setting-lang'); if (ls) ls.value = LANG;
         const th = document.getElementById('setting-theme'); if (th) th.value = themeChoice();
@@ -5143,11 +5167,12 @@ ${lib}`;
     window.appActions.switchTab('today');
     enableSwipeDown(document.getElementById('picker-box'), () => window.appActions.closePicker());
     enableSwipeDown(document.getElementById('history-modal-box'), () => window.appActions.closeHistoryModal());
-    enableSwipeDown(document.getElementById('ex-sheet-box'), () => window.appActions.closeExSheet());
-    enableSwipeDown(document.getElementById('exedit-box'), () => window.appActions.closeExEdit());
-    enableSwipeDown(document.getElementById('swapsetup-box'), () => window.appActions.closeSwapSetup());
-    enableSwipeDown(document.getElementById('workset-box'), () => window.appActions.closeSettings());
-    enableSwipeDown(document.getElementById('appset-box'), () => window.appActions.closeSettings());
+    // full pages: swipe from the left edge = back
+    enableEdgeBack(document.getElementById('workset-box'), () => window.appActions.closeSettings());
+    enableEdgeBack(document.getElementById('appset-box'), () => window.appActions.closeSettings());
+    enableEdgeBack(document.getElementById('account-box'), () => window.appActions.closeAccount());
+    enableEdgeBack(document.getElementById('backups-box'), () => window.appActions.closeBackups());
+    enableEdgeBack(document.getElementById('active-workout-box'), () => window.appActions.minimizeSession());
     enableSwipeDown(document.getElementById('programs-box'), () => window.appActions.closePrograms());
     enableSwipeDown(document.getElementById('ai-box'), () => window.appActions.closeAI());
     enableDaySwipe(document.querySelector('.scrollable-content')); // the whole Today screen, so rest days (one small card) swipe too
