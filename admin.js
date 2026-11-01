@@ -12,10 +12,7 @@
         messagingSenderId: '682655190858',
         appId: '1:682655190858:web:70d756fba8e17de80cbbb3'
     };
-    const $ = id => document.getElementById(id);
-    // every value shown comes from users, so all of it is escaped
-    const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    const isObj = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+    const { $, esc, isObj } = window.ApexAdminUtils; // admin-utils.js
     const num = v => (typeof v === 'number' && isFinite(v)) ? v : null;
     const DAY = 86400000;
     const fmtDate = t => num(t) ? new Date(t).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
@@ -73,7 +70,9 @@
     const notAdmin = u => {
         $('main').innerHTML = `<div class="center"><h1>Not an admin account</h1>
             <p>This Google account can't read other users' data.<br>To make it an admin, add this User UID to isAdmin() in <b>firestore.rules</b> and publish the rules:</p>
-            <div class="uid">${esc(u.uid)}</div></div>`;
+            <div class="uid">${esc(u.uid)}</div><p>Taking you to the app… <a href="./">Go now</a></p></div>`;
+        // nothing here for this account: back to the app (the data itself is protected by firestore.rules)
+        setTimeout(() => location.replace('./'), 8000);
     };
 
     // ---------- load everything ----------

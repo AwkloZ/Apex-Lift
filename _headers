@@ -36,3 +36,6 @@
 
 /admin-coach.js
   X-Robots-Tag: noindex, nofollow
+
+/admin-utils.js
+  X-Robots-Tag: noindex, nofollow

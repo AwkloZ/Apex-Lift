@@ -9,9 +9,7 @@ window.ApexCoach = (() => {
     const DAY_LONG = { SUN: 'Sunday', MON: 'Monday', TUE: 'Tuesday', WED: 'Wednesday', THU: 'Thursday', FRI: 'Friday', SAT: 'Saturday' };
     const REPS_PRESETS = ['5', '3 - 5', '6 - 8', '8 - 10', '8 - 12', '10 - 12', '12 - 15', '15 - 20', '30 - 45s'];
     const MAX_EX = 60, NOTE_MAX = 1000;
-    const $ = id => document.getElementById(id);
-    const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    const isObj = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+    const { $, esc, isObj } = window.ApexAdminUtils; // admin-utils.js
     const clone = v => JSON.parse(JSON.stringify(v));
     const muscleOf = name => Object.keys(exerciseDictionary).find(m => exerciseDictionary[m].includes(name)) || '';
     const ALL_EX = [...new Set(Object.values(exerciseDictionary).flat())].sort();

@@ -17,6 +17,7 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 - `require-sign-in.js`: the switch that makes sign-in (Google or email) required before using the app; it also covers the app until the user is signed in. Delete the file to make sign-in optional ("Not now"); add it back to require it again. It is not in `APP_FILES` on purpose.
 - Email links (reset password, confirm email) open inside the app (`?mode=...&oobCode=...`, see EMAIL LINKS in `app.js`). This needs one Firebase setting: Authentication → Templates → Customize action URL → `https://apex-liftt.netlify.app/`.
 - `admin.html`, `admin.js`: the admin page (users, insights, client notes, visits).
+- `admin-utils.js`: helpers shared by `admin.js` and `admin-coach.js` (`$`, `esc`, `isObj`); loaded before both.
 - `admin-coach.js`: the coach schedule builder; sends routines and messages to `users/{uid}/coach/plan`.
 - `firestore.rules`: database security rules. They are **not** deployed by Netlify: after changing them, tell the owner to paste them into Firebase (Firestore Database → Rules → Publish) **before** deploying the site.
 - `privacy.html`, `terms.html`: policy pages (English and Arabic sections).
@@ -26,7 +27,7 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 
 ## Conventions
 
-- Keep each file's line endings: `app.js`, `admin.js`, `admin-coach.js`, `library.js`, `index.html`, `admin.html`, `privacy.html`, `terms.html` and `style.css` use CRLF; `sw.js`, `tailwind.css` and `firestore.rules` use LF.
+- Keep each file's line endings: `app.js`, `admin.js`, `admin-utils.js`, `admin-coach.js`, `library.js`, `index.html`, `admin.html`, `privacy.html`, `terms.html` and `style.css` use CRLF; `sw.js`, `tailwind.css` and `firestore.rules` use LF.
 - New text shown in the app needs an Arabic translation in the `AR` table in `app.js`.
 - After changing Tailwind classes in `index.html` or `app.js`, rebuild tailwind.css:
   `npx tailwindcss@3.4.17 -c tools/tailwind.config.js -i tools/tailwind.in.css -o tailwind.css --minify`
