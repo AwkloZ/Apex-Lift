@@ -50,7 +50,7 @@
     const logTime = l => (num(l && l.ts) !== null ? l.ts : Date.parse(l && l.d));
     // training status (gold/amber/grey/red); green is kept for "online now"
     const STATUS = { active: ['Training', 'b-train'], risk: ['At risk', 'b-risk'], inactive: ['Inactive', 'b-inactive'], none: ['Not started', 'b-none'] };
-    const ONLINE_MS = 5 * 60000; // the app says "I'm here" every 2 minutes while it is open
+    const ONLINE_MS = 10 * 60000; // the app says "I'm here" every 5 minutes while it is open
     const fmtTime = t => new Date(t).toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true });
     const fmtDur = ms => { const m = Math.max(1, Math.round(ms / 60000)); return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60} min`; };
 
@@ -143,7 +143,7 @@
             refreshLive();
         }, e => console.warn('presence', e));
     };
-    // online dots go out by themselves 5 minutes after the last "I'm here"
+    // online dots go out by themselves 10 minutes after the last "I'm here"
     const refreshLive = () => {
         users.forEach(finish);
         const st = document.querySelector('.stats'); if (st) st.innerHTML = kpis();

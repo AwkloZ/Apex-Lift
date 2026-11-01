@@ -4175,10 +4175,10 @@ ${lib}`;
         finally { clearTimeout(slow); Cloud.flushing = false; if (Cloud.again) { Cloud.again = false; scheduleFlush(300); } }
     };
     // Live updates from your other phones
-    // 🟢 PRESENCE + VISITS (users/{uid}/presence/app): while the app is open on screen it says "I'm here" every 2 minutes,
+    // 🟢 PRESENCE + VISITS (users/{uid}/presence/app): while the app is open on screen it says "I'm here" every 5 minutes (and once when it is hidden),
     // so the admin page can show who is using the app right now, how many times each user opened it and for how long.
     // A visit = one stretch of use; coming back after 30 minutes away starts a new one. The last 30 visits are kept.
-    const PRES_MS = 120000, VISIT_GAP = 30 * 60000;
+    const PRES_MS = 300000, VISIT_GAP = 30 * 60000;
     const presPath = uid => `users/${uid}/presence/app`;
     const presence = { timer: null, doc: null, uid: null };
     const presenceBeat = async (off = false) => {
