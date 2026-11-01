@@ -1136,7 +1136,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '72';
+    const APP_VERSION = '73';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -4042,6 +4042,20 @@ ${lib}`;
         // the missing answers arrived from another phone: this phone doesn't need to ask them
         const W = window.appState.wiz; if (W && W.mode === 'complete' && !W.done && !setupMissing().length) { W.done = true; window.appActions.closeWizard(true); }
     };
+    // The app open in two tabs (or windows) on the same phone or computer: when the other tab saves, take its data here too,
+    // so this tab shows the same thing and never saves over it with an older copy.
+    const TAB_KEYS = [StorageManager.PLAN_KEY, StorageManager.ACTIVE_WEEK, StorageManager.KEY, StorageManager.REPS_KEY, StorageManager.HIST_KEY];
+    window.addEventListener('storage', e => {
+        if (e.storageArea !== localStorage || !TAB_KEYS.includes(e.key)) return;
+        try {
+            const plan = sanitizePlan(StorageManager.getPlan());
+            if (plan) appData = plan;
+            const aw = StorageManager.getActiveWeek();
+            currentWeekId = appData.weeks.some(w => w.id === aw) ? aw : appData.weeks[0].id;
+            loggedWeights = StorageManager.get(); loggedReps = StorageManager.getReps();
+            refreshAfterCloud();
+        } catch (err) { console.warn('Other tab update', err); }
+    });
     // Combine two lists of logs without duplicates (same time, weight and reps = same log)
     const mergeLogs = (a, b, del) => {
         const gone = new Set(del || []), m = new Map();
