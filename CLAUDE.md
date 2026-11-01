@@ -53,7 +53,7 @@ Design check: `node tools/design-check.js [--lang en|ar] [--theme dark|light]` (
 - **Background**: one solid colour, `--bg` (`#12100d` in dark), no gradient.
 - **Full pages** (second pages): Account, Account backups, Workout, App, and the workout itself. They slide in from the side, fill the screen, and have the round back button on the left with the title in the middle (no header line). The back button, the phone's back and a swipe from the left edge all go back. Back on the workout keeps it running in the small bar.
 - **Pop-up cards** (middle of the screen): the details of one thing: the exercise on Today, the exercise on Plan, sets & reps when changing an exercise, confirmations, short edits. Close by tapping outside, the phone's back, or their own button.
-- **Bottom sheets**: lists and tools: add / change exercise, exercise history, Coach, Add a routine by code, programs. Close with ✕, a swipe down, a tap outside or the phone's back. The exercise list (add / change exercise) has no header: a grab handle on top, no ✕.
+- **Bottom sheets**: lists and tools: add / change exercise, Coach, Add a routine by code, programs, Your training. A grab handle on top and no ✕: close with a swipe down, a tap outside, the phone's back, or a tap on the handle (it is a button labelled "Close" for screen readers: `.sheet-grab-btn` in `index.html`). The exercise list has no header at all.
 - **One back button** everywhere: `backBtn()` in `app.js` / `.back-btn` (round, ‹), also Plan → This week and the setup.
 - Today is for training, Plan is for editing (delete an exercise by swiping its card left).
 

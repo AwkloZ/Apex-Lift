@@ -452,8 +452,11 @@ input.day-title-input { font-size: 26px !important; }
 /* exercise pop-up on Today: a little see-through, the screen behind shows blurred */
 .ex-pop { background: rgba(17, 17, 17, 0.78); -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4); }
 :root[data-theme="light"] .ex-pop { background: rgba(255, 255, 255, 0.82); }
-/* bottom sheet without a header: a small grab handle on top (swipe down to close) */
-.sheet-grab { width: 40px; height: 5px; border-radius: 999px; margin: 10px auto 4px; background: rgba(255, 255, 255, 0.25); }
+/* bottom sheets: a small grab handle on top, no ✕ (swipe down, tap outside, the phone's back, or tap the handle to close).
+   The handle is a button with a 44px tap area, so it is also the close button for screen readers. */
+.sheet-grab-btn { display: flex; align-items: center; justify-content: center; width: 96px; height: 44px; margin: 0 auto; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+.sheet-grab { display: block; width: 40px; height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.25); }
+.sheet-grab-btn:focus-visible { outline: 2px solid #d4af37; outline-offset: -4px; border-radius: 12px; }
 :root[data-theme="light"] .sheet-grab { background: rgba(0, 0, 0, 0.18); }
 /* Plan → a day: no week bar, so the card starts at the day name */
 .today-body.no-week { margin-top: 0; padding-top: 4px; border-top: 0; }

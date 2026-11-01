@@ -75,10 +75,9 @@
     <!-- Profile → Your training (filled by app.js) -->
     <div id="training-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeTraining()">
         <div id="training-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <button type="button" onclick="window.appActions.closeTraining()" class="sheet-grab-btn shrink-0" aria-label="Close" data-i18n-label="Close"><span class="sheet-grab"></span></button>
             <div class="flex items-center justify-between px-5 pb-2 shrink-0">
                 <h3 class="text-lg font-black text-white" data-i18n="Your training">Your training</h3>
-                <button onclick="window.appActions.closeTraining()" class="w-11 h-11 bg-white/5 rounded-full text-slate-400 tap-feedback flex items-center justify-center" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div id="training-body" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
         </div>
@@ -192,10 +191,9 @@
     <!-- Routine codes: share a routine with a code, or add one from a friend's code (filled by app.js) -->
     <div id="code-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeCodeSheet()">
         <div id="code-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col max-h-[90dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <button type="button" onclick="window.appActions.closeCodeSheet()" class="sheet-grab-btn shrink-0" aria-label="Close" data-i18n-label="Close"><span class="sheet-grab"></span></button>
             <div class="flex items-center justify-between px-5 pb-2 shrink-0">
                 <h3 id="code-title" class="text-lg font-black text-white"></h3>
-                <button onclick="window.appActions.closeCodeSheet()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div id="code-body" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
         </div>
@@ -203,10 +201,9 @@
 
     <div id="programs-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closePrograms()">
         <div id="programs-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <button type="button" onclick="window.appActions.closePrograms()" class="sheet-grab-btn shrink-0" aria-label="Close" data-i18n-label="Close"><span class="sheet-grab"></span></button>
             <div class="flex items-center justify-between px-5 pb-3 shrink-0">
                 <h3 id="programs-title" class="text-lg font-black text-white">Programs</h3>
-                <button onclick="window.appActions.closePrograms()" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 tap-feedback" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div id="programs-list" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain pt-1"></div>
         </div>
@@ -215,12 +212,11 @@
     <!-- AI coach (Google Gemini through Firebase AI Logic): a chat that builds a program, see AI COACH in app.js -->
     <div id="ai-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeAI()">
         <div id="ai-box" role="dialog" aria-modal="true" aria-labelledby="ai-title" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <div class="sheet-grab pt-2.5 pb-1 flex justify-center shrink-0"><div class="w-10 h-1.5 rounded-full bg-white/20"></div></div>
+            <button type="button" onclick="window.appActions.closeAI()" class="sheet-grab-btn shrink-0" aria-label="Close" data-i18n-label="Close"><span class="sheet-grab"></span></button>
             <div class="flex items-center justify-between gap-2 px-5 pb-3 shrink-0">
                 <h3 id="ai-title" class="flex items-center gap-2 text-lg font-black text-white"><i data-lucide="sparkles" class="w-5 h-5 text-slate-400"></i><span data-i18n="Apex Coach">Apex Coach</span></h3>
                 <div class="flex items-center gap-2">
                     <button id="ai-new" onclick="window.appActions.aiNew()" data-ai-label="New chat" aria-label="New chat" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 tap-feedback"><i data-lucide="square-pen" class="w-5 h-5"></i></button>
-                    <button onclick="window.appActions.closeAI()" data-ai-label="Close" aria-label="Close" class="w-11 h-11 shrink-0 flex items-center justify-center bg-white/5 rounded-full text-slate-400 tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
             </div>
             <div id="ai-list" class="sheet-scroll relative flex-1 overflow-y-auto overscroll-contain px-4 pt-1 pb-4"></div>
@@ -345,7 +341,7 @@
     <!-- Exercise picker (slides up from the bottom) -->
     <div id="picker-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closePicker()">
         <div id="picker-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
-            <div class="sheet-grab shrink-0" aria-hidden="true"></div>
+            <button type="button" onclick="window.appActions.closePicker()" class="sheet-grab-btn shrink-0" aria-label="Close" data-i18n-label="Close"><span class="sheet-grab"></span></button>
             <h3 id="picker-title" class="ex-fit px-5 pt-2 pb-3 text-[22px] font-black text-white leading-tight whitespace-nowrap overflow-hidden shrink-0" data-i18n="Add exercises">Add exercises</h3>
             <div class="px-5 shrink-0">
                 <div class="flex items-center gap-2 bg-black/50 border border-white/10 rounded-xl px-3 focus-within:border-[#d4af37]">
