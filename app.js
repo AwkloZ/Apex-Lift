@@ -264,7 +264,7 @@
 
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '74';
+    const APP_VERSION = '75';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -545,18 +545,27 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
 
     // 📱 PHONE BACK BUTTON: closes the top window instead of leaving the app.
-    // One extra history entry ("guard") is added while windows are open. The app never calls history.back()
-    // itself, so it can never accidentally leave the page.
-    const backStack = []; let backGuard = false;
+    // One extra history entry ("guard") is added while windows are open. When the last window is closed by its own
+    // button, the guard is taken away again (history.back() only when the page is on the guard, so it can never leave
+    // the app): the next window adds a fresh one. In a phone's browser tab the swipe-back then shows the right screen
+    // behind the page, not the screen from when the first window of the visit was opened.
+    const backStack = []; let backGuard = false, backPending = false;
+    const removeBack = id => { const i = backStack.map(x => x.id).lastIndexOf(id); if (i >= 0) backStack.splice(i, 1); };
     const pushBack = (id, fn) => {
-        popBack(id); // one entry per window, even if it was opened twice
+        removeBack(id); // one entry per window, even if it was opened twice
         backStack.push({ id, fn });
-        if (!backGuard) { try { history.pushState({ apexGuard: 1 }, ''); backGuard = true; } catch (e) {} }
+        if (!backGuard && !backPending) { try { history.pushState({ apexGuard: 1 }, ''); backGuard = true; } catch (e) {} }
     };
     // Phone back button during a workout: the workout stays open (finish it or discard it with ✕ to leave)
     const sessionBack = () => window.appActions.minimizeSession(); // back = keep the workout running in the small bar
-    const popBack = id => { const i = backStack.map(x => x.id).lastIndexOf(id); if (i >= 0) backStack.splice(i, 1); };
+    const popBack = id => {
+        removeBack(id);
+        if (backStack.length || !backGuard || backPending) return;
+        try { if (history.state && history.state.apexGuard) { backPending = true; backGuard = false; history.back(); } } catch (e) { backPending = false; }
+    };
     window.addEventListener('popstate', () => {
+        // our own history.back() above: no window to close; a window opened in the meantime gets its guard now
+        if (backPending) { backPending = false; if (backStack.length && !backGuard) { try { history.pushState({ apexGuard: 1 }, ''); backGuard = true; } catch (e) {} } return; }
         backGuard = false;
         const top = backStack.pop();
         if (top) { top.fn(); if (backStack.length) { try { history.pushState({ apexGuard: 1 }, ''); backGuard = true; } catch (e) {} } }
@@ -594,8 +603,11 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     };
 
     // 👉 SWIPE from the left edge of a full page to go back (like the back button)
+    // In a browser tab on iPhone / iPad the browser has its own swipe-back (it goes back in history, which closes the page
+    // through PHONE BACK BUTTON above): the app's swipe is left out there, so the two don't run together.
+    const browserSwipesBack = (() => { try { const ua = navigator.userAgent || ''; return (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) && !(navigator.standalone === true || matchMedia('(display-mode: standalone)').matches); } catch (e) { return false; } })();
     const enableEdgeBack = (box, onBack) => {
-        if (!box) return;
+        if (!box || browserSwipesBack) return;
         let x0 = null, y0 = 0, dx = 0;
         box.addEventListener('touchstart', e => { const x = e.touches[0].clientX; x0 = x < 28 && e.touches.length === 1 ? x : null; y0 = e.touches[0].clientY; dx = 0; }, { passive: true });
         box.addEventListener('touchmove', e => {
