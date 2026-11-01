@@ -1009,6 +1009,9 @@
         }
     };
 
+    // Small values saved as they are: a full or blocked storage must not stop the action that saves them
+    const setRaw = (key, value) => { try { localStorage.setItem(key, value); return true; } catch (e) { console.error(`Could not save "${key}"`, e); return false; } };
+
     // Rest timer choices in seconds (Profile → Rest Timer)
     const REST_CHOICES = [45, 60, 90, 120, 150, 180, 240, 300];
     const StorageManager = {
@@ -1017,15 +1020,15 @@
         getReps: () => { const v = readJSON(StorageManager.REPS_KEY, {}); return isObj(v) ? v : {}; }, setReps: d => writeItem(StorageManager.REPS_KEY, JSON.stringify(d)),
         getHistory: () => { const v = readJSON(StorageManager.HIST_KEY, {}); return isObj(v) ? v : {}; }, setHistory: d => writeItem(StorageManager.HIST_KEY, JSON.stringify(d)),
         getPlan: () => readJSON(StorageManager.PLAN_KEY, null), setPlan: d => writeItem(StorageManager.PLAN_KEY, JSON.stringify(d)),
-        getStartDay: () => { const v = localStorage.getItem(StorageManager.START_KEY); return DAY_NAMES.includes(v) ? v : 'SAT'; }, setStartDay: v => { localStorage.setItem(StorageManager.START_KEY, v); cloudTouch(StorageManager.START_KEY); },
-        getActiveWeek: () => localStorage.getItem(StorageManager.ACTIVE_WEEK), setActiveWeek: v => { localStorage.setItem(StorageManager.ACTIVE_WEEK, v); cloudTouch(StorageManager.ACTIVE_WEEK); },
-        getBackupDate: () => parseInt(localStorage.getItem(StorageManager.BACKUP_DATE)) || 0, setBackupDate: () => localStorage.setItem(StorageManager.BACKUP_DATE, Date.now()),
+        getStartDay: () => { const v = localStorage.getItem(StorageManager.START_KEY); return DAY_NAMES.includes(v) ? v : 'SAT'; }, setStartDay: v => { setRaw(StorageManager.START_KEY, v); cloudTouch(StorageManager.START_KEY); },
+        getActiveWeek: () => localStorage.getItem(StorageManager.ACTIVE_WEEK), setActiveWeek: v => { setRaw(StorageManager.ACTIVE_WEEK, v); cloudTouch(StorageManager.ACTIVE_WEEK); },
+        getBackupDate: () => parseInt(localStorage.getItem(StorageManager.BACKUP_DATE)) || 0, setBackupDate: () => setRaw(StorageManager.BACKUP_DATE, String(Date.now())),
         RPE_KEY: 'workoutShowRpe_rakan_final',
-        getShowRpe: () => localStorage.getItem(StorageManager.RPE_KEY) === 'true', setShowRpe: v => { localStorage.setItem(StorageManager.RPE_KEY, v ? 'true' : 'false'); cloudTouch(StorageManager.RPE_KEY); },
+        getShowRpe: () => localStorage.getItem(StorageManager.RPE_KEY) === 'true', setShowRpe: v => { setRaw(StorageManager.RPE_KEY, v ? 'true' : 'false'); cloudTouch(StorageManager.RPE_KEY); },
         REST_KEY: 'workoutRest_rakan_final',
         getRestSeconds: () => { const v = parseInt(localStorage.getItem(StorageManager.REST_KEY)); return REST_CHOICES.includes(v) ? v : 90; },
-        setRestSeconds: v => { if (REST_CHOICES.includes(parseInt(v))) { localStorage.setItem(StorageManager.REST_KEY, String(parseInt(v))); cloudTouch(StorageManager.REST_KEY); } },
-        getOnboard: () => localStorage.getItem(StorageManager.ONBOARD_KEY) === 'true', setOnboard: () => localStorage.setItem(StorageManager.ONBOARD_KEY, 'true')
+        setRestSeconds: v => { if (REST_CHOICES.includes(parseInt(v))) { setRaw(StorageManager.REST_KEY, String(parseInt(v))); cloudTouch(StorageManager.REST_KEY); } },
+        getOnboard: () => localStorage.getItem(StorageManager.ONBOARD_KEY) === 'true', setOnboard: () => setRaw(StorageManager.ONBOARD_KEY, 'true')
     };
 
     const getExKey = (w, d, i, n) => (n||'').trim() === '' || (n||'').trim() === 'New Exercise' ? `temp_${w}_${d}_${i}` : `global_${(n||'').trim().toLowerCase().replace(/[^\p{L}\p{N}]/gu, '_')}`;
@@ -1133,7 +1136,7 @@
     };
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '71';
+    const APP_VERSION = '72';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3285,6 +3288,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
                 window.appActions.showConfirm(t('Import this file?'), (found ? found + '\n\n' : '') + t("Routines and settings will be replaced and workouts added. We back up your current data first."),
                     () => window.appActions.runImport(d), false, t('Import'));
             };
+            r.onerror = () => window.appActions.showToast(t("Invalid Backup file"), "error"); // the file couldn't be read (moved, or no permission)
             r.readAsText(f);
         },
         runImport: async d => {
@@ -4025,7 +4029,7 @@ ${lib}`;
             if (isObj(m.readiness)) writeItem(READY_KEY, JSON.stringify({ ...sanitizeReadiness(getReadinessAll()), ...sanitizeReadiness(m.readiness) }));
             if (isObj(m.account) && Number(m.account.createdAt) > 0) { const f = getCloudFlag(); if (f && f.uid && !f.since) writeItem(CLOUD_KEY, JSON.stringify({ ...f, since: Number(m.account.createdAt) })); }
             if (isObj(m.terms) && m.terms.v === TERMS_VERSION && !getAgree()) { try { localStorage.setItem(AGREE_KEY, JSON.stringify(m.terms)); } catch (e) {} }
-            localStorage.setItem(LOCAL_UPDATED_KEY, String(m.updatedAt || Date.now()));
+            setRaw(LOCAL_UPDATED_KEY, String(m.updatedAt || Date.now()));
         } finally { Cloud.applying = false; }
         refreshAfterCloud();
     };
@@ -4129,7 +4133,7 @@ ${lib}`;
             }
             Cloud.sent = {};
             Object.keys(clean).forEach(k => { Cloud.sent['h:' + k] = JSON.stringify(clean[k]); });
-            localStorage.setItem(CLOUD_LASTUID, uid);
+            setRaw(CLOUD_LASTUID, uid);
             refreshAfterCloud();
             // this account already has a plan: no need for the setup questions
             // this account finished the setup on another phone (or has workouts): no need for the setup questions here
