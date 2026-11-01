@@ -12,7 +12,9 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 
 ## Files
 
-- `index.html`, `app.js`, `style.css`: the app. `app.js` holds everything (storage, screens, cloud sync, translations in the `AR` table).
+- `index.html`, `app.js`, `style.css`: the app. `app.js` holds the storage, screens and cloud sync.
+- `i18n.js`: the Arabic text (`AR`, `AR_COUNT`, `MUSCLE_AR`), shared as `window.APEX_I18N`. Loaded before `app.js`.
+- `calc.js`: pure maths (dates, sets, sessions, progression), shared as `window.APEX_CALC`. No screen and no saved data in it. Loaded before `app.js`.
 - `library.js`: exercises, muscles and ready-made programs. Shared by the app and the coach builder.
 - `require-sign-in.js`: the switch that makes sign-in (Google or email) required before using the app; it also covers the app until the user is signed in. Delete the file to make sign-in optional ("Not now"); add it back to require it again. It is not in `APP_FILES` on purpose.
 - Email links (reset password, confirm email) open inside the app (`?mode=...&oobCode=...`, see EMAIL LINKS in `app.js`). This needs one Firebase setting: Authentication → Templates → Customize action URL → `https://apex-liftt.netlify.app/`.
@@ -27,8 +29,8 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 
 ## Conventions
 
-- Keep each file's line endings: `app.js`, `admin.js`, `admin-utils.js`, `admin-coach.js`, `library.js`, `index.html`, `admin.html`, `privacy.html`, `terms.html` and `style.css` use CRLF; `sw.js`, `tailwind.css` and `firestore.rules` use LF.
-- New text shown in the app needs an Arabic translation in the `AR` table in `app.js`.
+- Keep each file's line endings: `app.js`, `admin.js`, `admin-utils.js`, `admin-coach.js`, `library.js`, `i18n.js`, `calc.js`, `index.html`, `admin.html`, `privacy.html`, `terms.html` and `style.css` use CRLF; `sw.js`, `tailwind.css` and `firestore.rules` use LF.
+- New text shown in the app needs an Arabic translation in the `AR` table in `i18n.js`.
 - After changing Tailwind classes in `index.html` or `app.js`, rebuild tailwind.css:
   `npx tailwindcss@3.4.17 -c tools/tailwind.config.js -i tools/tailwind.in.css -o tailwind.css --minify`
   and keep its first comment line.
