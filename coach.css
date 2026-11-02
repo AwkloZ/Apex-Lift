@@ -1,0 +1,242 @@
+/* Apex Coach (coach.html): the same look as the Apex Lift app (style.css): its tokens, fonts, cards, grouped rows,
+   floating dock, full pages with the round back button, bottom sheets and pop-up cards. Dark and light themes. */
+
+/* ===== Fonts (stored in the app, vendor/fonts) ===== */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('vendor/fonts/inter-latin-var.woff2') format('woff2'); }
+@font-face { font-family: 'Cairo'; font-style: normal; font-weight: 200 1000; font-display: swap; src: url('vendor/fonts/cairo-arabic-var.woff2') format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FEFC; }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 700; font-display: swap; src: url('vendor/fonts/barlow-condensed-latin-700.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 800; font-display: swap; src: url('vendor/fonts/barlow-condensed-latin-800.woff2') format('woff2'); }
+
+/* ===== Design tokens: the same values as style.css ===== */
+:root {
+    color-scheme: dark;
+    --gold: #d4af37;
+    --gold-ink: #d4af37;
+    --gold-soft: rgba(212, 175, 55, 0.14);
+    --on-gold: #111111;
+    --bg: #12100d;
+    --surface-1: rgba(28, 28, 30, 0.6);
+    --surface-2: #161618;
+    --inset: rgba(255, 255, 255, 0.05);
+    --line: rgba(255, 255, 255, 0.09);
+    --text: #ffffff;
+    --text-2: #cbd5e1;
+    --text-3: #94a3b8;
+    --good: #22c55e;
+    --bad: #f87171;
+    --r-lg: 24px;
+    --r-md: 18px;
+    --r-sm: 12px;
+    --font-text: 'Inter', 'Cairo', system-ui, sans-serif;
+    --font-num: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
+    --dock: rgba(44, 42, 34, 0.55);
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+:root[data-theme="light"] {
+    color-scheme: light;
+    --gold-ink: #9a7810;
+    --gold-soft: rgba(212, 175, 55, 0.18);
+    --bg: #f3f3f0;
+    --surface-1: rgba(255, 255, 255, 0.92);
+    --surface-2: #ffffff;
+    --inset: rgba(0, 0, 0, 0.04);
+    --line: rgba(0, 0, 0, 0.08);
+    --text: #111318;
+    --text-2: #334155;
+    --text-3: #556273;
+    --bad: #dc2626;
+    --dock: rgba(255, 255, 255, 0.7);
+    --shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== Page ===== */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { background: var(--bg); overscroll-behavior: none; }
+body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--text); font-family: var(--font-text); font-size: 15px; line-height: 1.4; -webkit-font-smoothing: antialiased; }
+html, body, * { touch-action: pan-x pan-y; } /* no zooming, like the app */
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: var(--gold-ink); }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.tap { transition: transform 0.12s ease, opacity 0.12s ease; }
+.tap:active { transform: scale(0.97); opacity: 0.85; }
+.wrap { width: 100%; max-width: 42rem; margin: 0 auto; padding: 0 16px; }
+main.wrap { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
+.fade-in { animation: c-fade 0.3s ease both; }
+@keyframes c-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fade-in { animation: none; } .tap:active { transform: none; } }
+
+/* header: the APEX LIFT logo and a quiet "Coach" label */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: calc(env(safe-area-inset-top) + 24px) 0 20px; }
+.logo-mark { font-size: 22px; font-weight: 900; font-style: italic; letter-spacing: -0.05em; text-transform: uppercase; color: var(--text); white-space: nowrap; }
+.logo-mark span { color: var(--gold); }
+.top-tag { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px; background: var(--inset); border: 1px solid var(--line); color: var(--text-2); font-size: 13px; font-weight: 700; }
+.top-tag svg { width: 15px; height: 15px; color: var(--gold-ink); }
+
+/* titles */
+.page-title { font-size: 28px; font-weight: 900; line-height: 1.15; color: var(--text); margin: 4px 0 4px; letter-spacing: -0.01em; }
+.page-sub { font-size: 14px; font-weight: 600; color: var(--text-3); margin: 0 0 18px; }
+.pf-h { display: block; margin: 22px 6px 8px; font-size: 13px; font-weight: 700; color: var(--text-3); }
+
+/* cards */
+.glass-card { background: var(--surface-1); -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px); border: 0.5px solid rgba(255, 255, 255, 0.1); border-radius: var(--r-lg); }
+:root[data-theme="light"] .glass-card { border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(0, 0, 0, 0.04); }
+
+/* stats: three numbers in a row */
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+.stat { padding: 14px 12px; border-radius: 20px; }
+.stat b { display: block; font-family: var(--font-num); font-size: 32px; font-weight: 800; line-height: 1; color: var(--text); }
+.stat span { display: block; margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--text-3); line-height: 1.3; }
+
+/* grouped rows (like Profile in the app) */
+.pf-group { border-radius: 20px; background: var(--surface-1); border: 0.5px solid rgba(255, 255, 255, 0.1); overflow: hidden; }
+:root[data-theme="light"] .pf-group { background: #fff; border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(0, 0, 0, 0.04); }
+.pf-row { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 10px 14px; text-align: start; color: var(--text); font-size: 15px; font-weight: 600; line-height: 1.25; transition: background-color 0.15s; }
+button.pf-row:active, a.pf-row:active { background: var(--inset); }
+a.pf-row { text-decoration: none; }
+.pf-group > .pf-row ~ .pf-row::before { content: ''; position: absolute; top: 0; left: 56px; right: 0; height: 0.5px; background: var(--line); }
+.pf-ic { width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--gold-soft); color: var(--gold-ink); }
+.pf-ic svg { width: 17px; height: 17px; }
+.pf-label { flex: 1; min-width: 0; }
+.pf-label b { font-weight: 700; }
+.pf-sub { display: block; margin-top: 2px; font-size: 12px; font-weight: 500; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; }
+.pf-sub:empty { display: none; }
+.pf-chev { width: 16px; height: 16px; flex-shrink: 0; color: var(--text-3); }
+.pf-val { flex-shrink: 0; font-size: 14px; font-weight: 700; color: var(--text-2); }
+.pf-select { max-width: 50%; background: transparent; border: 0; color: var(--gold-ink); font: 900 14px var(--font-text); text-align: end; outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
+.pf-select option { background: var(--surface-2); color: var(--text); }
+.pf-row.is-danger { color: var(--bad); }
+.pf-row.is-danger .pf-ic { background: rgba(239, 68, 68, 0.12); color: var(--bad); }
+.pf-note { margin: 8px 6px 0; font-size: 12px; font-weight: 500; color: var(--text-3); line-height: 1.5; }
+.pill { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: rgba(34, 197, 94, 0.12); color: var(--good); font-size: 12px; font-weight: 700; vertical-align: middle; }
+.mini-btn { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border-radius: var(--r-sm); background: var(--inset); border: 1px solid var(--line); color: var(--text); font-size: 13px; font-weight: 700; }
+.mini-btn svg { width: 16px; height: 16px; }
+.mini-btn.is-icon { width: 40px; padding: 0; justify-content: center; }
+.mini-btn.is-danger { color: var(--bad); }
+
+/* client list */
+.client { display: flex; align-items: center; gap: 12px; width: 100%; margin-bottom: 10px; padding: 12px 14px; border-radius: 22px; text-align: start; }
+.av { position: relative; width: 46px; height: 46px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--gold-soft); color: var(--gold-ink); font-family: var(--font-num); font-size: 22px; font-weight: 800; }
+.av.is-big { width: 72px; height: 72px; font-size: 34px; }
+.av i, .av .dot { position: absolute; right: 0; bottom: 1px; width: 12px; height: 12px; border-radius: 50%; background: var(--good); border: 2px solid var(--bg); }
+.client .who { flex: 1; min-width: 0; }
+.client .who b { display: block; font-size: 16px; font-weight: 800; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.client .who span { display: block; margin-top: 2px; font-size: 13px; font-weight: 600; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.client .pf-chev { margin-inline-start: 4px; }
+
+/* empty state and status screens: a soft gold circle with an icon, a title and a short text */
+.hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 28px 8px 8px; }
+.orb { width: 112px; height: 112px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--gold-soft); box-shadow: inset 0 0 0 10px rgba(212, 175, 55, 0.06); color: var(--gold-ink); margin-bottom: 22px; }
+.orb svg { width: 46px; height: 46px; stroke-width: 1.8; }
+.orb.is-bad { background: rgba(239, 68, 68, 0.1); color: var(--bad); box-shadow: inset 0 0 0 10px rgba(239, 68, 68, 0.05); }
+.orb.is-small { width: 76px; height: 76px; margin-bottom: 14px; }
+.orb.is-small svg { width: 32px; height: 32px; }
+.hero h1 { margin: 0 0 8px; font-size: 26px; font-weight: 900; line-height: 1.2; color: var(--text); }
+.hero h2 { margin: 0 0 6px; font-size: 18px; font-weight: 800; color: var(--text); }
+.hero p { margin: 0 0 22px; max-width: 26rem; font-size: 15px; font-weight: 600; color: var(--text-3); line-height: 1.5; }
+.hero p b { color: var(--text); }
+.hero .btn { max-width: 26rem; }
+
+/* buttons */
+.btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 54px; padding: 0 18px; border-radius: var(--r-md); font-size: 15px; font-weight: 800; text-align: center; border: 1px solid var(--line); background: var(--inset); color: var(--text); margin-bottom: 10px; }
+.btn svg { width: 20px; height: 20px; }
+.btn.gold { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.btn.white { background: #fff; border-color: #fff; color: #1f1f1f; }
+:root[data-theme="light"] .btn.white { border-color: rgba(0, 0, 0, 0.12); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+.btn.is-danger { color: var(--bad); }
+.btn:disabled { opacity: 0.55; cursor: default; }
+.link-btn { display: block; margin: 6px auto 0; min-height: 44px; padding: 0 12px; color: var(--text-3); font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.err { min-height: 20px; margin: 4px 0 0; font-size: 13px; font-weight: 700; color: var(--bad); text-align: center; }
+.err.is-ok { color: var(--text-3); }
+
+/* inputs */
+.field { display: block; width: 100%; min-height: 54px; margin-bottom: 10px; padding: 0 16px; border-radius: var(--r-md); background: var(--inset); border: 1px solid var(--line); color: var(--text); font: 600 16px var(--font-text); outline: none; }
+.field::placeholder { color: var(--text-3); }
+.field:focus { border-color: var(--gold); }
+
+/* a client link: the code big and gold (like a routine code in the app) */
+.code-card { padding: 18px 16px 14px; margin-bottom: 10px; }
+.code-big { font-family: var(--font-num); font-size: 36px; font-weight: 800; letter-spacing: 5px; color: var(--gold-ink); line-height: 1; }
+.code-url { margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--text-3); word-break: break-all; }
+.code-actions { display: flex; gap: 8px; margin-top: 14px; }
+.code-actions .mini-btn:first-child { flex: 1; justify-content: center; }
+
+/* full page (one client): round back button on the left, the title in the middle */
+.page-bar { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; padding: calc(env(safe-area-inset-top) + 12px) 0 8px; }
+.page-bar-title { text-align: center; font-size: 19px; font-weight: 900; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.back-btn { width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--text); background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+.back-btn svg { width: 24px; height: 24px; stroke-width: 2.2; }
+:root[data-theme="light"] .back-btn { background: #fff; border-color: rgba(0, 0, 0, 0.1); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+.person { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 6px 0 18px; }
+.person h2 { margin: 12px 0 2px; font-size: 22px; font-weight: 900; color: var(--text); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.person p { margin: 0; font-size: 14px; font-weight: 600; color: var(--text-3); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* floating dock (the same as the app's tab bar) */
+.dock { position: fixed; z-index: 20; left: 16px; right: 16px; bottom: max(14px, env(safe-area-inset-bottom)); max-width: 420px; margin: 0 auto; padding: 5px; border-radius: 999px;
+    display: grid; grid-template-columns: repeat(3, 1fr); background: var(--dock); -webkit-backdrop-filter: blur(28px) saturate(1.8); backdrop-filter: blur(28px) saturate(1.8);
+    border: 0.5px solid rgba(255, 255, 255, 0.16); box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+:root[data-theme="light"] .dock { border-color: rgba(0, 0, 0, 0.08); }
+.dock[hidden] { display: none; }
+.dock button { height: 52px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--text); transition: background-color 0.2s; }
+.dock button svg { width: 26px; height: 26px; stroke-width: 1.7; }
+.dock button.is-on { background: rgba(255, 255, 255, 0.14); }
+.dock button.is-on svg { stroke-width: 2.5; }
+:root[data-theme="light"] .dock button.is-on { background: rgba(0, 0, 0, 0.07); }
+
+/* pop-up card (confirmations) */
+.pop { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(0, 0, 0, 0.6); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); animation: c-fade 0.2s ease both; }
+.pop-card { width: 100%; max-width: 360px; padding: 22px; border-radius: var(--r-lg); background: var(--surface-2); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.pop-card h3 { margin: 0 0 6px; font-size: 19px; font-weight: 900; color: var(--text); }
+.pop-card p { margin: 0 0 18px; font-size: 14px; font-weight: 600; color: var(--text-3); line-height: 1.5; }
+.pop-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pop-actions .btn { margin: 0; min-height: 48px; font-size: 14px; }
+.pop-actions .btn.is-danger { background: #ef4444; border-color: #ef4444; color: #fff; }
+
+/* toast */
+.toast { position: fixed; z-index: 70; left: 16px; right: 16px; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 76px); max-width: 420px; margin: 0 auto; display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 18px;
+    background: var(--surface-2); border: 1px solid var(--line); box-shadow: var(--shadow); color: var(--text); font-size: 14px; font-weight: 700; animation: c-fade 0.25s ease both; }
+.toast svg { width: 20px; height: 20px; flex-shrink: 0; color: var(--good); }
+.toast.is-bad svg { color: var(--bad); }
+
+/* loading placeholders */
+.skeleton { position: relative; overflow: hidden; background: var(--inset); border-radius: 22px; }
+.skeleton::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, var(--inset), transparent); animation: c-shimmer 1.4s ease-in-out infinite; }
+@keyframes c-shimmer { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .skeleton::after { animation: none; } }
+
+/* ===== Routine builder (admin-coach.js, opened from a client's page) in the app's look ===== */
+.coach { position: fixed; inset: 0; z-index: 40; background: var(--bg); overflow-y: auto; display: none; color: var(--text); }
+.coach.open { display: block; }
+.coach-bar { position: sticky; top: 0; z-index: 2; background: var(--bg); padding-top: env(safe-area-inset-top); border-bottom: 1px solid var(--line); }
+.coach-bar .in { max-width: 1200px; margin: 0 auto; padding: 12px 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.coach-bar h2 { margin: 0; flex: 1; min-width: 160px; font-size: 19px; font-weight: 900; color: var(--text); }
+.coach-body { max-width: 1200px; margin: 0 auto; padding: 16px 16px 80px; }
+.coach .btn { display: inline-flex; width: auto; min-height: 44px; margin: 0; padding: 0 16px; border-radius: var(--r-sm); font-size: 14px; }
+.coach .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.coach .grow { flex: 1; }
+.coach .lbl { display: block; margin: 0 0 6px; font-size: 12px; font-weight: 700; color: var(--text-3); }
+.coach .note { margin-top: 14px; font-size: 12px; font-weight: 500; color: var(--text-3); }
+.coach .check { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--text-2); }
+.coach .check input { width: 18px; height: 18px; accent-color: var(--gold); }
+.coach .field, .coach textarea { width: 100%; min-height: 44px; margin: 0; padding: 10px 12px; border-radius: var(--r-sm); background: var(--inset); border: 1px solid var(--line); color: var(--text); font: 600 14px var(--font-text); outline: none; }
+.coach textarea { min-height: 96px; line-height: 1.5; resize: vertical; }
+.coach .field:focus, .coach textarea:focus { border-color: var(--gold); }
+.coach select.field option { background: var(--surface-2); color: var(--text); }
+.coach .info { padding: 12px 14px; border-radius: var(--r-sm); background: var(--gold-soft); border: 1px solid rgba(212, 175, 55, 0.3); color: var(--text); font-size: 13px; font-weight: 600; }
+.coach .warn { padding: 12px 14px; border-radius: var(--r-sm); background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #d97706; font-size: 13px; font-weight: 700; }
+.coach .err { text-align: start; }
+.coach .days { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; margin-top: 14px; }
+.coach .day { background: var(--surface-1); border: 0.5px solid rgba(255, 255, 255, 0.1); border-radius: 22px; padding: 14px; min-width: 0; }
+:root[data-theme="light"] .coach .day { border-color: rgba(0, 0, 0, 0.08); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); }
+.coach .day.rest { opacity: 0.8; }
+.coach .day-h { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.coach .day-h b { color: var(--gold-ink); font-size: 13px; font-weight: 800; white-space: nowrap; }
+.coach .ex { display: grid; grid-template-columns: 1fr 96px; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); }
+.coach .ex .nums { display: grid; grid-template-columns: 52px 1fr auto; gap: 6px; grid-column: 1 / -1; align-items: center; }
+.coach .ex .field { min-height: 40px; padding: 8px 10px; font-size: 13px; }
+.coach .ex select.field { padding: 8px 6px; }
+.coach .icon-btn { width: 40px; height: 40px; border-radius: 10px; background: var(--inset); border: 1px solid var(--line); color: var(--text); font: 800 14px/1 var(--font-text); }
+.coach .icon-btn:disabled { opacity: 0.35; cursor: default; }
+.coach .icon-btn.del { color: var(--bad); }
+@media (max-width: 420px) { .coach .days { grid-template-columns: 1fr; } }

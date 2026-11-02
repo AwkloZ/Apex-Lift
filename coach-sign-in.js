@@ -1,23 +1,35 @@
 // Apex Coach (coach.html): signing in. A coach must be signed in to use the coach app (there is no "Not now"):
 // Google, or email and password. Email accounts must confirm their email first (the database rules need a
-// confirmed email to accept an invitation). Loaded before coach.js, which decides what to show after sign-in.
+// confirmed email to accept an invitation). Looks like the Apex Lift app's sign-in page (coach.css).
+// Loaded before coach.js, which decides what to show after sign-in.
 window.ApexCoachSignIn = (() => {
     'use strict';
     const { $, esc } = window.ApexAdminUtils; // admin-utils.js
+    const GOOGLE_G = '<svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
+    const top = '<header class="top"><div class="logo-mark" dir="ltr">APEX <span>LIFT</span></div><span class="top-tag"><i data-lucide="whistle"></i>Coach</span></header>';
+    const icons = el => { if (window.lucide) window.lucide.createIcons({ root: el }); };
 
     // the sign-in page. el: where to draw it; invited: opened from an invitation link; msg: an error to show
     const show = ({ el, auth, invited = false, msg = '' }) => {
-        el.innerHTML = `<div class="narrow"><div class="center" style="padding-bottom:20px"><h1>Apex Coach</h1><p>${invited ? 'You were invited to coach on Apex Lift. Sign in with the email the invitation was sent to.' : 'Sign in with your coach account.'}</p></div>
-            <button id="g" class="btn gold wide">Continue with Google</button>
-            <div class="or">or with email</div>
-            <input id="em" class="field" type="email" autocomplete="email" placeholder="Email">
-            <input id="pw" class="field" type="password" autocomplete="current-password" placeholder="Password (at least 8 characters)">
-            <button id="si" class="btn wide">Sign in</button>
-            <button id="su" class="btn wide">Create account</button>
-            <button id="fp" class="linkbtn note" style="display:block;margin:6px auto">Forgot password?</button>
-            <p id="err" class="err" style="text-align:center">${esc(msg)}</p></div>`;
-        const err = m => { $('err').textContent = m; };
+        el.innerHTML = `<div class="fade-in">${top}<div class="hero">
+                <div class="orb"><i data-lucide="${invited ? 'mail-open' : 'whistle'}"></i></div>
+                <h1>${invited ? 'You\'re invited to coach' : 'Apex Coach'}</h1>
+                <p>${invited ? 'Sign in with the email the invitation was sent to.' : 'Coach your Apex Lift clients: send them routines and messages, and see how they train.'}</p>
+                <button id="g" class="btn white tap">${GOOGLE_G}Continue with Google</button>
+                <button id="show-email" class="btn tap" ${msg ? 'hidden' : ''}><i data-lucide="mail"></i>Continue with email</button>
+                <div id="email-form" style="width:100%;max-width:26rem" ${msg ? '' : 'hidden'}>
+                    <input id="em" class="field" type="email" autocomplete="email" placeholder="Email">
+                    <input id="pw" class="field" type="password" autocomplete="current-password" placeholder="Password (at least 8 characters)">
+                    <button id="si" class="btn gold tap">Sign in</button>
+                    <button id="su" class="btn tap">Create account</button>
+                    <button id="fp" class="link-btn">Forgot password?</button>
+                </div>
+                <p id="err" class="err" role="alert">${esc(msg)}</p>
+            </div></div>`;
+        icons(el);
+        const err = (m, ok = false) => { const e = $('err'); e.textContent = m; e.classList.toggle('is-ok', ok); };
         const creds = () => [$('em').value.trim(), $('pw').value];
+        $('show-email').onclick = () => { $('show-email').hidden = true; $('email-form').hidden = false; $('em').focus(); };
         $('g').onclick = async () => {
             const p = new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' });
             try { await auth.signInWithPopup(p); }
@@ -39,16 +51,25 @@ window.ApexCoachSignIn = (() => {
         };
         $('fp').onclick = async () => {
             const [e] = creds(); if (!e) return err('Enter your email first.');
-            try { await auth.sendPasswordResetEmail(e); err('We sent you an email to reset your password.'); } catch (x) { err(x.code || 'Could not send the email'); }
+            try { await auth.sendPasswordResetEmail(e); err('We sent you an email to reset your password.', true); } catch (x) { err(x.code || 'Could not send the email'); }
         };
+        ['em', 'pw'].forEach(id => { $(id).onkeydown = e => { if (e.key === 'Enter') $('si').click(); }; });
     };
 
     // an email account that hasn't confirmed its email yet. onContinue: runs after they confirmed (the page goes on)
     const verify = ({ el, auth, user, onContinue }) => {
-        el.innerHTML = `<div class="narrow"><div class="center"><h1>Confirm your email</h1><p>We sent a link to <b>${esc(user.email)}</b>. Open it, then come back and tap Continue.</p>
-            <button id="cont" class="btn gold">Continue</button> <button id="resend" class="btn">Send again</button> <button class="btn" id="so2">Sign out</button></div></div>`;
-        $('cont').onclick = async () => { await user.reload(); await user.getIdToken(true); onContinue(); };
-        $('resend').onclick = async e => { try { await user.sendEmailVerification(); e.target.textContent = 'Sent'; } catch (x) { e.target.textContent = 'Try later'; } };
+        el.innerHTML = `<div class="fade-in">${top}<div class="hero">
+                <div class="orb"><i data-lucide="mail-check"></i></div>
+                <h1>Confirm your email</h1>
+                <p>We sent a link to <b>${esc(user.email)}</b>. Open it, then come back and tap Continue.</p>
+                <button id="cont" class="btn gold tap">Continue</button>
+                <button id="resend" class="btn tap"><i data-lucide="send"></i>Send again</button>
+                <button id="so2" class="link-btn">Sign out</button>
+                <p id="err" class="err" role="alert"></p>
+            </div></div>`;
+        icons(el);
+        $('cont').onclick = async () => { await user.reload(); await user.getIdToken(true); if (!user.emailVerified) { $('err').textContent = 'Not confirmed yet. Open the link in the email first.'; return; } onContinue(); };
+        $('resend').onclick = async () => { try { await user.sendEmailVerification(); $('err').textContent = ''; $('resend').lastChild.textContent = 'Sent'; } catch (x) { $('err').textContent = 'Please wait a minute, then try again.'; } };
         $('so2').onclick = () => auth.signOut();
     };
 

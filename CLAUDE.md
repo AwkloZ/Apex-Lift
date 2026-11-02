@@ -23,18 +23,19 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 - `admin-coach.js`: the coach schedule builder; sends routines and messages to `users/{uid}/coach/plan`. Also used by the coach app.
 - `coach.html`, `coach.js`, `coach.webmanifest`: Apex Coach, the app for coaches (English). A coach accepts the admin's invitation (`coach.html?invite=CODE`), makes client links (`coachCodes`, `/?coach=CODE`), sees their clients (`coaches/{uid}/members`) and sends routines and messages with `admin-coach.js` (their templates in `coaches/{uid}/templates`).
 - `coach-sign-in.js`: the coach app's sign-in (Google, or email and password with a confirmed email) and the "Confirm your email" page. Coaches must always sign in (no "Not now"); `require-sign-in.js` is only for the Apex Lift app.
-- `admin.css`: styles shared by `admin.html` and `coach.html`.
+- `coach.css`: the coach app's look, the same as the Apex Lift app (tokens, fonts, cards, grouped rows, floating dock with Clients / Invite / Account, full pages with the round back button, pop-up cards, dark and light theme from the same Theme setting as the app). It also styles the routine builder (`admin-coach.js`) inside the coach app.
+- `admin.css`: the admin page's styles.
 - `admin-coaches.js`: the admin's Coaches tab: invite coaches (`coachInvites`), switch them on/off (`coaches/{uid}.active`), see and remove their clients (`coaches/{uid}/members`).
 - `firestore.rules`: database security rules. They are **not** deployed by Netlify: after changing them, tell the owner to paste them into Firebase (Firestore Database → Rules → Publish) **before** deploying the site.
 - `privacy.html`, `terms.html`: policy pages (English and Arabic sections).
 - `sw.js`: offline cache. Add new app files to `APP_FILES`.
-- `vendor/lucide-icons.js`: only the Lucide icons the app uses (built from `tools/lucide-1.49.0.min.js`). After using a new icon name, run `node tools/build-icons.js`. `vendor/sortable-1.15.7.min.js` (drag & drop) is loaded by `app.js` only when a Plan list can be dragged (`needSortable`).
+- `vendor/lucide-icons.js`: only the Lucide icons the app uses (built from `tools/lucide-1.49.0.min.js`). After using a new icon name (app or coach app), run `node tools/build-icons.js`. `vendor/sortable-1.15.7.min.js` (drag & drop) is loaded by `app.js` only when a Plan list can be dragged (`needSortable`).
 - `_headers`, `_redirects`: Netlify settings (security headers, sign-in pass-through).
 - AI coach (AI COACH in `app.js`): a chat with Google Gemini through Firebase AI Logic (free Gemini Developer API, no key in the app). Uses `vendor/firebase-12.19.0/firebase-app.js`, `firebase-ai.js` and `firebase-app-check.js` (modular files; their import of `firebase-app.js` points to `./firebase-app.js`). Models in `AI_MODELS`, App Check (Fraud Defense / reCAPTCHA Enterprise) key ID in `AI_APP_CHECK_KEY`. The chat stays on the phone; routines from Gemini are checked by `routineFromAi` (library exercises only).
 
 ## Conventions
 
-- Keep each file's line endings: `app.js`, `admin.js`, `admin-utils.js`, `admin-coach.js`, `admin-coaches.js`, `coach.js`, `coach-sign-in.js`, `library.js`, `i18n.js`, `calc.js`, `index.html`, `admin.html`, `coach.html`, `admin.css`, `privacy.html`, `terms.html` and `style.css` use CRLF; `sw.js`, `tailwind.css` and `firestore.rules` use LF.
+- Keep each file's line endings: `app.js`, `admin.js`, `admin-utils.js`, `admin-coach.js`, `admin-coaches.js`, `coach.js`, `coach-sign-in.js`, `coach.css`, `library.js`, `i18n.js`, `calc.js`, `index.html`, `admin.html`, `coach.html`, `admin.css`, `privacy.html`, `terms.html` and `style.css` use CRLF; `sw.js`, `tailwind.css` and `firestore.rules` use LF.
 - New text shown in the app needs an Arabic translation in the `AR` table in `i18n.js`.
 - After changing Tailwind classes in `index.html` or `app.js`, rebuild tailwind.css:
   `npx tailwindcss@3.4.17 -c tools/tailwind.config.js -i tools/tailwind.in.css -o tailwind.css --minify`

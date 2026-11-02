@@ -138,12 +138,14 @@ T('coach makes and deletes a client code, sees clients', async ({ browser, base 
     await setDoc(`users/${CLIENT.uid}`, { updatedAt: Date.now() });
     const p = await openAs(browser, base, 'coach.html', COACH);
     check('client list shows the client', await waitText(p, /Client One/));
+    await p.click('[data-tab="invite"]');
     await p.click('#new-code');
     check('a client link is shown', await waitText(p, /\?coach=[A-HJ-NP-Z2-9]{8}/));
     const code = (await text(p)).match(/\?coach=([A-HJ-NP-Z2-9]{8})/)[1];
     const cc = await getDoc(`coachCodes/${code}`);
     check('code saved for this coach', cc && cc.coach === COACH.uid && cc.name === COACH.name, JSON.stringify(cc));
     await p.click(`[data-del-code="${code}"]`);
+    await p.click('#c-ok'); // the app-style "Delete this link?" pop-up
     await p.waitForTimeout(800);
     check('code deleted', !(await getDoc(`coachCodes/${code}`)));
     if (process.env.SHOTS) await p.screenshot({ path: `${process.env.SHOTS}/coach-clients.png`, fullPage: true });
@@ -282,12 +284,14 @@ T('coach removes a client; a client who already left is handled', async ({ brows
     check('a client with no name shows their email', await waitText(p, /client@x\.com/));
     await p.click(`[data-client="${CLIENT.uid}"]`);
     await p.click('#c-remove');
+    await p.click('#c-ok');
     check('after removing, the list no longer has them', await waitText(p, /Gone Client/) && !(await text(p)).includes('client@x.com'));
     check('member entry and link removed', !(await getDoc(`coaches/${COACH.uid}/members/${CLIENT.uid}`)) && !(await getDoc(`users/${CLIENT.uid}/coach/link`)));
     // this one left meanwhile (their entry is gone): Remove must not get stuck
     await p.click(`[data-client="${OTHER.uid}"]`);
     await api(docUrl(`coaches/${COACH.uid}/members/${OTHER.uid}`), { method: 'DELETE' });
     await p.click('#c-remove');
+    await p.click('#c-ok');
     check('a client who already left: back to the list', await waitText(p, /No clients yet/));
     check('coach app: no errors', !p.errors.length, p.errors.join(' | '));
     await p.context().close();
@@ -297,6 +301,7 @@ T('coach app: signing in with the sign-in page', async ({ browser, base }) => {
     await seedCoach();
     const p = await openAs(browser, base, 'coach.html', null);
     check('signed out: the sign-in page shows', await waitText(p, /Continue with Google/));
+    await p.click('#show-email');
     await p.fill('#em', COACH.email); await p.fill('#pw', 'wrong-password');
     await p.click('#si');
     check('wrong password is explained', await waitText(p, /Wrong email or password/));

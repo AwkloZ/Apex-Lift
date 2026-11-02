@@ -1,5 +1,5 @@
 // Builds vendor/lucide-icons.js: only the icons the app uses, instead of the full Lucide file (~445 KB, 2,100+ icons).
-// Run after adding a new icon name to index.html, app.js or library.js:   node tools/build-icons.js
+// Run after adding a new icon name to index.html, app.js, library.js or the coach app (coach.html, coach.js, coach-sign-in.js):   node tools/build-icons.js
 // It keeps every quoted word in those files that is a Lucide icon name, so icons picked in code
 // (e.g. icon: 'moon' or `${ok ? 'check' : 'plus'}`) are kept too.
 const fs = require('fs');
@@ -11,7 +11,7 @@ const lucide = require(path.join(ROOT, 'tools/lucide-1.49.0.min.js'));
 const pascal = s => s.replace(/(^|[-_\s]+)([a-z0-9])/g, (_, __, c) => c.toUpperCase());
 
 const used = new Set();
-for (const f of ['index.html', 'app.js', 'library.js', 'calc.js', 'require-sign-in.js']) {
+for (const f of ['index.html', 'app.js', 'library.js', 'calc.js', 'require-sign-in.js', 'coach.html', 'coach.js', 'coach-sign-in.js']) {
     const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
     const words = [...src.matchAll(/["'`]([a-z][a-z0-9]*(?:-[a-z0-9]+)*)["'`]/g)].map(m => m[1]);
     words.forEach(w => { if (lucide.icons[pascal(w)]) used.add(w); });
