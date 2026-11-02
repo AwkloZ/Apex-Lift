@@ -1,6 +1,6 @@
 Third-party libraries bundled with Apex Lift
 
-== lucide 1.49.0 (vendor/lucide-1.49.0.min.js) ==
+== lucide 1.49.0 (vendor/lucide-icons.js, built from tools/lucide-1.49.0.min.js) ==
 ISC License
 
 Copyright (c) 2026 Lucide Icons and Contributors
@@ -70,3 +70,8 @@ SOFTWARE.
 
 == firebase 12.19.0 (vendor/firebase-12.19.0/) — Apache License 2.0 ==
 Copyright Google LLC. Licensed under the Apache License, Version 2.0: https://www.apache.org/licenses/LICENSE-2.0
+
+== Inter (fonts/inter-latin-var.woff2) and Cairo (fonts/cairo-arabic-var.woff2) ==
+SIL Open Font License, Version 1.1 — https://openfontlicense.org
+Inter: Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter)
+Cairo: Copyright (c) 2009 The Cairo Project Authors (https://github.com/Gue3bara/Cairo)

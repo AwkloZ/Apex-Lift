@@ -14,11 +14,15 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <!-- Design styles are stored inside the app (built from Tailwind), so no outside code runs and it works offline -->
     <link rel="stylesheet" href="tailwind.css">
-    <!-- Icons and drag & drop are stored inside the app (vendor folder), so they work offline -->
-    <script src="vendor/lucide-1.49.0.min.js"></script>
-    <script src="vendor/sortable-1.15.7.min.js"></script>
-    
+    <!-- Fonts are stored inside the app (fonts folder): no wait for Google, works offline -->
+    <link rel="preload" href="fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="fonts/fonts.css">
     <link rel="stylesheet" href="style.css">
+    <!-- Icons and drag & drop are stored inside the app (vendor folder), so they work offline.
+         "defer": they download while the page is drawn and run in order, right before app.js.
+         Drag & drop (vendor/sortable-1.15.7.min.js) is loaded by app.js only when the Plan tab needs it. -->
+    <script defer src="vendor/lucide-icons.js"></script>
+    <script defer src="app.js"></script>
 </head>
 <body class="text-white">
     <div id="custom-confirm-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 px-6">
@@ -303,8 +307,8 @@
 
             </section>
 
-            <nav id="nav-container" class="grid grid-cols-7 gap-1.5 mb-6"></nav>
-            <main id="workout-container" class="space-y-4"></main>
+            <nav id="nav-container" class="grid grid-cols-7 gap-1.5 mb-6"><div class="skeleton h-16" aria-hidden="true"></div><div class="skeleton h-16" aria-hidden="true"></div><div class="skeleton h-16" aria-hidden="true"></div><div class="skeleton h-16" aria-hidden="true"></div><div class="skeleton h-16" aria-hidden="true"></div><div class="skeleton h-16" aria-hidden="true"></div><div class="skeleton h-16" aria-hidden="true"></div></nav>
+            <main id="workout-container" class="space-y-4"><div class="skeleton" style="height:6rem;border-radius:32px" aria-hidden="true"></div><div class="skeleton" style="height:10rem;border-radius:32px" aria-hidden="true"></div><div class="skeleton" style="height:10rem;border-radius:32px" aria-hidden="true"></div></main>
 
             <!-- Profile tab: settings, backup, contact -->
             <section id="profile-view" class="hidden pb-6">
@@ -416,6 +420,5 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
 </body>
 </html>

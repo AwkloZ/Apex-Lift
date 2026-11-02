@@ -58,6 +58,15 @@ service cloud.firestore {
       }
     }
 
+    // The admin page reads every user's workouts and backup summaries in a few big paged requests
+    // (a "collection group" read) instead of 2 requests per user. Read-only, admin only.
+    match /{path=**}/history/{exercise} {
+      allow read: if isAdmin();
+    }
+    match /{path=**}/backups/{backupId} {
+      allow read: if isAdmin();
+    }
+
     // everything else is closed
   }
 }

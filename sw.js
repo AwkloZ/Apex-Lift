@@ -3,10 +3,10 @@
 // How it works:
 // - App files (index.html, app.js, ...) : try the internet first so you always get the newest version,
 //   but if there is no answer within 3 seconds (bad gym signal) use the saved copy.
-// - Outside files (Google font): use the saved copy, refresh it in the background.
+// - Fonts and versioned library files never change (a new version gets a new name): saved copy first.
 //
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
-const CACHE = 'apex-lift-v10';
+const CACHE = 'apex-lift-v11';
 const APP_FILES = [
     './',
     'index.html',
@@ -14,8 +14,11 @@ const APP_FILES = [
     'tailwind.css',
     'app.js',
     'manifest.webmanifest',
-    'vendor/lucide-1.49.0.min.js',
+    'vendor/lucide-icons.js',
     'vendor/sortable-1.15.7.min.js',
+    'fonts/fonts.css',
+    'fonts/inter-latin-var.woff2',
+    'fonts/cairo-arabic-var.woff2',
     'icons/icon-192.png',
     'icons/icon-512.png',
     'icons/icon-maskable-512.png',
@@ -80,10 +83,9 @@ self.addEventListener('fetch', event => {
     if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
     // Google sign-in pages (/__/auth/...) are passed on to Firebase by Netlify: never save or replace them
     if (url.pathname.startsWith('/__/')) return;
-    if (url.origin === self.location.origin) {
-        event.respondWith(networkFirst(request));
-    } else if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-        // only the design and the font; Firebase (login, database) must always go to the internet
-        event.respondWith(cacheFirst(request));
-    }
+    // Firebase (login, database) and other outside addresses always go to the internet
+    if (url.origin !== self.location.origin) return;
+    // font files and versioned libraries (e.g. vendor/firebase-12.19.0/...) never change under the same name
+    if (/\.woff2$/.test(url.pathname) || /^\/vendor\/[^/]*\d+\.\d+\.\d+/.test(url.pathname)) event.respondWith(cacheFirst(request));
+    else event.respondWith(networkFirst(request));
 });

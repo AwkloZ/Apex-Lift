@@ -41,36 +41,82 @@
     };
 
     // ---------- load everything ----------
-    const loadUsers = async () => {
-        $('main').innerHTML = `<div class="center"><p>Loading users…</p></div>`;
-        const qs = await db.collection('users').get();
-        users = [];
-        qs.forEach(d => {
-            const m = d.data() || {}, b = isObj(m.body) ? m.body : {}, a = isObj(m.account) ? m.account : {}, pr = isObj(m.profile) ? m.profile : {};
-            const plan = isObj(m.plan) && Array.isArray(m.plan.weeks) ? m.plan.weeks : [];
-            const active = plan.find(w => isObj(w) && w.id === m.activeWeek) || plan[0] || {};
-            users.push({ uid: d.id, raw: m, name: String(a.name || ''), email: String(a.email || ''),
-                age: num(b.birthYear) ? new Date().getFullYear() - b.birthYear : null, sex: lab('sex', b.sex), heightCm: num(b.heightCm), weightKg: num(b.weightKg),
-                goal: lab('goal', pr.goal), days: String(pr.days || ''), exp: lab('exp', pr.exp), eq: lab('eq', pr.eq),
-                routine: String(active.name || ''), joined: num(a.createdAt), lastActive: num(m.updatedAt), terms: isObj(m.terms) ? String(m.terms.v || '') : '',
-                workouts: null, exercises: null, lastBackup: null, backups: [] });
-        });
-        render();
-        // workout counts and backups, a few users at a time
-        const queue = users.slice();
-        const worker = async () => { while (queue.length) { const u = queue.shift(); try { await loadStats(u); } catch (e) { u.workouts = -1; } renderTable(); } };
-        await Promise.all([1, 2, 3, 4].map(worker));
-        renderStats();
+    const PAGE = 300; // documents per request: big lists come in pages instead of one huge download
+    const withTimeout = (p, ms = 30000) => Promise.race([p, new Promise((_, fail) => setTimeout(() => fail(Object.assign(new Error('timeout'), { code: 'timeout' })), ms))]);
+    // Reads a whole collection (or collection group) page by page; onPage runs as each page arrives
+    const readAll = async (query, onPage) => {
+        let last = null;
+        for (;;) {
+            let q = query.orderBy(firebase.firestore.FieldPath.documentId()).limit(PAGE);
+            if (last) q = q.startAfter(last);
+            const qs = await withTimeout(q.get());
+            if (!qs.empty) onPage(qs.docs);
+            if (qs.size < PAGE) return;
+            last = qs.docs[qs.docs.length - 1];
+        }
     };
-    const loadStats = async u => {
-        const [hs, bs] = await Promise.all([db.collection(`users/${u.uid}/history`).get(), db.collection(`users/${u.uid}/backups`).get()]);
-        const days = new Set(); u.history = {};
-        hs.forEach(d => { const x = d.data() || {}; const logs = Array.isArray(x.logs) ? x.logs : []; let k = d.id; try { k = decodeURIComponent(d.id); } catch (e) {} u.history[k] = logs; logs.forEach(l => { const t = logTime(l); if (!isNaN(t)) days.add(dayKey(t)); }); });
+    const toUser = d => {
+        const m = d.data() || {}, b = isObj(m.body) ? m.body : {}, a = isObj(m.account) ? m.account : {}, pr = isObj(m.profile) ? m.profile : {};
+        const plan = isObj(m.plan) && Array.isArray(m.plan.weeks) ? m.plan.weeks : [];
+        const active = plan.find(w => isObj(w) && w.id === m.activeWeek) || plan[0] || {};
+        return { uid: d.id, raw: m, name: String(a.name || ''), email: String(a.email || ''),
+            age: num(b.birthYear) ? new Date().getFullYear() - b.birthYear : null, sex: lab('sex', b.sex), heightCm: num(b.heightCm), weightKg: num(b.weightKg),
+            goal: lab('goal', pr.goal), days: String(pr.days || ''), exp: lab('exp', pr.exp), eq: lab('eq', pr.eq),
+            routine: String(active.name || ''), joined: num(a.createdAt), lastActive: num(m.updatedAt), terms: isObj(m.terms) ? String(m.terms.v || '') : '',
+            workouts: null, exercises: null, lastBackup: null, backups: [], history: {} };
+    };
+    const addHistoryDoc = (u, d) => { const x = d.data() || {}; let k = d.id; try { k = decodeURIComponent(d.id); } catch (e) {} u.history[k] = Array.isArray(x.logs) ? x.logs : []; };
+    const addBackupDoc = (u, d) => { const x = d.data() || {}; if (num(x.createdAt)) u.backups.push({ id: d.id, ...x }); };
+    const finishStats = u => {
+        const days = new Set();
+        Object.values(u.history).forEach(logs => logs.forEach(l => { const t = logTime(l); if (!isNaN(t)) days.add(dayKey(t)); }));
         u.workouts = days.size; u.exercises = Object.values(u.history).filter(l => l.length).length;
-        u.backups = []; bs.forEach(d => { const x = d.data() || {}; if (num(x.createdAt)) u.backups.push({ id: d.id, ...x }); });
         u.backups.sort((a, c) => c.createdAt - a.createdAt);
         u.lastBackup = u.backups.length ? u.backups[0].createdAt : null;
     };
+    let loading = null; // Refresh tapped twice: still one load
+    const loadUsers = () => loading || (loading = loadUsersOnce().finally(() => { loading = null; }));
+    const loadUsersOnce = async () => {
+        $('main').innerHTML = skeleton();
+        users = [];
+        let first = true;
+        await readAll(db.collection('users'), docs => {
+            docs.forEach(d => users.push(toUser(d)));
+            if (first) { first = false; render(); } else renderTable();
+        });
+        if (first) render();
+        const byUid = new Map(users.map(u => [u.uid, u]));
+        try {
+            // Every user's workouts and backups in a few big paged requests,
+            // instead of 2 requests per user (needs the collection-group rules in firestore.rules)
+            await Promise.all([
+                readAll(db.collectionGroup('history'), docs => docs.forEach(d => { const u = byUid.get(d.ref.parent.parent.id); if (u) addHistoryDoc(u, d); })),
+                readAll(db.collectionGroup('backups'), docs => docs.forEach(d => { const u = byUid.get(d.ref.parent.parent.id); if (u) addBackupDoc(u, d); }))
+            ]);
+            users.forEach(finishStats);
+            renderTable();
+        } catch (e) {
+            // rules not published yet: fall back to asking per user, a few users at a time
+            console.warn('Collection-group read failed, loading per user', e);
+            users.forEach(u => { u.history = {}; u.backups = []; });
+            const queue = users.slice();
+            const worker = async () => { while (queue.length) { const u = queue.shift(); try { await loadStats(u); } catch (err) { u.workouts = -1; } scheduleTable(); } };
+            await Promise.all([1, 2, 3, 4].map(worker));
+            renderTable();
+        }
+        renderStats();
+    };
+    const loadStats = async u => {
+        const [hs, bs] = await withTimeout(Promise.all([db.collection(`users/${u.uid}/history`).get(), db.collection(`users/${u.uid}/backups`).get()]));
+        hs.forEach(d => addHistoryDoc(u, d)); bs.forEach(d => addBackupDoc(u, d));
+        finishStats(u);
+    };
+    // grey placeholder table while the first page loads
+    const skeleton = () => `<div class="stats">${'<div class="stat sk" style="height:62px"></div>'.repeat(5)}</div>
+        <div class="tablewrap" aria-label="Loading users…" role="status">${'<div class="sk" style="height:18px;margin:14px"></div>'.repeat(8)}</div>`;
+    // many quick updates (one per user) are drawn at most once per frame
+    let tableFrame = 0;
+    const scheduleTable = () => { if (!tableFrame) tableFrame = requestAnimationFrame(() => { tableFrame = 0; renderTable(); }); };
 
     // ---------- page ----------
     const COLS = [['name', 'Name'], ['email', 'Email'], ['age', 'Age'], ['sex', 'Sex'], ['heightCm', 'Height'], ['weightKg', 'Weight'], ['goal', 'Goal'], ['days', 'Days/wk'], ['exp', 'Experience'], ['routine', 'Routine'], ['workouts', 'Workouts'], ['joined', 'Joined'], ['lastActive', 'Last active'], ['lastBackup', 'Last backup']];
@@ -105,7 +151,9 @@
             <div class="note" id="count" style="margin:0 0 8px"></div>
             <div class="tablewrap"><table><thead><tr>${COLS.map(([k, l]) => `<th data-k="${k}" class="${k === sortKey ? 'sorted' : ''}">${l}${k === sortKey ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('')}</tr></thead><tbody id="rows"></tbody></table></div>
             <p class="note">Read-only. Data is used to support users and improve Apex Lift, as described in the Privacy Policy. Never sell or share it.</p>`;
-        $('q').oninput = e => { query = e.target.value; renderTable(); };
+        // the table is redrawn when typing pauses, not on every letter
+        let typing = 0;
+        $('q').oninput = e => { query = e.target.value; clearTimeout(typing); typing = setTimeout(renderTable, 200); };
         $('csv').onclick = downloadCSV;
         $('reload').onclick = loadUsers;
         document.querySelectorAll('th').forEach(th => th.onclick = () => { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : -1; sortKey = k; render(); });
@@ -139,10 +187,13 @@
     };
     const safeName = u => (u.name || u.uid).replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 40);
     const downloadBackup = async (u, id, btn) => {
+        if (btn.disabled) return;
         btn.disabled = true; btn.textContent = '…';
         try {
-            const meta = (await db.doc(`users/${u.uid}/backups/${id}`).get()).data() || {}; let json = '';
-            for (let i = 0; i < Math.min(30, Number(meta.parts) || 1); i++) json += ((await db.doc(`users/${u.uid}/backups/${id}/parts/${i}`).get()).data() || {}).d || '';
+            const meta = (await withTimeout(db.doc(`users/${u.uid}/backups/${id}`).get())).data() || {};
+            // all parts at once, not one after the other
+            const parts = await withTimeout(Promise.all(Array.from({ length: Math.min(30, Number(meta.parts) || 1) }, (_, i) => db.doc(`users/${u.uid}/backups/${id}/parts/${i}`).get())));
+            const json = parts.map(p => (p.data() || {}).d || '').join('');
             saveFile(`ApexLift_${safeName(u)}_backup_${fmtDate(meta.createdAt).replace(/ /g, '-')}.json`, JSON.stringify(JSON.parse(json), null, 2));
             btn.textContent = 'Downloaded';
         } catch (e) { btn.textContent = 'Failed'; console.warn(e); }

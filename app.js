@@ -1676,6 +1676,14 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         
 
         document.getElementById('workout-container').innerHTML = `<div class="${enterClass()}">${html}</div>`;
+        // drag & drop is only needed here, so its file is downloaded the first time the Plan list is shown
+        if (!day.isRest && day.exercises.length > 0 && !window.Sortable && !window.appState.sortableLoading) {
+            window.appState.sortableLoading = true;
+            const el = document.createElement('script'); el.src = 'vendor/sortable-1.15.7.min.js';
+            el.onload = () => { if (window.appState.currentView === 'plan' && !window.appState.sess) renderWorkout(); };
+            el.onerror = () => { window.appState.sortableLoading = false; el.remove(); };
+            document.head.appendChild(el);
+        }
         if(!day.isRest && day.exercises.length > 0 && window.Sortable) {
             const listEl = document.getElementById('sortable-list');
             if (listEl) {
@@ -1757,7 +1765,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         closeHistoryModal: () => { popBack('history'); const o=document.getElementById('history-modal-overlay'),b=document.getElementById('history-modal-box'); o.classList.add('opacity-0'); b.classList.add('translate-y-full'); if(window.innerWidth>=768)b.classList.add('md:scale-95'); setTimeout(()=>{if(o.classList.contains('opacity-0')){o.classList.add('hidden');o.classList.remove('flex');}},300); },
         toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`p-2 rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-400 bg-white/5 hover:text-[#d4af37]'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
         refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-500 text-[12px] font-bold uppercase tracking-widest">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('WEEK {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[10px] font-black text-[#d4af37] uppercase tracking-[2px] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
-         html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[10px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[10px] text-slate-400">${t('KG')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">${h.u==='s'?t('SEC'):t('REPS')}</span></span>`:''}`}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=exerciseStatsHTML(hA)+html; bindCharts(c); if(window.lucide) window.lucide.createIcons({root:c}); },
+         html+=`<div class="cv-row flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[10px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[10px] text-slate-400">${t('KG')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[10px] text-slate-400">${h.u==='s'?t('SEC'):t('REPS')}</span></span>`:''}`}</span></div><span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=exerciseStatsHTML(hA)+html; bindCharts(c); if(window.lucide) window.lucide.createIcons({root:c}); },
         deleteHistoryRecord: (k, i) => window.appActions.showConfirm(t("Delete Record"), t("Remove this record?"), () => { let h=StorageManager.getHistory(); if(h[k]&&h[k][i]){const dl=getDeleted(); dl[k]=[...(dl[k]||[]), logSig(h[k][i])].slice(-200); setDeleted(dl); h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast(t("Deleted"),"error");} }, true),
         handleTyping: (k, type, v) => { 
             if (type === 'load') { loggedWeights[k] = v; StorageManager.set(loggedWeights); } 
@@ -2133,9 +2141,11 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             pushBack('picker', () => window.appActions.closePicker());
         },
         closePicker: () => { popBack('picker'); closeSheet('picker-overlay', 'picker-box'); },
-        pickerSearch: v => { window.appState.picker.q = v; window.appActions.renderPicker(false); },
-        pickerMuscle: m => { window.appState.picker.muscle = m; window.appActions.renderPicker(); document.getElementById('picker-list').scrollTop = 0; },
+        // typing updates the search right away, but the list is only redrawn when typing pauses (not once per letter)
+        pickerSearch: v => { window.appState.picker.q = v; clearTimeout(window.appState.pickerTimer); window.appState.pickerTimer = setTimeout(() => window.appActions.renderPicker(false), 150); },
+        pickerMuscle: m => { clearTimeout(window.appState.pickerTimer); window.appState.picker.muscle = m; window.appActions.renderPicker(); document.getElementById('picker-list').scrollTop = 0; },
         renderPicker: (withChips = true) => {
+            clearTimeout(window.appState.pickerTimer);
             const P = window.appState.picker, d = getActiveSchedule().find(x => x.id === activeDay);
             const inDay = new Set(d.exercises.map(e => e.name));
             const isSel = (name, muscle) => P.sel.some(x => x.name === name && x.muscle === muscle);
@@ -2145,7 +2155,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             }
             const row = x => {
                 const sel = isSel(x.name, x.muscle), added = inDay.has(x.name);
-                return `<button onclick="window.appActions.pickerTap(${jsArg(x.name)}, ${jsArg(x.muscle)})" class="w-full flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 text-start tap-feedback ${sel ? 'bg-[#d4af37]/10' : ''}">
+                return `<button onclick="window.appActions.pickerTap(${jsArg(x.name)}, ${jsArg(x.muscle)})" class="cv-row w-full flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 text-start tap-feedback ${sel ? 'bg-[#d4af37]/10' : ''}">
                     <span class="min-w-0"><span class="ex-name block text-[14px] font-bold text-white truncate">${esc(x.name)}${x.custom ? ` <span class="text-[9px] text-[#d4af37]">★</span>` : ''}</span><span class="block text-[10px] font-bold text-slate-500">${esc(tm(x.muscle))}${added ? ` • ${esc(t('In this day'))}` : ''}</span></span>
                     <span class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center border ${sel ? 'bg-[#d4af37] border-[#d4af37] text-black' : 'border-white/20 text-slate-400'}"><i data-lucide="${P.mode === 'replace' ? 'arrow-left-right' : (sel ? 'check' : 'plus')}" class="w-4 h-4"></i></span>
                 </button>`;
@@ -2590,8 +2600,8 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     // Firebase is only downloaded when someone uses sign-in, so the app stays fast for everyone else
     const loadFirebase = () => Cloud.loading || (Cloud.loading = (async () => {
         if (!window.firebase) await loadScript(FB_DIR + 'firebase-app-compat.js');
-        if (!firebase.auth) await loadScript(FB_DIR + 'firebase-auth-compat.js');
-        if (!firebase.firestore) await loadScript(FB_DIR + 'firebase-firestore-compat.js');
+        // sign-in and database parts only need the first file: download both at the same time
+        await Promise.all([!firebase.auth && loadScript(FB_DIR + 'firebase-auth-compat.js'), !firebase.firestore && loadScript(FB_DIR + 'firebase-firestore-compat.js')]);
         if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
         Cloud.auth = firebase.auth(); Cloud.db = firebase.firestore();
         try { await Cloud.db.enablePersistence({ synchronizeTabs: true }); } catch (e) { /* private mode or another tab: still works online */ }
@@ -2796,7 +2806,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
                 offline: ['bg-slate-400', t('Offline · will sync when online')], error: ['bg-red-500', t('Sync problem · tap Sync now') + (Cloud.err ? ` (${Cloud.err})` : '')] }[Cloud.status] || ['bg-slate-500', ''];
             el.innerHTML = `<div class="glass-card p-5 border border-[#22c55e]/25">
                 <div class="flex items-center gap-3">
-                    ${photo ? `<img src="${esc(photo)}" alt="" referrerpolicy="no-referrer" class="w-12 h-12 rounded-full object-cover shrink-0">` : `<span class="w-12 h-12 rounded-full bg-[#d4af37] text-black text-[18px] font-black flex items-center justify-center shrink-0">${esc((name || email || '?').charAt(0).toUpperCase())}</span>`}
+                    ${photo ? `<img src="${esc(photo)}" alt="" width="48" height="48" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="w-12 h-12 rounded-full object-cover shrink-0">` : `<span class="w-12 h-12 rounded-full bg-[#d4af37] text-black text-[18px] font-black flex items-center justify-center shrink-0">${esc((name || email || '?').charAt(0).toUpperCase())}</span>`}
                     <div class="min-w-0 flex-1"><div class="text-[16px] font-black text-white truncate">${esc(name || email)}</div><div class="text-[11px] font-bold text-slate-400 truncate">${esc(email)}</div>
                     <div class="flex items-center gap-1.5 mt-1"><span class="w-2 h-2 rounded-full ${st[0]}"></span><span class="text-[11px] font-bold text-slate-300">${esc(st[1])}</span></div></div>
                 </div>
@@ -2813,6 +2823,11 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     };
     Object.assign(window.appActions, {
         cloudSignIn: async () => {
+            if (Cloud.signingIn) return; // a double tap opens one Google window, not two
+            Cloud.signingIn = true;
+            try { await window.appActions.cloudSignInOnce(); } finally { Cloud.signingIn = false; }
+        },
+        cloudSignInOnce: async () => {
             setCloudStatus('loading');
             try { await loadFirebase(); } catch (e) { window.appActions.showToast(t('No internet connection. Try again when online.'), 'error'); return setCloudStatus('off'); }
             const provider = new firebase.auth.GoogleAuthProvider();
@@ -3005,18 +3020,23 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     const BK_KEEP = 10, BK_CHUNK = 400000, BK_AUTO_MS = 20 * 3600000;
     const bkPath = uid => `users/${uid}/backups`;
     const countWorkouts = h => { const days = new Set(); Object.values(h).forEach(list => (list || []).forEach(l => { const tt = logTime(l); if (!isNaN(tt)) days.add(dateKey(tt)); })); return days.size; };
-    const listBackups = async () => {
-        const qs = await Cloud.db.collection(bkPath(Cloud.user.uid)).get(), out = [];
+    // A request the person is waiting for gives up after a while instead of spinning forever on bad gym signal
+    const withTimeout = (promise, ms = 15000) => Promise.race([promise, new Promise((_, fail) => setTimeout(() => fail(Object.assign(new Error('timeout'), { code: 'timeout' })), ms))]);
+    // Several callers at the same moment (menu opened + auto backup) share one download instead of each asking Firestore
+    let backupsReq = null;
+    const listBackups = () => backupsReq || (backupsReq = (async () => {
+        const qs = await withTimeout(Cloud.db.collection(bkPath(Cloud.user.uid)).get()), out = [];
         qs.forEach(d => { const x = d.data() || {}; if (Number(x.createdAt) > 0) out.push({ id: d.id, ...x }); });
         return out.sort((a, b) => b.createdAt - a.createdAt);
-    };
+    })().finally(() => { backupsReq = null; }));
     const deleteBackup = async b => {
         const uid = Cloud.user.uid, batch = Cloud.db.batch();
         for (let i = 0; i < (b.parts || 1); i++) batch.delete(Cloud.db.doc(`${bkPath(uid)}/${b.id}/parts/${i}`));
         batch.delete(Cloud.db.doc(`${bkPath(uid)}/${b.id}`));
         await batch.commit();
     };
-    const cloudBackup = async kind => {
+    // keep: a backup id that must not be cleaned up (the one being restored right now)
+    const cloudBackup = async (kind, keep) => {
         if (!Cloud.user) throw new Error('signed out');
         const uid = Cloud.user.uid, h = StorageManager.getHistory();
         const json = JSON.stringify({ v: 1, main: collectMain(), history: h, deleted: getDeleted() }), id = String(Date.now());
@@ -3028,7 +3048,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         // keep the newest 10 automatic and 10 other copies
         try {
             const all = await listBackups(), auto = all.filter(b => b.kind === 'auto'), other = all.filter(b => b.kind !== 'auto');
-            for (const b of [...auto.slice(BK_KEEP), ...other.slice(BK_KEEP)]) await deleteBackup(b);
+            await Promise.all([...auto.slice(BK_KEEP), ...other.slice(BK_KEEP)].filter(b => b.id !== keep).map(deleteBackup));
         } catch (e) { console.warn('Backup clean-up failed', e); }
         return id;
     };
@@ -3042,10 +3062,11 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         } catch (e) { console.warn('Auto backup failed', e); }
     };
     const loadBackup = async id => {
-        const uid = Cloud.user.uid, meta = (await Cloud.db.doc(`${bkPath(uid)}/${id}`).get()).data() || {};
-        let json = '';
-        for (let i = 0; i < (meta.parts || 1); i++) json += ((await Cloud.db.doc(`${bkPath(uid)}/${id}/parts/${i}`).get()).data() || {}).d || '';
-        return JSON.parse(json);
+        const uid = Cloud.user.uid, meta = (await withTimeout(Cloud.db.doc(`${bkPath(uid)}/${id}`).get())).data() || {};
+        // all parts at once, not one after the other
+        const n = Math.min(30, Number(meta.parts) || 1);
+        const parts = await withTimeout(Promise.all(Array.from({ length: n }, (_, i) => Cloud.db.doc(`${bkPath(uid)}/${id}/parts/${i}`).get())), 30000);
+        return JSON.parse(parts.map(p => (p.data() || {}).d || '').join(''));
     };
     const restoreSnapshot = data => {
         if (!isObj(data) || !isObj(data.main)) throw new Error('Backup is damaged');
@@ -3060,11 +3081,13 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
         Cloud.sent = {}; return cloudFlush();
     };
     const kindLabel = k => k === 'auto' ? t('Automatic') : k === 'before-restore' ? t('Before restore') : t('Manual');
+    let backupsDraw = 0;
     const renderBackups = async () => {
-        const list = document.getElementById('backups-list');
-        list.innerHTML = `<div class="p-8 text-center text-[12px] font-bold text-slate-500">${t('Loading…')}</div>`;
+        const list = document.getElementById('backups-list'), mine = ++backupsDraw;
+        list.innerHTML = `<div class="px-5" role="status" aria-label="${esc(t('Loading…'))}">${'<div class="flex items-center gap-3 py-3.5 border-b border-white/5"><span class="skeleton w-10 h-10 shrink-0" style="border-radius:9999px"></span><span class="flex-1 space-y-2"><span class="skeleton block h-3.5" style="width:40%"></span><span class="skeleton block h-3" style="width:60%"></span></span><span class="skeleton w-16 h-8 shrink-0"></span></div>'.repeat(3)}</div>`;
         try {
             const all = await listBackups();
+            if (mine !== backupsDraw) return; // a newer refresh started meanwhile: let that one draw
             if (!all.length) { list.innerHTML = `<div class="p-8 text-center text-[13px] font-bold text-slate-500">${t('No backups yet. Tap Back up now to make the first one.')}</div>`; return; }
             list.innerHTML = all.map(b => `<div class="flex items-center gap-3 px-5 py-3.5 border-b border-white/5">
                 <span class="w-10 h-10 rounded-full ${b.kind === 'auto' ? 'bg-white/5 text-slate-300' : 'bg-[#d4af37]/15 text-[#d4af37]'} flex items-center justify-center shrink-0"><i data-lucide="${b.kind === 'auto' ? 'clock' : b.kind === 'before-restore' ? 'rotate-ccw' : 'save'}" class="w-5 h-5"></i></span>
@@ -3074,6 +3097,7 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             if (window.lucide) window.lucide.createIcons({ root: list });
         } catch (e) {
             console.warn(e);
+            if (mine !== backupsDraw) return;
             list.innerHTML = `<div class="p-8 text-center text-[13px] font-bold text-red-400">${e && /permission/i.test(e.code || '') ? t('Backups are blocked by the Firebase rules. Publish the new firestore.rules.') : t('Could not load backups. Check your connection.')}</div>`;
         }
     };
@@ -3169,13 +3193,17 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
             finally { b.disabled = false; b.classList.remove('opacity-60'); }
         },
         restoreBackup: (id, label) => window.appActions.showConfirm(t('Restore this backup?'), t('Your routines, settings and workouts go back to {date}, on all your phones. A copy of how things are now is saved first.', { date: label }), async () => {
+            if (Cloud.restoring) return; // one restore at a time, even after a double tap
+            Cloud.restoring = true;
             try {
                 window.appActions.showToast(t('Restoring…'), 'success');
-                await cloudBackup('before-restore');
-                await restoreSnapshot(await loadBackup(id));
+                // download the chosen copy and save "how things are now" at the same time
+                const [data] = await Promise.all([loadBackup(id), cloudBackup('before-restore', id)]);
+                await restoreSnapshot(data);
                 window.appActions.closeBackups();
                 window.appActions.showToast(t('Backup restored'), 'success');
             } catch (e) { console.warn(e); window.appActions.showToast(t('Could not restore. Check your connection.'), 'error'); }
+            finally { Cloud.restoring = false; }
         }, true)
     });
 
@@ -3244,4 +3272,4 @@ window.appState = { currentView: 'today', sortableInstance: null, mappingConfig:
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
         window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(err => console.warn('Offline mode unavailable:', err)));
     }
-})();
+})();
