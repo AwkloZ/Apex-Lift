@@ -4,6 +4,8 @@ rules_version = '2';
 // - The Apex Lift admin account (below) can READ all users' data, for support and app improvement. It can't change it,
 //   except for the coach plan (users/{uid}/coach/plan): a routine and/or note the coach sends, which the user's app applies.
 // - Coach-only data (templates, private client notes, the admin activity log) can be read and written by the admin only.
+// - Coaches (invited by the admin, see COACHING below) can read the account, workouts and presence of the clients who
+//   joined them, and send them a coach plan. Never their backups. Only while the admin keeps the coach switched on.
 // - Only the data the app actually uses is accepted (known paths, known fields, size limits),
 //   so the database can't be filled with junk.
 // Paste this into Firebase console → Firestore Database → Rules → Publish.
@@ -25,14 +27,14 @@ service cloud.firestore {
     // routines + settings
     match /users/{uid} {
       allow delete: if isOwner(uid);
-      allow read: if isOwner(uid) || isAdmin();
+      allow read: if isOwner(uid) || isAdmin() || isCoachOf(uid);
       allow create, update: if isOwner(uid)
         && fields().keys().hasOnly(['plan', 'activeWeek', 'startDay', 'rest', 'showRpe', 'weights', 'custom', 'profile', 'terms', 'body', 'account', 'readiness', 'activity', 'updatedAt']);
 
       // workout history: one document per exercise
       match /history/{exercise} {
         allow delete: if isOwner(uid);
-        allow read: if isOwner(uid) || isAdmin();
+        allow read: if isOwner(uid) || isAdmin() || isCoachOf(uid);
         allow create, update: if isOwner(uid) && exercise.size() <= 1000
           && fields().keys().hasOnly(['logs', 'del', 'resetAt', 'updatedAt'])
           && fields().logs is list && fields().logs.size() <= 400
@@ -61,7 +63,7 @@ service cloud.firestore {
 
       // presence + visits: "using the app now" and the last 30 visits (written by the app while it is open)
       match /presence/{docId} {
-        allow read: if isOwner(uid) || isAdmin();
+        allow read: if isOwner(uid) || isAdmin() || isCoachOf(uid);
         allow delete: if isOwner(uid);
         allow create, update: if isOwner(uid) && docId == 'app'
           && fields().keys().hasOnly(['at', 'off', 'visits', 'recent'])
@@ -69,11 +71,17 @@ service cloud.firestore {
           && fields().recent is list && fields().recent.size() <= 30;
       }
 
-      // coach plan: written by the admin, read by the user's app, which only marks it as applied (appliedAt)
+      // coach plan: written by the admin or the user's coach, read by the user's app, which only marks it as applied (appliedAt)
+      // coach link: the coach this user joined (written by the user together with coaches/{coach}/members/{uid})
       match /coach/{docId} {
-        allow read: if isOwner(uid) || isAdmin();
-        allow delete: if isOwner(uid) || isAdmin();
-        allow create, update: if isAdmin() && docId == 'plan'
+        allow read: if isOwner(uid) || isAdmin() || isCoachOf(uid);
+        allow delete: if isOwner(uid) || isAdmin() || (docId == 'link' && isCoachOf(uid));
+        allow create: if isOwner(uid) && docId == 'link'
+          && fields().keys().hasOnly(['coachId', 'coachName', 'code', 'joinedAt'])
+          && fields().coachId is string && fields().code is string && fields().joinedAt is int
+          && fields().coachName is string && fields().coachName.size() <= 100
+          && existsAfter(/databases/$(database)/documents/coaches/$(fields().coachId)/members/$(uid));
+        allow create, update: if (isAdmin() || isCoachOf(uid)) && docId == 'plan'
           && fields().keys().hasOnly(['mode', 'routine', 'targetId', 'activate', 'note', 'coach', 'sentAt', 'appliedAt'])
           && (!('activate' in fields()) || fields().activate is bool)
           && fields().mode in ['add', 'replace', 'note']
@@ -155,6 +163,10 @@ service cloud.firestore {
     function isCoach() {
       return request.auth != null && exists(coachDoc(request.auth.uid)) && get(coachDoc(request.auth.uid)).data.active == true;
     }
+    // signed in as the (switched on) coach this user joined
+    function isCoachOf(uid) {
+      return isCoach() && exists(/databases/$(database)/documents/coaches/$(request.auth.uid)/members/$(uid));
+    }
 
     // coach invitations: made by the admin for one email; used once, by that email (verified), to create the coach account
     match /coachInvites/{code} {
@@ -188,6 +200,45 @@ service cloud.firestore {
       allow update: if (isAdmin() && fields().diff(resource.data).affectedKeys().hasOnly(['active']) && fields().active is bool)
         || (isOwner(coachId) && fields().diff(resource.data).affectedKeys().hasOnly(['name'])
             && fields().name is string && fields().name.size() > 0 && fields().name.size() <= 100);
+
+      // the coach's clients: a client adds themselves with one of the coach's codes; the client, the coach or the admin removes them
+      match /members/{clientId} {
+        allow get: if isOwner(clientId) || isAdmin() || (isOwner(coachId) && isCoach());
+        allow list: if isAdmin() || (isOwner(coachId) && isCoach());
+        allow delete: if isOwner(clientId) || isOwner(coachId) || isAdmin();
+        allow create: if isOwner(clientId)
+          && fields().keys().hasOnly(['code', 'name', 'email', 'joinedAt'])
+          && fields().code is string && fields().joinedAt is int
+          && fields().name is string && fields().name.size() <= 100
+          && fields().email is string && fields().email.size() <= 200
+          && get(/databases/$(database)/documents/coachCodes/$(fields().code)).data.coach == coachId
+          && get(coachDoc(coachId)).data.active == true;
+      }
+
+      // the coach's saved routine templates (same shape as coachTemplates)
+      match /templates/{id} {
+        allow read, delete: if isOwner(coachId) && isCoach();
+        allow create, update: if isOwner(coachId) && isCoach()
+          && fields().keys().hasOnly(['name', 'routine', 'updatedAt'])
+          && fields().name is string && fields().name.size() <= 60
+          && fields().routine is map && fields().updatedAt is int;
+      }
+    }
+
+    // client codes: a coach shares one so a client can join them. Anyone signed in who knows the code can open it;
+    // only its coach (or the admin) can list or delete them.
+    match /coachCodes/{code} {
+      allow get: if request.auth != null;
+      allow list, delete: if isAdmin() || (request.auth != null && resource.data.coach == request.auth.uid);
+      allow create: if isCoach() && code.matches('^[A-HJ-NP-Z2-9]{8}$')
+        && fields().keys().hasOnly(['coach', 'name', 'createdAt'])
+        && fields().coach == request.auth.uid && fields().createdAt is int
+        && fields().name is string && fields().name.size() <= 100;
+    }
+
+    // the admin page reads every coach's client list with one query (collection group)
+    match /{path=**}/members/{clientId} {
+      allow read: if isAdmin();
     }
 
     // everything else is closed

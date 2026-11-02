@@ -96,3 +96,124 @@ test('admin switches a coach on/off; the coach can only rename', async () => {
     await assertFails(as('u2').doc(`coaches/${COACH}`).get());
     await assertSucceeds(as(COACH, coachTok).doc(`coaches/${COACH}`).get());
 });
+
+// ---------- client codes, joining, leaving and coach access ----------
+const KCODE = 'KKKKKKKK', CLIENT = 'k1', clientTok = { email: 'client@x.com', email_verified: true };
+const seedCoach = (active = true, uid = COACH) => seed(db => db.doc(`coaches/${uid}`).set({ name: 'Coach Test', email: 'coach@x.com', invite: CODE, active, createdAt: 2 }));
+const seedCode = (coach = COACH, code = KCODE) => seed(db => db.doc(`coachCodes/${code}`).set({ coach, name: 'Coach Test', createdAt: 3 }));
+const seedClient = () => seed(async db => {
+    await db.doc(`users/${CLIENT}`).set({ updatedAt: 1 });
+    await db.doc(`users/${CLIENT}/history/global_bench`).set({ logs: [] });
+    await db.doc(`users/${CLIENT}/backups/1`).set({ createdAt: 1 });
+});
+// the client's join: the coach's member list + the client's own link, in one batch
+const join = (db, coach = COACH, code = KCODE, uid = CLIENT) => {
+    const b = db.batch();
+    b.set(db.doc(`coaches/${coach}/members/${uid}`), { code, name: 'Client', email: 'client@x.com', joinedAt: 4 });
+    b.set(db.doc(`users/${uid}/coach/link`), { coachId: coach, coachName: 'Coach Test', code, joinedAt: 4 });
+    return b.commit();
+};
+const leave = (db, coach = COACH, uid = CLIENT) => {
+    const b = db.batch();
+    b.delete(db.doc(`coaches/${coach}/members/${uid}`));
+    b.delete(db.doc(`users/${uid}/coach/link`));
+    return b.commit();
+};
+const coachDb = () => as(COACH, coachTok);
+
+test('an active coach creates client codes for themselves only', async () => {
+    await seedCoach();
+    await assertSucceeds(coachDb().doc(`coachCodes/${KCODE}`).set({ coach: COACH, name: 'Coach Test', createdAt: 3 }));
+    await assertFails(coachDb().doc('coachCodes/LLLLLLLL').set({ coach: 'someone', name: 'Coach Test', createdAt: 3 }));
+    await assertFails(coachDb().doc('coachCodes/bad').set({ coach: COACH, name: 'Coach Test', createdAt: 3 }));
+    await assertFails(as('u2').doc('coachCodes/MMMMMMMM').set({ coach: 'u2', name: 'X', createdAt: 3 }));
+    // anyone signed in can open a code; only its coach can list or delete them
+    await assertSucceeds(as(CLIENT, clientTok).doc(`coachCodes/${KCODE}`).get());
+    await assertFails(as(CLIENT, clientTok).collection('coachCodes').get());
+    await assertSucceeds(coachDb().collection('coachCodes').where('coach', '==', COACH).get());
+    await assertFails(as(CLIENT, clientTok).doc(`coachCodes/${KCODE}`).delete());
+    await assertSucceeds(coachDb().doc(`coachCodes/${KCODE}`).delete());
+});
+test('a switched-off coach cannot create codes', async () => {
+    await seedCoach(false);
+    await assertFails(coachDb().doc(`coachCodes/${KCODE}`).set({ coach: COACH, name: 'Coach Test', createdAt: 3 }));
+});
+test('a client joins with a code; the coach then reads their data but not backups', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await assertFails(coachDb().doc(`users/${CLIENT}`).get());
+    await assertSucceeds(join(as(CLIENT, clientTok)));
+    await assertSucceeds(coachDb().doc(`users/${CLIENT}`).get());
+    await assertSucceeds(coachDb().collection(`users/${CLIENT}/history`).get());
+    await assertSucceeds(coachDb().collection(`coaches/${COACH}/members`).get());
+    await assertFails(coachDb().collection(`users/${CLIENT}/backups`).get());
+    await assertFails(coachDb().doc(`users/${CLIENT}`).update({ updatedAt: 9 }));
+});
+test('joining fails with a deleted code, a switched-off coach, or a link alone', async () => {
+    await seedCoach(); await seedClient();
+    await assertFails(join(as(CLIENT, clientTok)));                     // no such code
+    await seedCode('c9');                                                 // code of another coach
+    await assertFails(join(as(CLIENT, clientTok)));
+    await seedCode();
+    await seedCoach(false);
+    await assertFails(join(as(CLIENT, clientTok)));                     // coach switched off
+    await seedCoach(true);
+    await assertFails(as(CLIENT, clientTok).doc(`users/${CLIENT}/coach/link`).set({ coachId: COACH, coachName: 'X', code: KCODE, joinedAt: 4 }));
+    // nobody can add someone else as a client
+    await assertFails(as('u2').doc(`coaches/${COACH}/members/${CLIENT}`).set({ code: KCODE, name: 'Client', email: 'c@x.com', joinedAt: 4 }));
+});
+test('a coach sends a plan to their own client only', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await join(as(CLIENT, clientTok));
+    await assertSucceeds(coachDb().doc(`users/${CLIENT}/coach/plan`).set(plan()));
+    await assertSucceeds(coachDb().doc(`users/${CLIENT}/coach/plan`).get());
+    await assertFails(coachDb().doc('users/u2/coach/plan').set(plan()));
+    await assertFails(coachDb().doc(`users/${CLIENT}/coach/plan`).set({ ...plan(), extra: 1 }));
+    // the client still only marks it applied
+    await assertSucceeds(as(CLIENT, clientTok).doc(`users/${CLIENT}/coach/plan`).update({ appliedAt: 5 }));
+});
+test('switching a coach off stops all access at once', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await join(as(CLIENT, clientTok));
+    await assertSucceeds(admin().doc(`coaches/${COACH}`).update({ active: false }));
+    await assertFails(coachDb().doc(`users/${CLIENT}`).get());
+    await assertFails(coachDb().collection(`users/${CLIENT}/history`).get());
+    await assertFails(coachDb().doc(`users/${CLIENT}/coach/plan`).set(plan()));
+    await assertFails(coachDb().collection(`coaches/${COACH}/members`).get());
+});
+test('a client leaves, or the coach removes them: access ends', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await join(as(CLIENT, clientTok));
+    await assertSucceeds(leave(as(CLIENT, clientTok)));
+    await assertFails(coachDb().doc(`users/${CLIENT}`).get());
+    await join(as(CLIENT, clientTok));
+    await assertSucceeds(coachDb().doc(`coaches/${COACH}/members/${CLIENT}`).delete());
+    await assertFails(coachDb().doc(`users/${CLIENT}`).get());
+    // the client sees their link is stale and removes it
+    await assertSucceeds(as(CLIENT, clientTok).doc(`users/${CLIENT}/coach/link`).delete());
+});
+test('the client reads their own link and member entry, others cannot', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await join(as(CLIENT, clientTok));
+    await assertSucceeds(as(CLIENT, clientTok).doc(`users/${CLIENT}/coach/link`).get());
+    await assertSucceeds(as(CLIENT, clientTok).doc(`coaches/${COACH}/members/${CLIENT}`).get());
+    await assertFails(as('u2').doc(`coaches/${COACH}/members/${CLIENT}`).get());
+    await assertFails(as(CLIENT, clientTok).collection(`coaches/${COACH}/members`).get());
+});
+test('coach templates: own only, while switched on', async () => {
+    await seedCoach(); await seedCoach(true, 'c2');
+    const t = { name: 'Push Pull', routine: { name: 'PPL', schedule: [] }, updatedAt: 1 };
+    await assertSucceeds(coachDb().doc(`coaches/${COACH}/templates/t1`).set(t));
+    await assertSucceeds(coachDb().collection(`coaches/${COACH}/templates`).get());
+    await assertFails(as('c2', coachTok).collection(`coaches/${COACH}/templates`).get());
+    await assertFails(coachDb().doc(`coaches/${COACH}/templates/t2`).set({ ...t, extra: 1 }));
+    await seedCoach(false);
+    await assertFails(coachDb().collection(`coaches/${COACH}/templates`).get());
+});
+test('admin reads every coach member list with one query', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await join(as(CLIENT, clientTok));
+    await assertSucceeds(admin().collectionGroup('members').get());
+    await assertFails(coachDb().collectionGroup('members').get());
+    // admin removes a client from a coach
+    await assertSucceeds(leave(admin()));
+});
