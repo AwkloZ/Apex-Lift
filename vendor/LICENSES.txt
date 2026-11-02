@@ -1,6 +1,6 @@
 Third-party libraries bundled with Apex Lift
 
-== lucide 1.49.0 (vendor/lucide-1.49.0.min.js) ==
+== lucide 1.49.0 (vendor/lucide-icons.js, built from tools/lucide-1.49.0.min.js) ==
 ISC License
 
 Copyright (c) 2026 Lucide Icons and Contributors

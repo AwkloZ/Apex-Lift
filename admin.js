@@ -120,12 +120,38 @@
         u.client = c.client === true; u.notes = String(c.notes || ''); u.followUp = String(c.followUp || '');
         u.status = statusOf(u); u.statusLabel = STATUS[u.status][0];
     };
-    const loadUsers = async () => {
-        $('main').innerHTML = `<div class="center"><p>Loading users…</p></div>`;
-        const [qs, cs] = await Promise.all([db.collection('users').get(), db.collection('clients').get().catch(() => null)]);
-        clients = {}; if (cs) cs.forEach(d => { clients[d.id] = d.data() || {}; });
-        users = []; qs.forEach(d => users.push(toUser(d)));
-        users.forEach(finish);
+    // Firestore reads the page waits for give up after a while instead of spinning forever
+    const withTimeout = (p, ms = 30000) => Promise.race([p, new Promise((_, fail) => setTimeout(() => fail(Object.assign(new Error('timeout'), { code: 'timeout' })), ms))]);
+    // Users come in pages of 300 (smaller answers, and the table shows after the first page) instead of one huge download
+    const PAGE = 300;
+    const readPages = async (query, onPage) => {
+        let last = null;
+        for (;;) {
+            let q = query.orderBy(firebase.firestore.FieldPath.documentId()).limit(PAGE);
+            if (last) q = q.startAfter(last);
+            const qs = await withTimeout(q.get());
+            if (!qs.empty) await onPage(qs.docs);
+            if (qs.size < PAGE) return;
+            last = qs.docs[qs.docs.length - 1];
+        }
+    };
+    // grey placeholder shapes while the first page loads
+    const skeleton = () => `<div class="stats" role="status" aria-label="Loading users…">${'<div class="stat sk" style="height:74px"></div>'.repeat(4)}</div>
+        <div class="tablewrap">${'<div class="sk" style="height:18px;margin:14px"></div>'.repeat(8)}</div>`;
+    let loading = null; // Refresh tapped twice: still one load
+    const loadUsers = () => loading || (loading = loadUsersOnce().finally(() => { loading = null; }));
+    const loadUsersOnce = async () => {
+        $('main').innerHTML = skeleton();
+        // client notes download at the same time as the first page of users
+        const clientsReady = withTimeout(db.collection('clients').get()).catch(() => null)
+            .then(cs => { clients = {}; if (cs) cs.forEach(d => { clients[d.id] = d.data() || {}; }); });
+        users = [];
+        let first = true;
+        await readPages(db.collection('users'), async docs => {
+            await clientsReady;
+            const page = docs.map(toUser); page.forEach(finish); users.push(...page);
+            if (first) { first = false; render(); } else refreshLive();
+        });
         render();
         watchPresence();
         // users on older app versions send no activity summary: work it out from their workout history
@@ -164,12 +190,12 @@
     // full workout history of one user (only when needed)
     const loadHistory = async u => {
         if (u.history) return u.history;
-        const hs = await db.collection(`users/${u.uid}/history`).get(), h = {};
+        const hs = await withTimeout(db.collection(`users/${u.uid}/history`).get()), h = {};
         hs.forEach(d => { const x = d.data() || {}; let k = d.id; try { k = decodeURIComponent(d.id); } catch (e) {} if (Array.isArray(x.logs) && x.logs.length) h[k] = x.logs; });
         return (u.history = h);
     };
     const loadBackups = async u => {
-        const bs = await db.collection(`users/${u.uid}/backups`).get(), out = [];
+        const bs = await withTimeout(db.collection(`users/${u.uid}/backups`).get()), out = [];
         bs.forEach(d => { const x = d.data() || {}; if (num(x.createdAt)) out.push({ id: d.id, ...x }); });
         return (u.backups = out.sort((a, c) => c.createdAt - a.createdAt));
     };
@@ -260,7 +286,9 @@
             ${users.some(u => !u.name && !u.email) ? `<div class="info" style="margin-bottom:10px">${users.filter(u => !u.name && !u.email).length} users show "Not shared yet": their phones still run an older version of the app, which didn't send their name and email. These fill in by themselves the next time each of them opens the updated app.</div>` : ''}
             <div class="note" id="count" style="margin:0 0 8px"></div>
             <div class="tablewrap"><table><thead><tr>${COLS.map(([k, l]) => `<th data-k="${k}" class="${k === sortKey ? 'sorted' : ''}">${l}${k === sortKey ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('')}</tr></thead><tbody id="rows"></tbody></table></div><div class="ulist" id="ucards"></div>`;
-        $('q').oninput = e => { query = e.target.value; renderRows(); };
+        // the table is redrawn when typing pauses, not on every letter
+        let typing = 0;
+        $('q').oninput = e => { query = e.target.value; clearTimeout(typing); typing = setTimeout(renderRows, 200); };
         $('fs').onchange = e => { fStatus = e.target.value; renderRows(); };
         $('fg').onchange = e => { fGoal = e.target.value; renderRows(); };
         $('fc').onchange = e => { fClients = e.target.checked; renderRows(); };
@@ -454,10 +482,13 @@
     };
     const safeName = u => (u.name || u.uid).replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 40);
     const downloadBackup = async (u, id, btn) => {
+        if (btn.disabled) return;
         btn.disabled = true; btn.textContent = '…';
         try {
-            const meta = (await db.doc(`users/${u.uid}/backups/${id}`).get()).data() || {}; let json = '';
-            for (let i = 0; i < Math.min(30, Number(meta.parts) || 1); i++) json += ((await db.doc(`users/${u.uid}/backups/${id}/parts/${i}`).get()).data() || {}).d || '';
+            const meta = (await withTimeout(db.doc(`users/${u.uid}/backups/${id}`).get())).data() || {};
+            // all parts at once, not one after the other
+            const parts = await withTimeout(Promise.all(Array.from({ length: Math.min(30, Number(meta.parts) || 1) }, (_, i) => db.doc(`users/${u.uid}/backups/${id}/parts/${i}`).get())));
+            const json = parts.map(p => (p.data() || {}).d || '').join('');
             saveFile(`ApexLift_${safeName(u)}_backup_${iso(meta.createdAt)}.json`, JSON.stringify(JSON.parse(json), null, 2));
             audit(u.uid, 'backup');
             btn.textContent = 'Downloaded';

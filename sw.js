@@ -3,12 +3,13 @@
 // How it works:
 // - App files (index.html, app.js, ...) : try the internet first so you always get the newest version,
 //   but if there is no answer within 3 seconds (bad gym signal) use the saved copy.
-// - Outside files: use the saved copy, refresh it in the background (fonts are now stored in vendor/fonts).
+// - Fonts and versioned library files (vendor/fonts, vendor/firebase-12.19.0/..., sortable-1.15.7): saved copy first,
+//   they never change under the same name. Outside files: saved copy first too, refreshed in the background.
 //
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
 // (require-sign-in.js is left out on purpose: it can be deleted, and a missing file in APP_FILES would break the install.
 //  It is still saved for offline use the first time the app loads it.)
-const CACHE = 'apex-lift-v77';
+const CACHE = 'apex-lift-v78';
 const APP_FILES = [
     './',
     'index.html',
@@ -19,7 +20,7 @@ const APP_FILES = [
     'calc.js',
     'app.js',
     'manifest.webmanifest',
-    'vendor/lucide-1.49.0.min.js',
+    'vendor/lucide-icons.js',
     'vendor/sortable-1.15.7.min.js',
     'vendor/fonts/inter-latin-var.woff2',
     'vendor/fonts/cairo-arabic-var.woff2',
@@ -94,7 +95,9 @@ self.addEventListener('fetch', event => {
     // Google sign-in pages (/__/auth/...) are passed on to Firebase by Netlify: never save or replace them
     if (url.pathname.startsWith('/__/')) return;
     if (url.origin === self.location.origin) {
-        event.respondWith(networkFirst(request));
+        // font files and versioned libraries never change under the same name: no need to wait for the internet
+        if (/\.woff2$/.test(url.pathname) || /^\/vendor\/[^/]*\d+\.\d+\.\d+/.test(url.pathname)) event.respondWith(cacheFirst(request));
+        else event.respondWith(networkFirst(request));
     } else if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
         // only the design and the font; Firebase (login, database) must always go to the internet
         event.respondWith(cacheFirst(request));

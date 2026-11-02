@@ -17,10 +17,8 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <!-- Design styles are stored inside the app (built from Tailwind), so no outside code runs and it works offline -->
     <link rel="stylesheet" href="tailwind.css">
-    <!-- Icons and drag & drop are stored inside the app (vendor folder), so they work offline -->
-    <script src="vendor/lucide-1.49.0.min.js"></script>
-    <script src="vendor/sortable-1.15.7.min.js"></script>
-    
+    <!-- The main font starts downloading right away instead of after style.css is read -->
+    <link rel="preload" href="vendor/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="text-white">
@@ -375,7 +373,7 @@
             </section>
 
             <nav id="nav-container" class="mb-4"></nav>
-            <main id="workout-container" class="space-y-4"></main>
+            <main id="workout-container" class="space-y-4"><div class="skeleton" style="height:6rem" aria-hidden="true"></div><div class="skeleton" style="height:10rem" aria-hidden="true"></div><div class="skeleton" style="height:10rem" aria-hidden="true"></div></main>
 
             <!-- Profile: you (account + stats), About you, then the settings in grouped cards -->
             <section id="profile-view" class="hidden pb-6">
@@ -450,6 +448,10 @@
     <script src="library.js"></script>
     <script src="i18n.js"></script>
     <script src="calc.js"></script>
+    <!-- Icons are stored inside the app (vendor folder), only the ones it uses (built by tools/build-icons.js).
+         They load here, after the page, so they don't hold up the first screen.
+         Drag & drop (vendor/sortable-1.15.7.min.js) is loaded by app.js only when the Plan list needs it. -->
+    <script src="vendor/lucide-icons.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
