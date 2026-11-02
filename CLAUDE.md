@@ -20,7 +20,8 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 - Email links (reset password, confirm email) open inside the app (`?mode=...&oobCode=...`, see EMAIL LINKS in `app.js`). This needs one Firebase setting: Authentication → Templates → Customize action URL → `https://apex-liftt.netlify.app/`.
 - `admin.html`, `admin.js`: the admin page (users, insights, client notes, visits).
 - `admin-utils.js`: helpers shared by `admin.js` and `admin-coach.js` (`$`, `esc`, `isObj`); loaded before both.
-- `admin-coach.js`: the coach schedule builder; sends routines and messages to `users/{uid}/coach/plan`.
+- `admin-coach.js`: the coach schedule builder; sends routines and messages to `users/{uid}/coach/plan`. Also used by the coach app.
+- `admin-coaches.js`: the admin's Coaches tab: invite coaches (`coachInvites`), switch them on/off (`coaches/{uid}.active`), see and remove their clients (`coaches/{uid}/members`).
 - `firestore.rules`: database security rules. They are **not** deployed by Netlify: after changing them, tell the owner to paste them into Firebase (Firestore Database → Rules → Publish) **before** deploying the site.
 - `privacy.html`, `terms.html`: policy pages (English and Arabic sections).
 - `sw.js`: offline cache. Add new app files to `APP_FILES`.

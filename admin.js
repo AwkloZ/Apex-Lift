@@ -270,11 +270,13 @@
             .map(([v, l]) => `<div class="stat"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join('');
     };
     const render = () => {
-        $('main').innerHTML = `<div class="tabs" role="tablist"><button data-tab="users" role="tab" aria-selected="${tab === 'users'}" class="${tab === 'users' ? 'on' : ''}">Users</button><button data-tab="insights" role="tab" aria-selected="${tab === 'insights'}" class="${tab === 'insights' ? 'on' : ''}">Insights</button></div>
-            <div class="stats">${kpis()}</div><div id="view"></div>
+        $('main').innerHTML = `<div class="tabs" role="tablist"><button data-tab="users" role="tab" aria-selected="${tab === 'users'}" class="${tab === 'users' ? 'on' : ''}">Users</button><button data-tab="insights" role="tab" aria-selected="${tab === 'insights'}" class="${tab === 'insights' ? 'on' : ''}">Insights</button><button data-tab="coaches" role="tab" aria-selected="${tab === 'coaches'}" class="${tab === 'coaches' ? 'on' : ''}">Coaches</button></div>
+            ${tab === 'coaches' ? '' : `<div class="stats">${kpis()}</div>`}<div id="view"></div>
             <p class="note">Data is used to support users and improve Apex Lift, as described in the Privacy Policy. Never sell or share it. Opening, downloading and coaching an account is recorded in the admin log.</p>`;
         document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });
-        if (tab === 'users') renderUsers(); else renderInsights();
+        if (tab === 'users') renderUsers();
+        else if (tab === 'coaches') window.ApexCoaches.render($('view'), { db, auth, audit }); // admin-coaches.js
+        else renderInsights();
     };
     const renderUsers = () => {
         const goals = Object.entries(LABEL.goal).map(([k, l]) => `<option value="${k}" ${fGoal === k ? 'selected' : ''}>${l}</option>`).join('');
