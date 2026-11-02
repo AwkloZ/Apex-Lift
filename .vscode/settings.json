@@ -1,0 +1,10 @@
+{
+    "liveServer.settings.host": "localhost",
+    "liveServer.settings.port": 5500,
+    "liveServer.settings.root": "/",
+    "liveServer.settings.ignoreFiles": [
+        "tools/**",
+        "docs/**",
+        "**/node_modules/**"
+    ]
+}

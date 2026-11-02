@@ -53,6 +53,8 @@ Test rule changes in the Firestore emulator, and test app and admin changes in a
 - Coach flow in a browser: `cd tools/rules-test && npm run e2e` (emulators + Playwright, `tools/coach-e2e.js`).
 - Any page opened on `localhost` with `?emu=1` (e.g. `index.html?emu=1`, `admin.html?emu=1`, `coach.html?emu=1`) uses the emulators instead of the real Firebase. `?emu=1` does nothing on the real site.
 
+Live Server in VS Code (`.vscode/settings.json`): opens on `http://localhost:5500` (not 127.0.0.1, where Google sign-in is refused). The apps: `/index.html` (Apex Lift), `/coach.html` (Apex Coach), `/admin.html` (admin). Without `?emu=1` they use the real Firebase.
+
 Design check: `node tools/design-check.js [--lang en|ar] [--theme dark|light]` (needs Playwright) opens every app screen and lists capital-letter labels, text under 12px, tap targets under 44px (40px for text buttons), unlabeled icon buttons and outside font requests. Run it in all four combinations after changing the app's look.
 
 ## Screens and navigation (keep every screen in one of these)
