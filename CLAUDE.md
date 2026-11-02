@@ -4,13 +4,16 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 
 ## Branch rule (important)
 
-- **`Main` is the live site** (Netlify deploys it) and the branch the owner pulls into VS Code to test. Everything ends up on `Main`.
-- **One branch per app** for working on that app alone:
-  - `apex-lift`: the Apex Lift app (`index.html`, `app.js`, `style.css`, `i18n.js`, `calc.js`, `sw.js`, `require-sign-in.js`, …)
-  - `apex-coach`: the coach app (`coach.html`, `coach.js`, `coach-sign-in.js`, `coach.css`, `coach.webmanifest`)
-  - `apex-admin`: the admin page (`admin.html`, `admin.js`, `admin-coaches.js`, `admin.css`)
-- When the owner names an app ("in the coach app…"), work on that app's branch: `git fetch origin <branch> Main && git checkout -B <branch> origin/<branch> && git merge origin/Main` (bring it up to date with `Main` first), commit there, push it (`git push origin <branch>`), then merge it into `Main` and push `Main` too, unless the owner says to keep it on the branch only for now.
-- Shared files (`firestore.rules`, `library.js`, `admin-utils.js`, `admin-coach.js` (used by admin and coach), `vendor/`, `icons/`, `_headers`, `_redirects`, `CLAUDE.md`, `tools/`) affect more than one app: change them on `Main` (or merge to `Main` right away) and then merge `Main` into the app branches.
+- **`Main` is the live site** (Netlify deploys it) and the branch the owner pulls into VS Code to test. It has every app and all shared files. Everything ends up on `Main`.
+- **One branch per app, holding only that app's files** (plus the few shared files the app needs to run in Live Server on its own):
+  - `apex-lift`: the Apex Lift app: `index.html`, `app.js`, `style.css`, `tailwind.css`, `i18n.js`, `calc.js`, `library.js`, `require-sign-in.js`, `sw.js`, `manifest.webmanifest`, `privacy.html`, `terms.html`, `icons/`, `vendor/`, and its tools (tailwind, calc test, design check, icons).
+  - `apex-coach`: the coach app: `coach.html`, `coach.js`, `coach-sign-in.js`, `coach.css`, `coach.webmanifest`, and to run: `admin-coach.js`, `admin-utils.js`, `library.js`, `privacy.html`, `icons/`, the Firebase compat files, `vendor/lucide-icons.js`, `vendor/fonts/`.
+  - `apex-admin`: the admin page: `admin.html`, `admin.js`, `admin-coaches.js`, `admin.css`, and to run: `admin-coach.js`, `admin-utils.js`, `library.js`, `icons/icon-192.png`, the Firebase compat files, `vendor/fonts/`.
+  - Only on `Main`: `firestore.rules`, `_headers`, `_redirects`, `docs/`, `tools/rules-test/`, `tools/coach-e2e.js`.
+- **Never `git merge` an app branch into `Main`** (or `Main` into an app branch): the branch doesn't have the other apps' files, so a merge would delete them from `Main` and the live site. Move changes by copying files instead:
+  - branch → Main: `git checkout -B Main origin/Main && git checkout origin/<branch> -- <the files you changed>`, commit, push `Main`.
+  - Main → branch (shared files changed): on the branch, `git checkout origin/Main -- <those files>`, commit, push the branch.
+- When the owner names an app ("in the coach app…"), work on that app's branch (`git fetch origin && git checkout -B <branch> origin/<branch>`), commit and push it, then copy the changed files to `Main` and push `Main` too, unless the owner says to keep it on the branch only for now. Changes to shared files (`library.js`, `admin-coach.js`, `admin-utils.js`, `vendor/`, `firestore.rules`, …) are made on `Main` and copied to the branches that have them. Rebuild `vendor/lucide-icons.js` on `Main` only (it needs every app's files).
 - If the owner doesn't name an app, work on `Main` as before. Never leave work only on a separate `claude/...` branch: work on other branches gets lost between chats.
 - Before starting, fetch again: another chat may have pushed since.
 - After pushing, tell the owner the commit (short hash and title) and which branch(es) it is on.
