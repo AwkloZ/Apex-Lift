@@ -293,6 +293,20 @@ T('coach removes a client; a client who already left is handled', async ({ brows
     await p.context().close();
 });
 
+T('coach app: signing in with the sign-in page', async ({ browser, base }) => {
+    await seedCoach();
+    const p = await openAs(browser, base, 'coach.html', null);
+    check('signed out: the sign-in page shows', await waitText(p, /Continue with Google/));
+    await p.fill('#em', COACH.email); await p.fill('#pw', 'wrong-password');
+    await p.click('#si');
+    check('wrong password is explained', await waitText(p, /Wrong email or password/));
+    await p.fill('#pw', PASS);
+    await p.click('#si');
+    check('signed in: the coach sees their clients', await waitText(p, /No clients yet/));
+    check('coach app: no errors', !p.errors.length, p.errors.join(' | '));
+    await p.context().close();
+});
+
 (async () => {
     await loadRules(); await clearDb(); await clearAuth();
     for (const u of [ADMIN, COACH, COACH2, OTHER, CLIENT]) await addUser(u);

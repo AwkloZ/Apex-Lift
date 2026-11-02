@@ -35,38 +35,9 @@
     const bindSignOut = () => { const b = $('so2'); if (b) b.onclick = () => auth.signOut(); };
     const forgetInvite = () => { invite = ''; params.delete('invite'); history.replaceState(null, '', location.pathname + (params.toString() ? `?${params}` : '')); };
 
-    // ---------- signing in (Google, or email and password) ----------
-    const signInScreen = (msg = '') => {
-        screen(`<div class="center" style="padding-bottom:20px"><h1>Apex Coach</h1><p>${invite ? 'You were invited to coach on Apex Lift. Sign in with the email the invitation was sent to.' : 'Sign in with your coach account.'}</p></div>
-            <button id="g" class="btn gold wide">Continue with Google</button>
-            <div class="or">or with email</div>
-            <input id="em" class="field" type="email" autocomplete="email" placeholder="Email">
-            <input id="pw" class="field" type="password" autocomplete="current-password" placeholder="Password (at least 8 characters)">
-            <button id="si" class="btn wide">Sign in</button>
-            <button id="su" class="btn wide">Create account</button>
-            <button id="fp" class="linkbtn note" style="display:block;margin:6px auto">Forgot password?</button>
-            <p id="err" class="err" style="text-align:center">${esc(msg)}</p>`);
-        const err = m => { $('err').textContent = m; };
-        const creds = () => [$('em').value.trim(), $('pw').value];
-        $('g').onclick = async () => {
-            const p = new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' });
-            try { await auth.signInWithPopup(p); }
-            catch (e) { if (['auth/popup-blocked', 'auth/operation-not-supported-in-this-environment', 'auth/cancelled-popup-request'].includes(e.code)) return auth.signInWithRedirect(p); if (e.code !== 'auth/popup-closed-by-user') err(e.code || 'Sign-in failed'); }
-        };
-        $('si').onclick = async () => { const [e, p] = creds(); if (!e || !p) return err('Enter your email and password.'); try { await auth.signInWithEmailAndPassword(e, p); } catch (x) { err(/wrong-password|invalid-credential|user-not-found/.test(x.code || '') ? 'Wrong email or password.' : (x.code || 'Sign-in failed')); } };
-        $('su').onclick = async () => {
-            const [e, p] = creds(); if (!e || p.length < 8) return err('Enter your email and a password of at least 8 characters.');
-            try { const r = await auth.createUserWithEmailAndPassword(e, p); await r.user.sendEmailVerification(); } catch (x) { err(x.code === 'auth/email-already-in-use' ? 'This email already has an account: sign in instead.' : (x.code || 'Could not create the account')); }
-        };
-        $('fp').onclick = async () => { const [e] = creds(); if (!e) return err('Enter your email first.'); try { await auth.sendPasswordResetEmail(e); err('We sent you an email to reset your password.'); } catch (x) { err(x.code || 'Could not send the email'); } };
-    };
-    const verifyScreen = () => {
-        center('Confirm your email', `We sent a link to <b>${esc(me.email)}</b>. Open it, then come back and tap Continue.`,
-            `<button id="cont" class="btn gold">Continue</button> <button id="resend" class="btn">Send again</button> ${signOutBtn}`);
-        $('cont').onclick = async () => { await me.reload(); await me.getIdToken(true); route(); };
-        $('resend').onclick = async e => { try { await me.sendEmailVerification(); e.target.textContent = 'Sent'; } catch (x) { e.target.textContent = 'Try later'; } };
-        bindSignOut();
-    };
+    // ---------- signing in: coach-sign-in.js ----------
+    const signInScreen = (msg = '') => window.ApexCoachSignIn.show({ el: $('main'), auth, invited: !!invite, msg });
+    const verifyScreen = () => window.ApexCoachSignIn.verify({ el: $('main'), auth, user: me, onContinue: route });
 
     // ---------- which screen ----------
     const route = async () => {
@@ -207,7 +178,7 @@
     auth.onAuthStateChanged(u => {
         me = u; $('signout').hidden = !u; $('who').textContent = u ? (u.email || '') : '';
         if (!u) return signInScreen();
-        if (!u.emailVerified && !u.providerData.some(p => p.providerId === 'google.com')) return verifyScreen();
+        if (window.ApexCoachSignIn.needsVerify(u)) return verifyScreen();
         route();
     });
 })();

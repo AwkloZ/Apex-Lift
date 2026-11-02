@@ -37,6 +37,9 @@
 /coach.js
   X-Robots-Tag: noindex, nofollow
 
+/coach-sign-in.js
+  X-Robots-Tag: noindex, nofollow
+
 /admin-coaches.js
   X-Robots-Tag: noindex, nofollow
 
