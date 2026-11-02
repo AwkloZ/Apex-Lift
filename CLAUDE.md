@@ -21,6 +21,8 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 - `admin.html`, `admin.js`: the admin page (users, insights, client notes, visits).
 - `admin-utils.js`: helpers shared by `admin.js` and `admin-coach.js` (`$`, `esc`, `isObj`); loaded before both.
 - `admin-coach.js`: the coach schedule builder; sends routines and messages to `users/{uid}/coach/plan`. Also used by the coach app.
+- `coach.html`, `coach.js`, `coach.webmanifest`: Apex Coach, the app for coaches (English). A coach accepts the admin's invitation (`coach.html?invite=CODE`), makes client links (`coachCodes`, `/?coach=CODE`), sees their clients (`coaches/{uid}/members`) and sends routines and messages with `admin-coach.js` (their templates in `coaches/{uid}/templates`).
+- `admin.css`: styles shared by `admin.html` and `coach.html`.
 - `admin-coaches.js`: the admin's Coaches tab: invite coaches (`coachInvites`), switch them on/off (`coaches/{uid}.active`), see and remove their clients (`coaches/{uid}/members`).
 - `firestore.rules`: database security rules. They are **not** deployed by Netlify: after changing them, tell the owner to paste them into Firebase (Firestore Database → Rules → Publish) **before** deploying the site.
 - `privacy.html`, `terms.html`: policy pages (English and Arabic sections).
@@ -31,7 +33,7 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 
 ## Conventions
 
-- Keep each file's line endings: `app.js`, `admin.js`, `admin-utils.js`, `admin-coach.js`, `library.js`, `i18n.js`, `calc.js`, `index.html`, `admin.html`, `privacy.html`, `terms.html` and `style.css` use CRLF; `sw.js`, `tailwind.css` and `firestore.rules` use LF.
+- Keep each file's line endings: `app.js`, `admin.js`, `admin-utils.js`, `admin-coach.js`, `admin-coaches.js`, `coach.js`, `library.js`, `i18n.js`, `calc.js`, `index.html`, `admin.html`, `coach.html`, `admin.css`, `privacy.html`, `terms.html` and `style.css` use CRLF; `sw.js`, `tailwind.css` and `firestore.rules` use LF.
 - New text shown in the app needs an Arabic translation in the `AR` table in `i18n.js`.
 - After changing Tailwind classes in `index.html` or `app.js`, rebuild tailwind.css:
   `npx tailwindcss@3.4.17 -c tools/tailwind.config.js -i tools/tailwind.in.css -o tailwind.css --minify`

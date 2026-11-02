@@ -14,7 +14,8 @@ window.ApexCoach = (() => {
     const muscleOf = name => Object.keys(exerciseDictionary).find(m => exerciseDictionary[m].includes(name)) || '';
     const ALL_EX = [...new Set(Object.values(exerciseDictionary).flat())].sort();
 
-    let S = null; // { db, auth, client, mode, targetId, routine, note, dirty, templates, onSent }
+    let S = null; // { db, auth, client, mode, targetId, routine, note, dirty, templates, onSent, templatesPath }
+    // templatesPath: where saved templates live: 'coachTemplates' (admin, the default) or 'coaches/{uid}/templates' (a coach)
 
     // ---------- routine helpers (same shape the app uses: 7 days, each { id, day, title, isRest, recoveryType, savedTitle, exercises }) ----------
     const dayOrder = startDay => { const s = Math.max(0, DAY_NAMES.indexOf(startDay)); return DAY_NAMES.map((_, i) => DAY_NAMES[(s + i) % 7]); };
@@ -70,7 +71,7 @@ window.ApexCoach = (() => {
     };
     const loadTemplates = async () => {
         try {
-            const qs = await S.db.collection('coachTemplates').get(), list = [];
+            const qs = await S.db.collection(S.templatesPath || 'coachTemplates').get(), list = [];
             qs.forEach(d => { const x = d.data() || {}; if (isObj(x.routine)) list.push({ id: d.id, name: String(x.name || 'Template'), routine: x.routine, updatedAt: x.updatedAt || 0 }); });
             if (!S) return;
             S.templates = list.sort((a, b) => a.name.localeCompare(b.name));
@@ -286,7 +287,7 @@ window.ApexCoach = (() => {
         const same = (S.templates || []).find(t => t.name.toLowerCase() === name.toLowerCase());
         if (same && !confirm(`Replace the template "${same.name}"?`)) return;
         try {
-            const ref = same ? S.db.collection('coachTemplates').doc(same.id) : S.db.collection('coachTemplates').doc();
+            const ref = same ? S.db.collection(S.templatesPath || 'coachTemplates').doc(same.id) : S.db.collection(S.templatesPath || 'coachTemplates').doc();
             const routine = { name: r.name, schedule: r.schedule };
             await ref.set({ name, routine, updatedAt: Date.now() });
             msg(`Saved as template "${esc(name)}".`, 'ok');
@@ -296,7 +297,7 @@ window.ApexCoach = (() => {
     };
     const deleteTemplate = async () => {
         const t = (S.templates || []).find(x => x.id === (S.from || '').slice(4)); if (!t || !confirm(`Delete the template "${t.name}"?`)) return;
-        try { await S.db.collection('coachTemplates').doc(t.id).delete(); S.from = ''; await loadTemplates(); msg('Template deleted.'); }
+        try { await S.db.collection(S.templatesPath || 'coachTemplates').doc(t.id).delete(); S.from = ''; await loadTemplates(); msg('Template deleted.'); }
         catch (e) { console.warn(e); msg(`Could not delete (${esc(e.code || 'error')}).`, 'err'); }
     };
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && S) close(); });

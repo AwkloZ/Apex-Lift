@@ -101,6 +101,56 @@ T('admin invites a coach and switches them off', async ({ browser, base }) => {
     await p.context().close();
 });
 
+// ---------- coach app ----------
+const ICODE = 'ABCDEFGH';
+const seedInvite = (email = COACH.email) => setDoc(`coachInvites/${ICODE}`, { name: COACH.name, email, by: ADMIN.uid, createdAt: 1, usedBy: '', usedAt: 0 });
+const seedCoach = (active = true, c = COACH) => setDoc(`coaches/${c.uid}`, { name: c.name, email: c.email, invite: ICODE, active, createdAt: 2 });
+
+T('coach accepts an invite', async ({ browser, base }) => {
+    await seedInvite();
+    const p = await openAs(browser, base, 'coach.html', COACH, `&invite=${ICODE}`);
+    check('claim screen names the coach', await waitText(p, /invited as Coach Test/));
+    await p.click('#accept');
+    check('after accepting: client list, empty', await waitText(p, /No clients yet/));
+    const c = await getDoc(`coaches/${COACH.uid}`), inv = await getDoc(`coachInvites/${ICODE}`);
+    check('coach account is active and the invite is used', c && c.active === true && inv.usedBy === COACH.uid, JSON.stringify([c, inv]));
+    check('invite removed from the address', !(await p.evaluate(() => location.search.includes('invite'))));
+    check('coach app: no errors', !p.errors.length, p.errors.join(' | '));
+    await p.context().close();
+});
+T('coach app: wrong account, not a coach, switched off', async ({ browser, base }) => {
+    await seedInvite();
+    let p = await openAs(browser, base, 'coach.html', OTHER, `&invite=${ICODE}`);
+    check('invite for another email is refused', await waitText(p, /This invitation is for another email/));
+    await p.context().close();
+    p = await openAs(browser, base, 'coach.html', OTHER);
+    check('a normal account sees "not a coach"', await waitText(p, /isn.t a coach account/));
+    await p.context().close();
+    await seedCoach(false);
+    p = await openAs(browser, base, 'coach.html', COACH);
+    check('a switched-off coach is told so', await waitText(p, /switched off/));
+    check('coach app: no errors', !p.errors.length, p.errors.join(' | '));
+    await p.context().close();
+});
+T('coach makes and deletes a client code, sees clients', async ({ browser, base }) => {
+    await seedCoach();
+    await setDoc(`coaches/${COACH.uid}/members/${CLIENT.uid}`, { code: 'KKKKKKKK', name: 'Client One', email: CLIENT.email, joinedAt: 4 });
+    await setDoc(`users/${CLIENT.uid}`, { updatedAt: Date.now() });
+    const p = await openAs(browser, base, 'coach.html', COACH);
+    check('client list shows the client', await waitText(p, /Client One/));
+    await p.click('#new-code');
+    check('a client link is shown', await waitText(p, /\?coach=[A-HJ-NP-Z2-9]{8}/));
+    const code = (await text(p)).match(/\?coach=([A-HJ-NP-Z2-9]{8})/)[1];
+    const cc = await getDoc(`coachCodes/${code}`);
+    check('code saved for this coach', cc && cc.coach === COACH.uid && cc.name === COACH.name, JSON.stringify(cc));
+    await p.click(`[data-del-code="${code}"]`);
+    await p.waitForTimeout(800);
+    check('code deleted', !(await getDoc(`coachCodes/${code}`)));
+    if (process.env.SHOTS) await p.screenshot({ path: `${process.env.SHOTS}/coach-clients.png`, fullPage: true });
+    check('coach app: no errors', !p.errors.length, p.errors.join(' | '));
+    await p.context().close();
+});
+
 (async () => {
     await loadRules(); await clearDb(); await clearAuth();
     for (const u of [ADMIN, COACH, COACH2, OTHER, CLIENT]) await addUser(u);

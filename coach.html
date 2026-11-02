@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <!-- No zooming: pinch is blocked (iPhone ignores user-scalable=0), double-tap zoom is off in the CSS (touch-action) -->
+    <script>document.addEventListener('gesturestart', function (e) { e.preventDefault(); }); document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });</script>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#050505">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Apex Coach">
+    <title>Apex Coach</title>
+    <link rel="manifest" href="coach.webmanifest">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        /* coach app only (the rest is shared with the admin page in admin.css) */
+        .narrow { max-width: 440px; margin: 0 auto; }
+        .field { display: block; width: 100%; background: #111113; border: 1px solid var(--line); color: #fff; border-radius: 10px; padding: 12px; font: 600 15px inherit; font-family: inherit; outline: none; margin-bottom: 10px; }
+        .field:focus { border-color: var(--gold); }
+        .btn.wide { width: 100%; min-height: 48px; font-size: 15px; margin-bottom: 10px; }
+        .or { color: var(--muted); font-size: 12px; text-align: center; margin: 14px 0; }
+        .client { display: flex; align-items: center; gap: 12px; width: 100%; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; color: #fff; font: inherit; text-align: start; cursor: pointer; min-height: 64px; }
+        .client:hover { border-color: rgba(255,255,255,0.2); }
+        .client .av { width: 40px; height: 40px; border-radius: 50%; background: var(--gold); color: #000; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .client .who { flex: 1; min-width: 0; }
+        .client .who b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .client .who span { color: var(--muted); font-size: 13px; }
+        .head-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 6px 0 12px; }
+        .head-row h2 { color: #fff; margin: 0; font-size: 22px; }
+        .code { font-family: ui-monospace, Menlo, monospace; color: #fff; font-weight: 700; letter-spacing: .08em; }
+    </style>
+</head>
+<body>
+    <header class="bar"><div class="bar-in">
+        <div class="logo" dir="ltr">APEX <span>LIFT</span></div><span class="tag">Coach</span>
+        <div class="grow"></div>
+        <span id="who" class="note" style="margin:0"></span>
+        <button id="signout" class="btn" hidden>Sign out</button>
+    </div></header>
+    <main id="main"><div class="center"><p>Loading…</p></div></main>
+    <div id="coach" class="coach" role="dialog" aria-modal="true" aria-label="Coach schedule builder"></div>
+    <script src="vendor/firebase-12.19.0/firebase-app-compat.js"></script>
+    <script src="vendor/firebase-12.19.0/firebase-auth-compat.js"></script>
+    <script src="vendor/firebase-12.19.0/firebase-firestore-compat.js"></script>
+    <script src="library.js"></script>
+    <script src="admin-utils.js"></script>
+    <script src="admin-coach.js"></script>
+    <script src="coach.js"></script>
+</body>
+</html>
