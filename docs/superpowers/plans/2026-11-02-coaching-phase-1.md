@@ -56,11 +56,11 @@ The subcollection is `members`, not `clients`: a top-level `clients` collection 
 - Produces: `cd tools/rules-test && npm test` runs `firebase emulators:exec --only firestore --project demo-apex "node --test rules.test.js"` against `../../firestore.rules`. Helpers in `rules.test.js`: `as(uid, {email, email_verified})` returns a Firestore for that user; `admin()` uses uid `O5aONnMMOLQI67fNpoNfu9GBrOL2`; `seed(fn)` writes with rules off.
 - Produces: emulator switch used by every page: on `localhost`/`127.0.0.1` only, with `?emu=1` in the address, `auth.useEmulator('http://127.0.0.1:9099')` and `db.useEmulator('127.0.0.1', 8080)` are called before any read. `?emu=1` is ignored on any other host.
 
-- [ ] **Step 1:** `package.json` (private, devDependencies `firebase-tools@15.34.2`, `@firebase/rules-unit-testing@6.0.0`, `firebase@12.19.0`), `firebase.json` (rules path `../../firestore.rules`, firestore 8080, auth 9099), `.gitignore` with `node_modules/`.
-- [ ] **Step 2:** Write baseline tests for today's rules: owner reads own `users/{uid}`, a stranger can't; admin reads any `users/{uid}`; admin writes a valid `coach/plan`, a stranger can't.
-- [ ] **Step 3:** Run `npm test`. Expected: 4 passing.
-- [ ] **Step 4:** Add the emulator switch to `app.js` and `admin.js`; add a "Rules tests" line under Testing in `CLAUDE.md`.
-- [ ] **Step 5:** Run `node tools/design-check.js` (unchanged result) and commit.
+- [x] **Step 1:** `package.json` (private, devDependencies `firebase-tools@15.34.2`, `@firebase/rules-unit-testing@6.0.0`, `firebase@12.19.0`), `firebase.json` (rules path `../../firestore.rules`, firestore 8080, auth 9099), `.gitignore` with `node_modules/`.
+- [x] **Step 2:** Write baseline tests for today's rules: owner reads own `users/{uid}`, a stranger can't; admin reads any `users/{uid}`; admin writes a valid `coach/plan`, a stranger can't.
+- [x] **Step 3:** Run `npm test`. Expected: 4 passing.
+- [x] **Step 4:** Add the emulator switch to `app.js` and `admin.js`; add a "Rules tests" line under Testing in `CLAUDE.md`.
+- [x] **Step 5:** Run `node tools/design-check.js` (unchanged result) and commit.
 
 ### Task 2: Rules — coach invitations and coach accounts
 
@@ -71,17 +71,17 @@ The subcollection is `members`, not `clients`: a top-level `clients` collection 
 - Produces rule functions `isCoach()` (`coaches/{auth.uid}` exists and `active == true`) and `myEmail()` (`request.auth.token.email.lower()`), used by Task 3.
 - Claiming is one batch from the coach: update `coachInvites/{code}` setting only `usedBy = auth.uid`, `usedAt = int`; create `coaches/{auth.uid}` with `invite = code`, `active = true`. The create rule uses `getAfter(coachInvites/{code}).data.usedBy == request.auth.uid`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
   - `admin creates an invite` (valid code, fields as in the data model) → allowed; non-admin → denied; bad code `ABC` → denied.
   - `invited coach reads own invite` (token email matches, any case) → allowed; other email → denied.
   - `claim with verified matching email` → batch allowed; afterwards `coaches/{uid}.active == true`.
   - `claim twice` (second account, same email) → denied; `claim with email_verified false` → denied; `claim with other email` → denied.
   - `create coaches/{uid} without claiming` → denied.
   - `admin sets active false` → allowed; admin changing `name` → denied; coach changing own `active` → denied; coach changing own `name` → allowed.
-- [ ] **Step 2:** Run `npm test`. Expected: the new tests FAIL.
-- [ ] **Step 3:** Add `match /coachInvites/{code}` and `match /coaches/{coachId}` (read: owner or admin; delete: admin) to `firestore.rules`, with a comment block in the file's plain style.
-- [ ] **Step 4:** Run `npm test`. Expected: all PASS.
-- [ ] **Step 5:** Commit.
+- [x] **Step 2:** Run `npm test`. Expected: the new tests FAIL.
+- [x] **Step 3:** Add `match /coachInvites/{code}` and `match /coaches/{coachId}` (read: owner or admin; delete: admin) to `firestore.rules`, with a comment block in the file's plain style.
+- [x] **Step 4:** Run `npm test`. Expected: all PASS.
+- [x] **Step 5:** Commit.
 
 ### Task 3: Rules — client codes, joining, leaving and coach access
 
@@ -96,7 +96,7 @@ The subcollection is `members`, not `clients`: a top-level `clients` collection 
 - `coachCodes/{code}`: create by `isCoach()` with `coach == auth.uid`; `get` by anyone signed in; `list`/`delete` by its coach or admin. `coaches/{c}/templates/{id}`: read/write by coach `c` while `isCoach()`, same field checks as `coachTemplates`.
 - Admin also reads all `members` with a collection-group rule `match /{path=**}/members/{uid}`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
   - `coach creates a client code` → allowed; inactive coach → denied; non-coach → denied; code with `coach` ≠ self → denied.
   - `client joins with a valid code` (batch) → allowed; then `coach reads users/{client}` and `history` → allowed; `coach reads backups` → denied.
   - `join with a deleted code` → denied; `join a switched-off coach` → denied; `link without members doc` → denied.
@@ -105,10 +105,10 @@ The subcollection is `members`, not `clients`: a top-level `clients` collection 
   - `client leaves` (deletes both) → coach read denied afterwards; `coach removes client` (deletes members) → allowed, then read denied.
   - `coach templates` → own allowed, another coach's denied.
   - Every existing baseline test still passes.
-- [ ] **Step 2:** Run `npm test`. Expected: new tests FAIL.
-- [ ] **Step 3:** Implement the rules; update the header comment of `firestore.rules` (who can read what).
-- [ ] **Step 4:** Run `npm test`. Expected: all PASS.
-- [ ] **Step 5:** Commit.
+- [x] **Step 2:** Run `npm test`. Expected: new tests FAIL.
+- [x] **Step 3:** Implement the rules; update the header comment of `firestore.rules` (who can read what).
+- [x] **Step 4:** Run `npm test`. Expected: all PASS.
+- [x] **Step 5:** Commit.
 
 ### Task 4: Admin page — Coaches tab
 
@@ -120,11 +120,11 @@ The subcollection is `members`, not `clients`: a top-level `clients` collection 
 - Consumes: data model; emulator switch (Task 1).
 - Produces: `tools/coach-e2e.js` starts the emulators (or expects them on 8080/9099), creates accounts with the Auth emulator REST call `accounts:batchCreate` (fixed `localId`, `emailVerified: true`), serves the repo and drives pages with `?emu=1`. Run: `cd tools/rules-test && npx firebase emulators:exec --only firestore,auth --project demo-apex "node ../coach-e2e.js"`.
 
-- [ ] **Step 1: Write the failing browser test** `admin invites a coach`: admin opens `admin.html?emu=1`, opens **Coaches**, enters name "Coach Test" and email, gets a code matching `^[A-HJ-NP-Z2-9]{8}$` and a link `…/coach.html?invite=CODE`; the list shows the coach as **Invited**. Then (data seeded as claimed) the list shows **Active**, the client count, and **Switch off** sets `active: false`.
-- [ ] **Step 2:** Run it. Expected: FAIL (no Coaches tab).
-- [ ] **Step 3:** Add the **Coaches** tab beside the existing tabs: invite form (name, email → creates `coachInvites/{code}`, shows link with a Copy button); list of invites (Invited / Used, delete unused) and coaches (name, email, joined, client count from the `members` collection group, Active / Off toggle); a coach's row opens their clients with **Remove from coach** (deletes the `members` doc and the client's `coach/link`). Log `coach` actions to `adminLog` as today.
-- [ ] **Step 4:** Run the browser test. Expected: PASS.
-- [ ] **Step 5:** Commit.
+- [x] **Step 1: Write the failing browser test** `admin invites a coach`: admin opens `admin.html?emu=1`, opens **Coaches**, enters name "Coach Test" and email, gets a code matching `^[A-HJ-NP-Z2-9]{8}$` and a link `…/coach.html?invite=CODE`; the list shows the coach as **Invited**. Then (data seeded as claimed) the list shows **Active**, the client count, and **Switch off** sets `active: false`.
+- [x] **Step 2:** Run it. Expected: FAIL (no Coaches tab).
+- [x] **Step 3:** Add the **Coaches** tab beside the existing tabs: invite form (name, email → creates `coachInvites/{code}`, shows link with a Copy button); list of invites (Invited / Used, delete unused) and coaches (name, email, joined, client count from the `members` collection group, Active / Off toggle); a coach's row opens their clients with **Remove from coach** (deletes the `members` doc and the client's `coach/link`). Log `coach` actions to `adminLog` as today.
+- [x] **Step 4:** Run the browser test. Expected: PASS.
+- [x] **Step 5:** Commit.
 
 ### Task 5: Coach app — sign-in, invite claim and client list
 
@@ -138,15 +138,15 @@ The subcollection is `members`, not `clients`: a top-level `clients` collection 
 - Coach app states, decided in this order after sign-in: invite in the address and not yet claimed → **Claim** screen ("You're invited as {name}"); no `coaches/{uid}` → **Not a coach** (shows email, "ask Apex Lift for an invitation"); `active == false` → **Switched off**; otherwise → **Clients**.
 - Sign-in: Google and email/password, the same Firebase config and auth domain rule as `admin.js`.
 
-- [ ] **Step 1: Write the failing browser tests** in `tools/coach-e2e.js`:
+- [x] **Step 1: Write the failing browser tests** in `tools/coach-e2e.js`:
   - `coach claims an invite`: open `coach.html?emu=1&invite=CODE`, sign in as the invited email, tap **Accept** → Clients screen, empty state "No clients yet".
   - `wrong account`: another email on the same link → message "This invitation is for another email".
   - `switched off`: after the admin switches the coach off and the page reloads → **Switched off** screen.
   - `client code`: **Invite a client** creates a code (8 letters) shown with a copy button and a link `https://…/?coach=CODE`; deleting it removes it from the list.
-- [ ] **Step 2:** Run. Expected: FAIL.
-- [ ] **Step 3:** Build `coach.html` (same look as `admin.html`: tokens, Inter/Cairo from `vendor/fonts`, phone-first list) and `coach.js` (an IIFE like `admin.js`): states above; client list from `coaches/{uid}/members` (name, email, joined, last active from `users/{uid}.activity`/`updatedAt`); client-code sheet; `coach.webmanifest` (`start_url: coach.html`, own name "Apex Coach"). Add the emulator switch.
-- [ ] **Step 4:** Run. Expected: PASS.
-- [ ] **Step 5:** Commit.
+- [x] **Step 2:** Run. Expected: FAIL.
+- [x] **Step 3:** Build `coach.html` (same look as `admin.html`: tokens, Inter/Cairo from `vendor/fonts`, phone-first list) and `coach.js` (an IIFE like `admin.js`): states above; client list from `coaches/{uid}/members` (name, email, joined, last active from `users/{uid}.activity`/`updatedAt`); client-code sheet; `coach.webmanifest` (`start_url: coach.html`, own name "Apex Coach"). Add the emulator switch.
+- [x] **Step 4:** Run. Expected: PASS.
+- [x] **Step 5:** Commit.
 
 ### Task 6: Client app — join and leave a coach
 
@@ -160,14 +160,14 @@ The subcollection is `members`, not `clients`: a top-level `clients` collection 
 - Joining while a coach is set: confirm "Leave {old} and join {new}?", then the leave batch, then the join batch.
 - Sign-in is required to join (signed-out: "Sign in to join a coach").
 
-- [ ] **Step 1: Write the failing browser tests**:
+- [x] **Step 1: Write the failing browser tests**:
   - `join with code`: signed-in client opens `index.html?emu=1&coach=CODE` → sheet shows "Join {coach name}?", **Join** → row shows the coach's name; the coach app lists the client.
   - `bad code` → "This code doesn't work. Check it with your coach."
   - `removed elsewhere`: admin removes the client → after the app comes back to the screen, the row shows "Join a coach".
   - `switch coach`: joining a second coach leaves the first (first coach's list no longer shows the client).
   - `coach sends a routine`: from the coach app's client page (Task 5 builder) → the client app shows "Your coach updated your routine" (existing `applyCoach`).
   - Arabic: every new string has an `AR` entry (the test switches to `ar` and checks no English text in the sheet).
-- [ ] **Step 2:** Run. Expected: FAIL.
-- [ ] **Step 3:** Implement; in the coach app's client page add **Send a routine**, **Edit a routine**, **Send a message** buttons calling `ApexCoach.open` with `templatesPath`; bump `APP_VERSION`/`CACHE`; rebuild `tailwind.css` if classes were added; run `node tools/build-icons.js` if a new icon is used.
-- [ ] **Step 4:** Run the browser tests, `npm test` (rules) and `node tools/design-check.js` in en/ar × dark/light. Expected: all PASS.
-- [ ] **Step 5:** Commit, push to `Main`, and tell the owner to publish `firestore.rules` before the deploy reaches users.
+- [x] **Step 2:** Run. Expected: FAIL.
+- [x] **Step 3:** Implement; in the coach app's client page add **Send a routine**, **Edit a routine**, **Send a message** buttons calling `ApexCoach.open` with `templatesPath`; bump `APP_VERSION`/`CACHE`; rebuild `tailwind.css` if classes were added; run `node tools/build-icons.js` if a new icon is used.
+- [x] **Step 4:** Run the browser tests, `npm test` (rules) and `node tools/design-check.js` in en/ar × dark/light. Expected: all PASS.
+- [x] **Step 5:** Commit, push to `Main`, and tell the owner to publish `firestore.rules` before the deploy reaches users.

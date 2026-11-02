@@ -151,6 +151,127 @@ T('coach makes and deletes a client code, sees clients', async ({ browser, base 
     await p.context().close();
 });
 
+// ---------- client app: joining and leaving a coach ----------
+const KCODE = 'KKKKKKKK', KCODE2 = 'MMMMMMMM';
+const seedCode = (c = COACH, code = KCODE) => setDoc(`coachCodes/${code}`, { coach: c.uid, name: c.name, createdAt: 3 });
+// the Apex Lift app, signed in as the client (sign-in screens skipped: already agreed, set up, About you filled in)
+const openClient = async (browser, base, extra = '', lang = 'en') => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    await ctx.route('**/require-sign-in.js', r => r.fulfill({ status: 200, contentType: 'text/javascript', body: '' }));
+    await ctx.addInitScript(([uid, email, lang]) => {
+        if (sessionStorage.getItem('e2eInit')) return; sessionStorage.setItem('e2eInit', '1');
+        localStorage.setItem('workoutLang_rakan_final', lang);
+        localStorage.setItem('workoutCloud_rakan_final', JSON.stringify({ uid, email, name: 'Client One', since: 1 }));
+        localStorage.setItem('workoutCloudLastUid_rakan_final', uid);
+        localStorage.setItem('workoutAgreed_rakan_final', JSON.stringify({ v: '2026-10.10', at: 1 }));
+        localStorage.setItem('workoutIntroSeen_rakan_final', '1');
+        localStorage.setItem('workoutBody_rakan_final', JSON.stringify({ birthYear: 1995, birthDate: '1995-05-20', sex: 'male', heightCm: 178, weightKg: 80, locked: true }));
+    }, [CLIENT.uid, CLIENT.email, lang]);
+    const p = await ctx.newPage();
+    p.errors = [];
+    p.on('pageerror', e => p.errors.push(e.message));
+    p.on('dialog', d => d.accept());
+    await p.goto(`${base}/index.html?emu=1${extra}`);
+    await p.waitForFunction(() => window.firebase && firebase.apps.length && firebase.auth, null, { timeout: 15000 });
+    await p.evaluate(([e, pw]) => firebase.auth().signInWithEmailAndPassword(e, pw), [CLIENT.email, PASS]);
+    return p;
+};
+// the app's own confirm pop-up: tap its Yes button
+const confirmYes = p => p.evaluate(() => { const b = document.getElementById('confirm-yes-btn'); if (b) b.click(); });
+const sheetText = p => p.evaluate(() => (document.getElementById('code-body') || {}).innerText || '');
+const waitSheet = (p, re, timeout = 10000) => p.waitForFunction(r => new RegExp(r).test((document.getElementById('code-body') || {}).innerText || ''), re.source, { timeout }).then(() => true, () => false);
+const rowText = p => p.evaluate(() => (document.getElementById('coach-row') || {}).innerText || '');
+const waitRow = (p, re, timeout = 10000) => p.waitForFunction(r => new RegExp(r).test((document.getElementById('coach-row') || {}).innerText || ''), re.source, { timeout }).then(() => true, () => false);
+
+T('client joins a coach with a link, coach sends a routine', async ({ browser, base }) => {
+    await seedCoach(); await seedCode();
+    const p = await openClient(browser, base, `&coach=${KCODE}`);
+    check('the link opens "Join Coach Test?"', await waitSheet(p, /Join Coach Test\?/));
+    check('the sheet says what the coach will see', /will see your profile/.test(await sheetText(p)));
+    // a new client answers the setup questions first: the join sheet must still be there afterwards
+    await p.evaluate(() => { const W = window.appState.wiz; if (W) { Object.assign(W, { goal: 'muscle', days: '4', exp: 'mid', eq: 'gym', session: '60' }); window.appActions.wizFinish('program'); } });
+    await p.waitForTimeout(4500);
+    check('after the setup questions the join sheet is visible', await p.evaluate(() => { const b = document.getElementById('coach-join'); if (!b) return false; const r = b.getBoundingClientRect(), hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!hit && b.contains(hit); }));
+    if (process.env.SHOTS) await p.screenshot({ path: `${process.env.SHOTS}/client-join.png` });
+    await p.evaluate(() => document.getElementById('coach-join').click());
+    check('Profile row shows the coach', await waitRow(p, /Coach Test/));
+    const m = await getDoc(`coaches/${COACH.uid}/members/${CLIENT.uid}`), l = await getDoc(`users/${CLIENT.uid}/coach/link`);
+    check('member entry and link saved', m && m.code === KCODE && l && l.coachId === COACH.uid, JSON.stringify([m, l]));
+    // the coach sees the client and sends a message from the coach app
+    const c = await openAs(browser, base, 'coach.html', COACH);
+    check('coach app lists the new client', await waitText(c, /Client One|client@x.com/));
+    await c.click(`[data-client="${CLIENT.uid}"]`);
+    await c.click('#c-note');
+    await c.waitForSelector('#coach.open');
+    await c.fill('#cb-note', 'Great work this week');
+    await c.click('#cb-send');
+    await c.waitForTimeout(1200);
+    const plan = await getDoc(`users/${CLIENT.uid}/coach/plan`);
+    check('the coach\'s message reached the client\'s account', plan && plan.mode === 'note' && plan.note === 'Great work this week', JSON.stringify(plan));
+    check('the client app shows the message toast', await waitText(p, /Your coach sent you a message/));
+    check('coach app: no errors', !c.errors.length, c.errors.join(' | '));
+    check('client app: no errors', !p.errors.length, p.errors.join(' | '));
+    await c.context().close(); await p.context().close();
+});
+T('client: bad code, switching coach, leaving, removed elsewhere', async ({ browser, base }) => {
+    await seedCoach(); await seedCoach(true, COACH2); await seedCode(); await seedCode(COACH2, KCODE2);
+    const p = await openClient(browser, base);
+    await p.waitForTimeout(1500);
+    check('no coach yet: row says Join a coach', await waitRow(p, /Join a coach/));
+    await p.evaluate(() => window.appActions.openCoachSheet());
+    await p.fill('#coach-in', 'ZZZZ-ZZZZ');
+    await p.evaluate(() => window.appActions.coachFind());
+    check('a code that doesn\'t exist is explained', await waitSheet(p, /This code doesn.t work/));
+    await p.evaluate(c => window.appActions.openCoachSheet(c), KCODE);
+    await p.evaluate(() => window.appActions.coachFind());
+    await waitSheet(p, /Join Coach Test/);
+    await p.evaluate(() => document.getElementById('coach-join').click());
+    await waitRow(p, /Coach Test/);
+    // switch to the second coach: the first one loses the client
+    await p.evaluate(c => window.appActions.openCoachSheet(c), KCODE2);
+    await p.evaluate(() => window.appActions.coachFind());
+    await waitSheet(p, /Join Second Coach/);
+    await p.evaluate(() => document.getElementById('coach-join').click());
+    await p.waitForTimeout(500); await confirmYes(p);
+    check('switching shows the new coach', await waitRow(p, /Second Coach/));
+    check('switching leaves the first coach', !(await getDoc(`coaches/${COACH.uid}/members/${CLIENT.uid}`)) && !!(await getDoc(`coaches/${COACH2.uid}/members/${CLIENT.uid}`)));
+    // leave
+    await p.evaluate(() => window.appActions.openCoachSheet());
+    await waitSheet(p, /Second Coach/);
+    await p.evaluate(() => document.getElementById('coach-leave').click());
+    await p.waitForTimeout(500); await confirmYes(p);
+    check('after leaving: Join a coach', await waitRow(p, /Join a coach/));
+    check('leaving removes both entries', !(await getDoc(`coaches/${COACH2.uid}/members/${CLIENT.uid}`)) && !(await getDoc(`users/${CLIENT.uid}/coach/link`)));
+    // join again, then the admin removes the client elsewhere: the app notices when it comes back
+    await p.evaluate(c => window.appActions.openCoachSheet(c), KCODE);
+    await p.evaluate(() => window.appActions.coachFind());
+    await waitSheet(p, /Join Coach Test/);
+    await p.evaluate(() => document.getElementById('coach-join').click());
+    await waitRow(p, /Coach Test/);
+    await api(docUrl(`coaches/${COACH.uid}/members/${CLIENT.uid}`), { method: 'DELETE' });
+    await p.evaluate(() => window.appActions.coachCheck(true));
+    check('removed elsewhere: back to Join a coach', await waitRow(p, /Join a coach/));
+    check('client app: no errors', !p.errors.length, p.errors.join(' | '));
+    await p.context().close();
+});
+T('client: Arabic coach sheet has no English left', async ({ browser, base }) => {
+    await seedCoach(); await seedCode();
+    const p = await openClient(browser, base, `&coach=${KCODE}`, 'ar');
+    await waitSheet(p, /Coach Test/);
+    const t = (await sheetText(p)).replace(/Coach Test|KKKK-KKKK|ABCD-EFGH/g, '');
+    check('join sheet is Arabic', !/[A-Za-z]{3,}/.test(t), t);
+    await p.evaluate(() => document.getElementById('coach-join').click());
+    await waitRow(p, /Coach Test/);
+    const r = (await rowText(p)).replace(/Coach Test/g, '');
+    check('coach row is Arabic', !/[A-Za-z]{3,}/.test(r), r);
+    await p.evaluate(() => window.appActions.openCoachSheet());
+    await p.waitForTimeout(500);
+    const t2 = (await sheetText(p)).replace(/Coach Test/g, '');
+    check('your-coach sheet is Arabic', !/[A-Za-z]{3,}/.test(t2), t2);
+    check('client app: no errors', !p.errors.length, p.errors.join(' | '));
+    await p.context().close();
+});
+
 (async () => {
     await loadRules(); await clearDb(); await clearAuth();
     for (const u of [ADMIN, COACH, COACH2, OTHER, CLIENT]) await addUser(u);

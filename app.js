@@ -264,7 +264,7 @@
 
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '78';
+    const APP_VERSION = '79';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -3315,6 +3315,7 @@ ${lib}`;
             cloudSubscribe(uid);
             maybeAutoBackup();
             openPendingCode();
+            window.appActions.coachCheck(true).then(openPendingCoach);
         } catch (e) { console.warn('Cloud sync failed', e); setCloudStatus('error', e, 'read'); cloudRetry(); if (fromWelcome) window.appActions.initOnboarding(); }
         finally { Cloud.starting = false; }
     };
@@ -3412,6 +3413,7 @@ ${lib}`;
         Cloud.unsub.forEach(u => u()); Cloud.unsub = []; Cloud.user = null; Cloud.sent = {};
         const hadAccount = !!(getCloudFlag() || {}).uid; // not a sign-in still on its way, or Firebase loading early with nobody signed in
         try { localStorage.removeItem(CLOUD_KEY); } catch (e) {}
+        if (window.appActions.coachCheck) setCoachLink(null); // the coach belongs to the account that left
         setCloudStatus('off');
         // an account is needed to use the app: back to the sign-in page (workouts stay on the phone)
         if (gateOn() && hadAccount && requireSignIn()) {
@@ -3429,6 +3431,7 @@ ${lib}`;
         if (!getCloudFlag()) return;
         if (document.visibilityState === 'hidden') { cloudHiddenAt = Date.now(); if (Cloud.user && Cloud.unsub.length) cloudFlush(); return; }
         cloudResume(cloudHiddenAt > 0 && Date.now() - cloudHiddenAt > 30000);
+        if (window.appActions.coachCheck) window.appActions.coachCheck(); // removed by the coach meanwhile? (at most once a minute)
     });
     window.addEventListener('pageshow', e => { if (e.persisted) cloudResume(true); });
 
@@ -3586,6 +3589,8 @@ ${lib}`;
                 // routines you shared with a code stop working too
                 try { const ss = await Cloud.db.collection('shared').where('by', '==', uid).get(); ss.forEach(d => paths.push(`shared/${d.id}`)); } catch (e) { console.warn('Shared routines', e); }
                 presenceStop();
+                // leave the coach too (their client list and your link)
+                try { const ls = await Cloud.db.doc(`users/${uid}/coach/link`).get(); if (ls.exists) { paths.push(`coaches/${(ls.data() || {}).coachId}/members/${uid}`, `users/${uid}/coach/link`); } } catch (e) { console.warn('Coach link', e); }
                 paths.push(coachPath(uid), presPath(uid), `users/${uid}`);
                 for (let i = 0; i < paths.length; i += 400) { const b = Cloud.db.batch(); paths.slice(i, i + 400).forEach(x => b.delete(Cloud.db.doc(x))); await b.commit(); }
                 try { await Cloud.auth.currentUser.delete(); }
@@ -3951,6 +3956,121 @@ ${lib}`;
             window.appActions.copyCode(code);
         }
     });
+
+    // 🧑‍🏫 MY COACH: join a coach with the code or link (?coach=CODE) they gave you, see who your coach is, leave.
+    // Joining writes coaches/{coach}/members/{me} and users/{me}/coach/link together (see COACHING in firestore.rules);
+    // from then on the coach can see your account and workouts (never your backups) and send you routines (coach/plan).
+    // A coach can remove you from their side: the app notices (the link points to a member entry that is gone) and forgets them.
+    const COACH_LINK_KEY = 'workoutCoachLink_rakan_final', PENDING_COACH = 'workoutPendingCoach';
+    const getCoachLink = () => { const v = readJSON(COACH_LINK_KEY, null); return isObj(v) && v.coachId ? v : null; };
+    const setCoachLink = v => { try { if (v) localStorage.setItem(COACH_LINK_KEY, JSON.stringify(v)); else localStorage.removeItem(COACH_LINK_KEY); } catch (e) {} renderCoachRow(); };
+    const renderCoachRow = () => {
+        const l = getCoachLink(), sub = document.getElementById('coach-sub'), lab = document.getElementById('coach-label');
+        if (lab) lab.textContent = l ? t('Your coach') : t('Join a coach');
+        if (sub) sub.textContent = l ? l.coachName : t("With your coach's code");
+    };
+    const coachMsg = (txt, bad = true) => `<p class="text-[12px] font-bold ${bad ? 'text-red-400' : 'text-slate-400'}">${esc(txt)}</p>`;
+    const coachFindBody = (code = '') => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Type or paste the code your coach gave you.')}</p>
+        <input id="coach-in" type="text" value="${esc(code ? fmtCode(code) : '')}" maxlength="12" placeholder="ABCD-EFGH" autocomplete="off" autocapitalize="characters" spellcheck="false" dir="ltr" class="code-input"
+            oninput="window.appActions.codeTyped(this)" onkeydown="if(event.key==='Enter')window.appActions.coachFind()">
+        <button id="coach-find" onclick="window.appActions.coachFind()" class="w-full mt-3 py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="search" class="w-4 h-4"></i>${t('Find coach')}</button>
+        <div id="coach-result" class="mt-4"></div>`;
+    const coachFoundBody = (code, name) => `<div class="glass-card p-4 border border-[#d4af37]/30 p-pop">
+            <div class="text-[17px] font-black text-white">${t('Join {name}?', { name: esc(name) })}</div>
+            <p class="text-[13px] font-bold text-slate-400 mt-2 leading-snug">${t('Your coach will see your profile, routines and workouts, and can send you routines and messages. Your backups stay private.')}</p>
+            <button id="coach-join" onclick="window.appActions.coachJoin()" class="w-full mt-4 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="user-check" class="w-5 h-5"></i>${t('Join')}</button>
+        </div>
+        <button onclick="window.appActions.openCoachSheet()" class="mt-3 text-[12px] font-bold text-slate-300 underline underline-offset-2 tap-feedback">${t('Use another code')}</button>`;
+    const coachMineBody = l => `<div class="glass-card p-4">
+            <div class="text-[12px] font-bold text-slate-400">${t('Your coach')}</div>
+            <div class="text-[17px] font-black text-white mt-0.5">${esc(l.coachName)}</div>
+            <p class="text-[13px] font-bold text-slate-400 mt-2 leading-snug">${t('Your coach sees your profile, routines and workouts, and can send you routines and messages.')}</p>
+        </div>
+        <button id="coach-leave" onclick="window.appActions.coachLeave()" class="w-full mt-3 py-3.5 rounded-xl bg-white/5 border border-white/10 text-red-400 text-[12px] font-bold tap-feedback">${t('Leave coach')}</button>`;
+    // a ?coach=CODE link: remember it, clean the address bar, and open it once you're signed in
+    try { const u = new URL(location.href), c = cleanCode(u.searchParams.get('coach')); if (c) { sessionStorage.setItem(PENDING_COACH, c); u.searchParams.delete('coach'); history.replaceState(history.state, '', u.pathname + u.search + u.hash); } } catch (e) {}
+    const openPendingCoach = () => {
+        let c = ''; try { c = sessionStorage.getItem(PENDING_COACH) || ''; sessionStorage.removeItem(PENDING_COACH); } catch (e) {}
+        if (cleanCode(c)) setTimeout(() => { window.appActions.openCoachSheet(c); window.appActions.coachFind(); }, 600);
+    };
+    const leaveBatch = (uid, coachId) => { const b = Cloud.db.batch(); b.delete(Cloud.db.doc(`coaches/${coachId}/members/${uid}`)); b.delete(Cloud.db.doc(`users/${uid}/coach/link`)); return withTimeout(b.commit()); };
+    let coachCheckedAt = 0;
+    Object.assign(window.appActions, {
+        // Is the coach still there? (they or the admin may have removed you). force: check now, not at most once a minute
+        coachCheck: async (force = false) => {
+            if (!Cloud.user || !Cloud.db || (!force && Date.now() - coachCheckedAt < 60000)) return;
+            coachCheckedAt = Date.now();
+            const uid = Cloud.user.uid;
+            try {
+                const ls = await withTimeout(Cloud.db.doc(`users/${uid}/coach/link`).get({ source: 'server' }));
+                if (!ls.exists) return setCoachLink(null);
+                const l = ls.data() || {};
+                const ms = await withTimeout(Cloud.db.doc(`coaches/${l.coachId}/members/${uid}`).get({ source: 'server' }));
+                if (ms.exists) return setCoachLink({ coachId: l.coachId, coachName: cut(l.coachName, 100, 'Coach'), code: l.code });
+                await Cloud.db.doc(`users/${uid}/coach/link`).delete().catch(() => {});
+                setCoachLink(null);
+            } catch (e) { console.warn('Coach check', e); /* offline: keep what we know */ }
+        },
+        openCoachSheet: (code = '') => {
+            window.appState.coachFound = null;
+            const l = getCoachLink(), c = cleanCode(code);
+            codeSheet(l && !c ? t('Your coach') : t('Join a coach'), l && !c ? coachMineBody(l) : coachFindBody(c));
+            if (!c) window.appActions.coachCheck(true).then(() => { const now = getCoachLink(); if (!!now !== !!l && document.getElementById('code-overlay').classList.contains('flex')) codeSheet(now ? t('Your coach') : t('Join a coach'), now ? coachMineBody(now) : coachFindBody()); });
+        },
+        coachFind: async () => {
+            const inp = document.getElementById('coach-in'), res = document.getElementById('coach-result'), btn = document.getElementById('coach-find'); if (!inp || !res) return;
+            const code = cleanCode(inp.value);
+            if (!code) { res.innerHTML = coachMsg(t('A code has 8 letters and numbers, like ABCD-EFGH.')); return; }
+            if (!Cloud.user || !Cloud.db) { res.innerHTML = coachMsg(t('Sign in to join a coach.')); return; }
+            if (btn) btn.disabled = true;
+            res.innerHTML = `<div class="flex items-center justify-center gap-2 py-4 text-[13px] font-bold text-slate-400"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>${t('Looking for your coach…')}</div>`;
+            if (window.lucide) window.lucide.createIcons({ root: res });
+            try {
+                const snap = await withTimeout(Cloud.db.doc(`coachCodes/${code}`).get({ source: 'server' }));
+                const d = snap.exists ? snap.data() || {} : null;
+                if (!d || typeof d.coach !== 'string') { res.innerHTML = coachMsg(t("This code doesn't work. Check it with your coach.")); return; }
+                const l = getCoachLink();
+                if (l && l.coachId === d.coach) { res.innerHTML = coachMsg(t('You already train with {name}.', { name: cut(d.name, 100, 'Coach') }), false); return; }
+                window.appState.coachFound = { code, coachId: d.coach, name: cut(d.name, 100, 'Coach') };
+                codeSheet(t('Join a coach'), coachFoundBody(code, window.appState.coachFound.name));
+            } catch (e) { console.warn('Coach code', e); res.innerHTML = coachMsg(codeErr(e)); }
+            finally { if (btn) btn.disabled = false; }
+        },
+        coachJoin: () => {
+            const f = window.appState.coachFound; if (!f || !Cloud.user) return;
+            const old = getCoachLink();
+            const go = async () => {
+                if (window.appState.coachBusy) return; window.appState.coachBusy = true;
+                const uid = Cloud.user.uid, f2 = { ...f };
+                try {
+                    if (old && old.coachId !== f2.coachId) await leaveBatch(uid, old.coachId); // one coach at a time
+                    const flag = getCloudFlag() || {}, now = Date.now(), b = Cloud.db.batch();
+                    b.set(Cloud.db.doc(`coaches/${f2.coachId}/members/${uid}`), { code: f2.code, name: cut(Cloud.user.displayName || flag.name || '', 100, ''), email: cut(Cloud.user.email || flag.email || '', 200, ''), joinedAt: now });
+                    b.set(Cloud.db.doc(`users/${uid}/coach/link`), { coachId: f2.coachId, coachName: f2.name, code: f2.code, joinedAt: now });
+                    await withTimeout(b.commit());
+                    window.appState.coachFound = null;
+                    setCoachLink({ coachId: f2.coachId, coachName: f2.name, code: f2.code });
+                    window.appActions.closeCodeSheet();
+                    window.appActions.showToast(t('You joined {name}', { name: f2.name }), 'success');
+                } catch (e) {
+                    console.warn('Join coach', e);
+                    if (old) window.appActions.coachCheck(true);
+                    const r = document.getElementById('code-body');
+                    if (r) r.insertAdjacentHTML('beforeend', `<div class="mt-3">${coachMsg(e && e.code === 'permission-denied' ? t("This code doesn't work. Check it with your coach.") : codeErr(e))}</div>`);
+                } finally { window.appState.coachBusy = false; }
+            };
+            if (old && old.coachId !== f.coachId) window.appActions.showConfirm(t('Leave {old} and join {new}?', { old: old.coachName, new: f.name }), t('{name} will no longer see your account.', { name: old.coachName }), go, false, t('Join'));
+            else go();
+        },
+        coachLeave: () => {
+            const l = getCoachLink(); if (!l || !Cloud.user) return;
+            window.appActions.showConfirm(t('Leave your coach?'), t('{name} will no longer see your account.', { name: l.coachName }), async () => {
+                try { await leaveBatch(Cloud.user.uid, l.coachId); setCoachLink(null); window.appActions.closeCodeSheet(); window.appActions.showToast(t('You left your coach'), 'success'); }
+                catch (e) { console.warn('Leave coach', e); window.appActions.showToast(codeErr(e), 'error'); }
+            }, true, t('Leave coach'));
+        }
+    });
+    renderCoachRow();
 
     // 📦 BACKUP FILE v2: readable by people and AI models (names instead of internal keys, real dates, kg and reps)
     const exerciseNames = () => {
