@@ -138,6 +138,58 @@ service cloud.firestore {
         && fields().at is int && fields().by is string;
     }
 
+    // ===== COACHING =====
+    // Coaches are invited by the admin (coachInvites), accept on coach.html, and then coach only the clients who
+    // joined them with one of their codes (coaches/{coach}/members/{client}). Switching a coach off (active: false)
+    // stops all of their access at once.
+    function myEmail() {
+      return request.auth.token.email.lower();
+    }
+    function emailVerified() {
+      return request.auth.token.email_verified == true;
+    }
+    function coachDoc(uid) {
+      return /databases/$(database)/documents/coaches/$(uid);
+    }
+    // signed in as a coach the admin hasn't switched off
+    function isCoach() {
+      return request.auth != null && exists(coachDoc(request.auth.uid)) && get(coachDoc(request.auth.uid)).data.active == true;
+    }
+
+    // coach invitations: made by the admin for one email; used once, by that email (verified), to create the coach account
+    match /coachInvites/{code} {
+      allow read, delete: if isAdmin();
+      allow get: if request.auth != null && resource.data.email == myEmail();
+      allow create: if isAdmin() && code.matches('^[A-HJ-NP-Z2-9]{8}$')
+        && fields().keys().hasOnly(['name', 'email', 'by', 'createdAt', 'usedBy', 'usedAt'])
+        && fields().name is string && fields().name.size() > 0 && fields().name.size() <= 100
+        && fields().email is string && fields().email.size() <= 200 && fields().email == fields().email.lower()
+        && fields().by == request.auth.uid && fields().createdAt is int
+        && fields().usedBy == '' && fields().usedAt == 0;
+      // accepting: in the same batch that creates coaches/{me}
+      allow update: if request.auth != null && emailVerified()
+        && resource.data.usedBy == '' && resource.data.email == myEmail()
+        && fields().diff(resource.data).affectedKeys().hasOnly(['usedBy', 'usedAt'])
+        && fields().usedBy == request.auth.uid && fields().usedAt is int
+        && existsAfter(coachDoc(request.auth.uid));
+    }
+
+    // coach accounts: created by accepting an invitation; the admin switches them on/off, the coach can change the name
+    match /coaches/{coachId} {
+      allow read: if isOwner(coachId) || isAdmin();
+      allow delete: if isAdmin();
+      allow create: if isOwner(coachId) && emailVerified()
+        && fields().keys().hasOnly(['name', 'email', 'invite', 'active', 'createdAt'])
+        && fields().active == true && fields().createdAt is int
+        && fields().name is string && fields().name.size() > 0 && fields().name.size() <= 100
+        && fields().invite is string && fields().email == myEmail()
+        && get(/databases/$(database)/documents/coachInvites/$(fields().invite)).data.usedBy == ''
+        && getAfter(/databases/$(database)/documents/coachInvites/$(fields().invite)).data.usedBy == coachId;
+      allow update: if (isAdmin() && fields().diff(resource.data).affectedKeys().hasOnly(['active']) && fields().active is bool)
+        || (isOwner(coachId) && fields().diff(resource.data).affectedKeys().hasOnly(['name'])
+            && fields().name is string && fields().name.size() > 0 && fields().name.size() <= 100);
+    }
+
     // everything else is closed
   }
 }

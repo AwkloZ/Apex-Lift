@@ -44,4 +44,55 @@ test('admin writes a coach plan, a stranger cannot', async () => {
     await assertFails(as('u2').doc('users/u1/coach/plan').set(plan()));
 });
 
-module.exports = { as, admin, anon, seed, plan, ADMIN, getEnv: () => env };
+// ---------- coach invitations and coach accounts ----------
+const CODE = 'ABCDEFGH';
+const invite = (extra = {}) => ({ name: 'Coach Test', email: 'coach@x.com', by: ADMIN, createdAt: 1, usedBy: '', usedAt: 0, ...extra });
+const COACH = 'c1', coachTok = { email: 'Coach@X.com', email_verified: true };
+// the coach's claim: mark the invite used and create the coach account, in one batch
+const claim = (db, uid = COACH, code = CODE) => {
+    const b = db.batch();
+    b.update(db.doc(`coachInvites/${code}`), { usedBy: uid, usedAt: 2 });
+    b.set(db.doc(`coaches/${uid}`), { name: 'Coach Test', email: 'coach@x.com', invite: code, active: true, createdAt: 2 });
+    return b.commit();
+};
+
+test('admin creates an invite; others and bad codes cannot', async () => {
+    await assertSucceeds(admin().doc(`coachInvites/${CODE}`).set(invite()));
+    await assertFails(as('u1', coachTok).doc('coachInvites/ZZZZZZZZ').set(invite()));
+    await assertFails(admin().doc('coachInvites/ABC').set(invite()));
+    await assertFails(admin().doc('coachInvites/ZZZZZZZZ').set(invite({ usedBy: 'x' })));
+});
+test('the invited email can read its invite (any letter case), others cannot', async () => {
+    await seed(db => db.doc(`coachInvites/${CODE}`).set(invite()));
+    await assertSucceeds(as(COACH, coachTok).doc(`coachInvites/${CODE}`).get());
+    await assertFails(as('u2', { email: 'other@x.com', email_verified: true }).doc(`coachInvites/${CODE}`).get());
+    await assertFails(as('u2', { email: 'other@x.com', email_verified: true }).collection('coachInvites').get());
+});
+test('claim with the verified invited email works once', async () => {
+    await seed(db => db.doc(`coachInvites/${CODE}`).set(invite()));
+    await assertSucceeds(claim(as(COACH, coachTok)));
+    const c = await admin().doc(`coaches/${COACH}`).get();
+    if (c.data().active !== true) throw new Error('coach should be active');
+    // a second account with the same email can't use it again
+    await assertFails(claim(as('c2', coachTok), 'c2'));
+});
+test('claim is refused for an unverified email or another email', async () => {
+    await seed(db => db.doc(`coachInvites/${CODE}`).set(invite()));
+    await assertFails(claim(as(COACH, { email: 'coach@x.com', email_verified: false })));
+    await assertFails(claim(as(COACH, { email: 'other@x.com', email_verified: true })));
+});
+test('a coach account cannot be created without claiming an invite', async () => {
+    await seed(db => db.doc(`coachInvites/${CODE}`).set(invite()));
+    await assertFails(as(COACH, coachTok).doc(`coaches/${COACH}`).set({ name: 'X', email: 'coach@x.com', invite: CODE, active: true, createdAt: 2 }));
+    await assertFails(as(COACH, coachTok).doc(`coaches/${COACH}`).set({ name: 'X', email: 'coach@x.com', invite: 'NOPENOPE', active: true, createdAt: 2 }));
+});
+test('admin switches a coach on/off; the coach can only rename', async () => {
+    await seed(db => db.doc(`coaches/${COACH}`).set({ name: 'Coach Test', email: 'coach@x.com', invite: CODE, active: true, createdAt: 2 }));
+    await assertSucceeds(admin().doc(`coaches/${COACH}`).update({ active: false }));
+    await assertFails(admin().doc(`coaches/${COACH}`).update({ name: 'Other' }));
+    await assertFails(as(COACH, coachTok).doc(`coaches/${COACH}`).update({ active: true }));
+    await assertSucceeds(as(COACH, coachTok).doc(`coaches/${COACH}`).update({ name: 'Coach Renamed' }));
+    await assertFails(as(COACH, coachTok).doc(`coaches/${COACH}`).update({ name: '' }));
+    await assertFails(as('u2').doc(`coaches/${COACH}`).get());
+    await assertSucceeds(as(COACH, coachTok).doc(`coaches/${COACH}`).get());
+});
