@@ -4,10 +4,16 @@ A workout tracking web app (English and Arabic), hosted on Netlify, with Google 
 
 ## Branch rule (important)
 
-- **All work happens on the `Main` branch.** Start from the latest `Main` (`git fetch origin Main && git checkout -B Main origin/Main`), commit there and push every change to `Main` (`git push origin Main`).
-- Never leave work only on a separate `claude/...` branch: the owner tests by pulling `Main` into VS Code automatically, and work on other branches gets lost between chats.
-- Before starting, pull `Main` again: another chat may have pushed since.
-- After pushing, tell the owner the commit (short hash and title).
+- **`Main` is the live site** (Netlify deploys it) and the branch the owner pulls into VS Code to test. Everything ends up on `Main`.
+- **One branch per app** for working on that app alone:
+  - `apex-lift`: the Apex Lift app (`index.html`, `app.js`, `style.css`, `i18n.js`, `calc.js`, `sw.js`, `require-sign-in.js`, …)
+  - `apex-coach`: the coach app (`coach.html`, `coach.js`, `coach-sign-in.js`, `coach.css`, `coach.webmanifest`)
+  - `apex-admin`: the admin page (`admin.html`, `admin.js`, `admin-coaches.js`, `admin.css`)
+- When the owner names an app ("in the coach app…"), work on that app's branch: `git fetch origin <branch> Main && git checkout -B <branch> origin/<branch> && git merge origin/Main` (bring it up to date with `Main` first), commit there, push it (`git push origin <branch>`), then merge it into `Main` and push `Main` too, unless the owner says to keep it on the branch only for now.
+- Shared files (`firestore.rules`, `library.js`, `admin-utils.js`, `admin-coach.js` (used by admin and coach), `vendor/`, `icons/`, `_headers`, `_redirects`, `CLAUDE.md`, `tools/`) affect more than one app: change them on `Main` (or merge to `Main` right away) and then merge `Main` into the app branches.
+- If the owner doesn't name an app, work on `Main` as before. Never leave work only on a separate `claude/...` branch: work on other branches gets lost between chats.
+- Before starting, fetch again: another chat may have pushed since.
+- After pushing, tell the owner the commit (short hash and title) and which branch(es) it is on.
 - Don't send files, zips or screenshots in the chat: the owner gets everything from `Main`. This applies to every Apex chat.
 
 ## Files
