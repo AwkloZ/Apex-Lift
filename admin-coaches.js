@@ -7,7 +7,8 @@ window.ApexCoaches = (() => {
     const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     const newCode = () => { const a = new Uint32Array(8); crypto.getRandomValues(a); return Array.from(a, x => CODE_ABC[x % 32]).join(''); };
     const fmtDate = t => t ? new Date(t).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
-    const inviteLink = code => `${location.origin}/coach.html?invite=${code}`;
+    // next to this page (works on the site and in a sub-folder on your computer, e.g. Live Server)
+    const inviteLink = code => new URL(`coach.html?invite=${code}`, location.href).href;
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     let C = null; // { el, db, auth, audit, invites, coaches, members: { coachUid: [ {uid, ...} ] }, lastLink }

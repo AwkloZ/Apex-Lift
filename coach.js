@@ -18,7 +18,8 @@
     const DAY = 86400000;
     const fmtDate = t => t ? new Date(t).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
     const ago = t => { if (!t) return 'not yet'; const d = Math.floor((Date.now() - t) / DAY); return d <= 0 ? 'today' : d === 1 ? 'yesterday' : `${d} days ago`; };
-    const clientLink = code => `${location.origin}/?coach=${code}`;
+    // the Apex Lift app next to this page (works on the site and in a sub-folder on your computer, e.g. Live Server)
+    const clientLink = code => new URL(`./?coach=${code}`, location.href).href;
     const withTimeout = (p, ms = 20000) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(Object.assign(new Error('timeout'), { code: 'timeout' })), ms))]);
 
     firebase.initializeApp(FIREBASE_CONFIG);
