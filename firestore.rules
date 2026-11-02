@@ -75,13 +75,23 @@ service cloud.firestore {
       // coach link: the coach this user joined (written by the user together with coaches/{coach}/members/{uid})
       match /coach/{docId} {
         allow read: if isOwner(uid) || isAdmin() || isCoachOf(uid);
-        allow delete: if isOwner(uid) || isAdmin() || (docId == 'link' && isCoachOf(uid));
-        allow create: if isOwner(uid) && docId == 'link'
+        // The link always names the one coach whose member list has this user: it can only be removed together with
+        // that member entry, and changing coach (update) must drop the old coach's entry in the same batch.
+        allow delete: if isAdmin()
+          || (isOwner(uid) && docId != 'link')
+          || (docId == 'link' && (isOwner(uid) || resource.data.coachId == request.auth.uid)
+              && !existsAfter(/databases/$(database)/documents/coaches/$(resource.data.coachId)/members/$(uid)));
+        allow create, update: if isOwner(uid) && docId == 'link'
           && fields().keys().hasOnly(['coachId', 'coachName', 'code', 'joinedAt'])
-          && fields().coachId is string && fields().code is string && fields().joinedAt is int
+          && fields().coachId is string && fields().coachId.size() > 0 && fields().coachId.size() <= 128
+          && fields().code is string && fields().code.matches('^[A-HJ-NP-Z2-9]{8}$') && fields().joinedAt is int
           && fields().coachName is string && fields().coachName.size() <= 100
-          && existsAfter(/databases/$(database)/documents/coaches/$(fields().coachId)/members/$(uid));
+          && existsAfter(/databases/$(database)/documents/coaches/$(fields().coachId)/members/$(uid))
+          && (resource == null || resource.data.coachId == fields().coachId
+              || !existsAfter(/databases/$(database)/documents/coaches/$(resource.data.coachId)/members/$(uid)));
+        // sentAt can't be in the future (a far-future date would block every later plan on the phone)
         allow create, update: if (isAdmin() || isCoachOf(uid)) && docId == 'plan'
+          && fields().sentAt is int && fields().sentAt <= request.time.toMillis() + 600000
           && fields().keys().hasOnly(['mode', 'routine', 'targetId', 'activate', 'note', 'coach', 'sentAt', 'appliedAt'])
           && (!('activate' in fields()) || fields().activate is bool)
           && fields().mode in ['add', 'replace', 'note']
@@ -90,7 +100,7 @@ service cloud.firestore {
           && fields().coach is string && fields().coach.size() <= 100
           && fields().targetId is string && fields().targetId.size() <= 60
           && (fields().mode == 'note' || (fields().routine is map && fields().routine.schedule is list && fields().routine.schedule.size() == 7));
-        allow update: if isOwner(uid)
+        allow update: if isOwner(uid) && docId == 'plan'
           && fields().diff(resource.data).affectedKeys().hasOnly(['appliedAt'])
           && fields().appliedAt is int;
       }
@@ -205,12 +215,17 @@ service cloud.firestore {
       match /members/{clientId} {
         allow get: if isOwner(clientId) || isAdmin() || (isOwner(coachId) && isCoach());
         allow list: if isAdmin() || (isOwner(coachId) && isCoach());
-        allow delete: if isOwner(clientId) || isOwner(coachId) || isAdmin();
+        // the client drops their entry only together with their link (or when the link names another coach)
+        allow delete: if isOwner(coachId) || isAdmin()
+          || (isOwner(clientId) && (!existsAfter(/databases/$(database)/documents/users/$(clientId)/coach/link)
+              || getAfter(/databases/$(database)/documents/users/$(clientId)/coach/link).data.coachId != coachId));
+        // joining: with the client's own email, a real code of this coach, and their link pointing here in the same batch
         allow create: if isOwner(clientId)
           && fields().keys().hasOnly(['code', 'name', 'email', 'joinedAt'])
           && fields().code is string && fields().joinedAt is int
           && fields().name is string && fields().name.size() <= 100
-          && fields().email is string && fields().email.size() <= 200
+          && fields().email == request.auth.token.get('email', '')
+          && getAfter(/databases/$(database)/documents/users/$(clientId)/coach/link).data.coachId == coachId
           && get(/databases/$(database)/documents/coachCodes/$(fields().code)).data.coach == coachId
           && get(coachDoc(coachId)).data.active == true;
       }

@@ -272,6 +272,27 @@ T('client: Arabic coach sheet has no English left', async ({ browser, base }) =>
     await p.context().close();
 });
 
+T('coach removes a client; a client who already left is handled', async ({ browser, base }) => {
+    await seedCoach();
+    await setDoc(`coaches/${COACH.uid}/members/${CLIENT.uid}`, { code: KCODE, name: '', email: CLIENT.email, joinedAt: 4 });
+    await setDoc(`users/${CLIENT.uid}/coach/link`, { coachId: COACH.uid, coachName: COACH.name, code: KCODE, joinedAt: 4 });
+    await setDoc(`users/${CLIENT.uid}`, { updatedAt: Date.now() });
+    await setDoc(`coaches/${COACH.uid}/members/${OTHER.uid}`, { code: KCODE, name: 'Gone Client', email: OTHER.email, joinedAt: 4 });
+    const p = await openAs(browser, base, 'coach.html', COACH);
+    check('a client with no name shows their email', await waitText(p, /client@x\.com/));
+    await p.click(`[data-client="${CLIENT.uid}"]`);
+    await p.click('#c-remove');
+    check('after removing, the list no longer has them', await waitText(p, /Gone Client/) && !(await text(p)).includes('client@x.com'));
+    check('member entry and link removed', !(await getDoc(`coaches/${COACH.uid}/members/${CLIENT.uid}`)) && !(await getDoc(`users/${CLIENT.uid}/coach/link`)));
+    // this one left meanwhile (their entry is gone): Remove must not get stuck
+    await p.click(`[data-client="${OTHER.uid}"]`);
+    await api(docUrl(`coaches/${COACH.uid}/members/${OTHER.uid}`), { method: 'DELETE' });
+    await p.click('#c-remove');
+    check('a client who already left: back to the list', await waitText(p, /No clients yet/));
+    check('coach app: no errors', !p.errors.length, p.errors.join(' | '));
+    await p.context().close();
+});
+
 (async () => {
     await loadRules(); await clearDb(); await clearAuth();
     for (const u of [ADMIN, COACH, COACH2, OTHER, CLIENT]) await addUser(u);

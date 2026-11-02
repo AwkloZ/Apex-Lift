@@ -37,6 +37,7 @@ window.ApexCoaches = (() => {
                     <span><button class="btn" data-copy="${esc(i.code)}">Copy link</button> <button class="btn" data-del-invite="${esc(i.code)}">Delete</button></span></div>`).join('')}</div>` : ''}
             <div id="co-panel"></div>`;
         $('ci-go').onclick = createInvite;
+        const cp = $('ci-copy'); if (cp) cp.onclick = () => copy(C.lastLink, cp);
         $('co-reload').onclick = refresh;
         C.el.querySelectorAll('[data-coach]').forEach(b => b.onclick = () => openCoach(b.dataset.coach));
         C.el.querySelectorAll('[data-toggle]').forEach(b => b.onclick = () => toggle(b.dataset.toggle, b));
@@ -58,7 +59,6 @@ window.ApexCoaches = (() => {
             await C.db.doc(`coachInvites/${code}`).set({ name, email, by: C.auth.currentUser.uid, createdAt: Date.now(), usedBy: '', usedAt: 0 });
             C.lastLink = inviteLink(code);
             await refresh();
-            const cp = $('ci-copy'); if (cp) cp.onclick = () => copy(C.lastLink, cp);
         } catch (e) { console.warn(e); msg(`Could not create the invite (${e.code || 'error'}). Publish the new firestore.rules if you haven't.`); }
         finally { btn.disabled = false; }
     };

@@ -217,3 +217,64 @@ test('admin reads every coach member list with one query', async () => {
     // admin removes a client from a coach
     await assertSucceeds(leave(admin()));
 });
+
+// ---------- review fixes: the link always names the one coach who has access ----------
+// switching coach is one batch: leave the old coach's list, join the new one, point the link at the new coach
+const sw = (db, from, to, code, uid = CLIENT) => {
+    const b = db.batch();
+    b.delete(db.doc(`coaches/${from}/members/${uid}`));
+    b.set(db.doc(`coaches/${to}/members/${uid}`), { code, name: 'Client', email: 'client@x.com', joinedAt: 5 });
+    b.set(db.doc(`users/${uid}/coach/link`), { coachId: to, coachName: 'Other', code, joinedAt: 5 });
+    return b.commit();
+};
+test('a coach cannot delete the link while keeping access', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await join(as(CLIENT, clientTok));
+    await assertFails(coachDb().doc(`users/${CLIENT}/coach/link`).delete());
+    // removing from their side and the link together is fine
+    const cdb = coachDb(), b = cdb.batch(); b.delete(cdb.doc(`coaches/${COACH}/members/${CLIENT}`)); b.delete(cdb.doc(`users/${CLIENT}/coach/link`));
+    await assertSucceeds(b.commit());
+});
+test('the client cannot drop the link alone or be in two coach lists', async () => {
+    await seedCoach(); await seedCoach(true, 'c2'); await seedCode(); await seedCode('c2', 'MMMMMMMM'); await seedClient();
+    await join(as(CLIENT, clientTok));
+    await assertFails(as(CLIENT, clientTok).doc(`users/${CLIENT}/coach/link`).delete());
+    // a second member entry without moving the link
+    await assertFails(as(CLIENT, clientTok).doc(`coaches/c2/members/${CLIENT}`).set({ code: 'MMMMMMMM', name: 'Client', email: 'client@x.com', joinedAt: 5 }));
+    // the member entry alone can't be dropped while the link names that coach
+    await assertFails(as(CLIENT, clientTok).doc(`coaches/${COACH}/members/${CLIENT}`).delete());
+    // switching in one batch works, and the old coach loses access
+    await assertSucceeds(sw(as(CLIENT, clientTok), COACH, 'c2', 'MMMMMMMM'));
+    await assertFails(coachDb().doc(`users/${CLIENT}`).get());
+    await assertSucceeds(as('c2', coachTok).doc(`users/${CLIENT}`).get());
+    // switching but keeping the old entry is refused
+    const kdb = as(CLIENT, clientTok), b = kdb.batch();
+    b.set(kdb.doc(`coaches/${COACH}/members/${CLIENT}`), { code: KCODE, name: 'Client', email: 'client@x.com', joinedAt: 6 });
+    b.set(kdb.doc(`users/${CLIENT}/coach/link`), { coachId: COACH, coachName: 'X', code: KCODE, joinedAt: 6 });
+    await assertFails(b.commit());
+});
+test('joining needs your own email and a real code; link fields are checked', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    const db = as(CLIENT, clientTok);
+    let b = db.batch();
+    b.set(db.doc(`coaches/${COACH}/members/${CLIENT}`), { code: KCODE, name: 'Victim', email: 'victim@gmail.com', joinedAt: 4 });
+    b.set(db.doc(`users/${CLIENT}/coach/link`), { coachId: COACH, coachName: 'Coach Test', code: KCODE, joinedAt: 4 });
+    await assertFails(b.commit());
+    b = db.batch();
+    b.set(db.doc(`coaches/${COACH}/members/${CLIENT}`), { code: KCODE, name: 'Client', email: 'client@x.com', joinedAt: 4 });
+    b.set(db.doc(`users/${CLIENT}/coach/link`), { coachId: COACH, coachName: 'Coach Test', code: 'X'.repeat(5000), joinedAt: 4 });
+    await assertFails(b.commit());
+    await assertSucceeds(join(db));
+    await assertFails(db.doc(`users/${CLIENT}/coach/link`).update({ appliedAt: 5 }));
+});
+test('a coach plan cannot be dated in the future', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await join(as(CLIENT, clientTok));
+    await assertFails(coachDb().doc(`users/${CLIENT}/coach/plan`).set(plan({ sentAt: 9e15 })));
+    await assertSucceeds(coachDb().doc(`users/${CLIENT}/coach/plan`).set(plan({ sentAt: Date.now() })));
+});
+test('account deletion: the client removes both entries in one batch', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await join(as(CLIENT, clientTok));
+    await assertSucceeds(leave(as(CLIENT, clientTok)));
+});

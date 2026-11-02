@@ -119,16 +119,23 @@
         clients = await Promise.all(ms.docs.map(async d => {
             const m = { uid: d.id, ...d.data() };
             try { const u = await db.doc(`users/${m.uid}`).get(); m.raw = u.exists ? u.data() : {}; } catch (e) { m.raw = {}; }
-            const a = isObj(m.raw.account) ? m.raw.account : {};
-            m.name = m.name || a.name || m.email || 'No name';
+            // everything here was written by the client: keep only values of the right type
+            const a = isObj(m.raw.account) ? m.raw.account : {}, str = v => (typeof v === 'string' ? v : '');
+            m.email = str(m.email);
+            m.name = (str(m.name) || str(a.name) || m.email || 'No name').slice(0, 100);
             m.lastWorkout = Number(isObj(m.raw.activity) && m.raw.activity.last) || 0;
+            m.joinedAt = Number(m.joinedAt) || 0;
             m.lastActive = Math.max(Number(m.raw.updatedAt) || 0, m.lastWorkout);
             return m;
         }));
         clients.sort((a, b) => b.lastActive - a.lastActive);
     };
-    const home = async () => {
-        await withTimeout(load());
+    // reload: read the clients again from the database (after a change); otherwise draw what was loaded (going Back)
+    const home = async (reload = true) => {
+        if (reload) {
+            try { await withTimeout(load()); }
+            catch (e) { if (e && e.code === 'permission-denied') return route(); throw e; } // switched off meanwhile: route() says so
+        }
         $('main').innerHTML = `<div class="narrow">
             <div class="head-row"><h2>Clients</h2><span class="note" style="margin:0">${esc(coach.name)}</span></div>
             <div id="list">${clients.map(c => `<button class="client" data-client="${esc(c.uid)}"><span class="av">${esc(c.name.charAt(0).toUpperCase())}</span>
@@ -158,7 +165,7 @@
     // ---------- one client ----------
     const openClient = uid => {
         const c = clients.find(x => x.uid === uid); if (!c) return;
-        const m = c.raw || {}, plan = isObj(m.plan) && Array.isArray(m.plan.weeks) ? m.plan.weeks.filter(isObj) : [];
+        const m = c.raw || {}, plan = isObj(m.plan) && Array.isArray(m.plan.weeks) ? m.plan.weeks.filter(w => isObj(w) && typeof w.id === 'string').map(w => ({ ...w, name: String(w.name || 'Routine') })) : [];
         const b = isObj(m.body) ? m.body : {}, pr = isObj(m.profile) ? m.profile : {};
         const kv = (l, v) => `<div><span>${esc(l)}</span><b>${esc(v || '—')}</b></div>`;
         $('main').innerHTML = `<div class="narrow">
@@ -170,10 +177,10 @@
             <h3>Their routines</h3><div class="list">${plan.map(w => `<div><span>${esc(w.name)}${w.id === m.activeWeek ? ' <span class="pill">active</span>' : ''}</span><span><button class="btn" data-edit="${esc(w.id)}">Edit and send</button></span></div>`).join('') || '<div><span class="note">No routines yet.</span></div>'}</div>
             <h3>Client</h3><button id="c-remove" class="btn">Remove this client</button>
             <p class="note">Removing ends your access to their account. They can join you again with a new link.</p></div>`;
-        $('back').onclick = () => home();
+        $('back').onclick = () => home(false);
         const open = (mode, routine = null) => window.ApexCoach.open({
             db, auth, mode, routine, templatesPath: `coaches/${me.uid}/templates`,
-            client: { uid: c.uid, name: c.name, startDay: m.startDay, exp: pr.exp || '', session: pr.session || '', routines: plan, activeWeek: m.activeWeek },
+            client: { uid: c.uid, name: c.name, startDay: typeof m.startDay === 'string' ? m.startDay : '', exp: String(pr.exp || ''), session: String(pr.session || ''), routines: plan, activeWeek: m.activeWeek },
             onSent: () => {}
         });
         $('c-new').onclick = () => open('add');
@@ -184,10 +191,12 @@
             btn.disabled = true;
             try {
                 const bt = db.batch();
-                bt.delete(db.doc(`users/${c.uid}/coach/link`)); // their app also notices by itself
                 bt.delete(db.doc(`coaches/${me.uid}/members/${c.uid}`));
+                // their link too, but only if it still points to you (they may have joined someone else); their app also notices by itself
+                const link = await withTimeout(db.doc(`users/${c.uid}/coach/link`).get()).catch(() => null);
+                if (link && link.exists && (link.data() || {}).coachId === me.uid) bt.delete(link.ref);
                 await withTimeout(bt.commit()); await home();
-            } catch (x) { console.warn(x); btn.disabled = false; btn.textContent = 'Failed: try again'; }
+            } catch (x) { console.warn(x); await home().catch(() => {}); } // e.g. they already left: show the list as it is now
         };
         window.scrollTo(0, 0);
     };

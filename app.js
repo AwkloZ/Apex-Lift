@@ -3233,7 +3233,8 @@ ${lib}`;
         if (!sentAt || Number(c.appliedAt) >= sentAt || !Cloud.user || Cloud.user.uid !== uid) return;
         const ack = () => Cloud.db.doc(coachPath(uid)).update({ appliedAt: sentAt }).catch(e => console.warn('Coach plan: could not confirm', e));
         const mine = getCoach();
-        if (mine && Number(mine.sentAt) >= sentAt) return ack(); // already applied on this phone
+        // already applied on this phone (a saved date in the future is ignored: it would block every later plan)
+        if (mine && Number(mine.sentAt) >= sentAt && Number(mine.sentAt) <= Date.now() + 600000) return ack();
         // never change the plan in the middle of a workout: try again a bit later
         if (window.appState.sess) { clearTimeout(Cloud.coachTimer); Cloud.coachTimer = setTimeout(() => applyCoach(uid, c), 60000); return; }
         if (Cloud.coachBusy) return; Cloud.coachBusy = true;
@@ -3589,8 +3590,8 @@ ${lib}`;
                 // routines you shared with a code stop working too
                 try { const ss = await Cloud.db.collection('shared').where('by', '==', uid).get(); ss.forEach(d => paths.push(`shared/${d.id}`)); } catch (e) { console.warn('Shared routines', e); }
                 presenceStop();
-                // leave the coach too (their client list and your link)
-                try { const ls = await Cloud.db.doc(`users/${uid}/coach/link`).get(); if (ls.exists) { paths.push(`coaches/${(ls.data() || {}).coachId}/members/${uid}`, `users/${uid}/coach/link`); } } catch (e) { console.warn('Coach link', e); }
+                // leave the coach too (their client list and your link, together: the rules need both in one step)
+                try { const ls = await Cloud.db.doc(`users/${uid}/coach/link`).get(); if (ls.exists) await leaveBatch(uid, (ls.data() || {}).coachId); } catch (e) { console.warn('Coach link', e); }
                 paths.push(coachPath(uid), presPath(uid), `users/${uid}`);
                 for (let i = 0; i < paths.length; i += 400) { const b = Cloud.db.batch(); paths.slice(i, i + 400).forEach(x => b.delete(Cloud.db.doc(x))); await b.commit(); }
                 try { await Cloud.auth.currentUser.delete(); }
@@ -3994,21 +3995,24 @@ ${lib}`;
         if (cleanCode(c)) setTimeout(() => { window.appActions.openCoachSheet(c); window.appActions.coachFind(); }, 600);
     };
     const leaveBatch = (uid, coachId) => { const b = Cloud.db.batch(); b.delete(Cloud.db.doc(`coaches/${coachId}/members/${uid}`)); b.delete(Cloud.db.doc(`users/${uid}/coach/link`)); return withTimeout(b.commit()); };
+    // the link as the database has it now (the copy on this phone can be out of date, e.g. changed on another phone)
+    const serverLink = async uid => { const s = await withTimeout(Cloud.db.doc(`users/${uid}/coach/link`).get({ source: 'server' })); return s.exists ? s.data() || {} : null; };
     let coachCheckedAt = 0;
     Object.assign(window.appActions, {
         // Is the coach still there? (they or the admin may have removed you). force: check now, not at most once a minute
         coachCheck: async (force = false) => {
             if (!Cloud.user || !Cloud.db || (!force && Date.now() - coachCheckedAt < 60000)) return;
             coachCheckedAt = Date.now();
-            const uid = Cloud.user.uid;
+            const uid = Cloud.user.uid, still = () => Cloud.user && Cloud.user.uid === uid; // signed out meanwhile: don't save the old account's coach
             try {
-                const ls = await withTimeout(Cloud.db.doc(`users/${uid}/coach/link`).get({ source: 'server' }));
-                if (!ls.exists) return setCoachLink(null);
-                const l = ls.data() || {};
+                const l = await serverLink(uid);
+                if (!still()) return;
+                if (!l) return setCoachLink(null);
                 const ms = await withTimeout(Cloud.db.doc(`coaches/${l.coachId}/members/${uid}`).get({ source: 'server' }));
+                if (!still()) return;
                 if (ms.exists) return setCoachLink({ coachId: l.coachId, coachName: cut(l.coachName, 100, 'Coach'), code: l.code });
                 await Cloud.db.doc(`users/${uid}/coach/link`).delete().catch(() => {});
-                setCoachLink(null);
+                if (still()) setCoachLink(null);
             } catch (e) { console.warn('Coach check', e); /* offline: keep what we know */ }
         },
         openCoachSheet: (code = '') => {
@@ -4043,9 +4047,10 @@ ${lib}`;
                 if (window.appState.coachBusy) return; window.appState.coachBusy = true;
                 const uid = Cloud.user.uid, f2 = { ...f };
                 try {
-                    if (old && old.coachId !== f2.coachId) await leaveBatch(uid, old.coachId); // one coach at a time
-                    const flag = getCloudFlag() || {}, now = Date.now(), b = Cloud.db.batch();
-                    b.set(Cloud.db.doc(`coaches/${f2.coachId}/members/${uid}`), { code: f2.code, name: cut(Cloud.user.displayName || flag.name || '', 100, ''), email: cut(Cloud.user.email || flag.email || '', 200, ''), joinedAt: now });
+                    // one coach at a time: leaving the old coach and joining the new one happen in one step (both or neither)
+                    const cur = await serverLink(uid), flag = getCloudFlag() || {}, now = Date.now(), b = Cloud.db.batch();
+                    if (cur && cur.coachId && cur.coachId !== f2.coachId) b.delete(Cloud.db.doc(`coaches/${cur.coachId}/members/${uid}`));
+                    b.set(Cloud.db.doc(`coaches/${f2.coachId}/members/${uid}`), { code: f2.code, name: cut(Cloud.user.displayName || flag.name || '', 100, ''), email: Cloud.user.email || '', joinedAt: now });
                     b.set(Cloud.db.doc(`users/${uid}/coach/link`), { coachId: f2.coachId, coachName: f2.name, code: f2.code, joinedAt: now });
                     await withTimeout(b.commit());
                     window.appState.coachFound = null;
@@ -4054,7 +4059,7 @@ ${lib}`;
                     window.appActions.showToast(t('You joined {name}', { name: f2.name }), 'success');
                 } catch (e) {
                     console.warn('Join coach', e);
-                    if (old) window.appActions.coachCheck(true);
+                    window.appActions.coachCheck(true); // show what the database really has now
                     const r = document.getElementById('code-body');
                     if (r) r.insertAdjacentHTML('beforeend', `<div class="mt-3">${coachMsg(e && e.code === 'permission-denied' ? t("This code doesn't work. Check it with your coach.") : codeErr(e))}</div>`);
                 } finally { window.appState.coachBusy = false; }
@@ -4065,7 +4070,11 @@ ${lib}`;
         coachLeave: () => {
             const l = getCoachLink(); if (!l || !Cloud.user) return;
             window.appActions.showConfirm(t('Leave your coach?'), t('{name} will no longer see your account.', { name: l.coachName }), async () => {
-                try { await leaveBatch(Cloud.user.uid, l.coachId); setCoachLink(null); window.appActions.closeCodeSheet(); window.appActions.showToast(t('You left your coach'), 'success'); }
+                try {
+                    const uid = Cloud.user.uid, cur = await serverLink(uid);
+                    if (cur && cur.coachId) await leaveBatch(uid, cur.coachId); // the coach the database has, not only this phone's copy
+                    setCoachLink(null); window.appActions.closeCodeSheet(); window.appActions.showToast(t('You left your coach'), 'success');
+                }
                 catch (e) { console.warn('Leave coach', e); window.appActions.showToast(codeErr(e), 'error'); }
             }, true, t('Leave coach'));
         }
