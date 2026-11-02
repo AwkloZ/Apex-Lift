@@ -1,0 +1,14 @@
+{
+  "name": "apex-lift-rules-test",
+  "private": true,
+  "description": "Tests for firestore.rules and the coach pages, run against the Firebase emulators (dev only, not part of the site).",
+  "scripts": {
+    "test": "firebase emulators:exec --only firestore --project demo-apex \"node --test rules.test.js\"",
+    "e2e": "firebase emulators:exec --only firestore,auth --project demo-apex \"node ../coach-e2e.js\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "6.0.0",
+    "firebase": "13.2.0",
+    "firebase-tools": "15.34.2"
+  }
+}

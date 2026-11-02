@@ -3079,6 +3079,8 @@ ${lib}`;
         await Promise.all([!firebase.auth && loadScript(FB_DIR + 'firebase-auth-compat.js'), !firebase.firestore && loadScript(FB_DIR + 'firebase-firestore-compat.js')]);
         if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
         Cloud.auth = firebase.auth(); Cloud.db = firebase.firestore();
+        // tests only: on this computer with ?emu=1 the app talks to the Firebase emulators (tools/rules-test), never to the real database
+        if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && new URLSearchParams(location.search).has('emu')) { Cloud.auth.useEmulator('http://127.0.0.1:9099'); Cloud.db.useEmulator('127.0.0.1', 8080); }
         try { await Cloud.db.enablePersistence({ synchronizeTabs: true }); } catch (e) { /* private mode or another tab: still works online */ }
         Cloud.auth.getRedirectResult().catch(e => window.appActions.showToast(cloudErrorText(e), 'error'));
         Cloud.auth.onAuthStateChanged(u => { if (u) cloudSignedIn(u); else cloudSignedOut(); });

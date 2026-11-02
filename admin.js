@@ -53,6 +53,8 @@
 
     firebase.initializeApp(FIREBASE_CONFIG);
     const auth = firebase.auth(), db = firebase.firestore();
+    // tests only: on this computer with ?emu=1 the page talks to the Firebase emulators (tools/rules-test), never to the real database
+    if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && new URLSearchParams(location.search).has('emu')) { auth.useEmulator('http://127.0.0.1:9099'); db.useEmulator('127.0.0.1', 8080); }
     let users = [], clients = {}, presence = {}, presUnsub = null, tab = 'users', sortKey = 'lastActive', sortDir = -1, query = '', fStatus = '', fGoal = '', fClients = false;
 
     // writes "who looked at what" to adminLog (append-only, see firestore.rules); never blocks the page
