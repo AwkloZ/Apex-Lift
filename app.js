@@ -264,7 +264,7 @@
 
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '81';
+    const APP_VERSION = '82';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -4099,6 +4099,27 @@ ${lib}`;
     const CHAT_LIMIT = 100;
     let chatThread = null, chatKey = '', chatThreadOff = null, chatMsgsOff = null, chatMsgs = [], chatSeenAt = 0;
     const chatOpen = () => sheetOpen('chat-overlay');
+    // The chat page is pinned to the part of the screen you can see: when the phone's keyboard opens, the page shrinks
+    // above it (your coach's name stays at the top, only the messages scroll) instead of the whole page being pushed up.
+    let chatFitOff = null;
+    const chatFit = () => {
+        const o = document.getElementById('chat-overlay'), list = document.getElementById('chat-list'), v = window.visualViewport;
+        const atEnd = list.scrollHeight - list.scrollTop - list.clientHeight < 80;
+        o.style.height = `${v ? v.height : window.innerHeight}px`; o.style.bottom = 'auto';
+        o.style.top = `${v ? v.offsetTop : 0}px`;
+        if (atEnd) list.scrollTop = list.scrollHeight;
+    };
+    const chatFitStart = () => {
+        const v = window.visualViewport;
+        if (v) { v.addEventListener('resize', chatFit); v.addEventListener('scroll', chatFit); }
+        window.addEventListener('resize', chatFit);
+        chatFitOff = () => {
+            if (v) { v.removeEventListener('resize', chatFit); v.removeEventListener('scroll', chatFit); }
+            window.removeEventListener('resize', chatFit);
+            const o = document.getElementById('chat-overlay'); o.style.height = o.style.top = o.style.bottom = '';
+        };
+        chatFit();
+    };
     const chatRef = () => { const l = getCoachLink(); return Cloud.user && Cloud.db && l ? Cloud.db.doc(`users/${Cloud.user.uid}/chats/${l.coachId}`) : null; };
     function chatUnread() { const l = getCoachLink(); return !!(chatThread && l && chatThread.lastFrom === l.coachId && chatThread.lastAt > (chatThread.readClient || 0)); }
     const renderChatDot = () => { const d = document.getElementById('chat-dot'); if (d) d.classList.toggle('hidden', !chatUnread()); const r = document.getElementById('coach-new'); if (r) r.classList.toggle('hidden', !chatUnread()); };
@@ -4162,6 +4183,8 @@ ${lib}`;
             chatMsgs = []; renderChat();
             const inp = document.getElementById('chat-in'); inp.value = ''; window.appActions.chatTyped(inp);
             openSheet('chat-overlay', 'chat-box'); pushBack('chat', () => window.appActions.closeChat());
+            if (chatFitOff) chatFitOff();
+            chatFitStart();
             if (chatMsgsOff) chatMsgsOff();
             chatMsgsOff = r.collection('messages').orderBy('at', 'desc').limit(CHAT_LIMIT).onSnapshot({ includeMetadataChanges: true }, qs => {
                 chatMsgs = qs.docs.map(d => { const x = d.data() || {}; return { from: String(x.from || ''), text: cut(x.text, 1000, ''), at: Number(x.at) || 0, pending: d.metadata.hasPendingWrites }; })
@@ -4172,6 +4195,7 @@ ${lib}`;
         closeChat: () => {
             popBack('chat'); closeSheet('chat-overlay', 'chat-box');
             if (chatMsgsOff) { chatMsgsOff(); chatMsgsOff = null; }
+            if (chatFitOff) setTimeout(() => { if (chatFitOff && !chatOpen()) { chatFitOff(); chatFitOff = null; } }, 320); // after the page has slid away
         },
         // the box grows with the text (up to 5 lines); Send works only with some text
         chatTyped: el => {

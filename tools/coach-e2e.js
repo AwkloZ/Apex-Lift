@@ -347,6 +347,15 @@ T('coach and client chat', async ({ browser, base }) => {
     await c.fill('#chat-in', 'Hello from your coach');
     await c.click('#chat-send');
     check('coach: the message shows', await waitText(c, /Hello from your coach/));
+    check('chat: a short message bubble is only as wide as its text', await c.evaluate(() => { const m = document.querySelector('.chat-msg'), l = document.getElementById('chat-list'); return m.getBoundingClientRect().width < l.getBoundingClientRect().width * 0.6; }));
+    // a smaller visible screen (like a phone with its keyboard open): the name stays on top, the box to type right above
+    await c.setViewportSize({ width: 1200, height: 420 });
+    await c.waitForTimeout(300);
+    check('chat: with less room the name and the typing box stay visible', await c.evaluate(() => {
+        const top = document.querySelector('.chat-top .page-bar-title').getBoundingClientRect(), bar = document.querySelector('.chat-bar').getBoundingClientRect();
+        return top.top >= 0 && bar.bottom <= window.innerHeight + 1 && bar.top > top.bottom;
+    }));
+    await c.setViewportSize({ width: 1200, height: 900 });
     await c.waitForTimeout(800);
     const th = await getDoc(`users/${CLIENT.uid}/chats/${COACH.uid}`);
     check('thread summary saved', th && th.lastFrom === COACH.uid && th.lastText === 'Hello from your coach', JSON.stringify(th));
@@ -415,6 +424,52 @@ T('coach sees a client\'s workouts, check-ins and progress', async ({ browser, b
     if (process.env.SHOTS) await c.screenshot({ path: `${process.env.SHOTS}/coach-home.png`, fullPage: true });
     check('coach app: no errors', !c.errors.length, c.errors.join(' | '));
     await c.context().close();
+});
+T('coach builds a routine like the Plan tab', async ({ browser, base }) => {
+    await seedCoach(); await seedTraining();
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const c = await ctx.newPage(); c.errors = []; c.on('pageerror', e => c.errors.push(e.message));
+    await c.goto(`${base}/coach.html?emu=1`);
+    await c.waitForFunction(() => window.firebase && firebase.apps.length, null, { timeout: 15000 });
+    await c.addStyleTag({ content: '.firebase-emulator-warning{display:none!important}' }); // the emulator's banner covers the Send bar
+    await c.evaluate(([e, pw]) => firebase.auth().signInWithEmailAndPassword(e, pw), [COACH.email, PASS]);
+    await c.waitForSelector(`[data-client="${CLIENT.uid}"]`);
+    await c.click(`[data-client="${CLIENT.uid}"]`);
+    await c.click('[data-act="routine"]');
+    await c.waitForSelector('#coach.open');
+    check('editor: the week with 7 days', await c.evaluate(() => document.querySelectorAll('#coach [data-day]').length === 7));
+    await c.fill('#cb-name', 'Strength block');
+    await c.click('[data-day="0"]');
+    await c.fill('#cb-title', 'Push');
+    await c.click('#cb-add');
+    await c.waitForSelector('.cb-sheet.is-open');
+    await c.fill('#cb-q', 'bench press');
+    await c.click('.cb-row[data-add="Bench Press"]');
+    check('sheet: the added exercise is marked', await c.waitForFunction(() => /In this day/.test(document.getElementById('cb-list').innerText), null, { timeout: 5000 }).then(() => true, () => false));
+    // the phone's back closes the sheet, not the editor
+    await c.goBack();
+    check('back closes the sheet first', await c.waitForFunction(() => !document.querySelector('.cb-sheet') && document.getElementById('coach').classList.contains('open'), null, { timeout: 5000 }).then(() => true, () => false));
+    check('day: the exercise card with its pill', await waitText(c, /Bench Press[\s\S]*3 × 10–12/));
+    await c.click('.cb-ex[data-j="0"]');
+    await c.click('.cb-pop [data-s="1"]');
+    await c.click('.cb-pop [data-r="6 - 8"]');
+    await c.click('.cb-pop [data-ok]');
+    check('pop-up: sets and reps changed', await waitText(c, /4 × 6–8/));
+    if (process.env.SHOTS) await c.screenshot({ path: `${process.env.SHOTS}/coach-builder-day.png`, fullPage: true });
+    await c.goBack();
+    check('back from a day: the week', await c.waitForFunction(() => document.querySelectorAll('#coach [data-day]').length === 7, null, { timeout: 5000 }).then(() => true, () => false));
+    check('week: the day shows its name and size', await waitText(c, /Push[\s\S]*1 exercises? · 4 sets/));
+    if (process.env.SHOTS) await c.screenshot({ path: `${process.env.SHOTS}/coach-builder-week.png`, fullPage: true });
+    await c.click('#cb-send');
+    await c.waitForSelector('.cb-pop [data-ok]'); // "Send anyway?" (the other days are empty)
+    await c.click('.cb-pop [data-ok]');
+    await c.waitForFunction(() => !document.getElementById('coach').classList.contains('open'), null, { timeout: 8000 });
+    const r = await api(docUrl(`users/${CLIENT.uid}/coach/plan`));
+    const v = JSON.stringify(r.fields);
+    check('sent: the routine with the day and the exercise', /Strength block/.test(v) && /Push/.test(v) && /Bench Press/.test(v) && /"stringValue":"4"/.test(v) && /6 - 8/.test(v), v.slice(0, 400));
+    check('after sending: back on the client page', await waitText(c, /Routine sent/) && await c.evaluate(() => !!document.querySelector('[data-seg]')));
+    check('coach app: no errors', !c.errors.length, c.errors.join(' | '));
+    await ctx.close();
 });
 T('coach app in Arabic', async ({ browser, base }) => {
     await seedCoach(); await seedTraining();

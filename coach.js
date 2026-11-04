@@ -129,8 +129,9 @@
         if (skipPop) { skipPop = false; return; } // our own history.back() after the builder closed by its own button
         // the routine builder is open: the phone's back closes it first (it asks if there are changes)
         if (builderOpen) {
-            builderOpen = false; window.ApexCoach.close();
-            if ($('coach').classList.contains('open')) { builderOpen = true; try { history.pushState({ coachPage: 1 }, ''); } catch (e) {} } // kept open (changes not sent)
+            // inside the editor the back goes one step back (a pop-up, the exercise list, a day, then the editor itself)
+            if (window.ApexCoachBuilder.back()) { try { history.pushState({ coachPage: 1 }, ''); } catch (e) {} return; }
+            builderOpen = false; // closed (nothing to lose)
             return;
         }
         if (!page) return;
@@ -158,11 +159,11 @@
             else { main.style.transform = ''; setTimeout(() => { main.style.transition = ''; }, 260); }
         });
     }
-    // the builder (admin-coach.js) opens over the page: one history entry for it too, removed when it closes by its own buttons
+    // the routine editor (coach-builder.js) opens over the page: one history entry for it too, removed when it closes by its own buttons
     const openBuilder = opts => {
         try { history.pushState({ coachPage: 1 }, ''); } catch (e) {}
         builderOpen = true;
-        window.ApexCoach.open(opts);
+        window.ApexCoachBuilder.open({ ...opts, coachName: coach ? coach.name : '' });
         const box = $('coach'), watch = new MutationObserver(() => {
             if (box.classList.contains('open')) return;
             watch.disconnect();
@@ -700,7 +701,25 @@
     // ---------- chat with one client (users/{client}/chats/{me}/messages) ----------
     const CHAT_LIMIT = 100;
     let chatOff = null, chatMsgs = [];
-    const stopChat = () => { if (chatOff) { chatOff(); chatOff = null; } };
+    // The chat page is pinned to the part of the screen you can see: when the phone's keyboard opens, the page shrinks
+    // above it (the name stays at the top, only the messages scroll) instead of the whole page being pushed up.
+    let fitOff = null;
+    const fitChat = () => {
+        const el = $('chat-page'), list = $('chat-list'), v = window.visualViewport; if (!el) return;
+        const atEnd = list && list.scrollHeight - list.scrollTop - list.clientHeight < 80;
+        el.style.height = `${v ? v.height : window.innerHeight}px`;
+        el.style.transform = v && v.offsetTop ? `translateY(${v.offsetTop}px)` : '';
+        if (list && atEnd) list.scrollTop = list.scrollHeight;
+    };
+    const watchFit = () => {
+        const v = window.visualViewport, f = () => fitChat();
+        if (v) { v.addEventListener('resize', f); v.addEventListener('scroll', f); }
+        window.addEventListener('resize', f);
+        document.documentElement.classList.add('in-chat');
+        fitOff = () => { if (v) { v.removeEventListener('resize', f); v.removeEventListener('scroll', f); } window.removeEventListener('resize', f); document.documentElement.classList.remove('in-chat'); };
+        fitChat();
+    };
+    const stopChat = () => { if (chatOff) { chatOff(); chatOff = null; } if (fitOff) { fitOff(); fitOff = null; } };
     const chatRef = uid => db.doc(`users/${uid}/chats/${me.uid}`);
     const markRead = c => {
         if (!c.thread || !unread(c)) return;
@@ -722,16 +741,18 @@
             list.innerHTML = html;
         }
         icons(list);
-        window.scrollTo(0, document.body.scrollHeight);
+        list.scrollTop = list.scrollHeight;
     };
     const chatPage = () => {
         const c = byUid(page.uid); if (!c) { page = null; return home(false); }
-        draw(`<div class="chat-top">${pageBar(c.name)}</div>
+        draw(`<div id="chat-page" class="chat-page">
+            <div class="chat-top">${pageBar(c.name)}</div>
             <div id="chat-list" class="chat-list" aria-live="polite">${skeleton()}</div>
             <div class="chat-bar"><div class="chat-bar-in">
                 <textarea id="chat-in" rows="1" maxlength="1000" dir="auto" placeholder="${esc(t('Message'))}" aria-label="${esc(t('Message'))}"></textarea>
                 <button id="chat-send" class="chat-send tap" aria-label="${esc(t('Send'))}" disabled><i data-lucide="arrow-up"></i></button>
-            </div></div>`, false, true); // no fade-in: its animation would hold the fixed typing bar in the middle of the page
+            </div></div></div>`, false, true); // no fade-in: its animation would hold the fixed page in the wrong place
+        stopChat(); watchFit();
         main.querySelector('[data-back]').onclick = goBack;
         const inp = $('chat-in'), send = $('chat-send');
         const grow = () => { inp.style.height = 'auto'; if (inp.value) inp.style.height = `${Math.min(inp.scrollHeight, 132)}px`; send.disabled = !inp.value.trim(); };
@@ -747,12 +768,11 @@
             inp.value = ''; grow(); inp.focus();
             b.commit().catch(e => { console.warn('Chat send', e); toast(e && e.code === 'permission-denied' ? t('You can no longer message {name}.', { name: c.name }) : errText(e), true); });
         };
-        stopChat();
         chatOff = chatRef(c.uid).collection('messages').orderBy('at', 'desc').limit(CHAT_LIMIT).onSnapshot({ includeMetadataChanges: true }, qs => {
             chatMsgs = qs.docs.map(d => { const x = d.data() || {}; return { from: str(x.from, 128), text: str(x.text, 1000), at: num(x.at) || 0, pending: d.metadata.hasPendingWrites }; }).filter(m => m.text).reverse();
             renderMsgs(c); markRead(c);
         }, e => { console.warn('Chat', e); const l = $('chat-list'); if (l) l.innerHTML = `<p class="pf-note" style="text-align:center;margin-top:20px">${esc(errText(e))}</p>`; });
-        setTimeout(() => inp.focus(), 50);
+        if (matchMedia('(pointer: fine)').matches) setTimeout(() => inp.focus(), 50); // on a phone the keyboard opens only when you tap the box
     };
 
     // ---------- offline copy (coach-sw.js, only for this app's pages) ----------
