@@ -43,6 +43,13 @@
 /coach.css
   X-Robots-Tag: noindex, nofollow
 
+/coach-i18n.js
+  X-Robots-Tag: noindex, nofollow
+
+/coach-sw.js
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-cache
+
 /admin-coaches.js
   X-Robots-Tag: noindex, nofollow
 

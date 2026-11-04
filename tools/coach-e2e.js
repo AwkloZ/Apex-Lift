@@ -34,7 +34,9 @@ const addUser = u => api(`${AUTH}/identitytoolkit.googleapis.com/v1/projects/${A
     body: JSON.stringify({ users: [{ localId: u.uid, email: u.email, emailVerified: true, rawPassword: PASS, displayName: u.name || '' }] }) });
 // read / write a document as the admin of the emulator (rules off)
 const docUrl = p => `${FS}/v1/projects/${PROJECT}/databases/(default)/documents/${p}`;
-const toFields = o => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, typeof v === 'boolean' ? { booleanValue: v } : typeof v === 'number' ? { integerValue: String(v) } : { stringValue: String(v) }]));
+const toValue = v => typeof v === 'boolean' ? { booleanValue: v } : typeof v === 'number' ? (Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v })
+    : Array.isArray(v) ? { arrayValue: { values: v.map(toValue) } } : v && typeof v === 'object' ? { mapValue: { fields: toFields(v) } } : { stringValue: String(v) };
+const toFields = o => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, toValue(v)]));
 const fromFields = f => Object.fromEntries(Object.entries(f || {}).map(([k, v]) => [k, 'booleanValue' in v ? v.booleanValue : 'integerValue' in v ? Number(v.integerValue) : v.stringValue]));
 const setDoc = (p, o) => api(docUrl(p), { method: 'PATCH', body: JSON.stringify({ fields: toFields(o) }) });
 const getDoc = async p => { try { return fromFields((await api(docUrl(p))).fields); } catch (e) { return null; } };
@@ -145,7 +147,7 @@ T('coach makes and deletes a client code, sees clients', async ({ browser, base 
     const cc = await getDoc(`coachCodes/${code}`);
     check('code saved for this coach', cc && cc.coach === COACH.uid && cc.name === COACH.name, JSON.stringify(cc));
     await p.click(`[data-del-code="${code}"]`);
-    await p.click('#c-ok'); // the app-style "Delete this link?" pop-up
+    await p.click('.pop [data-ok]'); // the app-style "Delete this link?" pop-up
     await p.waitForTimeout(800);
     check('code deleted', !(await getDoc(`coachCodes/${code}`)));
     if (process.env.SHOTS) await p.screenshot({ path: `${process.env.SHOTS}/coach-clients.png`, fullPage: true });
@@ -165,7 +167,7 @@ const openClient = async (browser, base, extra = '', lang = 'en') => {
         localStorage.setItem('workoutLang_rakan_final', lang);
         localStorage.setItem('workoutCloud_rakan_final', JSON.stringify({ uid, email, name: 'Client One', since: 1 }));
         localStorage.setItem('workoutCloudLastUid_rakan_final', uid);
-        localStorage.setItem('workoutAgreed_rakan_final', JSON.stringify({ v: '2026-10.10', at: 1 }));
+        localStorage.setItem('workoutAgreed_rakan_final', JSON.stringify({ v: '2026-11.04', at: 1 }));
         localStorage.setItem('workoutIntroSeen_rakan_final', '1');
         localStorage.setItem('workoutBody_rakan_final', JSON.stringify({ birthYear: 1995, birthDate: '1995-05-20', sex: 'male', heightCm: 178, weightKg: 80, locked: true }));
     }, [CLIENT.uid, CLIENT.email, lang]);
@@ -203,7 +205,7 @@ T('client joins a coach with a link, coach sends a routine', async ({ browser, b
     const c = await openAs(browser, base, 'coach.html', COACH);
     check('coach app lists the new client', await waitText(c, /Client One|client@x.com/));
     await c.click(`[data-client="${CLIENT.uid}"]`);
-    await c.click('#c-note');
+    await c.click('[data-act="note"]');
     await c.waitForSelector('#coach.open');
     await c.fill('#cb-note', 'Great work this week');
     await c.click('#cb-send');
@@ -244,8 +246,9 @@ T('client: bad code, switching coach, leaving, removed elsewhere', async ({ brow
     await p.waitForTimeout(500); await confirmYes(p);
     check('after leaving: Join a coach', await waitRow(p, /Join a coach/));
     check('leaving removes both entries', !(await getDoc(`coaches/${COACH2.uid}/members/${CLIENT.uid}`)) && !(await getDoc(`users/${CLIENT.uid}/coach/link`)));
-    // join again, then the admin removes the client elsewhere: the app notices when it comes back
-    await p.evaluate(c => window.appActions.openCoachSheet(c), KCODE);
+    // join again (with a new code: each one works once), then the admin removes the client elsewhere: the app notices when it comes back
+    await seedCode(COACH, 'NNNNNNNN');
+    await p.evaluate(c => window.appActions.openCoachSheet(c), 'NNNNNNNN');
     await p.evaluate(() => window.appActions.coachFind());
     await waitSheet(p, /Join Coach Test/);
     await p.evaluate(() => document.getElementById('coach-join').click());
@@ -283,18 +286,156 @@ T('coach removes a client; a client who already left is handled', async ({ brows
     const p = await openAs(browser, base, 'coach.html', COACH);
     check('a client with no name shows their email', await waitText(p, /client@x\.com/));
     await p.click(`[data-client="${CLIENT.uid}"]`);
-    await p.click('#c-remove');
-    await p.click('#c-ok');
+    await p.click('[data-act="remove"]');
+    await p.click('.pop [data-ok]');
     check('after removing, the list no longer has them', await waitText(p, /Gone Client/) && !(await text(p)).includes('client@x.com'));
     check('member entry and link removed', !(await getDoc(`coaches/${COACH.uid}/members/${CLIENT.uid}`)) && !(await getDoc(`users/${CLIENT.uid}/coach/link`)));
     // this one left meanwhile (their entry is gone): Remove must not get stuck
     await p.click(`[data-client="${OTHER.uid}"]`);
     await api(docUrl(`coaches/${COACH.uid}/members/${OTHER.uid}`), { method: 'DELETE' });
-    await p.click('#c-remove');
-    await p.click('#c-ok');
+    await p.click('[data-act="remove"]');
+    await p.click('.pop [data-ok]');
     check('a client who already left: back to the list', await waitText(p, /No clients yet/));
     check('coach app: no errors', !p.errors.length, p.errors.join(' | '));
     await p.context().close();
+});
+
+// ---------- one-time client codes ----------
+T('a client code works once', async ({ browser, base }) => {
+    await seedCoach(); await seedCode();
+    const p = await openClient(browser, base, `&coach=${KCODE}`);
+    await waitSheet(p, /Join Coach Test\?/);
+    await p.evaluate(() => document.getElementById('coach-join').click());
+    check('joined', await waitRow(p, /Coach Test/));
+    const cc = await getDoc(`coachCodes/${KCODE}`);
+    check('the code is marked as used by the client', cc && cc.usedBy === CLIENT.uid && cc.usedAt > 0, JSON.stringify(cc));
+    // the coach app lists it under Used, with the client's name
+    const c = await openAs(browser, base, 'coach.html', COACH);
+    await waitText(c, /Coach Test|Client One/);
+    await c.click('[data-tab="invite"]');
+    check('coach sees the link as used by the client', await waitText(c, /Used by (Client One|client@x\.com)/));
+    await c.click('#new-code');
+    await waitText(c, /Ready to send/);
+    const fresh = await listDocs('coachCodes');
+    check('a new link starts unused', fresh.some(d => !d.name.endsWith(KCODE) && fromFields(d.fields).usedBy === ''), JSON.stringify(fresh.map(d => d.fields)));
+    // the client leaves and tries the same code again
+    await p.evaluate(() => window.appActions.openCoachSheet());
+    await waitSheet(p, /Coach Test/);
+    await p.evaluate(() => document.getElementById('coach-leave').click());
+    await p.waitForTimeout(500); await confirmYes(p);
+    await waitRow(p, /Join a coach/);
+    await p.evaluate(c => window.appActions.openCoachSheet(c), KCODE);
+    await p.evaluate(() => window.appActions.coachFind());
+    check('a used code is explained', await waitSheet(p, /already used/));
+    check('coach app: no errors', !c.errors.length, c.errors.join(' | '));
+    check('client app: no errors', !p.errors.length, p.errors.join(' | '));
+    await c.context().close(); await p.context().close();
+});
+
+// ---------- chat ----------
+T('coach and client chat', async ({ browser, base }) => {
+    await seedCoach(); await seedCode();
+    const p = await openClient(browser, base, `&coach=${KCODE}`);
+    await waitSheet(p, /Join Coach Test\?/);
+    await p.evaluate(() => document.getElementById('coach-join').click());
+    await waitRow(p, /Coach Test/);
+    const c = await openAs(browser, base, 'coach.html', COACH);
+    await waitText(c, /Client One|client@x\.com/);
+    await c.click('[data-tab="chats"]');
+    await c.click(`[data-chat="${CLIENT.uid}"]`);
+    check('coach: an empty chat says who can read it', await waitText(c, /Only you and/));
+    await c.fill('#chat-in', 'Hello from your coach');
+    await c.click('#chat-send');
+    check('coach: the message shows', await waitText(c, /Hello from your coach/));
+    await c.waitForTimeout(800);
+    const th = await getDoc(`users/${CLIENT.uid}/chats/${COACH.uid}`);
+    check('thread summary saved', th && th.lastFrom === COACH.uid && th.lastText === 'Hello from your coach', JSON.stringify(th));
+    // the client gets a dot on Profile and a toast, opens the chat and answers
+    check('client: dot on Profile', await p.waitForFunction(() => !document.getElementById('chat-dot').classList.contains('hidden'), null, { timeout: 10000 }).then(() => true, () => false));
+    check('client: toast for the new message', await waitText(p, /New message from Coach Test/));
+    await p.evaluate(() => window.appActions.openChat());
+    check('client: the coach\'s message is in the chat', await p.waitForFunction(() => /Hello from your coach/.test(document.getElementById('chat-list').innerText), null, { timeout: 10000 }).then(() => true, () => false));
+    check('client: opening the chat clears the dot', await p.waitForFunction(() => document.getElementById('chat-dot').classList.contains('hidden'), null, { timeout: 5000 }).then(() => true, () => false));
+    check('coach: the client saw the message', await waitText(c, /Seen/));
+    await p.fill('#chat-in', 'Thanks coach!');
+    await p.evaluate(() => window.appActions.chatSend());
+    check('coach: the reply arrives live', await waitText(c, /Thanks coach!/));
+    check('coach: "Seen" goes once the client wrote last', !/Seen/.test(await text(c)));
+    if (process.env.SHOTS) { await c.screenshot({ path: `${process.env.SHOTS}/coach-chat.png` }); await p.screenshot({ path: `${process.env.SHOTS}/client-chat.png` }); }
+    // back to the list: the chat is there, read
+    await c.click('[data-back]');
+    check('coach: back goes to the Chats list', await waitText(c, /Chats[\s\S]*Thanks coach!/));
+    // the client leaves: the coach can no longer write
+    await p.evaluate(() => window.appActions.closeChat());
+    await p.evaluate(() => window.appActions.openCoachSheet());
+    await waitSheet(p, /Coach Test/);
+    await p.evaluate(() => document.getElementById('coach-leave').click());
+    await p.waitForTimeout(500); await confirmYes(p);
+    await waitRow(p, /Join a coach/);
+    const msgs = await listDocs(`users/${CLIENT.uid}/chats/${COACH.uid}/messages`);
+    check('both messages saved, from the right people', msgs.length === 2 && msgs.some(d => fromFields(d.fields).from === CLIENT.uid) && msgs.some(d => fromFields(d.fields).from === COACH.uid), JSON.stringify(msgs.map(d => d.fields)));
+    check('coach app: no errors', !c.errors.length, c.errors.join(' | '));
+    check('client app: no errors', !p.errors.length, p.errors.join(' | '));
+    await c.context().close(); await p.context().close();
+});
+
+// ---------- a client's training in the coach app ----------
+const seedTraining = async () => {
+    const now = Date.now(), day = 86400000, k = d => { const x = new Date(now - d * day); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`; };
+    await setDoc(`coaches/${COACH.uid}/members/${CLIENT.uid}`, { code: KCODE, name: 'Client One', email: CLIENT.email, joinedAt: now - 30 * day });
+    await setDoc(`users/${CLIENT.uid}`, {
+        updatedAt: now, profile: { days: '4', exp: 'mid', session: '60' },
+        body: { weightKg: 80, heightCm: 178, sex: 'male', birthDate: '1995-05-20', log: [{ t: now - 20 * day, kg: 82 }, { t: now - 10 * day, kg: 81 }, { t: now - day, kg: 80 }] },
+        readiness: { [k(0)]: { sleep: 0, soreness: 0, energy: 1 }, [k(1)]: { sleep: 2, soreness: 2, energy: 2 } },
+        activity: { n: 3, ex: 1, last: now - day, days: [k(9), k(5), k(1)], top: [] }
+    });
+    await setDoc(`users/${CLIENT.uid}/history/global_barbell_bench_press`, { logs: [
+        { d: 'x', ts: now - 9 * day, w: '60', s: [8, 8, 7] },
+        { d: 'x', ts: now - 5 * day, w: '62.5', s: [8, 7, 6], rpe: [8, 9, 10] },
+        { d: 'x', ts: now - day, w: '65', s: [6, 6, 5], ws: ['65', '65', '60'] }
+    ] });
+};
+T('coach sees a client\'s workouts, check-ins and progress', async ({ browser, base }) => {
+    await seedCoach(); await seedTraining();
+    const c = await openAs(browser, base, 'coach.html', COACH);
+    check('home flags a low check-in today', await waitText(c, /Low check-in today/));
+    await c.click(`[data-client="${CLIENT.uid}"]`);
+    check('overview: check-in and training days', await waitText(c, /Daily check-in[\s\S]*Today: Low[\s\S]*3 workout days in the last 12 weeks/));
+    check('overview: about the client', await waitText(c, /1 to 3 years/));
+    await c.click('[data-seg="workouts"]');
+    check('workouts: sets with weight × reps and RPE', await waitText(c, /Barbell Bench Press[\s\S]*65 kg × 6 · 65 kg × 6 · 60 kg × 5/) && /62\.5 kg × 6 @10/.test(await text(c)));
+    await c.click('[data-seg="progress"]');
+    check('progress: body weight and the exercise', await waitText(c, /Body weight[\s\S]*80[\s\S]*Barbell Bench Press[\s\S]*3 sessions/));
+    await c.click('[data-ex="global_barbell_bench_press"]');
+    check('progress: an exercise opens every session', await c.waitForFunction(() => document.querySelectorAll('.pop .ex-hist > div').length === 3, null, { timeout: 5000 }).then(() => true, () => false));
+    await c.keyboard.press('Escape');
+    // the phone's back closes the client page
+    await c.goBack();
+    check('back: the tabs again', await c.waitForFunction(() => !document.getElementById('dock').hidden, null, { timeout: 5000 }).then(() => true, () => false));
+    if (process.env.SHOTS) await c.screenshot({ path: `${process.env.SHOTS}/coach-home.png`, fullPage: true });
+    check('coach app: no errors', !c.errors.length, c.errors.join(' | '));
+    await c.context().close();
+});
+T('coach app in Arabic', async ({ browser, base }) => {
+    await seedCoach(); await seedTraining();
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    await ctx.addInitScript(() => localStorage.setItem('workoutLang_rakan_final', 'ar'));
+    const c = await ctx.newPage(); c.errors = []; c.on('pageerror', e => c.errors.push(e.message)); c.on('dialog', d => d.accept());
+    await c.goto(`${base}/coach.html?emu=1`);
+    await c.waitForFunction(() => window.firebase && firebase.apps.length, null, { timeout: 15000 });
+    await c.evaluate(([e, pw]) => firebase.auth().signInWithEmailAndPassword(e, pw), [COACH.email, PASS]);
+    await c.waitForFunction(() => !document.getElementById('dock').hidden, null, { timeout: 15000 });
+    check('page is right to left', await c.evaluate(() => document.documentElement.dir === 'rtl'));
+    const english = async () => (await text(c)).replace(/Running in emulator mode\. Do not use with production credentials\./g, '').replace(/يا Coach/g, '').replace(/APEX|LIFT|Apex Coach|Apex Lift|Coach Test|Client One|client@x\.com|coach@x\.com|Barbell Bench Press|kg|e1RM|RPE|@apexlift\.app|English/g, '').match(/[A-Za-z]{3,}/g);
+    for (const tb of ['home', 'clients', 'chats', 'invite', 'account']) { await c.click(`[data-tab="${tb}"]`); await c.waitForTimeout(300); const e = await english(); check(`Arabic: ${tb} tab has no English`, !e, String(e)); }
+    await c.click('[data-tab="clients"]'); await c.click(`[data-client="${CLIENT.uid}"]`);
+    for (const sg of ['overview', 'workouts', 'progress']) { await c.click(`[data-seg="${sg}"]`); await c.waitForTimeout(600); const e = await english(); check(`Arabic: client ${sg} has no English`, !e, String(e)); }
+    await c.click('[data-act="routine"]'); await c.waitForSelector('#coach.open');
+    const b = (await c.evaluate(() => document.getElementById('coach').innerText)).replace(/Coach plan|Client One|Client|Barbell Bench Press|kg|\d+ - \d+s?/g, '').match(/[A-Za-z]{3,}/g);
+    check('Arabic: the routine builder has no English (program names aside)', !b || b.every(w => /^(PPL|Push|Pull|Legs|Upper|Lower|Full|Body|Bro|Split|StrongLifts|Starting|Strength|Hypertrophy|PHUL|PHAT|GZCLP|Arnold|Classic|Beginner|Intermediate|Advanced|Power|Building)$/i.test(w)), String(b));
+    if (process.env.SHOTS) await c.screenshot({ path: `${process.env.SHOTS}/coach-ar.png`, fullPage: true });
+    check('coach app: no errors', !c.errors.length, c.errors.join(' | '));
+    await ctx.close();
 });
 
 T('coach app: signing in with the sign-in page', async ({ browser, base }) => {

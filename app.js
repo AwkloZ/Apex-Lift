@@ -251,7 +251,7 @@
     const getResets = () => { const v = readJSON(RESET_KEY, {}); return isObj(v) ? v : {}; };
     const setResets = d => { try { localStorage.setItem(RESET_KEY, JSON.stringify(d)); } catch (e) {} };
     // Terms of Use & Privacy Policy: which version the user agreed to, and when
-    const TERMS_VERSION = '2026-10.10';
+    const TERMS_VERSION = '2026-11.04';
     const AGREE_KEY = 'workoutAgreed_rakan_final';
     const getAgree = () => { const v = readJSON(AGREE_KEY, null); return isObj(v) && v.v === TERMS_VERSION ? v : null; };
 
@@ -264,7 +264,7 @@
 
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '80';
+    const APP_VERSION = '81';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -281,6 +281,7 @@
             </div>
             ${c.routine ? `<div class="text-[12px] font-bold text-[#d4af37] mt-2">${esc(t('New routine from your coach: {name}', { name: c.routine }))}</div>` : ''}
             ${c.note ? `<p class="text-[12px] font-bold text-slate-300 leading-snug mt-2" style="white-space:pre-wrap">${esc(c.note)}</p>` : ''}
+            ${getCoachLink() ? `<button onclick="window.appActions.openChat()" class="mt-3 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-bold tap-feedback flex items-center gap-2"><i data-lucide="message-circle" class="w-4 h-4"></i>${t('Reply')}</button>` : ''}
         </div>`;
     };
 
@@ -3587,6 +3588,11 @@ ${lib}`;
                 // every account backup (and its parts) goes too
                 const bs = await Cloud.db.collection(`users/${uid}/backups`).get();
                 bs.forEach(d => { const n = Number((d.data() || {}).parts) || 1; for (let i = 0; i < n; i++) paths.push(`users/${uid}/backups/${d.id}/parts/${i}`); paths.push(`users/${uid}/backups/${d.id}`); });
+                // your chats with coaches (every message, then the thread)
+                try {
+                    const cs = await Cloud.db.collection(`users/${uid}/chats`).get();
+                    for (const c of cs.docs) { const ms = await c.ref.collection('messages').get(); ms.forEach(m => paths.push(m.ref.path)); paths.push(c.ref.path); }
+                } catch (e) { console.warn('Chats', e); }
                 // routines you shared with a code stop working too
                 try { const ss = await Cloud.db.collection('shared').where('by', '==', uid).get(); ss.forEach(d => paths.push(`shared/${d.id}`)); } catch (e) { console.warn('Shared routines', e); }
                 presenceStop();
@@ -3969,6 +3975,7 @@ ${lib}`;
         const l = getCoachLink(), sub = document.getElementById('coach-sub'), lab = document.getElementById('coach-label');
         if (lab) lab.textContent = l ? t('Your coach') : t('Join a coach');
         if (sub) sub.textContent = l ? l.coachName : t("With your coach's code");
+        if (window.appActions.chatWatch) window.appActions.chatWatch();
     };
     const coachMsg = (txt, bad = true) => `<p class="text-[12px] font-bold ${bad ? 'text-red-400' : 'text-slate-400'}">${esc(txt)}</p>`;
     const coachFindBody = (code = '') => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Type or paste the code your coach gave you.')}</p>
@@ -3987,6 +3994,7 @@ ${lib}`;
             <div class="text-[17px] font-black text-white mt-0.5">${esc(l.coachName)}</div>
             <p class="text-[13px] font-bold text-slate-400 mt-2 leading-snug">${t('Your coach sees your profile, routines and workouts, and can send you routines and messages.')}</p>
         </div>
+        <button onclick="window.appActions.openChat()" class="w-full mt-3 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="message-circle" class="w-5 h-5"></i>${t('Chat with {name}', { name: esc(l.coachName) })}${chatUnread() ? `<span class="chat-badge">${t('New')}</span>` : ''}</button>
         <button id="coach-leave" onclick="window.appActions.coachLeave()" class="w-full mt-3 py-3.5 rounded-xl bg-white/5 border border-white/10 text-red-400 text-[12px] font-bold tap-feedback">${t('Leave coach')}</button>`;
     // a ?coach=CODE link: remember it, clean the address bar, and open it once you're signed in
     try { const u = new URL(location.href), c = cleanCode(u.searchParams.get('coach')); if (c) { sessionStorage.setItem(PENDING_COACH, c); u.searchParams.delete('coach'); history.replaceState(history.state, '', u.pathname + u.search + u.hash); } } catch (e) {}
@@ -4035,6 +4043,8 @@ ${lib}`;
                 if (!d || typeof d.coach !== 'string') { res.innerHTML = coachMsg(t("This code doesn't work. Check it with your coach.")); return; }
                 const l = getCoachLink();
                 if (l && l.coachId === d.coach) { res.innerHTML = coachMsg(t('You already train with {name}.', { name: cut(d.name, 100, 'Coach') }), false); return; }
+                // each code works once
+                if (typeof d.usedBy === 'string' && d.usedBy) { res.innerHTML = coachMsg(t('This code was already used. Ask your coach for a new one.')); return; }
                 window.appState.coachFound = { code, coachId: d.coach, name: cut(d.name, 100, 'Coach') };
                 codeSheet(t('Join a coach'), coachFoundBody(code, window.appState.coachFound.name));
             } catch (e) { console.warn('Coach code', e); res.innerHTML = coachMsg(codeErr(e)); }
@@ -4052,6 +4062,7 @@ ${lib}`;
                     if (cur && cur.coachId && cur.coachId !== f2.coachId) b.delete(Cloud.db.doc(`coaches/${cur.coachId}/members/${uid}`));
                     b.set(Cloud.db.doc(`coaches/${f2.coachId}/members/${uid}`), { code: f2.code, name: cut(Cloud.user.displayName || flag.name || '', 100, ''), email: Cloud.user.email || '', joinedAt: now });
                     b.set(Cloud.db.doc(`users/${uid}/coach/link`), { coachId: f2.coachId, coachName: f2.name, code: f2.code, joinedAt: now });
+                    b.update(Cloud.db.doc(`coachCodes/${f2.code}`), { usedBy: uid, usedAt: now }); // the code works once
                     await withTimeout(b.commit());
                     window.appState.coachFound = null;
                     setCoachLink({ coachId: f2.coachId, coachName: f2.name, code: f2.code });
@@ -4080,6 +4091,107 @@ ${lib}`;
         }
     });
     renderCoachRow();
+
+    // 💬 COACH CHAT: messages with your coach, users/{me}/chats/{coachId}/messages (see firestore.rules: only you and that
+    // coach, while you are in their list). The thread document (users/{me}/chats/{coachId}) holds the last message and when
+    // each side last read it: one small listener on it shows a dot on Profile when the coach wrote. The chat page listens to
+    // the last 100 messages while it is open. Messages are not kept on the phone.
+    const CHAT_LIMIT = 100;
+    let chatThread = null, chatKey = '', chatThreadOff = null, chatMsgsOff = null, chatMsgs = [], chatSeenAt = 0;
+    const chatOpen = () => sheetOpen('chat-overlay');
+    const chatRef = () => { const l = getCoachLink(); return Cloud.user && Cloud.db && l ? Cloud.db.doc(`users/${Cloud.user.uid}/chats/${l.coachId}`) : null; };
+    function chatUnread() { const l = getCoachLink(); return !!(chatThread && l && chatThread.lastFrom === l.coachId && chatThread.lastAt > (chatThread.readClient || 0)); }
+    const renderChatDot = () => { const d = document.getElementById('chat-dot'); if (d) d.classList.toggle('hidden', !chatUnread()); const r = document.getElementById('coach-new'); if (r) r.classList.toggle('hidden', !chatUnread()); };
+    const chatTime = ts => { const d = new Date(ts); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+    const chatDay = ts => {
+        const k = dateKey(ts);
+        if (k === dateKey()) return t('Today');
+        if (k === dateKey(Date.now() - 86400000)) return t('Yesterday');
+        const d = new Date(ts);
+        return `${d.getDate()} ${isAR ? MONTHS_AR[d.getMonth()] : MONTHS_EN[d.getMonth()]}${d.getFullYear() !== new Date().getFullYear() ? ` ${d.getFullYear()}` : ''}`;
+    };
+    const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const MONTHS_AR = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    const renderChat = () => {
+        const list = document.getElementById('chat-list'); if (!list) return;
+        const l = getCoachLink(), me = Cloud.user ? Cloud.user.uid : '';
+        if (!chatMsgs.length) {
+            list.innerHTML = `<div class="chat-empty"><i data-lucide="message-circle"></i><p>${t('Send your coach a message. Only you and {name} can see this chat.', { name: esc(l ? l.coachName : t('your coach')) })}</p></div>`;
+        } else {
+            let html = '', lastDay = '';
+            chatMsgs.forEach(m => {
+                const day = chatDay(m.at); if (day !== lastDay) { html += `<div class="chat-day">${esc(day)}</div>`; lastDay = day; }
+                const mine = m.from === me;
+                html += `<div class="chat-msg${mine ? ' is-me' : ''}"><p dir="auto">${esc(m.text)}</p><span class="num">${m.pending ? t('Sending…') : chatTime(m.at)}</span></div>`;
+            });
+            list.innerHTML = html;
+        }
+        if (window.lucide) window.lucide.createIcons({ root: list });
+        list.scrollTop = list.scrollHeight;
+    };
+    // you read everything up to now (only when the thread exists: the rules need its other fields)
+    const chatMarkRead = () => {
+        const r = chatRef(); if (!r || !chatThread || !chatUnread()) return;
+        chatThread.readClient = Date.now(); renderChatDot();
+        r.update({ readClient: chatThread.readClient }).catch(e => console.warn('Chat read', e));
+    };
+    Object.assign(window.appActions, {
+        // follow the thread of the coach you are linked to (called whenever the coach link changes)
+        chatWatch: () => {
+            const l = getCoachLink(), key = Cloud.user && Cloud.db && l ? `${Cloud.user.uid}/${l.coachId}` : '';
+            if (key === chatKey) return renderChatDot();
+            if (chatThreadOff) { chatThreadOff(); chatThreadOff = null; }
+            chatKey = key; chatThread = null; chatSeenAt = 0; renderChatDot();
+            if (!key) { if (chatOpen()) window.appActions.closeChat(); return; }
+            chatThreadOff = chatRef().onSnapshot(s => {
+                const d = s.exists ? s.data() || {} : null, first = !chatSeenAt;
+                chatThread = d ? { lastAt: Number(d.lastAt) || 0, lastText: cut(d.lastText, 200, ''), lastFrom: String(d.lastFrom || ''), readClient: Number(d.readClient) || 0, readCoach: Number(d.readCoach) || 0 } : null;
+                // a new message from the coach while the app is open (not the first look at the thread)
+                if (!first && chatThread && chatUnread() && chatThread.lastAt > chatSeenAt) {
+                    if (chatOpen()) chatMarkRead();
+                    else window.appActions.showToast(t('New message from {name}', { name: getCoachLink() ? getCoachLink().coachName : t('your coach') }), 'success');
+                }
+                chatSeenAt = Math.max(chatSeenAt, chatThread ? chatThread.lastAt : 0, 1);
+                renderChatDot();
+            }, e => { console.warn('Chat thread', e); chatThread = null; renderChatDot(); });
+        },
+        openChat: () => {
+            const l = getCoachLink(), r = chatRef(); if (!l || !r) return;
+            if (sheetOpen('code-overlay')) window.appActions.closeCodeSheet();
+            document.getElementById('chat-title').textContent = l.coachName;
+            chatMsgs = []; renderChat();
+            const inp = document.getElementById('chat-in'); inp.value = ''; window.appActions.chatTyped(inp);
+            openSheet('chat-overlay', 'chat-box'); pushBack('chat', () => window.appActions.closeChat());
+            if (chatMsgsOff) chatMsgsOff();
+            chatMsgsOff = r.collection('messages').orderBy('at', 'desc').limit(CHAT_LIMIT).onSnapshot({ includeMetadataChanges: true }, qs => {
+                chatMsgs = qs.docs.map(d => { const x = d.data() || {}; return { from: String(x.from || ''), text: cut(x.text, 1000, ''), at: Number(x.at) || 0, pending: d.metadata.hasPendingWrites }; })
+                    .filter(m => m.text).reverse();
+                renderChat(); chatMarkRead();
+            }, e => { console.warn('Chat', e); window.appActions.showToast(codeErr(e), 'error'); });
+        },
+        closeChat: () => {
+            popBack('chat'); closeSheet('chat-overlay', 'chat-box');
+            if (chatMsgsOff) { chatMsgsOff(); chatMsgsOff = null; }
+        },
+        // the box grows with the text (up to 5 lines); Send works only with some text
+        chatTyped: el => {
+            el.style.height = 'auto'; if (el.value) el.style.height = `${Math.min(el.scrollHeight, 132)}px`; // empty (or still hidden): its normal one line
+            const b = document.getElementById('chat-send'); if (b) b.disabled = !el.value.trim();
+        },
+        chatKeyDown: e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && window.matchMedia('(pointer: fine)').matches) { e.preventDefault(); window.appActions.chatSend(); } },
+        chatSend: () => {
+            const inp = document.getElementById('chat-in'), r = chatRef(), text = (inp.value || '').trim().slice(0, 1000);
+            if (!text || !r) return;
+            const now = Date.now(), uid = Cloud.user.uid, b = Cloud.db.batch();
+            b.set(r.collection('messages').doc(), { from: uid, text, at: now });
+            const last = { lastAt: now, lastText: text.slice(0, 200), lastFrom: uid, readClient: now };
+            if (chatThread) b.update(r, last); else b.set(r, { ...last, readCoach: 0 });
+            chatThread = { ...(chatThread || { readCoach: 0 }), ...last };
+            inp.value = ''; window.appActions.chatTyped(inp); inp.focus();
+            // offline: Firestore keeps it and sends it later; the message shows "Sending…" until then
+            b.commit().catch(e => { console.warn('Chat send', e); window.appActions.showToast(e && e.code === 'permission-denied' ? t('You can no longer message this coach.') : codeErr(e), 'error'); window.appActions.coachCheck(true); });
+        }
+    });
 
     // 📦 BACKUP FILE v2: readable by people and AI models (names instead of internal keys, real dates, kg and reps)
     const exerciseNames = () => {
@@ -4501,6 +4613,7 @@ ${lib}`;
     enableEdgeBack(document.getElementById('appset-box'), () => window.appActions.closeSettings());
     enableEdgeBack(document.getElementById('account-box'), () => window.appActions.closeAccount());
     enableEdgeBack(document.getElementById('backups-box'), () => window.appActions.closeBackups());
+    enableEdgeBack(document.getElementById('chat-box'), () => window.appActions.closeChat());
     enableEdgeBack(document.getElementById('active-workout-box'), () => window.appActions.minimizeSession());
     enableSwipeDown(document.getElementById('programs-box'), () => window.appActions.closePrograms());
     enableSwipeDown(document.getElementById('code-box'), () => window.appActions.closeCodeSheet());

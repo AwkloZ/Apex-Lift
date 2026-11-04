@@ -5,7 +5,7 @@ rules_version = '2';
 //   except for the coach plan (users/{uid}/coach/plan): a routine and/or note the coach sends, which the user's app applies.
 // - Coach-only data (templates, private client notes, the admin activity log) can be read and written by the admin only.
 // - Coaches (invited by the admin, see COACHING below) can read the account, workouts and presence of the clients who
-//   joined them, and send them a coach plan. Never their backups. Only while the admin keeps the coach switched on.
+//   joined them, send them a coach plan, and chat with them (the admin can't read the chats). Never their backups. Only while the admin keeps the coach switched on.
 // - Only the data the app actually uses is accepted (known paths, known fields, size limits),
 //   so the database can't be filled with junk.
 // Paste this into Firebase console → Firestore Database → Rules → Publish.
@@ -104,6 +104,32 @@ service cloud.firestore {
           && fields().diff(resource.data).affectedKeys().hasOnly(['appliedAt'])
           && fields().appliedAt is int;
       }
+
+      // chat with the coach: one thread per coach (users/{uid}/chats/{coachId}), written by the client and that coach
+      // only while the client is in the coach's list and the coach is switched on. The admin can't read it.
+      // The thread document is a summary (last message, when each side last read it) so lists need one read per client.
+      match /chats/{coachId} {
+        allow read: if isOwner(uid) || inChat(uid, coachId);
+        allow delete: if isOwner(uid);
+        allow create, update: if inChat(uid, coachId)
+          && fields().keys().hasOnly(['lastAt', 'lastText', 'lastFrom', 'readClient', 'readCoach'])
+          && fields().lastAt is int && fields().readClient is int && fields().readCoach is int
+          && fields().lastText is string && fields().lastText.size() <= 200
+          && fields().lastFrom in [uid, coachId]
+          // each side marks only its own "read" time
+          && (resource == null
+              || fields().diff(resource.data).affectedKeys().hasOnly(['lastAt', 'lastText', 'lastFrom', isOwner(uid) ? 'readClient' : 'readCoach']));
+
+        match /messages/{msgId} {
+          allow read: if isOwner(uid) || inChat(uid, coachId);
+          allow delete: if isOwner(uid);
+          allow create: if inChat(uid, coachId) && msgId.size() <= 60
+            && fields().keys().hasOnly(['from', 'text', 'at'])
+            && fields().from == request.auth.uid
+            && fields().text is string && fields().text.size() > 0 && fields().text.size() <= 1000
+            && fields().at is int && fields().at <= request.time.toMillis() + 600000;
+        }
+      }
     }
 
     // the admin page reads everyone's presence with one query (collection group)
@@ -177,6 +203,15 @@ service cloud.firestore {
     function isCoachOf(uid) {
       return isCoach() && exists(/databases/$(database)/documents/coaches/$(request.auth.uid)/members/$(uid));
     }
+    // the client and their (switched on) coach, for the chat
+    function inChat(uid, coachId) {
+      return (isOwner(uid) && exists(/databases/$(database)/documents/coaches/$(coachId)/members/$(uid))
+              && get(coachDoc(coachId)).data.active == true)
+        || (isOwner(coachId) && isCoachOf(uid));
+    }
+    function codeDoc(code) {
+      return /databases/$(database)/documents/coachCodes/$(code);
+    }
 
     // coach invitations: made by the admin for one email; used once, by that email (verified), to create the coach account
     match /coachInvites/{code} {
@@ -226,7 +261,10 @@ service cloud.firestore {
           && fields().name is string && fields().name.size() <= 100
           && fields().email == request.auth.token.get('email', '')
           && getAfter(/databases/$(database)/documents/users/$(clientId)/coach/link).data.coachId == coachId
-          && get(/databases/$(database)/documents/coachCodes/$(fields().code)).data.coach == coachId
+          && get(codeDoc(fields().code)).data.coach == coachId
+          // each code works once: unused before, marked as used by this client in the same batch
+          && get(codeDoc(fields().code)).data.get('usedBy', '') == ''
+          && getAfter(codeDoc(fields().code)).data.get('usedBy', '') == clientId
           && get(coachDoc(coachId)).data.active == true;
       }
 
@@ -241,14 +279,20 @@ service cloud.firestore {
     }
 
     // client codes: a coach shares one so a client can join them. Anyone signed in who knows the code can open it;
-    // only its coach (or the admin) can list or delete them.
+    // only its coach (or the admin) can list or delete them. Each code works once: joining marks it used (usedBy, usedAt).
     match /coachCodes/{code} {
       allow get: if request.auth != null;
       allow list, delete: if isAdmin() || (request.auth != null && resource.data.coach == request.auth.uid);
       allow create: if isCoach() && code.matches('^[A-HJ-NP-Z2-9]{8}$')
-        && fields().keys().hasOnly(['coach', 'name', 'createdAt'])
+        && fields().keys().hasOnly(['coach', 'name', 'createdAt', 'usedBy', 'usedAt'])
         && fields().coach == request.auth.uid && fields().createdAt is int
-        && fields().name is string && fields().name.size() <= 100;
+        && fields().name is string && fields().name.size() <= 100
+        && fields().get('usedBy', '') == '' && fields().get('usedAt', 0) == 0;
+      // using it: the client marks it, in the same batch that adds them to this coach's list with this code
+      allow update: if request.auth != null && resource.data.get('usedBy', '') == ''
+        && fields().diff(resource.data).affectedKeys().hasOnly(['usedBy', 'usedAt'])
+        && fields().usedBy == request.auth.uid && fields().usedAt is int
+        && getAfter(/databases/$(database)/documents/coaches/$(resource.data.coach)/members/$(request.auth.uid)).data.code == code;
     }
 
     // the admin page reads every coach's client list with one query (collection group)

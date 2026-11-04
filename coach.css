@@ -95,7 +95,7 @@ main.wrap { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
 .pf-row { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 10px 14px; text-align: start; color: var(--text); font-size: 15px; font-weight: 600; line-height: 1.25; transition: background-color 0.15s; }
 button.pf-row:active, a.pf-row:active { background: var(--inset); }
 a.pf-row { text-decoration: none; }
-.pf-group > .pf-row ~ .pf-row::before { content: ''; position: absolute; top: 0; left: 56px; right: 0; height: 0.5px; background: var(--line); }
+.pf-group > .pf-row ~ .pf-row::before { content: ''; position: absolute; top: 0; inset-inline-start: 56px; inset-inline-end: 0; height: 0.5px; background: var(--line); }
 .pf-ic { width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--gold-soft); color: var(--gold-ink); }
 .pf-ic svg { width: 17px; height: 17px; }
 .pf-label { flex: 1; min-width: 0; }
@@ -119,7 +119,7 @@ a.pf-row { text-decoration: none; }
 .client { display: flex; align-items: center; gap: 12px; width: 100%; margin-bottom: 10px; padding: 12px 14px; border-radius: 22px; text-align: start; }
 .av { position: relative; width: 46px; height: 46px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--gold-soft); color: var(--gold-ink); font-family: var(--font-num); font-size: 22px; font-weight: 800; }
 .av.is-big { width: 72px; height: 72px; font-size: 34px; }
-.av i, .av .dot { position: absolute; right: 0; bottom: 1px; width: 12px; height: 12px; border-radius: 50%; background: var(--good); border: 2px solid var(--bg); }
+.av i, .av .dot { position: absolute; inset-inline-end: 0; bottom: 1px; width: 12px; height: 12px; border-radius: 50%; background: var(--good); border: 2px solid var(--bg); }
 .client .who { flex: 1; min-width: 0; }
 .client .who b { display: block; font-size: 16px; font-weight: 800; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .client .who span { display: block; margin-top: 2px; font-size: 13px; font-weight: 600; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -174,11 +174,11 @@ a.pf-row { text-decoration: none; }
 
 /* floating dock (the same as the app's tab bar) */
 .dock { position: fixed; z-index: 20; left: 16px; right: 16px; bottom: max(14px, env(safe-area-inset-bottom)); max-width: 420px; margin: 0 auto; padding: 5px; border-radius: 999px;
-    display: grid; grid-template-columns: repeat(3, 1fr); background: var(--dock); -webkit-backdrop-filter: blur(28px) saturate(1.8); backdrop-filter: blur(28px) saturate(1.8);
+    display: grid; grid-template-columns: repeat(5, 1fr); background: var(--dock); -webkit-backdrop-filter: blur(28px) saturate(1.8); backdrop-filter: blur(28px) saturate(1.8);
     border: 0.5px solid rgba(255, 255, 255, 0.16); box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
 :root[data-theme="light"] .dock { border-color: rgba(0, 0, 0, 0.08); }
 .dock[hidden] { display: none; }
-.dock button { height: 52px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--text); transition: background-color 0.2s; }
+.dock button { position: relative; height: 52px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--text); transition: background-color 0.2s; }
 .dock button svg { width: 26px; height: 26px; stroke-width: 1.7; }
 .dock button.is-on { background: rgba(255, 255, 255, 0.14); }
 .dock button.is-on svg { stroke-width: 2.5; }
@@ -204,6 +204,114 @@ a.pf-row { text-decoration: none; }
 .skeleton::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, var(--inset), transparent); animation: c-shimmer 1.4s ease-in-out infinite; }
 @keyframes c-shimmer { to { transform: translateX(100%); } }
 @media (prefers-reduced-motion: reduce) { .skeleton::after { animation: none; } }
+
+/* ===== Home, Clients, Chats (coach.js) ===== */
+[dir="rtl"] .rtl-flip { transform: scaleX(-1); }
+.dock-badge { position: absolute; top: 6px; left: 50%; margin-left: 6px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-size: 12px; font-weight: 800; line-height: 18px; text-align: center; }
+.dock-badge[hidden] { display: none; }
+.stat small { font-size: 18px; color: var(--text-3); }
+button.stat { text-align: start; width: 100%; }
+.badge { flex-shrink: 0; display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-size: 12px; font-weight: 800; }
+.badge.is-dark { background: var(--on-gold); color: var(--gold); }
+.muted { margin: 0; font-size: 12px; font-weight: 600; color: var(--text-3); line-height: 1.45; }
+.card-pad { padding: 16px; }
+.empty-row { display: flex; align-items: center; gap: 12px; padding: 16px; margin-bottom: 10px; color: var(--text-3); font-size: 13px; font-weight: 700; line-height: 1.45; }
+.empty-row svg { width: 22px; height: 22px; flex-shrink: 0; color: var(--good); }
+.online { color: var(--good); font-weight: 700; }
+/* what needs the coach: small labels under a client's name (gold only for a new message: "do this") */
+.flags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.flags.is-block { margin: 0 0 14px; justify-content: center; }
+.client .who .flags { white-space: normal; }
+.flag { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px; border-radius: 999px; background: var(--inset); border: 1px solid var(--line); color: var(--text-2); font-size: 12px; font-weight: 700; font-style: normal; }
+.flag svg { width: 13px; height: 13px; }
+.flag.is-msg { background: var(--gold-soft); border-color: transparent; color: var(--gold-ink); }
+.flag.is-low { color: var(--bad); }
+/* search and sort */
+.search { position: relative; margin-bottom: 10px; }
+.search svg { position: absolute; inset-inline-start: 16px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--text-3); pointer-events: none; }
+.search input { display: block; width: 100%; min-height: 50px; padding: 0 16px; padding-inline-start: 44px; border-radius: 999px; background: var(--inset); border: 1px solid var(--line); color: var(--text); font: 600 16px var(--font-text); outline: none; -webkit-appearance: none; appearance: none; }
+.search input:focus { border-color: var(--gold); }
+.search input::placeholder { color: var(--text-3); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.chip { min-height: 40px; padding: 0 14px; border-radius: 999px; background: var(--inset); border: 1px solid var(--line); color: var(--text-2); font-size: 13px; font-weight: 700; }
+.chip.is-on { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+/* chats list */
+.client .who span.is-unread { color: var(--text); font-weight: 800; }
+.chat-meta { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; font-size: 12px; font-weight: 700; color: var(--text-3); }
+
+/* ===== One client ===== */
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.actions .btn { margin: 0; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 16px 0 6px; padding: 4px; border-radius: 999px; background: var(--inset); border: 1px solid var(--line); }
+.seg button { min-height: 44px; border-radius: 999px; font-size: 14px; font-weight: 700; color: var(--text-2); }
+.seg button.is-on { background: var(--surface-2); color: var(--text); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
+#seg-body { padding-top: 8px; }
+/* check-ins: today in words, then the last 7 days as small bars (score out of 6) */
+.check-today { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 14px; font-size: 13px; font-weight: 600; color: var(--text-3); }
+.check-today > b { width: 100%; font-size: 16px; font-weight: 800; color: var(--text); }
+.check-today span b { color: var(--text); }
+.check-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cw { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.cw-bar { position: relative; width: 100%; max-width: 30px; height: 56px; border-radius: 8px; background: var(--inset); overflow: hidden; }
+.cw-bar span { position: absolute; left: 0; right: 0; bottom: 0; background: var(--text-3); opacity: 0.55; border-radius: 8px; }
+.cw-bar span.is-low { background: var(--bad); opacity: 0.8; }
+.cw.is-today .cw-bar { outline: 2px solid var(--gold); outline-offset: 1px; }
+.cw em { font-style: normal; font-size: 15px; font-weight: 800; color: var(--text); }
+.cw small { font-size: 12px; font-weight: 600; color: var(--text-3); }
+/* training days: 12 columns (weeks) × 7 rows (days), oldest first */
+.cal { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 1fr); gap: 4px; direction: ltr; }
+.cal-d { aspect-ratio: 1; border-radius: 4px; background: var(--inset); }
+.cal-d.is-on { background: var(--text-2); opacity: 0.75; }
+.cal-d.is-today { outline: 2px solid var(--gold); outline-offset: 1px; }
+/* workouts */
+.session { padding: 14px 16px; margin-bottom: 10px; }
+.session-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.session-h b { font-size: 16px; font-weight: 800; color: var(--text); }
+.session-h span { font-size: 15px; color: var(--text-3); }
+.session > .muted { margin: 2px 0 8px; }
+.session-ex { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-top: 1px solid var(--line); }
+.session-ex b { font-size: 14px; font-weight: 700; color: var(--text); }
+.session-ex span { font-size: 15px; color: var(--text-2); text-align: start; }
+/* progress */
+.bw-now { margin-bottom: 8px; font-size: 14px; font-weight: 700; color: var(--text-2); }
+.bw-now b { font-size: 32px; color: var(--text); }
+.chart { display: block; width: 100%; height: 120px; }
+.chart-x { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text-3); }
+.delta { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; font-family: var(--font-num); font-size: 14px; font-weight: 700; background: var(--inset); color: var(--text-2); }
+.delta.is-up { background: rgba(34, 197, 94, 0.12); color: var(--good); }
+.ex-card { display: flex; align-items: center; gap: 12px; width: 100%; margin-bottom: 8px; padding: 14px 16px; text-align: start; }
+.ex-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.ex-main > b { font-size: 15px; font-weight: 800; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ex-nums { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 4px; font-size: 12px; font-weight: 600; color: var(--text-3); }
+.ex-nums b { font-size: 16px; color: var(--text); }
+.ex-spark { flex-shrink: 0; color: var(--text-3); }
+.spark { display: block; }
+.ex-hist { max-height: 50vh; overflow-y: auto; }
+.ex-hist div { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 13px; font-weight: 700; color: var(--text-3); }
+.ex-hist .num { font-size: 15px; color: var(--text); text-align: start; }
+[dir="rtl"] .session-ex span, [dir="rtl"] .ex-hist .num { text-align: right; }
+
+/* ===== Chat (a full page; the box to type in stays at the bottom) ===== */
+.chat-top { position: sticky; top: 0; z-index: 5; background: var(--bg); }
+.chat-list { padding: 4px 0 calc(90px + env(safe-area-inset-bottom)); min-height: 50vh; }
+main.wrap:has(.chat-list) { padding-bottom: 0; }
+.chat-msg { max-width: 82%; margin: 0 0 6px; padding: 9px 13px 6px; border-radius: var(--r-md); background: var(--surface-1); border: 1px solid var(--line); color: var(--text); border-end-start-radius: 6px; }
+.chat-msg.is-me { margin-inline-start: auto; background: var(--gold-soft); border-color: transparent; border-end-start-radius: var(--r-md); border-end-end-radius: 6px; }
+.chat-msg p { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.chat-msg span { display: block; text-align: end; margin-top: 2px; font-size: 12px; color: var(--text-3); }
+.chat-day { text-align: center; margin: 14px 0 10px; font-size: 12px; font-weight: 800; color: var(--text-3); }
+.chat-seen { text-align: end; margin: -2px 4px 6px; font-size: 12px; font-weight: 700; color: var(--text-3); }
+.chat-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 56px 24px; text-align: center; color: var(--text-3); font-size: 14px; font-weight: 700; line-height: 1.5; }
+.chat-empty svg { width: 34px; height: 34px; }
+.chat-empty p { margin: 0; }
+.chat-bar { position: fixed; z-index: 10; left: 0; right: 0; bottom: 0; background: var(--bg); border-top: 1px solid var(--line); padding: 10px 16px max(12px, env(safe-area-inset-bottom)); }
+.chat-bar-in { display: flex; align-items: flex-end; gap: 8px; max-width: calc(42rem - 32px); margin: 0 auto; }
+.chat-bar textarea { flex: 1; min-width: 0; min-height: 44px; max-height: 132px; resize: none; padding: 10px 16px; border-radius: 22px; background: var(--inset); border: 1px solid var(--line); color: var(--text); font: 600 16px/1.4 var(--font-text); outline: none; }
+.chat-bar textarea:focus { border-color: var(--gold); }
+.chat-bar textarea::placeholder { color: var(--text-3); }
+.chat-send { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--gold); color: var(--on-gold); }
+.chat-send svg { width: 22px; height: 22px; }
+.chat-send:disabled { opacity: 0.4; }
 
 /* ===== Routine builder (admin-coach.js, opened from a client's page) in the app's look ===== */
 .coach { position: fixed; inset: 0; z-index: 40; background: var(--bg); overflow-y: auto; display: none; color: var(--text); }

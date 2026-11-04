@@ -328,6 +328,19 @@ input.day-title-input { font-size: 26px !important; }
 /* Programs: the workout names in the 7-day preview use the narrow number font and break long words */
 .pv-wo { font-family: var(--font-num); font-size: 13px; font-weight: 600; line-height: 1.1; overflow-wrap: anywhere; hyphens: auto; }
 /* AI coach chat: your questions on the end side, the coach's answers on the start side */
+/* coach chat (COACH CHAT in app.js): your messages on the end side, the coach's on the start side */
+.chat-msg { max-width: 82%; margin: 0 0 6px; padding: 9px 13px 6px; border-radius: var(--r-md); background: var(--surface-1); border: 1px solid var(--line); color: var(--text); border-end-start-radius: 6px; }
+.chat-msg.is-me { margin-inline-start: auto; background: var(--gold-soft); border-color: transparent; border-end-start-radius: var(--r-md); border-end-end-radius: 6px; }
+.chat-msg p { font-size: 15px; font-weight: 600; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.chat-msg span { display: block; text-align: end; margin-top: 2px; font-size: 12px; color: var(--text-3); }
+.chat-day { text-align: center; margin: 14px 0 10px; font-size: 12px; font-weight: 800; color: var(--text-3); }
+.chat-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 56px 24px; text-align: center; color: var(--text-3); font-size: 13px; font-weight: 700; line-height: 1.5; }
+.chat-empty svg { width: 34px; height: 34px; }
+.chat-badge { flex-shrink: 0; padding: 3px 9px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-size: 12px; font-weight: 800; }
+.chat-badge.hidden { display: none; }
+.bg-\[\#d4af37\] .chat-badge { background: var(--on-gold); color: var(--gold); }
+.chat-dot { position: absolute; top: 6px; right: 50%; margin-right: 8px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid var(--bg); pointer-events: none; }
+.chat-dot.hidden { display: none; }
 .ai-msg { max-width: 90%; padding: 10px 14px; border-radius: var(--r-md); font-size: 14px; font-weight: 600; line-height: 1.55; overflow-wrap: anywhere; }
 .ai-me { background: rgba(255, 255, 255, 0.1); color: var(--text); border-end-end-radius: 6px; }
 .ai-bot { background: var(--surface-1); border: 1px solid var(--line); color: var(--text-2); border-end-start-radius: 6px; }

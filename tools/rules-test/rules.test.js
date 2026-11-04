@@ -111,6 +111,7 @@ const join = (db, coach = COACH, code = KCODE, uid = CLIENT) => {
     const b = db.batch();
     b.set(db.doc(`coaches/${coach}/members/${uid}`), { code, name: 'Client', email: 'client@x.com', joinedAt: 4 });
     b.set(db.doc(`users/${uid}/coach/link`), { coachId: coach, coachName: 'Coach Test', code, joinedAt: 4 });
+    b.update(db.doc(`coachCodes/${code}`), { usedBy: uid, usedAt: 4 });
     return b.commit();
 };
 const leave = (db, coach = COACH, uid = CLIENT) => {
@@ -185,7 +186,8 @@ test('a client leaves, or the coach removes them: access ends', async () => {
     await join(as(CLIENT, clientTok));
     await assertSucceeds(leave(as(CLIENT, clientTok)));
     await assertFails(coachDb().doc(`users/${CLIENT}`).get());
-    await join(as(CLIENT, clientTok));
+    await seedCode(COACH, 'NNNNNNNN');
+    await join(as(CLIENT, clientTok), COACH, 'NNNNNNNN');
     await assertSucceeds(coachDb().doc(`coaches/${COACH}/members/${CLIENT}`).delete());
     await assertFails(coachDb().doc(`users/${CLIENT}`).get());
     // the client sees their link is stale and removes it
@@ -225,6 +227,7 @@ const sw = (db, from, to, code, uid = CLIENT) => {
     b.delete(db.doc(`coaches/${from}/members/${uid}`));
     b.set(db.doc(`coaches/${to}/members/${uid}`), { code, name: 'Client', email: 'client@x.com', joinedAt: 5 });
     b.set(db.doc(`users/${uid}/coach/link`), { coachId: to, coachName: 'Other', code, joinedAt: 5 });
+    b.update(db.doc(`coachCodes/${code}`), { usedBy: uid, usedAt: 5 });
     return b.commit();
 };
 test('a coach cannot delete the link while keeping access', async () => {
@@ -277,4 +280,98 @@ test('account deletion: the client removes both entries in one batch', async () 
     await seedCoach(); await seedCode(); await seedClient();
     await join(as(CLIENT, clientTok));
     await assertSucceeds(leave(as(CLIENT, clientTok)));
+});
+
+// ---------- each client code works once ----------
+test('a client code works once', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await assertSucceeds(join(as(CLIENT, clientTok)));
+    await leave(as(CLIENT, clientTok));
+    // the same client again, or someone else, with the used code
+    await assertFails(join(as(CLIENT, clientTok)));
+    await seed(db => db.doc('users/k2').set({ updatedAt: 1 }));
+    await assertFails(join(as('k2', { email: 'client@x.com', email_verified: true }), COACH, KCODE, 'k2'));
+    // a fresh code works
+    await seedCode(COACH, 'NNNNNNNN');
+    await assertSucceeds(join(as(CLIENT, clientTok), COACH, 'NNNNNNNN'));
+});
+test('joining without marking the code, or marking it without joining, fails', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    const db = as(CLIENT, clientTok);
+    let b = db.batch();
+    b.set(db.doc(`coaches/${COACH}/members/${CLIENT}`), { code: KCODE, name: 'Client', email: 'client@x.com', joinedAt: 4 });
+    b.set(db.doc(`users/${CLIENT}/coach/link`), { coachId: COACH, coachName: 'Coach Test', code: KCODE, joinedAt: 4 });
+    await assertFails(b.commit());
+    await assertFails(db.doc(`coachCodes/${KCODE}`).update({ usedBy: CLIENT, usedAt: 4 }));
+    await assertFails(as('u2').doc(`coachCodes/${KCODE}`).update({ usedBy: CLIENT, usedAt: 4 }));
+    // marking it for someone else
+    b = db.batch();
+    b.set(db.doc(`coaches/${COACH}/members/${CLIENT}`), { code: KCODE, name: 'Client', email: 'client@x.com', joinedAt: 4 });
+    b.set(db.doc(`users/${CLIENT}/coach/link`), { coachId: COACH, coachName: 'Coach Test', code: KCODE, joinedAt: 4 });
+    b.update(db.doc(`coachCodes/${KCODE}`), { usedBy: 'u2', usedAt: 4 });
+    await assertFails(b.commit());
+});
+test('new codes start unused; the coach cannot pre-mark them', async () => {
+    await seedCoach();
+    await assertSucceeds(coachDb().doc(`coachCodes/${KCODE}`).set({ coach: COACH, name: 'Coach Test', createdAt: 3, usedBy: '', usedAt: 0 }));
+    await assertFails(coachDb().doc('coachCodes/LLLLLLLL').set({ coach: COACH, name: 'Coach Test', createdAt: 3, usedBy: 'x', usedAt: 1 }));
+    await assertFails(coachDb().doc(`coachCodes/${KCODE}`).update({ name: 'Other' }));
+});
+
+// ---------- chat between a client and their coach ----------
+const chatPath = (coach = COACH, uid = CLIENT) => `users/${uid}/chats/${coach}`;
+const thread = (from, extra = {}) => ({ lastAt: 10, lastText: 'Hi', lastFrom: from, readClient: 0, readCoach: 0, ...extra });
+const msg = (from, extra = {}) => ({ from, text: 'Hi', at: Date.now(), ...extra });
+test('client and coach chat while the client is in the list', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    // not joined yet: nobody can write
+    await assertFails(as(CLIENT, clientTok).doc(`${chatPath()}/messages/m1`).set(msg(CLIENT)));
+    await assertFails(coachDb().doc(`${chatPath()}/messages/m1`).set(msg(COACH)));
+    await join(as(CLIENT, clientTok));
+    await assertSucceeds(as(CLIENT, clientTok).doc(`${chatPath()}/messages/m1`).set(msg(CLIENT)));
+    await assertSucceeds(as(CLIENT, clientTok).doc(chatPath()).set(thread(CLIENT, { readClient: 10 })));
+    await assertSucceeds(coachDb().doc(`${chatPath()}/messages/m2`).set(msg(COACH)));
+    await assertSucceeds(coachDb().doc(chatPath()).update({ lastAt: 11, lastText: 'Hello', lastFrom: COACH, readCoach: 11 }));
+    await assertSucceeds(coachDb().collection(`${chatPath()}/messages`).orderBy('at', 'desc').limit(50).get());
+    await assertSucceeds(as(CLIENT, clientTok).collection(`${chatPath()}/messages`).get());
+    // others: no
+    await assertFails(as('u2').collection(`${chatPath()}/messages`).get());
+    await assertFails(admin().collection(`${chatPath()}/messages`).get());
+    await assertFails(as('c2', coachTok).doc(`${chatPath('c2')}/messages/m3`).set(msg('c2')));
+});
+test('chat messages are checked and cannot be changed', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await join(as(CLIENT, clientTok));
+    const db = as(CLIENT, clientTok);
+    await assertFails(db.doc(`${chatPath()}/messages/m1`).set(msg(COACH)));                       // pretending to be the coach
+    await assertFails(db.doc(`${chatPath()}/messages/m1`).set(msg(CLIENT, { text: '' })));
+    await assertFails(db.doc(`${chatPath()}/messages/m1`).set(msg(CLIENT, { text: 'x'.repeat(1001) })));
+    await assertFails(db.doc(`${chatPath()}/messages/m1`).set(msg(CLIENT, { at: 9e15 })));
+    await assertFails(db.doc(`${chatPath()}/messages/m1`).set(msg(CLIENT, { extra: 1 })));
+    await assertSucceeds(db.doc(`${chatPath()}/messages/m1`).set(msg(CLIENT)));
+    await assertFails(db.doc(`${chatPath()}/messages/m1`).update({ text: 'changed' }));
+    await assertFails(coachDb().doc(`${chatPath()}/messages/m1`).delete());
+    // each side marks only its own read time
+    await assertSucceeds(db.doc(chatPath()).set(thread(CLIENT)));
+    await assertFails(db.doc(chatPath()).update({ readCoach: 99 }));
+    await assertFails(coachDb().doc(chatPath()).update({ readClient: 99 }));
+    await assertSucceeds(coachDb().doc(chatPath()).update({ readCoach: 99 }));
+    await assertFails(db.doc(chatPath()).update({ lastFrom: 'u2' }));
+    // the client deletes it with their account
+    await assertSucceeds(db.doc(`${chatPath()}/messages/m1`).delete());
+    await assertSucceeds(db.doc(chatPath()).delete());
+});
+test('the chat closes when the client leaves or the coach is switched off', async () => {
+    await seedCoach(); await seedCode(); await seedClient();
+    await join(as(CLIENT, clientTok));
+    await assertSucceeds(as(CLIENT, clientTok).doc(`${chatPath()}/messages/m1`).set(msg(CLIENT)));
+    await seedCoach(false);
+    await assertFails(as(CLIENT, clientTok).doc(`${chatPath()}/messages/m2`).set(msg(CLIENT)));
+    await assertFails(coachDb().collection(`${chatPath()}/messages`).get());
+    await seedCoach(true);
+    await leave(as(CLIENT, clientTok));
+    await assertFails(coachDb().collection(`${chatPath()}/messages`).get());
+    await assertFails(as(CLIENT, clientTok).doc(`${chatPath()}/messages/m2`).set(msg(CLIENT)));
+    // the client still has their old messages
+    await assertSucceeds(as(CLIENT, clientTok).collection(`${chatPath()}/messages`).get());
 });

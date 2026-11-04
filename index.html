@@ -168,6 +168,22 @@
         </div>
     </div>
 
+    <!-- Chat with your coach (a full page, filled by app.js: COACH CHAT) -->
+    <div id="chat-overlay" class="sheet-overlay page-overlay fixed inset-0 z-[410] hidden flex-col opacity-0 transition-opacity duration-300">
+        <div id="chat-box" role="dialog" aria-modal="true" aria-labelledby="chat-title" class="page-box w-full h-full flex flex-col transform translate-x-full transition-transform duration-300">
+            <div class="page-bar shrink-0">
+                <button onclick="window.appActions.closeChat()" class="back-btn tap-feedback" aria-label="Go back" data-i18n-label="Go back"><i data-lucide="chevron-left" class="rtl-flip"></i></button>
+                <h2 id="chat-title" class="page-bar-title"></h2>
+                <span class="w-11 shrink-0" aria-hidden="true"></span>
+            </div>
+            <div id="chat-list" class="sheet-scroll page-body flex-1 overflow-y-auto overscroll-contain px-4 pt-1 pb-4" aria-live="polite"></div>
+            <div class="page-body shrink-0 border-t border-white/10 px-4 pt-3 flex items-end gap-2" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
+                <textarea id="chat-in" rows="1" maxlength="1000" dir="auto" oninput="window.appActions.chatTyped(this)" onkeydown="window.appActions.chatKeyDown(event)" data-i18n-ph="Message" placeholder="Message" data-i18n-label="Message" aria-label="Message" class="ai-input flex-1 min-w-0 resize-none bg-white/5 border border-white/10 rounded-2xl px-4 py-2.5 text-[16px] font-bold text-white outline-none"></textarea>
+                <button id="chat-send" onclick="window.appActions.chatSend()" aria-label="Send" data-i18n-label="Send" class="w-11 h-11 shrink-0 flex items-center justify-center bg-[#d4af37] rounded-full text-black tap-feedback disabled:opacity-40" disabled><i data-lucide="arrow-up" class="w-5 h-5"></i></button>
+            </div>
+        </div>
+    </div>
+
     <!-- Email sign-in: sign in, create an account, reset the password, or confirm the password (filled by app.js).
          A card in the middle of the screen, above the welcome page. -->
     <div id="email-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9995] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeEmail()">
@@ -394,6 +410,7 @@
                     <button id="coach-row" onclick="window.appActions.openCoachSheet()" class="pf-row tap-feedback">
                         <span class="pf-ic"><i data-lucide="user-check"></i></span>
                         <span class="pf-label"><span id="coach-label">Join a coach</span><span id="coach-sub" class="pf-sub">With your coach's code</span></span>
+                        <span id="coach-new" class="chat-badge hidden" data-i18n="New">New</span>
                         <i data-lucide="chevron-right" class="pf-chev"></i>
                     </button>
                     <button onclick="window.appActions.openCodeSheet()" class="pf-row tap-feedback">
@@ -432,7 +449,7 @@
             <button id="tabbtn-today" onclick="window.appActions.switchTab('today')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="dumbbell" class="w-6 h-6"></i><span class="sr-only" data-i18n="Today">Today</span></button>
             <button id="tabbtn-plan" onclick="window.appActions.switchTab('plan')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="calendar-days" class="w-6 h-6"></i><span class="sr-only" data-i18n="Plan">Plan</span></button>
             <button id="tabbtn-progress" onclick="window.appActions.switchTab('progress')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback"><i data-lucide="trending-up" class="w-6 h-6"></i><span class="sr-only" data-i18n="Progress">Progress</span></button>
-            <button id="tabbtn-profile" onclick="window.appActions.switchTab('profile')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative"><i data-lucide="user" class="w-6 h-6"></i><span class="sr-only" data-i18n="Profile">Profile</span><span id="backup-dot" class="hidden absolute top-1.5 left-1/2 ml-2 w-3 h-3 rounded-full bg-red-500 border-2 border-black pointer-events-none"></span></button>
+            <button id="tabbtn-profile" onclick="window.appActions.switchTab('profile')" class="tab-btn py-2.5 flex flex-col items-center gap-1 tap-feedback relative"><i data-lucide="user" class="w-6 h-6"></i><span class="sr-only" data-i18n="Profile">Profile</span><span id="backup-dot" class="hidden absolute top-1.5 left-1/2 ml-2 w-3 h-3 rounded-full bg-red-500 border-2 border-black pointer-events-none"></span><span id="chat-dot" class="chat-dot hidden" aria-hidden="true"></span></button>
         </div>
     </nav>
 
