@@ -170,6 +170,31 @@ window.ApexCoachI18n = (() => {
         'Best set and estimated 1-rep max (e1RM). The change is from their first session to the last one. Tap an exercise for every session.': 'أفضل مجموعة والحد الأقصى المقدّر لتكرار واحد (e1RM). التغيير من أول حصة إلى آخر حصة. اضغط على تمرين لرؤية كل الحصص.',
         'Last session {when}': 'آخر حصة {when}',
 
+        // routine editor (coach-builder.js)
+        'Close without sending?': 'إغلاق دون إرسال؟',
+        'Your changes are lost.': 'ستضيع تغييراتك.',
+        'Edit routine': 'تعديل الجدول',
+        'For {name}': 'لـ {name}',
+        'Coach plan': 'خطة المدرب',
+        'Send as': 'أرسله كـ',
+        'A new routine': 'جدول جديد',
+        'The week': 'الأسبوع',
+        'Replace': 'استبدال',
+        'Load "{name}" to edit it?': 'تحميل «{name}» لتعديله؟',
+        'The days you have built so far are replaced.': 'ستُستبدل الأيام التي بنيتها حتى الآن.',
+        'Load': 'تحميل',
+        'Back to the week': 'العودة إلى الأسبوع',
+        'Tap an exercise to change its sets and reps, move it or delete it.': 'اضغط على تمرين لتغيير مجموعاته وتكراراته أو نقله أو حذفه.',
+        'No exercises yet. Add some from the library.': 'لا تمارين بعد. أضف من المكتبة.',
+        'Fewer sets': 'مجموعات أقل',
+        'More sets': 'مجموعات أكثر',
+        'Exercise removed': 'تم حذف التمرين',
+        'Add “{name}”': 'أضف «{name}»',
+        'Your own exercise': 'تمرين خاص بك',
+        'No exercise found.': 'لم يُعثر على تمرين.',
+        'A day can have up to 60 exercises.': 'يمكن أن يحتوي اليوم على 60 تمرينًا كحد أقصى.',
+        '{name} added': 'تمت إضافة {name}',
+        'Pin a note': 'ثبّت ملاحظة',
         // routine builder (admin-coach.js)
         'Close without sending? Your changes are lost.': 'إغلاق دون إرسال؟ ستضيع تغييراتك.',
         'Send to': 'أرسل إلى',
@@ -241,6 +266,8 @@ window.ApexCoachI18n = (() => {
     const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k) && o[k];
     const t = (en, vars) => {
         let out = (isAR && (has(AR, en) || has(APP.AR, en))) || en;
+        // English: one of a thing ("1 exercise", "1 set", "1 session")
+        if (!isAR && vars && Number(vars.n) === 1) out = out.replace(/\{n\} ([a-z]+?)s\b/, '{n} $1');
         if (vars && isAR) out = out.replace(/\{(\w+)\} ([؀-ۿ]+)/g, (m, k, w) => vars[k] !== undefined && APP.AR_COUNT[w] ? arCount(vars[k], w) : m);
         if (vars) out = out.replace(/\{(\w+)\}/g, (m, k) => vars[k] !== undefined ? vars[k] : m);
         // after منذ / من / خلال the dual takes its other form: منذ يومين
