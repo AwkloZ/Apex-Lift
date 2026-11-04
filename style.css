@@ -329,7 +329,7 @@ input.day-title-input { font-size: 26px !important; }
 .pv-wo { font-family: var(--font-num); font-size: 13px; font-weight: 600; line-height: 1.1; overflow-wrap: anywhere; hyphens: auto; }
 /* AI coach chat: your questions on the end side, the coach's answers on the start side */
 /* coach chat (COACH CHAT in app.js): your messages on the end side, the coach's on the start side */
-.chat-msg { max-width: 82%; margin: 0 0 6px; padding: 9px 13px 6px; border-radius: var(--r-md); background: var(--surface-1); border: 1px solid var(--line); color: var(--text); border-end-start-radius: 6px; }
+.chat-msg { width: fit-content; max-width: 82%; margin: 0 0 6px; padding: 9px 13px 6px; border-radius: var(--r-md); background: var(--surface-1); border: 1px solid var(--line); color: var(--text); border-end-start-radius: 6px; }
 .chat-msg.is-me { margin-inline-start: auto; background: var(--gold-soft); border-color: transparent; border-end-start-radius: var(--r-md); border-end-end-radius: 6px; }
 .chat-msg p { font-size: 15px; font-weight: 600; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
 .chat-msg span { display: block; text-align: end; margin-top: 2px; font-size: 12px; color: var(--text-3); }
