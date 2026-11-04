@@ -460,6 +460,7 @@ window.APEX_I18N = (() => {
         "Sign in to join a coach.": "سجّل الدخول للانضمام إلى مدرب.",
         "Looking for your coach…": "نبحث عن مدربك…",
         "This code doesn't work. Check it with your coach.": "هذا الرمز لا يعمل. تأكد منه مع مدربك.",
+        'This code was already used. Ask your coach for a new one.': 'هذا الرمز استُخدم من قبل. اطلب من مدربك رمزاً جديداً.',
         "You already train with {name}.": "أنت تتدرب مع {name} بالفعل.",
         "You joined {name}": "انضممت إلى {name}",
         "Leave {old} and join {new}?": "مغادرة {old} والانضمام إلى {new}؟",
@@ -806,6 +807,17 @@ window.APEX_I18N = (() => {
         "Get program": "احصل على البرنامج",
         "{name} fits your answers. You have 5 routines, so it replaces the current one. Your history is kept.": "{name} يناسب إجاباتك. لديك 5 جداول، لذلك سيحل محل الجدول الحالي. يبقى سجلك محفوظًا.",
         "{name} fits your answers. It is added to your routines; your current one stays.": "{name} يناسب إجاباتك. سيُضاف إلى جداولك ويبقى الحالي كما هو.",
+        // coach chat
+        'Chat with {name}': 'تحدث مع {name}',
+        'New': 'جديد',
+        'Reply': 'رد',
+        'Message': 'رسالة',
+        'Yesterday': 'أمس',
+        'Sending…': 'جارٍ الإرسال…',
+        'your coach': 'مدربك',
+        'Send your coach a message. Only you and {name} can see this chat.': 'أرسل رسالة إلى مدربك. لا يرى هذه المحادثة إلا أنت و{name}.',
+        'New message from {name}': 'رسالة جديدة من {name}',
+        'You can no longer message this coach.': 'لم يعد بإمكانك مراسلة هذا المدرب.',
     };
     // Arabic counts follow Arabic grammar: 1 مجموعة واحدة, 2 مجموعتان, 3–10 مجموعات, 11+ مجموعة
     // [one, two, 3–10, 11 and up]; the table word after "{n}" picks the row
