@@ -27,9 +27,11 @@
         <div class="skeleton" style="height:72px;margin-bottom:10px" aria-hidden="true"></div>
         <div class="skeleton" style="height:72px" aria-hidden="true"></div>
     </main>
-    <!-- Floating dock, like the Apex Lift app: Clients, Invite, Account -->
+    <!-- Floating dock, like the Apex Lift app: Home, Clients, Chats, Invite, Account (labels set in coach.js, in the app's language) -->
     <nav id="dock" class="dock" dir="ltr" hidden>
+        <button data-tab="home" class="tap" aria-label="Home"><i data-lucide="house"></i></button>
         <button data-tab="clients" class="tap" aria-label="Clients"><i data-lucide="users"></i></button>
+        <button data-tab="chats" class="tap" aria-label="Chats"><i data-lucide="message-circle"></i><span class="dock-badge num" hidden></span></button>
         <button data-tab="invite" class="tap" aria-label="Invite"><i data-lucide="user-plus"></i></button>
         <button data-tab="account" class="tap" aria-label="Account"><i data-lucide="user"></i></button>
     </nav>
@@ -39,6 +41,9 @@
     <script src="vendor/firebase-12.19.0/firebase-firestore-compat.js"></script>
     <script src="vendor/lucide-icons.js"></script>
     <script src="library.js"></script>
+    <script src="calc.js"></script>
+    <script src="i18n.js"></script>
+    <script src="coach-i18n.js"></script>
     <script src="admin-utils.js"></script>
     <script src="admin-coach.js"></script>
     <script src="coach-sign-in.js"></script>
