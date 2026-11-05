@@ -1693,7 +1693,8 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         progressTab: id => { window.appState.aTab = id; try { localStorage.setItem(PTAB_KEY, id); } catch (e) {} renderAnalytics(); window.scrollTo({ top: 0 }); },
         // the chip row keeps its scroll position after the list is redrawn
         progressFilter: id => { const row = document.getElementById('pex-chips'), x = row ? row.scrollLeft : 0; window.appState.pexF = id; renderAnalytics(); const nr = document.getElementById('pex-chips'); if (nr) nr.scrollLeft = x; },
-        progressSearch: q => { window.appState.pexQ = q; const el = document.getElementById('pex-list'); if (!el) return; el.innerHTML = progressExerciseListHTML(progressExerciseRows(StorageManager.getHistory())); if (window.lucide) window.lucide.createIcons({ root: el }); },
+        progressSearch: q => { window.appState.pexQ = q; clearTimeout(window.appState.pexTimer); window.appState.pexTimer = setTimeout(window.appActions.progressSearchNow, 150); }, // after the last key
+        progressSearchNow: () => { const el = document.getElementById('pex-list'); if (!el) return; el.innerHTML = progressExerciseListHTML(progressExerciseRows(StorageManager.getHistory())); if (window.lucide) window.lucide.createIcons({ root: el }); },
         progressLogWeight: () => {
             const inp = document.getElementById('pb-weight'), v = inp ? latinDigits(inp.value).trim() : '';
             const w = parseFloat(v.replace(/[\u066B\u060C,]/g, '.'));

@@ -487,7 +487,7 @@ window.ApexCoachBuilder = (() => {
     };
 
     // ---------- Add / change exercise: a bottom sheet with search and muscle chips (like the app) ----------
-    let sheet = null; // { mode: 'add' | 'replace', j, q, m }
+    let sheet = null, searchTimer = 0; // sheet: { mode: 'add' | 'replace', j, q, m }
     const openSheet = (mode, j = -1) => {
         sheet = { mode, j, q: '', m: '' };
         const w = document.createElement('div');
@@ -503,7 +503,7 @@ window.ApexCoachBuilder = (() => {
         requestAnimationFrame(() => w.classList.add('is-open'));
         w.onclick = e => { if (e.target === w) closeSheet(); };
         w.querySelector('[data-close]').onclick = closeSheet;
-        w.querySelector('#cb-q').oninput = e => { sheet.q = e.target.value; renderList(); };
+        w.querySelector('#cb-q').oninput = e => { sheet.q = e.target.value; clearTimeout(searchTimer); searchTimer = setTimeout(() => { if (sheet) renderList(); }, 150); }; // after the last key
         w.querySelectorAll('[data-m]').forEach(x => x.onclick = () => { sheet.m = x.dataset.m; w.querySelectorAll('[data-m]').forEach(y => y.classList.toggle('is-on', y === x)); x.scrollIntoView({ inline: 'nearest', block: 'nearest' }); renderList(); });
         // swipe down (from the top, or with the list at the top) closes it
         const sb = w.querySelector('.cb-sheet-box'), list = w.querySelector('.cb-list');
