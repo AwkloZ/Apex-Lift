@@ -163,7 +163,7 @@
     const openBuilder = opts => {
         try { history.pushState({ coachPage: 1 }, ''); } catch (e) {}
         builderOpen = true;
-        window.ApexCoachBuilder.open({ ...opts, coachName: coach ? coach.name : '' });
+        window.ApexCoachBuilder.open({ ...opts, coachName: coach ? coach.name : '', coachUid: me ? me.uid : '' });
         const box = $('coach'), watch = new MutationObserver(() => {
             if (box.classList.contains('open')) return;
             watch.disconnect();

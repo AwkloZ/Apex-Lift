@@ -5,7 +5,7 @@
 // fonts and versioned libraries from the saved copy. Firebase (sign-in, database) always goes to the internet.
 //
 // When you add a NEW file to the coach app, add it to APP_FILES and change the version number below.
-const CACHE = 'apex-coach-v3';
+const CACHE = 'apex-coach-v4';
 const APP_FILES = [
     'coach.html',
     'coach.css',
@@ -19,6 +19,7 @@ const APP_FILES = [
     'calc.js',
     'i18n.js',
     'vendor/lucide-icons.js',
+    'vendor/sortable-1.15.7.min.js',
     'vendor/firebase-12.19.0/firebase-app-compat.js',
     'vendor/firebase-12.19.0/firebase-auth-compat.js',
     'vendor/firebase-12.19.0/firebase-firestore-compat.js',
