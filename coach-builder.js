@@ -14,7 +14,7 @@
 window.ApexCoachBuilder = (() => {
     'use strict';
     const { muscleOptions, exerciseDictionary, exerciseAR, WORKOUTS, PROGRAMS } = window.APEX_LIB;
-    const { $, esc, isObj } = window.ApexAdminUtils;
+    const { $, esc, isObj, coachPlanDoc } = window.ApexAdminUtils;
     const { t, isAR, muscle: tm } = window.ApexCoachI18n;
     const DAY_NAMES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     const DAY_LONG = { SUN: 'Sunday', MON: 'Monday', TUE: 'Tuesday', WED: 'Wednesday', THU: 'Thursday', FRI: 'Friday', SAT: 'Saturday' };
@@ -571,18 +571,13 @@ window.ApexCoachBuilder = (() => {
     const send = async () => {
         const isNote = S.mode === 'note', note = S.note.trim().slice(0, NOTE_MAX);
         if (isNote && !note) return flash(t('Write a note first.'), true);
-        let doc;
-        if (isNote) doc = { mode: 'note', targetId: '', note };
-        else {
-            const r = finalRoutine(), p = problems(r);
+        let routine = null;
+        if (!isNote) {
+            routine = finalRoutine(); const p = problems(routine);
             if (p.length && !(await ask(t('Send anyway?'), p.join('\n'), t('Send')))) return;
-            const tg = target();
-            // a new routine gets its own id, so sending it twice (or to two phones) never makes duplicates
-            r.id = tg ? tg.id : `coach_${Date.now()}`;
-            doc = { mode: tg ? 'replace' : 'add', targetId: tg ? tg.id : '', routine: r, note, activate: S.activate };
         }
         const me = S.auth.currentUser;
-        doc = { ...doc, coach: String(S.coachName || (me && (me.displayName || me.email)) || 'Coach').slice(0, 100), sentAt: Date.now(), appliedAt: 0 };
+        const doc = coachPlanDoc({ note, routine, target: isNote ? null : target(), activate: S.activate, coach: S.coachName || (me && (me.displayName || me.email)) });
         const btn = $('cb-send'); btn.disabled = true;
         try {
             await S.db.doc(`users/${S.client.uid}/coach/plan`).set(doc);

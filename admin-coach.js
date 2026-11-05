@@ -9,7 +9,7 @@ window.ApexCoach = (() => {
     const DAY_LONG = { SUN: 'Sunday', MON: 'Monday', TUE: 'Tuesday', WED: 'Wednesday', THU: 'Thursday', FRI: 'Friday', SAT: 'Saturday' };
     const REPS_PRESETS = ['5', '3 - 5', '6 - 8', '8 - 10', '8 - 12', '10 - 12', '12 - 15', '15 - 20', '30 - 45s'];
     const MAX_EX = 60, NOTE_MAX = 1000;
-    const { $, esc, isObj } = window.ApexAdminUtils; // admin-utils.js
+    const { $, esc, isObj, coachPlanDoc } = window.ApexAdminUtils; // admin-utils.js
     // text: Arabic in the coach app (coach-i18n.js), English on the admin page. Day titles and routine names sent to the
     // client stay as typed; the app translates the standard ones (New Day, Complete Rest, ...) itself.
     const t = (window.ApexCoachI18n && window.ApexCoachI18n.t) || ((en, v) => v ? en.replace(/\{(\w+)\}/g, (m, k) => v[k] !== undefined ? v[k] : m) : en);
@@ -261,18 +261,13 @@ window.ApexCoach = (() => {
     const send = async () => {
         const isNote = S.mode === 'note', note = S.note.trim().slice(0, NOTE_MAX);
         if (isNote && !note) return msg(t('Write a note first.'), 'err');
-        let doc;
-        if (isNote) doc = { mode: 'note', targetId: '', note };
-        else {
-            const r = finalRoutine(), p = problems(r);
+        let routine = null;
+        if (!isNote) {
+            routine = finalRoutine(); const p = problems(routine);
             if (p.length && !confirm(`${p.join('\n')}\n\n${t('Send anyway?')}`)) return;
-            const target = S.client.routines.find(w => w.id === S.targetId);
-            // a new routine gets its own id, so sending it twice (or to two phones) never makes duplicates
-            r.id = target ? target.id : `coach_${Date.now()}`;
-            doc = { mode: target ? 'replace' : 'add', targetId: target ? target.id : '', routine: r, note, activate: S.activate };
         }
         const me = S.auth.currentUser;
-        doc = { ...doc, coach: String((me && (me.displayName || me.email)) || 'Coach').slice(0, 100), sentAt: Date.now(), appliedAt: 0 };
+        const doc = coachPlanDoc({ note, routine, target: isNote ? null : S.client.routines.find(w => w.id === S.targetId), activate: S.activate, coach: me && (me.displayName || me.email) });
         const btn = $('cb-send'); btn.disabled = true; btn.textContent = t('Sending…');
         try {
             await S.db.doc(`users/${S.client.uid}/coach/plan`).set(doc);
