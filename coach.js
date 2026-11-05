@@ -9,14 +9,7 @@
 // Text is in English in the code and wrapped in t('...'); Arabic comes from coach-i18n.js.
 (() => {
     'use strict';
-    const FIREBASE_CONFIG = {
-        apiKey: 'AIzaSyCItVZimtbvod94CGUfYx1xwgSTW_mEq0Y',
-        authDomain: location.hostname === 'apex-liftt.netlify.app' ? location.host : 'apex-lift-52a18.firebaseapp.com',
-        projectId: 'apex-lift-52a18',
-        storageBucket: 'apex-lift-52a18.firebasestorage.app',
-        messagingSenderId: '682655190858',
-        appId: '1:682655190858:web:70d756fba8e17de80cbbb3'
-    };
+    const FIREBASE_CONFIG = window.APEX_FIREBASE_CONFIG; // firebase-config.js
     const { $, esc, isObj } = window.ApexAdminUtils; // admin-utils.js
     const { t, isAR, LANG_KEY, daysAgo } = window.ApexCoachI18n; // coach-i18n.js
     const CALC = window.APEX_CALC; // calc.js: log dates and sets, the same rules as the app
@@ -58,7 +51,7 @@
 
     const params = new URLSearchParams(location.search);
     let invite = CODE_RE.test(params.get('invite') || '') ? params.get('invite') : '';
-    let me = null, coach = null, clients = [], codes = [], tab = 'home', query = '', sortKey = 'active';
+    let me = null, coach = null, clients = [], codes = [], tab = 'home', query = '', sortKey = 'active', queryTimer = 0;
     const forgetInvite = () => { invite = ''; params.delete('invite'); history.replaceState(history.state, '', location.pathname + (params.toString() ? `?${params}` : '')); };
 
     // ---------- pieces of the page ----------
@@ -378,7 +371,8 @@
             : emptyClients()}`, true, keepScroll);
         bindClients(); bindGo();
         const qi = $('q');
-        if (qi) qi.oninput = () => { query = qi.value; const pos = qi.selectionStart; clientsTab(true); const n = $('q'); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} };
+        // the list is drawn again 150 ms after the last key (not on every key); the box keeps focus and the cursor
+        if (qi) qi.oninput = () => { clearTimeout(queryTimer); queryTimer = setTimeout(() => { const cur = $('q'); if (!cur) return; query = cur.value; const pos = cur.selectionStart; clientsTab(true); const n = $('q'); if (!n) return; n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} }, 150); };
         main.querySelectorAll('[data-sort]').forEach(b => b.onclick = () => { sortKey = b.dataset.sort; clientsTab(true); });
     };
 
