@@ -749,7 +749,7 @@
             <div class="chat-top">${pageBar(c.name)}</div>
             <div id="chat-list" class="chat-list" aria-live="polite">${skeleton()}</div>
             <div class="chat-bar"><div class="chat-bar-in">
-                <textarea id="chat-in" rows="1" maxlength="1000" dir="auto" placeholder="${esc(t('Message'))}" aria-label="${esc(t('Message'))}"></textarea>
+                <textarea id="chat-in" rows="1" maxlength="1000" dir="auto" enterkeyhint="send" autocomplete="off" autocorrect="on" autocapitalize="sentences" spellcheck="true" inputmode="text" name="chat-message" placeholder="${esc(t('Message'))}" aria-label="${esc(t('Message'))}"></textarea>
                 <button id="chat-send" class="chat-send tap" aria-label="${esc(t('Send'))}" disabled><i data-lucide="arrow-up"></i></button>
             </div></div></div>`, false, true); // no fade-in: its animation would hold the fixed page in the wrong place
         stopChat(); watchFit();
@@ -757,7 +757,8 @@
         const inp = $('chat-in'), send = $('chat-send');
         const grow = () => { inp.style.height = 'auto'; if (inp.value) inp.style.height = `${Math.min(inp.scrollHeight, 132)}px`; send.disabled = !inp.value.trim(); };
         inp.oninput = grow;
-        inp.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(pointer: fine)').matches) { e.preventDefault(); send.click(); } };
+        // the keyboard's return key says Send (enterkeyhint) and sends, like a chat app; Shift+Enter on a computer = new line
+        inp.onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send.click(); } };
         send.onclick = () => {
             const text = inp.value.trim().slice(0, 1000); if (!text) return;
             const now = Date.now(), b = db.batch(), ref = chatRef(c.uid);
