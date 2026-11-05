@@ -4,21 +4,38 @@
 // - App files (index.html, app.js, ...) : try the internet first so you always get the newest version,
 //   but if there is no answer within 3 seconds (bad gym signal) use the saved copy.
 // - Fonts and versioned library files (vendor/fonts, vendor/firebase-12.19.0/..., sortable-1.15.7): saved copy first,
-//   they never change under the same name. Outside files: saved copy first too, refreshed in the background.
+//   they never change under the same name. Other sites (Firebase) are never saved.
 //
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
 // (require-sign-in.js is left out on purpose: it can be deleted, and a missing file in APP_FILES would break the install.
 //  It is still saved for offline use the first time the app loads it.)
-const CACHE = 'apex-lift-v83';
+const CACHE = 'apex-lift-v85';
 const APP_FILES = [
     './',
     'index.html',
+    'no-zoom.js',
+    'theme-boot.js',
     'style.css',
     'tailwind.css',
     'library.js',
     'i18n.js',
     'calc.js',
-    'app.js',
+    'firebase-config.js',
+    'admin-utils.js',
+    'app/core.js',
+    'app/handlers.js',
+    'app/init.js',
+    'app/render.js',
+    'app/profile.js',
+    'app/today-plan.js',
+    'app/actions.js',
+    'app/ai-coach.js',
+    'app/cloud.js',
+    'app/email-auth.js',
+    'app/routine-codes.js',
+    'app/my-coach.js',
+    'app/welcome.js',
+    'app/start.js',
     'manifest.webmanifest',
     'vendor/lucide-icons.js',
     'vendor/sortable-1.15.7.min.js',
@@ -33,19 +50,15 @@ const APP_FILES = [
     'icons/icon-maskable-512.png',
     'icons/apple-touch-icon.png',
     'privacy.html',
-    'terms.html'
+    'terms.html',
+    'policy.js'
 ];
-const OUTSIDE_FILES = [];
 const NETWORK_TIMEOUT_MS = 3000;
 
 self.addEventListener('install', event => {
     event.waitUntil((async () => {
         const cache = await caches.open(CACHE);
         await cache.addAll(APP_FILES);
-        // Outside files are nice to have: don't fail the install if one can't be downloaded right now
-        await Promise.all(OUTSIDE_FILES.map(url =>
-            fetch(url, { mode: 'no-cors' }).then(res => cache.put(url, res)).catch(() => {})
-        ));
         self.skipWaiting();
     })());
 });
@@ -98,8 +111,6 @@ self.addEventListener('fetch', event => {
         // font files and versioned libraries never change under the same name: no need to wait for the internet
         if (/\.woff2$/.test(url.pathname) || /^\/vendor\/[^/]*\d+\.\d+\.\d+/.test(url.pathname)) event.respondWith(cacheFirst(request));
         else event.respondWith(networkFirst(request));
-    } else if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-        // only the design and the font; Firebase (login, database) must always go to the internet
-        event.respondWith(cacheFirst(request));
     }
+    // everything else (Firebase sign-in and database) always goes to the internet
 });
