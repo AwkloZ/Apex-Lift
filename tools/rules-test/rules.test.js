@@ -357,6 +357,11 @@ test('chat messages are checked and cannot be changed', async () => {
     await assertFails(coachDb().doc(chatPath()).update({ readClient: 99 }));
     await assertSucceeds(coachDb().doc(chatPath()).update({ readCoach: 99 }));
     await assertFails(db.doc(chatPath()).update({ lastFrom: 'u2' }));
+    // the summary can't claim the other side sent the last message
+    await assertFails(db.doc(chatPath()).update({ lastAt: 12, lastText: 'Fake', lastFrom: COACH }));
+    await assertFails(coachDb().doc(chatPath()).update({ lastAt: 12, lastText: 'Fake', lastFrom: CLIENT }));
+    await assertSucceeds(db.doc(chatPath()).update({ lastAt: 12, lastText: 'Mine', lastFrom: CLIENT, readClient: 12 }));
+    await assertSucceeds(db.doc(chatPath()).update({ readClient: 13 }));
     // the client deletes it with their account
     await assertSucceeds(db.doc(`${chatPath()}/messages/m1`).delete());
     await assertSucceeds(db.doc(chatPath()).delete());

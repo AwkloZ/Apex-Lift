@@ -116,6 +116,10 @@ service cloud.firestore {
           && fields().lastAt is int && fields().readClient is int && fields().readCoach is int
           && fields().lastText is string && fields().lastText.size() <= 200
           && fields().lastFrom in [uid, coachId]
+          // a new last message is always your own (marking "read" keeps the summary as it was)
+          && (fields().lastFrom == request.auth.uid
+              || (resource != null && fields().lastFrom == resource.data.lastFrom
+                  && fields().lastAt == resource.data.lastAt && fields().lastText == resource.data.lastText))
           // each side marks only its own "read" time
           && (resource == null
               || fields().diff(resource.data).affectedKeys().hasOnly(['lastAt', 'lastText', 'lastFrom', isOwner(uid) ? 'readClient' : 'readCoach']));
