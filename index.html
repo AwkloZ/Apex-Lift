@@ -70,17 +70,6 @@
         </div>
     </div>
 
-    <!-- Profile → Your training (filled by app.js) -->
-    <div id="training-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closeTraining()">
-        <div id="training-box" role="dialog" aria-modal="true" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300">
-            <button type="button" onclick="window.appActions.closeTraining()" class="sheet-grab-btn shrink-0" aria-label="Close" data-i18n-label="Close"><span class="sheet-grab"></span></button>
-            <div class="flex items-center justify-between px-5 pb-2 shrink-0">
-                <h3 class="text-lg font-black text-white" data-i18n="Your training">Your training</h3>
-            </div>
-            <div id="training-body" class="sheet-scroll flex-1 overflow-y-auto overscroll-contain px-5" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom));"></div>
-        </div>
-    </div>
-
     <!-- Profile → Workout and App: full pages (back button, title in the middle) -->
     <div id="workset-overlay" class="sheet-overlay page-overlay fixed inset-0 z-[400] hidden flex-col opacity-0 transition-opacity duration-300">
         <div id="workset-box" role="dialog" aria-modal="true" class="page-box w-full h-full flex flex-col transform translate-x-full transition-transform duration-300">
@@ -335,23 +324,6 @@
         </div>
     </div>
 
-    <div id="smart-backup-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 px-6">
-        <div id="smart-backup-box" class="glass-card p-6 w-full max-w-sm transform scale-95 transition-transform duration-300 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
-                <div class="flex items-center gap-3">
-                    <i data-lucide="share" class="w-5 h-5 text-[#d4af37]"></i>
-                    <h3 class="text-lg font-black text-white" data-i18n="Export data">Export data</h3>
-                </div>
-                <button onclick="window.appActions.closeBackupModal()" class="text-slate-400 hover:text-white tap-feedback"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            
-            <p class="text-[12px] font-bold text-slate-400 mb-5 leading-relaxed" data-i18n="Your routines, workouts and settings in one file.">Your routines, workouts and settings in one file.</p>
-
-            <button onclick="window.appActions.executeSmartBackup('file')" class="w-full rounded-xl py-3.5 text-[12px] font-extrabold text-black bg-[#d4af37] border-none tap-feedback shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center gap-2"><i data-lucide="share" class="w-4 h-4"></i><span data-i18n="Save or share file">Save or share file</span></button>
-            <button onclick="window.appActions.executeSmartBackup('copy')" class="w-full mt-2 rounded-xl py-3.5 text-[12px] font-bold text-white bg-white/5 border border-white/10 tap-feedback flex items-center justify-center gap-2"><i data-lucide="copy" class="w-4 h-4"></i><span data-i18n="Copy as text">Copy as text</span></button>
-            <p class="text-[12px] font-bold text-slate-400 mt-3 leading-snug text-center" data-i18n="Copy the text to paste into an AI chat.">Copy the text to paste into an AI chat.</p>
-        </div>
-    </div>
     <!-- Exercise picker (slides up from the bottom) -->
     <div id="picker-overlay" class="sheet-overlay fixed inset-0 bg-black/70 backdrop-blur-sm z-[400] hidden flex-col justify-end opacity-0 transition-opacity duration-300" onclick="if(event.target===this)window.appActions.closePicker()">
         <div id="picker-box" class="w-full max-w-2xl mx-auto bg-[#111] rounded-t-3xl border border-white/10 border-b-0 flex flex-col h-[92dvh] transform translate-y-full transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
@@ -467,6 +439,8 @@
 
     <!-- Sign-in (Google or email) required before using the app: delete require-sign-in.js (or this line) to make it optional -->
     <script src="require-sign-in.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="admin-utils.js"></script>
     <script src="library.js"></script>
     <script src="i18n.js"></script>
     <script src="calc.js"></script>

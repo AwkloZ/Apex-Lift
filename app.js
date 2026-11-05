@@ -1,8 +1,8 @@
 (() => {
     'use strict';
 
-    // Escapes any value for safe use inside HTML text or attributes
-    const esc = str => (str === null || str === undefined ? '' : String(str)).replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t]));
+    // esc: escapes any value for safe use inside HTML text or attributes; isObj: a plain object (admin-utils.js, shared)
+    const { esc, isObj } = window.ApexAdminUtils;
     // Turns a value into a safe JS string argument for inline handlers, e.g. onclick="fn(${jsArg(name)})"
     // (handles names like "Farmer's Walk" and blocks code hidden in imported backups)
     const jsArg = v => esc(JSON.stringify(v === null || v === undefined ? '' : String(v)));
@@ -117,7 +117,6 @@
 
     // 🛡️ DATA VALIDATION (used for saved data and imported backup files)
     const DAY_NAMES = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-    const isObj = v => v !== null && typeof v === 'object' && !Array.isArray(v);
     // Arabic keyboards type ٤ or ۴: turn them into 4 so numbers always work
     const latinDigits = v => String(v == null ? '' : v).replace(/[\u0660-\u0669]/g, d => d.charCodeAt(0) - 0x660).replace(/[\u06F0-\u06F9]/g, d => d.charCodeAt(0) - 0x6F0);
     const toStr = (v, fb = '') => (typeof v === 'string' || typeof v === 'number') ? String(v) : fb;
@@ -220,14 +219,13 @@
     // Rest timer choices in seconds (Profile → Rest Timer)
     const REST_CHOICES = [45, 60, 90, 120, 150, 180, 240, 300];
     const StorageManager = {
-        KEY: 'workoutWeights_rakan_final', REPS_KEY: 'workoutReps_rakan_final', HIST_KEY: 'workoutHistory_rakan_final', PLAN_KEY: 'workoutPlan_rakan_final_v3', START_KEY: 'workoutStartDay_rakan_final', BACKUP_DATE: 'workoutLastBackup_rakan_final', ACTIVE_WEEK: 'workoutActiveWeek_rakan_final', AUTO_SYNC: 'workoutAutoSync_rakan_final', LAST_DAY: 'workoutLastDay_rakan_final', ONBOARD_KEY: 'workoutOnboard_rakan_final',
+        KEY: 'workoutWeights_rakan_final', REPS_KEY: 'workoutReps_rakan_final', HIST_KEY: 'workoutHistory_rakan_final', PLAN_KEY: 'workoutPlan_rakan_final_v3', START_KEY: 'workoutStartDay_rakan_final', ACTIVE_WEEK: 'workoutActiveWeek_rakan_final', AUTO_SYNC: 'workoutAutoSync_rakan_final', LAST_DAY: 'workoutLastDay_rakan_final', ONBOARD_KEY: 'workoutOnboard_rakan_final',
         get: () => { const v = readJSON(StorageManager.KEY, {}); return isObj(v) ? v : {}; }, set: d => writeItem(StorageManager.KEY, JSON.stringify(d)),
         getReps: () => { const v = readJSON(StorageManager.REPS_KEY, {}); return isObj(v) ? v : {}; }, setReps: d => writeItem(StorageManager.REPS_KEY, JSON.stringify(d)),
         getHistory: () => { const v = readJSON(StorageManager.HIST_KEY, {}); return isObj(v) ? v : {}; }, setHistory: d => writeItem(StorageManager.HIST_KEY, JSON.stringify(d)),
         getPlan: () => readJSON(StorageManager.PLAN_KEY, null), setPlan: d => writeItem(StorageManager.PLAN_KEY, JSON.stringify(d)),
         getStartDay: () => { const v = localStorage.getItem(StorageManager.START_KEY); return DAY_NAMES.includes(v) ? v : 'SAT'; }, setStartDay: v => { setRaw(StorageManager.START_KEY, v); cloudTouch(StorageManager.START_KEY); },
         getActiveWeek: () => localStorage.getItem(StorageManager.ACTIVE_WEEK), setActiveWeek: v => { setRaw(StorageManager.ACTIVE_WEEK, v); cloudTouch(StorageManager.ACTIVE_WEEK); },
-        getBackupDate: () => parseInt(localStorage.getItem(StorageManager.BACKUP_DATE)) || 0, setBackupDate: () => setRaw(StorageManager.BACKUP_DATE, String(Date.now())),
         RPE_KEY: 'workoutShowRpe_rakan_final',
         getShowRpe: () => localStorage.getItem(StorageManager.RPE_KEY) === 'true', setShowRpe: v => { setRaw(StorageManager.RPE_KEY, v ? 'true' : 'false'); cloudTouch(StorageManager.RPE_KEY); },
         REST_KEY: 'workoutRest_rakan_final',
@@ -1189,10 +1187,7 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
 
     // 👤 PROFILE. Tapping your photo opens Account: your information (name and date of birth can change; sex and height
     // are set in the setup) and everything about the account (sign-in, backups, sign out, delete).
-    const GOAL_LABEL = { muscle: 'Build muscle', strength: 'Get stronger', fat: 'Lose fat' };
     const EXP_LABEL = { none: 'Just starting', new: 'Less than 1 year', mid: '1 to 3 years', adv: '3 to 5 years', pro: 'More than 5 years' };
-    const EQ_LABEL = { gym: 'Full gym', db: 'Dumbbells only' };
-    const sessionLabel = v => v ? t(v === '90' ? '90+ min' : '{n} min', { n: v }) : '';
     const pfRow = (icon, label, value, sub = '', extra = '') => `<div class="pf-row"><span class="pf-ic"><i data-lucide="${icon}"></i></span><span class="pf-label">${label}${sub ? `<span class="pf-sub">${sub}</span>` : ''}</span><span class="pf-val">${value || '—'}</span>${extra}</div>`;
     const avatarHTML = (u, size) => {
         const name = u.displayName || u.name || '', photo = u.photoURL || u.photo || '';
@@ -1230,29 +1225,6 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
             </div>`;
         if (window.lucide) window.lucide.createIcons({ root: el });
     };
-    // Your training: goal, days, workout length and equipment can be changed here; a change offers a matching program
-    const TRAINING_EDIT = {
-        goal: ['Goal', () => [['muscle', t('Build muscle')], ['strength', t('Get stronger')], ['fat', t('Lose fat')]]],
-        days: ['Days a week', () => ['3', '4', '5', '6'].map(d => [d, t('{n} days', { n: d })])],
-        session: ['Workout length', () => SESSION_OPTS.map(m => [m, sessionLabel(m)])],
-        eq: ['Equipment', () => [['gym', t('Full gym')], ['db', t('Dumbbells only')]]]
-    };
-    const renderTrainingSheet = () => {
-        const el = document.getElementById('training-body'); if (!el) return;
-        const pr = getProfile(), active = appData.weeks.find(w => w.id === currentWeekId) || appData.weeks[0];
-        const value = { goal: t(GOAL_LABEL[pr.goal] || ''), days: pr.days ? t('{n} days', { n: pr.days }) : '', session: sessionLabel(pr.session), eq: t(EQ_LABEL[pr.eq] || '') };
-        const icon = { goal: 'target', days: 'calendar-days', session: 'timer', eq: 'building-2' };
-        el.innerHTML = `<p class="text-[13px] font-bold text-slate-400 mb-4">${t('Your program is built from these answers. Tap one to change it.')}</p>
-            <div class="pf-group">${Object.keys(TRAINING_EDIT).map(k => `<button onclick="window.appActions.editTraining(${jsArg(k)})" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="${icon[k]}"></i></span><span class="pf-label">${t(TRAINING_EDIT[k][0])}</span><span class="pf-val">${esc(value[k] || '—')}</span><i data-lucide="chevron-right" class="pf-chev"></i></button>`).join('')}</div>
-            <div class="h-6"></div>
-            <h3 class="pf-h">${t('Your program')}</h3>
-            <div class="pf-group mb-4">
-                ${pfRow('calendar-range', t('Active routine'), esc(t(active.name)))}
-                <button onclick="window.appActions.closeTraining(); setTimeout(window.appActions.openPrograms, 320)" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="layout-list"></i></span><span class="pf-label">${t('Browse programs')}<span class="pf-sub">${t('Add another ready-made program')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
-                <button onclick="window.appActions.closeTraining(); setTimeout(window.appActions.openAI, 320)" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="sparkles"></i></span><span class="pf-label">${t('Apex Coach')}<span class="pf-sub">${t('Build a program that fits you')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
-            </div>`;
-        if (window.lucide) window.lucide.createIcons({ root: el });
-    };
     // small centered window: a title, then a text box or a list of choices
     const openEdit = html => {
         const box = document.getElementById('edit-box'); box.innerHTML = html;
@@ -1261,17 +1233,10 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         if (!o.classList.contains('flex') || o.classList.contains('opacity-0')) { openModal('edit-overlay', 'edit-box'); pushBack('edit', () => window.appActions.closeEdit()); }
     };
     const editHead = title => `<div class="flex items-center justify-between mb-4"><h3 class="text-[18px] font-black text-white">${title}</h3><button onclick="window.appActions.closeEdit()" class="w-11 h-11 -me-2 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button></div>`;
-    // the Your training row: a one-line summary
-    const renderTrainingRow = () => {
-        const el = document.getElementById('pf-training-sub'); if (!el) return;
-        const pr = getProfile();
-        el.textContent = [t(GOAL_LABEL[pr.goal] || ''), pr.days ? t('{n} days', { n: pr.days }) : '', sessionLabel(pr.session)].filter(Boolean).join(' · ');
-    };
     const sheetOpen = id => document.getElementById(id).classList.contains('flex') && !document.getElementById(id).classList.contains('opacity-0');
     const renderProfile = () => {
-        renderAccount(); renderTrainingRow(); updateBackupStatus();
+        renderAccount();
         if (sheetOpen('account-overlay')) renderAccountSheet();
-        if (sheetOpen('training-overlay')) renderTrainingSheet();
     };
     // 🏠 TODAY: the selected day: a small day card, then its exercises. Tap an exercise to open it: Start (that exercise only) and History
     // Cards slide in when you open a different tab or day, but not when the same screen just refreshes
@@ -1313,11 +1278,6 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
     const progressRing = (done, total, n) => {
         const r = 16, c = 2 * Math.PI * r, p = total > 0 ? Math.min(1, done / total) : 0, full = p >= 1;
         return `<span class="ex-ring ${full ? 'is-full' : ''}"><svg viewBox="0 0 38 38" aria-hidden="true"><circle cx="19" cy="19" r="${r}" class="ex-ring-bg"/>${p > 0 && !full ? `<circle cx="19" cy="19" r="${r}" class="ex-ring-fg" stroke-dasharray="${(c * p).toFixed(1)} ${c.toFixed(1)}"/>` : ''}</svg><span class="ex-ring-n">${full ? '<i data-lucide="check" class="w-4 h-4"></i>' : n}</span></span>`;
-    };
-    // Today's target in one short coloured line: ↑ add weight, ↓ go lighter
-    const suggestionText = (sg, timed) => {
-        const cls = { up: 'text-[#22c55e]', down: 'text-red-400', build: 'text-[#d4af37]', easy: 'text-slate-300' }[sg.type];
-        return `<span class="font-black ${cls}" title="${esc(t(SUGG[sg.type].label))}" dir="ltr">${{ up: '↑ ', down: '↓ ' }[sg.type] || ''}${fmtW(sg.w)} × ${sg.r}${timed ? 's' : ''}</span>`;
     };
     // Today's edit mode: a gold bar on top (Done / plan the whole week), then the same day editor as Plan
     const todayEditBar = () => `<div class="plan-strip flex items-center gap-2.5 px-3.5 py-2.5 mb-2.5 rounded-2xl bg-white/5 border border-white/10">
@@ -1748,11 +1708,6 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-400 text-[12px] font-bold">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('Week {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[12px] font-bold text-[#d4af37] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
          html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[12px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[12px] text-slate-400">${t('kg')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[12px] text-slate-400">${h.u==='s'?t('sec'):t('reps')}</span></span>`:''}`}</span></div><span class="text-[12px] font-bold text-slate-400 mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=exerciseStatsHTML(hA)+html; bindCharts(c); if(window.lucide) window.lucide.createIcons({root:c}); },
         deleteHistoryRecord: (k, i) => window.appActions.showConfirm(t("Delete Record"), t("Remove this record?"), () => { let h=StorageManager.getHistory(); if(h[k]&&h[k][i]){const dl=getDeleted(); dl[k]=[...(dl[k]||[]), logSig(h[k][i])].slice(-200); setDeleted(dl); h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast(t("Deleted"),"error");} }, true),
-        handleTyping: (k, type, v) => { 
-            if (type === 'load') { loggedWeights[k] = v; StorageManager.set(loggedWeights); } 
-            else { loggedReps[k] = v; StorageManager.setReps(loggedReps); }
-        },
-        restoreIfEmpty: (k, v) => { if(v.trim()===''){const h=StorageManager.getHistory()[k]||[]; if(h.length){loggedWeights[k]=h[h.length-1].w; StorageManager.set(loggedWeights); renderWorkout();}} },
         // ---------- Workout session: the whole day on one screen ----------
         // restore = a saved unfinished workout to bring back (minimized)
         // exIdx = one exercise of the day (from its card on Today); null = the whole day
@@ -2391,91 +2346,6 @@ window.appState = { currentView: 'today', sortableInstance: null, awTimer: null 
         switchWeek: id => { currentWeekId=id; StorageManager.setActiveWeek(id); activeDay=getTodayId(); window.appState.inlineEdit=null; window.appState.planDay=null; renderNav(); renderWorkout(); },
         setActiveDay: id => { window.appState.inlineEdit=null; window.appState.weekMenu=null; if (window.appState.currentView==='today') window.appState.todayEdit=false; else if (window.appState.planDay!=null) window.appState.planDay=id; activeDay=id; renderNav(); renderWorkout(); },
         toggleRpe: v => { StorageManager.setShowRpe(v); window.appActions.showToast(t(v ? 'RPE column on' : 'RPE column off'), 'success'); },
-        openBackupModal: () => { openModal('smart-backup-overlay','smart-backup-box'); pushBack('backup', () => window.appActions.closeBackupModal()); },
-        closeBackupModal: () => { popBack('backup'); closeModal('smart-backup-overlay','smart-backup-box'); },
-        // Export: the phone's share sheet (save to Files, send to a friend, or open in an AI app); "copy" puts the text on the clipboard
-        executeSmartBackup: async (mode = 'file') => {
-            // everything, in the readable format (v2): easy to share with a friend or give to an AI; old files still import
-            const text = JSON.stringify(buildExport({ prog: true, sched: true, sett: true }), null, 2);
-            const done = msg => { StorageManager.setBackupDate(); updateBackupStatus(); window.appActions.closeBackupModal(); setTimeout(() => window.appActions.showToast(msg, "success"), 300); };
-            if (mode === 'copy') {
-                try { await navigator.clipboard.writeText(text); done(t('Copied')); }
-                catch (e) { window.appActions.showToast(t('Could not copy. Use Save or share file.'), 'error'); }
-                return;
-            }
-            const n = new Date(), ms = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], dStr = `${ms[n.getMonth()]}${n.getDate()}`;
-            const fName = `ApexLift_${dStr}.json`;
-            const file = new File([text], fName, { type: 'application/json' });
-            if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
-                try { await navigator.share({ files: [file], title: 'Apex Lift' }); return done(t("Data Exported!")); }
-                catch (e) { if (e && e.name === 'AbortError') return; } // closed the share sheet: nothing to do
-            }
-            // no share sheet (computers, older phones): download the file
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(file); a.download = fName; a.click();
-            setTimeout(() => URL.revokeObjectURL(a.href), 10000);
-            done(t("Data Exported!"));
-        },
-        // Import: everything in an Apex Lift file, no choices. Your current data is saved to your account first,
-        // so an import can always be undone (Profile → Account backups).
-        importData: e => {
-            const f = e.target.files[0]; e.target.value = ''; if (!f) return;
-            if (f.size > 5e6) return window.appActions.showToast(t("Invalid Backup file"), "error"); // over 5 MB is not an Apex Lift file
-            const r = new FileReader();
-            r.onload = ev => {
-                let d;
-                try {
-                    let raw = JSON.parse(ev.target.result);
-                    if (!isObj(raw)) throw new Error('Backup is not an object');
-                    if (raw.format === 2 || raw.app === 'Apex Lift') raw = fromExportV2(raw);
-                    // Clean everything in the file before using it
-                    d = {
-                        w: raw.w !== undefined ? sanitizeValueMap(raw.w) : undefined,
-                        h: sanitizeHistory(raw.h),
-                        p: raw.p !== undefined ? sanitizePlan(raw.p) : null,
-                        aw: toStr(raw.aw) || null,
-                        s: DAY_NAMES.includes(raw.s) ? raw.s : null,
-                        rt: REST_CHOICES.includes(raw.rt) ? raw.rt : null,
-                        cx: sanitizeCustomEx(raw.cx)
-                    };
-                    if (!d.w && !d.p && !d.s && !Object.keys(d.h).length) throw new Error('Nothing usable in backup');
-                } catch (err) { return window.appActions.showToast(t("Invalid Backup file"), "error"); }
-                const found = [d.p ? t('{n} routines', { n: d.p.weeks.length }) : '', Object.keys(d.h).length ? t('{n} exercises with history', { n: Object.keys(d.h).length }) : ''].filter(Boolean).join(' · ');
-                window.appActions.showConfirm(t('Import this file?'), (found ? found + '\n\n' : '') + t("Routines and settings will be replaced and workouts added. We back up your current data first."),
-                    () => window.appActions.runImport(d), false, t('Import'));
-            };
-            r.onerror = () => window.appActions.showToast(t("Invalid Backup file"), "error"); // the file couldn't be read (moved, or no permission)
-            r.readAsText(f);
-        },
-        runImport: async d => {
-            if (!Cloud.user || !Cloud.db) return window.appActions.showToast(t('Sign in to import. We back up your data first.'), 'error');
-            if (window.appState.sess) return window.appActions.showToast(t('Finish your workout first.'), 'error');
-            if (window.appState.importing) return; window.appState.importing = true;
-            try {
-                window.appActions.showToast(t('Backing up your data…'), 'success');
-                try { await cloudBackup('before-import'); }
-                catch (e) { console.warn('Backup before import failed', e); return window.appActions.showToast(t('Backup failed, so nothing was imported. Check your connection.'), 'error'); }
-                // workouts: both lists together, in date order, without duplicates (and without records you deleted)
-                const w = StorageManager.get(), h = StorageManager.getHistory(), del = getDeleted();
-                Object.keys(d.h).forEach(k => { h[k] = mergeLogs(h[k], d.h[k], del[k]); const n = h[k][h[k].length - 1]; if (n) w[k] = n.w; });
-                if (d.w) Object.keys(d.w).forEach(k => { if (!w[k]) w[k] = d.w[k]; });
-                StorageManager.set(w); StorageManager.setHistory(h); loggedWeights = w;
-                if (d.p) {
-                    // Only use the saved active routine if it really exists in the file
-                    currentWeekId = (d.aw && d.p.weeks.some(x => x.id === d.aw)) ? d.aw : d.p.weeks[0].id;
-                    appData = d.p; StorageManager.setActiveWeek(currentWeekId);
-                    // the file's own exercises join this phone's list
-                    const cx = getCustomEx(); (d.cx || []).forEach(x => { if (!cx.some(y => y.name.toLowerCase() === x.name.toLowerCase())) cx.push(x); }); setCustomEx(cx);
-                }
-                if (d.rt) { StorageManager.setRestSeconds(d.rt); const rs = document.getElementById('setting-rest'); if (rs) rs.value = String(d.rt); }
-                // each day stays on its weekday (the file's first day of the week, or this phone's)
-                setWeekStart(d.s || StorageManager.getStartDay());
-                const sd = document.getElementById('setting-start-day'); if (sd) sd.value = StorageManager.getStartDay();
-                if (StorageManager.setPlan(appData) === false) return;
-                activeDay = getTodayId(); renderNav(); window.appActions.refreshUI();
-                window.appActions.showToast(t('Imported. Your old data is in Account backups.'), 'success');
-            } finally { window.appState.importing = false; }
-        },
     restoreDefaults: () => { window.appActions.showConfirm(t("Reset app"),t("Your routines go back to the default. Your history is kept."),()=>{const aD=DAY_NAMES, sI=aD.indexOf('SAT'); const def=JSON.parse(JSON.stringify(defaultWorkoutData)); def.forEach((d,i)=>d.day=aD[(sI+i)%7]); appData={weeks:[{id:'w_default',name:t('Main Routine'),schedule:def}]}; currentWeekId='w_default'; StorageManager.setActiveWeek('w_default'); StorageManager.setPlan(appData); StorageManager.setStartDay('SAT'); document.getElementById('setting-start-day').value='SAT'; activeDay=getTodayId(); renderNav(); window.appActions.refreshUI(); window.appActions.showToast(t("Reset Complete"));},true); },
         // ---------- First-launch setup (also from Profile → Set up again) ----------
         // 🧭 SETUP, one question per screen, nothing can be skipped.
@@ -3057,16 +2927,7 @@ ${lib}`;
     // The phone stays the main copy and keeps working offline; the cloud mirrors it and brings it to your other phones.
     // Data layout: users/{uid} = routines + settings, users/{uid}/history/{exercise} = that exercise's logs.
     // Security rules (only you can read/write your data) are in firestore.rules — paste them into Firebase.
-    const FIREBASE_CONFIG = {
-        apiKey: 'AIzaSyCItVZimtbvod94CGUfYx1xwgSTW_mEq0Y',
-        // On the live site, sign-in runs through our own address (Netlify passes /__/auth/ on to Firebase, see _redirects),
-        // so Google's sign-in screen shows apex-liftt.netlify.app instead of the firebaseapp.com address
-        authDomain: location.hostname === 'apex-liftt.netlify.app' ? location.host : 'apex-lift-52a18.firebaseapp.com',
-        projectId: 'apex-lift-52a18',
-        storageBucket: 'apex-lift-52a18.firebasestorage.app',
-        messagingSenderId: '682655190858',
-        appId: '1:682655190858:web:70d756fba8e17de80cbbb3'
-    };
+    const FIREBASE_CONFIG = window.APEX_FIREBASE_CONFIG; // firebase-config.js
     const FB_DIR = 'vendor/firebase-12.19.0/';
     const CLOUD_KEY = 'workoutCloud_rakan_final', CLOUD_LASTUID = 'workoutCloudLastUid_rakan_final', LOCAL_UPDATED_KEY = 'workoutLocalUpdated_rakan_final';
     const MAIN_KEYS = new Set([BODY_KEY, StorageManager.PLAN_KEY, StorageManager.ACTIVE_WEEK, StorageManager.START_KEY, StorageManager.REST_KEY, StorageManager.RPE_KEY, StorageManager.KEY, CUSTOM_KEY, PROFILE_KEY, READY_KEY]);
@@ -3465,15 +3326,12 @@ ${lib}`;
                 </button></div>`;
         }
         if (window.lucide) window.lucide.createIcons({ root: el });
-        if (typeof updateBackupStatus === 'function') updateBackupStatus();
         if (welcomeOpen()) updateWelcomeUI(); // "Signing in…" on the welcome page too
     };
-    // Profile → Account and Your training pages
+    // Profile → Account pages
     Object.assign(window.appActions, {
         openAccount: () => { if (!Cloud.user) return; renderAccountSheet(); openSheet('account-overlay', 'account-box'); pushBack('account', () => window.appActions.closeAccount()); },
         closeAccount: () => { popBack('account'); closeSheet('account-overlay', 'account-box'); },
-        openTraining: () => { renderTrainingSheet(); openSheet('training-overlay', 'training-box'); pushBack('training', () => window.appActions.closeTraining()); },
-        closeTraining: () => { popBack('training'); closeSheet('training-overlay', 'training-box'); },
         // Profile → Workout / App (full pages)
         openSettings: which => { const id = which === 'app' ? 'appset' : 'workset'; window.appState.settingsOpen = id; openSheet(id + '-overlay', id + '-box'); pushBack('settings', () => window.appActions.closeSettings()); },
         closeSettings: () => { const id = window.appState.settingsOpen; if (!id) return; window.appState.settingsOpen = null; popBack('settings'); closeSheet(id + '-overlay', id + '-box'); },
@@ -3502,23 +3360,6 @@ ${lib}`;
             setBody({ ...getBody(), birthDate: v });
             window.appActions.closeEdit(); renderAccountSheet();
             window.appActions.showToast(t('Saved'));
-        },
-        editTraining: k => {
-            const row = TRAINING_EDIT[k]; if (!row) return;
-            const cur = getProfile()[k];
-            openEdit(editHead(t(row[0])) + `<div class="space-y-2">${row[1]().map(([v, l]) => `<button onclick="window.appActions.setTraining(${jsArg(k)}, ${jsArg(v)})" class="w-full min-h-[52px] px-4 rounded-xl border flex items-center justify-between text-start text-[15px] font-bold tap-feedback ${cur === v ? 'bg-[#d4af37]/15 border-[#d4af37] text-white' : 'bg-white/5 border-white/10 text-white'}">${esc(l)}${cur === v ? '<i data-lucide="check" class="w-5 h-5 text-[#d4af37]"></i>' : ''}</button>`).join('')}</div>`);
-        },
-        // a changed answer: saved, then a program that fits the new answers is offered (the current routine stays)
-        setTraining: (k, v) => {
-            const pr = getProfile(); window.appActions.closeEdit();
-            if (pr[k] === v) return;
-            writeItem(PROFILE_KEY, JSON.stringify(sanitizeProfile({ ...pr, [k]: v })));
-            renderTrainingSheet(); renderTrainingRow();
-            const np = getProfile(), rec = PROGRAMS.find(p => p.id === recommendProgram({ ...np, sex: getBody().sex }));
-            setTimeout(() => window.appActions.showConfirm(t('Get a matching program?'),
-                appData.weeks.length >= 5 ? t('{name} fits your answers. You have 5 routines, so it replaces the current one. Your history is kept.', { name: t(rec.name) })
-                    : t('{name} fits your answers. It is added to your routines; your current one stays.', { name: t(rec.name) }),
-                () => { window.appActions.closeTraining(); window.appActions.applyProgram(rec.id, { exp: np.exp || 'mid' }); }, false, t('Get program')), 320);
         },
         saveName: async v => {
             const name = String(v || '').trim().slice(0, 60);
@@ -4218,7 +4059,7 @@ ${lib}`;
         }
     });
 
-    // 📦 BACKUP FILE v2: readable by people and AI models (names instead of internal keys, real dates, kg and reps)
+    // the exercise names used in the catalogue and your routines, by their keys (for the AI coach)
     const exerciseNames = () => {
         const m = {}; const add = n => { if (n) m[getExKey('', '', '', n)] = n; };
         catalogue().forEach(x => add(x.name));
@@ -4226,69 +4067,6 @@ ${lib}`;
         return m;
     };
     const keyToName = (k, names) => names[k] || k.replace(/^global_/, '').split('_').filter(Boolean).map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(' ');
-    const dayKind = d => d.isRest ? (d.recoveryType === 'active' ? 'active rest' : 'rest') : 'workout';
-    const buildExport = ({ prog, sched, sett }) => {
-        const out = { app: 'Apex Lift', format: 2, exported: new Date().toISOString(),
-            about: 'Apex Lift workout file. "routines": weekly plans, days in order from the first day of the week; each exercise has sets and a reps range ("30 - 45s" = seconds). "history": every logged session per exercise, oldest first: date, weightKg (0 = bodyweight), reps per set, optional weightsKg per set, rpe per set (10 = no reps left) and unit "sec" for timed exercises. Import in Apex Lift: Profile → Restore data.' };
-        if (sett) out.settings = { weekStartsOn: StorageManager.getStartDay(), restSeconds: StorageManager.getRestSeconds() };
-        if (sched) {
-            out.routines = appData.weeks.map(w => ({ name: w.name, active: w.id === currentWeekId, days: w.schedule.map(d => ({ day: d.day, title: d.title, type: dayKind(d),
-                exercises: (d.exercises || []).map(e => ({ name: e.name, muscle: e.muscle, sets: parseInt(e.sets) || e.sets, reps: e.reps })) })) }));
-            const cx = getCustomEx(); if (cx.length) out.customExercises = cx;
-        }
-        if (prog) {
-            const names = exerciseNames(), h = StorageManager.getHistory(); out.history = {};
-            Object.keys(h).filter(k => !k.startsWith('temp_') && (h[k] || []).length).forEach(k => {
-                out.history[keyToName(k, names)] = h[k].map(l => {
-                    const tt = logTime(l), e = { date: isNaN(tt) ? l.d : new Date(tt).toISOString(), weightKg: parseFloat(l.w) || 0, reps: Array.isArray(l.s) ? l.s.map(Number) : [parseInt(l.s) || 0] };
-                    if (Array.isArray(l.ws)) e.weightsKg = l.ws.map(x => parseFloat(x) || 0);
-                    if (Array.isArray(l.rpe) && l.rpe.some(x => x != null)) e.rpe = l.rpe;
-                    if (l.u === 's') e.unit = 'sec';
-                    if (l.week) e.routine = l.week;
-                    if (typeof l.dayId === 'number') e.day = l.dayId;
-                    if (l.time) e.duration = l.time;
-                    return e;
-                });
-            });
-        }
-        return out;
-    };
-    // v2 file → the app's own backup shape (then cleaned by the normal import checks)
-    const fromExportV2 = raw => {
-        const d = {};
-        if (Array.isArray(raw.routines)) {
-            const stamp = Date.now();
-            const weeks = raw.routines.filter(isObj).slice(0, 5).map((r, i) => ({ id: `w_${stamp}_${i}`, name: toStr(r.name, 'Routine'), active: r.active === true,
-                schedule: (Array.isArray(r.days) ? r.days : []).slice(0, 7).map((x, j) => {
-                    x = isObj(x) ? x : {}; const type = toStr(x.type).toLowerCase(), rest = type === 'rest' || type === 'active rest';
-                    return { id: j + 1, day: toStr(x.day).toUpperCase(), title: toStr(x.title, rest ? (type === 'rest' ? 'Complete Rest' : 'Active Rest') : 'New Day'), isRest: rest, recoveryType: rest ? (type === 'active rest' ? 'active' : 'complete') : null,
-                        exercises: Array.isArray(x.exercises) ? x.exercises.filter(isObj).map(e => ({ name: toStr(e.name), muscle: toStr(e.muscle, 'Chest'), sets: latinDigits(e.sets == null ? '3' : e.sets), reps: latinDigits(e.reps == null ? '10' : e.reps) })) : [] };
-                }) }));
-            d.p = { weeks }; const a = weeks.find(w => w.active) || weeks[0]; if (a) d.aw = a.id;
-        }
-        if (Array.isArray(raw.customExercises)) d.cx = raw.customExercises;
-        if (isObj(raw.settings)) { d.s = toStr(raw.settings.weekStartsOn).toUpperCase(); d.rt = parseInt(raw.settings.restSeconds); }
-        if (isObj(raw.history)) {
-            d.h = {}; d.w = {};
-            Object.keys(raw.history).forEach(name => {
-                const list = raw.history[name]; if (!Array.isArray(list)) return;
-                const k = getExKey('', '', '', name);
-                d.h[k] = list.filter(isObj).map(e => {
-                    const ts = Date.parse(e.date), l = { d: isNaN(ts) ? toStr(e.date) : formatLogDate(new Date(ts)), w: String(parseFloat(e.weightKg) || 0), s: Array.isArray(e.reps) ? e.reps.map(x => parseInt(x)).filter(x => x > 0) : [] };
-                    if (!isNaN(ts)) l.ts = ts;
-                    if (Array.isArray(e.weightsKg)) l.ws = e.weightsKg.map(x => String(parseFloat(x) || 0));
-                    if (Array.isArray(e.rpe)) l.rpe = e.rpe;
-                    if (e.unit === 'sec') l.u = 's';
-                    if (e.routine) l.week = toStr(e.routine);
-                    if (typeof e.day === 'number') l.dayId = e.day;
-                    if (e.duration) l.time = toStr(e.duration);
-                    return l;
-                }).sort((a, b) => (a.ts || 0) - (b.ts || 0));
-                const last = d.h[k][d.h[k].length - 1]; if (last) d.w[k] = last.w === '0' ? '' : last.w;
-            });
-        }
-        return d;
-    };
 
     // 👋 WELCOME: intro pages you swipe through, then Google sign-in (required).
     // Automated tests run without the sign-in page unless they ask for it (localStorage workoutTestGate = 1).
@@ -4642,7 +4420,6 @@ ${lib}`;
     enableEdgeBack(document.getElementById('active-workout-box'), () => window.appActions.minimizeSession());
     enableSwipeDown(document.getElementById('programs-box'), () => window.appActions.closePrograms());
     enableSwipeDown(document.getElementById('code-box'), () => window.appActions.closeCodeSheet());
-    enableSwipeDown(document.getElementById('training-box'), () => window.appActions.closeTraining());
     enableSwipeDown(document.getElementById('ai-box'), () => window.appActions.closeAI());
     enableDaySwipe(document.querySelector('.scrollable-content')); // the whole Today screen, so rest days (one small card) swipe too
     // An unfinished Log/Focus session (e.g. the phone closed the app during rest) comes back minimized
@@ -4665,17 +4442,6 @@ ${lib}`;
     const restEl = document.getElementById('setting-rest');
     if (restEl) restEl.value = String(StorageManager.getRestSeconds());
 
-    // Without an account, a reminder to export (no pop-ups): red dot on the Profile tab + "Last export" under Export data
-    const updateBackupStatus = () => {
-        let lB = StorageManager.getBackupDate();
-        if (!lB) { StorageManager.setBackupDate(); lB = Date.now(); }
-        const days = Math.floor((Date.now() - lB) / 86400000), old = days >= 7 && !Cloud.user && !getCloudFlag();
-        const age = document.getElementById('backup-age');
-        // signed in, everything is already kept in the account: the file is for sharing or for an AI
-        const synced = !!(Cloud.user || getCloudFlag());
-        if (age) { age.textContent = synced ? t('Save or share a copy') : days < 1 ? t('Last export: today') : t('Last export: {n} days ago', { n: days }); age.classList.toggle('is-warn', old); }
-    };
-    updateBackupStatus();
     renderAccount();
     cloudKick();
     // First launch (or signed out): intro pages + sign-in. Signed in: straight to the app (setup questions if needed).

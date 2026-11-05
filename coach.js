@@ -9,14 +9,7 @@
 // Text is in English in the code and wrapped in t('...'); Arabic comes from coach-i18n.js.
 (() => {
     'use strict';
-    const FIREBASE_CONFIG = {
-        apiKey: 'AIzaSyCItVZimtbvod94CGUfYx1xwgSTW_mEq0Y',
-        authDomain: location.hostname === 'apex-liftt.netlify.app' ? location.host : 'apex-lift-52a18.firebaseapp.com',
-        projectId: 'apex-lift-52a18',
-        storageBucket: 'apex-lift-52a18.firebasestorage.app',
-        messagingSenderId: '682655190858',
-        appId: '1:682655190858:web:70d756fba8e17de80cbbb3'
-    };
+    const FIREBASE_CONFIG = window.APEX_FIREBASE_CONFIG; // firebase-config.js
     const { $, esc, isObj } = window.ApexAdminUtils; // admin-utils.js
     const { t, isAR, LANG_KEY, daysAgo } = window.ApexCoachI18n; // coach-i18n.js
     const CALC = window.APEX_CALC; // calc.js: log dates and sets, the same rules as the app

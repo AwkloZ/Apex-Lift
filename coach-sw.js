@@ -15,6 +15,7 @@ const APP_FILES = [
     'coach.webmanifest',
     'coach-builder.js',
     'admin-utils.js',
+    'firebase-config.js',
     'library.js',
     'calc.js',
     'i18n.js',
