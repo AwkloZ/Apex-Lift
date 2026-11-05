@@ -448,6 +448,19 @@
          They load here, after the page, so they don't hold up the first screen.
          Drag & drop (vendor/sortable-1.15.7.min.js) is loaded by app.js only when the Plan list needs it. -->
     <script src="vendor/lucide-icons.js"></script>
-    <script src="app.js"></script>
+    <!-- The app itself: plain scripts that share one scope, loaded in this order (core first, start last) -->
+    <script src="app/core.js"></script>
+    <script src="app/init.js"></script>
+    <script src="app/render.js"></script>
+    <script src="app/profile.js"></script>
+    <script src="app/today-plan.js"></script>
+    <script src="app/actions.js"></script>
+    <script src="app/ai-coach.js"></script>
+    <script src="app/cloud.js"></script>
+    <script src="app/email-auth.js"></script>
+    <script src="app/routine-codes.js"></script>
+    <script src="app/my-coach.js"></script>
+    <script src="app/welcome.js"></script>
+    <script src="app/start.js"></script>
 </body>
 </html>
