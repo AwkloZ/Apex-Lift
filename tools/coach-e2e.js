@@ -471,6 +471,77 @@ T('coach builds a routine like the Plan tab', async ({ browser, base }) => {
     check('coach app: no errors', !c.errors.length, c.errors.join(' | '));
     await ctx.close();
 });
+T('routine editor: drag, swipe to delete, same for all, copy a day, move days, draft', async ({ browser, base }) => {
+    await seedCoach(); await seedTraining();
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+    const c = await ctx.newPage(); c.errors = []; c.on('pageerror', e => c.errors.push(e.message));
+    await c.goto(`${base}/coach.html?emu=1`);
+    await c.waitForFunction(() => window.firebase && firebase.apps.length, null, { timeout: 15000 });
+    await c.addStyleTag({ content: '.firebase-emulator-warning{display:none!important}' });
+    await c.evaluate(([e, pw]) => firebase.auth().signInWithEmailAndPassword(e, pw), [COACH.email, PASS]);
+    await c.waitForSelector(`[data-client="${CLIENT.uid}"]`);
+    await c.click(`[data-client="${CLIENT.uid}"]`);
+    await c.click('[data-act="routine"]');
+    await c.waitForSelector('#coach.open');
+    await c.fill('#cb-name', 'Draft test');
+    await c.click('[data-day="0"]');
+    await c.click('#cb-add');
+    await c.waitForSelector('.cb-sheet.is-open');
+    for (const q of ['Bench Press', 'Squat', 'Deadlift']) { await c.fill('#cb-q', q); await c.click(`.cb-row[data-add="${q}"]`); }
+    await c.click('.cb-grab');
+    await c.waitForFunction(() => !document.querySelector('.cb-sheet'));
+    const names = () => c.evaluate(() => [...document.querySelectorAll('#cb-exs .cb-et b')].map(b => b.textContent));
+    check('three exercises in the day', (await names()).join() === 'Bench Press,Squat,Deadlift', String(await names()));
+    // drag the last card to the top by its ⋮⋮ grip
+    await c.waitForFunction(() => window.Sortable && document.querySelectorAll('#cb-exs .handle').length === 3, null, { timeout: 8000 });
+    const h = await c.locator('#cb-exs .swipe-row').nth(2).locator('.handle').boundingBox(), top = await c.locator('#cb-exs .swipe-row').nth(0).boundingBox();
+    await c.mouse.move(h.x + h.width / 2, h.y + h.height / 2); await c.mouse.down();
+    for (let i = 1; i <= 12; i++) await c.mouse.move(h.x + h.width / 2, h.y + h.height / 2 - (h.y - top.y + 10) * i / 12);
+    await c.mouse.up();
+    check('drag: Deadlift moved to the top', await c.waitForFunction(() => document.querySelector('#cb-exs .cb-et b').textContent === 'Deadlift', null, { timeout: 5000 }).then(() => true, () => false), String(await names()));
+    await c.click('.cb-undo');
+    check('drag: Undo puts it back', (await names()).join() === 'Bench Press,Squat,Deadlift', String(await names()));
+    // swipe the middle card from right to left
+    await c.evaluate(() => {
+        const fg = document.querySelectorAll('#cb-exs .swipe-fg')[1], r = fg.getBoundingClientRect(), y = r.top + r.height / 2;
+        const tp = x => new Touch({ identifier: 1, target: fg, clientX: x, clientY: y });
+        fg.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, touches: [tp(r.right - 20)] }));
+        for (let i = 1; i <= 10; i++) fg.dispatchEvent(new TouchEvent('touchmove', { bubbles: true, touches: [tp(r.right - 20 - r.width * 0.07 * i)] }));
+        fg.dispatchEvent(new TouchEvent('touchend', { bubbles: true, touches: [] }));
+    });
+    check('swipe left: Squat deleted', await c.waitForFunction(() => document.querySelectorAll('#cb-exs .swipe-row').length === 2, null, { timeout: 5000 }).then(() => true, () => false) && !(await names()).includes('Squat'));
+    await c.click('.cb-undo');
+    check('swipe: Undo brings it back', (await names()).join() === 'Bench Press,Squat,Deadlift', String(await names()));
+    // same sets & reps for all
+    await c.click('#cb-same'); await c.fill('#cb-gsets', '5'); await c.fill('#cb-greps', '3 - 5'); await c.click('#cb-gapply');
+    check('same for all: every card says 5 × 3–5', await c.evaluate(() => [...document.querySelectorAll('#cb-exs .cb-pill')].every(p => p.textContent === '5 × 3–5')));
+    if (process.env.SHOTS) await c.screenshot({ path: `${process.env.SHOTS}/coach-editor-day.png` });
+    // back to the week; ⋮ → copy day 1 to day 3
+    await c.click('[data-cb-back]');
+    await c.click('[data-menu="1"]');
+    await c.selectOption('[data-copy-to="0"]', '2');
+    check('⋮ copy: day 3 has the same exercises', await c.evaluate(() => /3 exercises · 15 sets/.test(document.querySelector('[data-row="2"]').innerText)));
+    // ✏️ move days: drag day 3 to the 2nd place
+    await c.click('#cb-weekedit');
+    await c.waitForFunction(() => window.Sortable && document.querySelectorAll('#cb-wlist .handle').length === 7);
+    const dh = await c.locator('#cb-wlist [data-row="2"] .handle').boundingBox(), d1 = await c.locator('#cb-wlist [data-row="1"]').boundingBox();
+    await c.mouse.move(dh.x + dh.width / 2, dh.y + dh.height / 2); await c.mouse.down();
+    for (let i = 1; i <= 10; i++) await c.mouse.move(dh.x + dh.width / 2, dh.y + dh.height / 2 - (dh.y - d1.y + 4) * i / 10);
+    await c.mouse.up();
+    check('move days: the workout moved to day 2', await c.waitForFunction(() => /3 exercises/.test(document.querySelector('[data-row="1"]').innerText) && !/3 exercises/.test(document.querySelector('[data-row="2"]').innerText), null, { timeout: 5000 }).then(() => true, () => false));
+    if (process.env.SHOTS) await c.screenshot({ path: `${process.env.SHOTS}/coach-editor-week.png` });
+    await c.click('#cb-weekedit');
+    // close without sending: it's kept as a draft and offered next time
+    await c.click('[data-cb-back]');
+    await c.click('.cb-pop [data-ok]'); // "Close without sending?"
+    await c.waitForFunction(() => !document.getElementById('coach').classList.contains('open'));
+    await c.click('[data-act="routine"]');
+    check('draft: offered when the editor opens again', await waitText(c, /Continue your draft\?/));
+    await c.click('.cb-pop [data-ok]');
+    check('draft: the work is back', await c.evaluate(() => document.getElementById('cb-name').value === 'Draft test' && /3 exercises/.test(document.querySelector('[data-row="0"]').innerText)));
+    check('coach app: no errors', !c.errors.length, c.errors.join(' | '));
+    await ctx.close();
+});
 T('coach app in Arabic', async ({ browser, base }) => {
     await seedCoach(); await seedTraining();
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });

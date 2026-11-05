@@ -11,7 +11,7 @@ const lucide = require(path.join(ROOT, 'tools/lucide-1.49.0.min.js'));
 const pascal = s => s.replace(/(^|[-_\s]+)([a-z0-9])/g, (_, __, c) => c.toUpperCase());
 
 const used = new Set();
-for (const f of ['index.html', 'app.js', 'library.js', 'calc.js', 'require-sign-in.js', 'coach.html', 'coach.js', 'coach-sign-in.js']) {
+for (const f of ['index.html', 'app.js', 'library.js', 'calc.js', 'require-sign-in.js', 'coach.html', 'coach.js', 'coach-builder.js', 'coach-sign-in.js']) {
     if (!fs.existsSync(path.join(ROOT, f))) continue; // an app branch has only its own app's files
     const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
     const words = [...src.matchAll(/["'`]([a-z][a-z0-9]*(?:-[a-z0-9]+)*)["'`]/g)].map(m => m[1]);
