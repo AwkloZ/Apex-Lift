@@ -264,7 +264,7 @@
 
 
     // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-    const APP_VERSION = '82';
+    const APP_VERSION = '83';
     // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
     const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -4202,7 +4202,8 @@ ${lib}`;
             el.style.height = 'auto'; if (el.value) el.style.height = `${Math.min(el.scrollHeight, 132)}px`; // empty (or still hidden): its normal one line
             const b = document.getElementById('chat-send'); if (b) b.disabled = !el.value.trim();
         },
-        chatKeyDown: e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && window.matchMedia('(pointer: fine)').matches) { e.preventDefault(); window.appActions.chatSend(); } },
+        // the keyboard's return key says Send (enterkeyhint) and sends, like a chat app; Shift+Enter on a computer = new line
+        chatKeyDown: e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); window.appActions.chatSend(); } },
         chatSend: () => {
             const inp = document.getElementById('chat-in'), r = chatRef(), text = (inp.value || '').trim().slice(0, 1000);
             if (!text || !r) return;
