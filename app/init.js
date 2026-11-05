@@ -1,6 +1,6 @@
 // Apex Lift app (index.html), part 2 of 13: Start-up state, the exercise picker data, the phone's back button, swipe gestures, screen wake lock and the workout session draft.
 // The app/*.js files are plain scripts loaded in order by index.html; they share one scope, so a name declared in an
-// earlier file can be used in a later one (see app/README in CLAUDE.md). Keep the order in index.html and sw.js.
+// earlier file can be used in a later one (see "App files" in CLAUDE.md). Keep the order in index.html and sw.js.
 'use strict';
 
 // ⚙️ 3. APP INITIALIZATION

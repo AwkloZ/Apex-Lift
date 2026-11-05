@@ -1,6 +1,6 @@
 // Apex Lift app (index.html), part 11 of 13: Joining a coach (Profile → Your coach) and the chat with the coach.
 // The app/*.js files are plain scripts loaded in order by index.html; they share one scope, so a name declared in an
-// earlier file can be used in a later one (see app/README in CLAUDE.md). Keep the order in index.html and sw.js.
+// earlier file can be used in a later one (see "App files" in CLAUDE.md). Keep the order in index.html and sw.js.
 'use strict';
 
 // 🧑‍🏫 MY COACH: join a coach with the code or link (?coach=CODE) they gave you, see who your coach is, leave.
@@ -19,22 +19,22 @@ const renderCoachRow = () => {
 const coachMsg = (txt, bad = true) => `<p class="text-[12px] font-bold ${bad ? 'text-red-400' : 'text-slate-400'}">${esc(txt)}</p>`;
 const coachFindBody = (code = '') => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Type or paste the code your coach gave you.')}</p>
         <input id="coach-in" type="text" value="${esc(code ? fmtCode(code) : '')}" maxlength="12" placeholder="ABCD-EFGH" autocomplete="off" autocapitalize="characters" spellcheck="false" dir="ltr" class="code-input"
-            oninput="window.appActions.codeTyped(this)" onkeydown="if(event.key==='Enter')window.appActions.coachFind()">
-        <button id="coach-find" onclick="window.appActions.coachFind()" class="w-full mt-3 py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="search" class="w-4 h-4"></i>${t('Find coach')}</button>
+            data-on-input="window.appActions.codeTyped(this)" data-on-keydown="if(event.key==='Enter')window.appActions.coachFind()">
+        <button id="coach-find" data-on-click="window.appActions.coachFind()" class="w-full mt-3 py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="search" class="w-4 h-4"></i>${t('Find coach')}</button>
         <div id="coach-result" class="mt-4"></div>`;
 const coachFoundBody = (code, name) => `<div class="glass-card p-4 border border-[#d4af37]/30 p-pop">
             <div class="text-[17px] font-black text-white">${t('Join {name}?', { name: esc(name) })}</div>
             <p class="text-[13px] font-bold text-slate-400 mt-2 leading-snug">${t('Your coach will see your profile, routines and workouts, and can send you routines and messages. Your backups stay private.')}</p>
-            <button id="coach-join" onclick="window.appActions.coachJoin()" class="w-full mt-4 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="user-check" class="w-5 h-5"></i>${t('Join')}</button>
+            <button id="coach-join" data-on-click="window.appActions.coachJoin()" class="w-full mt-4 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="user-check" class="w-5 h-5"></i>${t('Join')}</button>
         </div>
-        <button onclick="window.appActions.openCoachSheet()" class="mt-3 text-[12px] font-bold text-slate-300 underline underline-offset-2 tap-feedback">${t('Use another code')}</button>`;
+        <button data-on-click="window.appActions.openCoachSheet()" class="mt-3 text-[12px] font-bold text-slate-300 underline underline-offset-2 tap-feedback">${t('Use another code')}</button>`;
 const coachMineBody = l => `<div class="glass-card p-4">
             <div class="text-[12px] font-bold text-slate-400">${t('Your coach')}</div>
             <div class="text-[17px] font-black text-white mt-0.5">${esc(l.coachName)}</div>
             <p class="text-[13px] font-bold text-slate-400 mt-2 leading-snug">${t('Your coach sees your profile, routines and workouts, and can send you routines and messages.')}</p>
         </div>
-        <button onclick="window.appActions.openChat()" class="w-full mt-3 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="message-circle" class="w-5 h-5"></i>${t('Chat with {name}', { name: esc(l.coachName) })}${chatUnread() ? `<span class="chat-badge">${t('New')}</span>` : ''}</button>
-        <button id="coach-leave" onclick="window.appActions.coachLeave()" class="w-full mt-3 py-3.5 rounded-xl bg-white/5 border border-white/10 text-red-400 text-[12px] font-bold tap-feedback">${t('Leave coach')}</button>`;
+        <button data-on-click="window.appActions.openChat()" class="w-full mt-3 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="message-circle" class="w-5 h-5"></i>${t('Chat with {name}', { name: esc(l.coachName) })}${chatUnread() ? `<span class="chat-badge">${t('New')}</span>` : ''}</button>
+        <button id="coach-leave" data-on-click="window.appActions.coachLeave()" class="w-full mt-3 py-3.5 rounded-xl bg-white/5 border border-white/10 text-red-400 text-[12px] font-bold tap-feedback">${t('Leave coach')}</button>`;
 // a ?coach=CODE link: remember it, clean the address bar, and open it once you're signed in
 try { const u = new URL(location.href), c = cleanCode(u.searchParams.get('coach')); if (c) { sessionStorage.setItem(PENDING_COACH, c); u.searchParams.delete('coach'); history.replaceState(history.state, '', u.pathname + u.search + u.hash); } } catch (e) {}
 const openPendingCoach = () => {

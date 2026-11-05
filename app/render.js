@@ -1,6 +1,6 @@
 // Apex Lift app (index.html), part 3 of 13: Screen drawing: the tabs, the routine list and the Progress tab.
 // The app/*.js files are plain scripts loaded in order by index.html; they share one scope, so a name declared in an
-// earlier file can be used in a later one (see app/README in CLAUDE.md). Keep the order in index.html and sw.js.
+// earlier file can be used in a later one (see "App files" in CLAUDE.md). Keep the order in index.html and sw.js.
 'use strict';
 
 // 🎨 4. CORE UI RENDERING
@@ -10,21 +10,21 @@ const renderSidePanel = () => {
     // each routine: its name (tap to rename) and one ⋮ button with Use / Share / Duplicate / Delete
     const mItem = 'w-full flex items-center gap-2.5 px-3 py-3 rounded-xl text-start text-[13px] font-extrabold tap-feedback';
     const rMenu = w => window.appState.routineMenu !== w.id ? '' : `<div class="absolute end-2 top-full mt-1 z-[61] w-[220px] p-1.5 rounded-2xl bg-[#111] border border-white/15 shadow-[0_20px_40px_rgba(0,0,0,0.7)]" role="menu">
-                <button onclick="window.appState.routineMenu=null;window.appActions.editRoutineName(${jsArg(w.id)})" class="${mItem} text-white" role="menuitem"><i data-lucide="pencil" class="w-4 h-4 text-slate-400"></i>${t('Rename routine')}</button>
-                <button onclick="window.appState.routineMenu=null;window.appActions.shareWeek(${jsArg(w.id)})" class="${mItem} text-slate-200" role="menuitem"><i data-lucide="share-2" class="w-4 h-4 text-[#d4af37]"></i>${t('Share routine')}</button>
-                <button onclick="window.appState.routineMenu=null;window.appActions.duplicateWeek(${jsArg(w.id)})" class="${mItem} text-slate-200" role="menuitem"><i data-lucide="copy" class="w-4 h-4 text-slate-400"></i>${t('Duplicate routine')}</button>
-                ${appData.weeks.length > 1 ? `<button onclick="window.appState.routineMenu=null;window.appActions.deleteWeek(${jsArg(w.id)})" class="${mItem} text-red-400" role="menuitem"><i data-lucide="trash-2" class="w-4 h-4"></i>${t('Delete routine')}</button>` : ''}
+                <button data-on-click="window.appState.routineMenu=null;window.appActions.editRoutineName(@0)" data-a-click="${hArgs(hStr(w.id))}" class="${mItem} text-white" role="menuitem"><i data-lucide="pencil" class="w-4 h-4 text-slate-400"></i>${t('Rename routine')}</button>
+                <button data-on-click="window.appState.routineMenu=null;window.appActions.shareWeek(@0)" data-a-click="${hArgs(hStr(w.id))}" class="${mItem} text-slate-200" role="menuitem"><i data-lucide="share-2" class="w-4 h-4 text-[#d4af37]"></i>${t('Share routine')}</button>
+                <button data-on-click="window.appState.routineMenu=null;window.appActions.duplicateWeek(@0)" data-a-click="${hArgs(hStr(w.id))}" class="${mItem} text-slate-200" role="menuitem"><i data-lucide="copy" class="w-4 h-4 text-slate-400"></i>${t('Duplicate routine')}</button>
+                ${appData.weeks.length > 1 ? `<button data-on-click="window.appState.routineMenu=null;window.appActions.deleteWeek(@0)" data-a-click="${hArgs(hStr(w.id))}" class="${mItem} text-red-400" role="menuitem"><i data-lucide="trash-2" class="w-4 h-4"></i>${t('Delete routine')}</button>` : ''}
             </div>`;
-    const row = w => { const on = window.appState.routineMenu === w.id, cur = w.id === currentWeekId; return `<div class="relative ${on ? 'z-20' : ''} flex items-center gap-1 bg-black/40 pe-1 rounded-xl border ${cur?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><button onclick="window.appActions.switchWeek(${jsArg(w.id)})" class="flex-1 min-w-0 min-h-[52px] ps-3 flex items-center gap-3 text-start tap-feedback" aria-pressed="${cur}"><span class="flex-1 min-w-0 text-white text-[13px] font-bold truncate">${esc(t(w.name))}</span>${cur?`<span class="text-[#22c55e] text-[12px] font-bold shrink-0">${t('Active')}</span>`:''}</button><button onclick="window.appActions.toggleRoutineMenu(${jsArg(w.id)})" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-lg tap-feedback ${on ? 'text-[#d4af37]' : 'text-slate-300'}" aria-haspopup="menu" aria-expanded="${on}" aria-label="${esc(t('Routine options') + ' · ' + w.name)}"><i data-lucide="ellipsis-vertical" class="w-[18px] h-[18px]"></i></button>${rMenu(w)}</div>`; };
+    const row = w => { const on = window.appState.routineMenu === w.id, cur = w.id === currentWeekId; return `<div class="relative ${on ? 'z-20' : ''} flex items-center gap-1 bg-black/40 pe-1 rounded-xl border ${cur?'border-[#d4af37]/50 shadow-[0_0_10px_rgba(212,175,55,0.1)]':'border-white/5'} transition-all"><button data-on-click="window.appActions.switchWeek(@0)" data-a-click="${hArgs(hStr(w.id))}" class="flex-1 min-w-0 min-h-[52px] ps-3 flex items-center gap-3 text-start tap-feedback" aria-pressed="${cur}"><span class="flex-1 min-w-0 text-white text-[13px] font-bold truncate">${esc(t(w.name))}</span>${cur?`<span class="text-[#22c55e] text-[12px] font-bold shrink-0">${t('Active')}</span>`:''}</button><button data-on-click="window.appActions.toggleRoutineMenu(@0)" data-a-click="${hArgs(hStr(w.id))}" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-lg tap-feedback ${on ? 'text-[#d4af37]' : 'text-slate-300'}" aria-haspopup="menu" aria-expanded="${on}" aria-label="${esc(t('Routine options') + ' · ' + w.name)}"><i data-lucide="ellipsis-vertical" class="w-[18px] h-[18px]"></i></button>${rMenu(w)}</div>`; };
     document.getElementById('weeks-container').innerHTML = inDay ? '' : `<div class="glass-card ${open ? 'border border-[#d4af37]/30' : ''} ${window.appState.routineMenu != null ? 'relative z-30' : ''}">
-            <button onclick="window.appActions.toggleRoutines()" class="w-full p-4 flex items-center gap-3 text-start tap-feedback" aria-expanded="${open}">
+            <button data-on-click="window.appActions.toggleRoutines()" class="w-full p-4 flex items-center gap-3 text-start tap-feedback" aria-expanded="${open}">
                 <span class="w-10 h-10 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="calendar-range" class="w-5 h-5"></i></span>
                 <span class="flex-1 min-w-0"><span class="block text-[12px] font-bold text-slate-400">${t('My routines')}</span><span class="block text-[15px] font-black text-white truncate">${esc(t(active.name))}</span></span>
                 <span class="shrink-0 text-[12px] font-bold text-slate-400" dir="ltr">${appData.weeks.length}</span>
                 <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}"></i>
             </button>
             ${open ? `<div class="px-4 pb-4 space-y-2.5">${appData.weeks.map(row).join('')}
-                <button onclick="window.appActions.addWeek()" class="w-full py-3 flex items-center justify-center gap-2 text-[#d4af37] font-bold text-[12px] tap-feedback border border-dashed border-[#d4af37]/40 bg-[#d4af37]/5 rounded-xl"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i>${t('New routine')}</button>
+                <button data-on-click="window.appActions.addWeek()" class="w-full py-3 flex items-center justify-center gap-2 text-[#d4af37] font-bold text-[12px] tap-feedback border border-dashed border-[#d4af37]/40 bg-[#d4af37]/5 rounded-xl"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i>${t('New routine')}</button>
             </div>` : ''}
         </div>`;
     document.getElementById('active-week-label').innerText = t(active.name);
@@ -45,7 +45,7 @@ const weekNavHTML = () => {
         const sel = activeDay === d.id, comp = doneOf(d), empty = isDayIncomplete(d), isT = today === d.id;
         const name = d.isRest ? shortTitle(d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : shortTitle(d.title);
         const mark = empty && view === 'plan' ? '<span class="wk-dot is-empty"></span>' : isT ? '<span class="wk-dot"></span>' : '';
-        return `<button onclick="window.appActions.setActiveDay(${d.id})" class="wk-day tap-feedback ${sel ? 'is-sel' : ''} ${d.isRest ? 'is-rest' : ''} ${comp ? 'is-done' : ''}" aria-pressed="${sel}" aria-label="${esc(dayLong(d.day) + ' ' + dateOf(d.id).getDate() + ' · ' + (d.isRest ? name : t(d.title)) + (comp ? ' · ' + t('Done') : ''))}"><span class="wk-wd">${esc(dayShort(d.day))}</span><span class="wk-dt">${dateOf(d.id).getDate()}</span><span class="wk-wo">${esc(empty ? '—' : name)}</span><span class="wk-mk">${mark}</span></button>`;
+        return `<button data-on-click="window.appActions.setActiveDay(@0)" data-a-click="${hArgs(d.id)}" class="wk-day tap-feedback ${sel ? 'is-sel' : ''} ${d.isRest ? 'is-rest' : ''} ${comp ? 'is-done' : ''}" aria-pressed="${sel}" aria-label="${esc(dayLong(d.day) + ' ' + dateOf(d.id).getDate() + ' · ' + (d.isRest ? name : t(d.title)) + (comp ? ' · ' + t('Done') : ''))}"><span class="wk-wd">${esc(dayShort(d.day))}</span><span class="wk-dt">${dateOf(d.id).getDate()}</span><span class="wk-wo">${esc(empty ? '—' : name)}</span><span class="wk-mk">${mark}</span></button>`;
     });
     return head + `<div class="wk-strip">${cells.join('')}</div>`;
 };
@@ -231,7 +231,7 @@ const changeHTML = (now, before) => {
 // Overview: this week against the same days last week, 8 weeks of sets, the 5-week calendar, recent records
 const progressOverviewHTML = history => {
     const days = workoutDays(history), dayKeys = Object.keys(days).map(Number);
-    if (!dayKeys.length) return pEmpty('calendar-check', t('No workouts yet'), t('Finish your first workout to see your progress here.'), `<button onclick="window.appActions.switchTab('today')" class="mt-5 h-12 px-5 rounded-2xl bg-[#d4af37] text-black text-[14px] font-extrabold tap-feedback inline-flex items-center gap-2"><i data-lucide="play" class="w-4 h-4 fill-current"></i>${t("Go to today's workout")}</button>`);
+    if (!dayKeys.length) return pEmpty('calendar-check', t('No workouts yet'), t('Finish your first workout to see your progress here.'), `<button data-on-click="window.appActions.switchTab('today')" class="mt-5 h-12 px-5 rounded-2xl bg-[#d4af37] text-black text-[14px] font-extrabold tap-feedback inline-flex items-center gap-2"><i data-lucide="play" class="w-4 h-4 fill-current"></i>${t("Go to today's workout")}</button>`);
     const wkD = getWeekStart(), wk = wkD.getTime(), today = startOfDay(Date.now());
     const weekAgo = n => new Date(wkD.getFullYear(), wkD.getMonth(), wkD.getDate() - 7 * n).getTime();
     // last week only up to the same weekday as today, so a Tuesday is never compared with a whole week
@@ -266,7 +266,7 @@ const progressOverviewHTML = history => {
         const d = startOfDay(start + i * DAY_MS + 3600000), info = days[d], future = d > today;
         const lvl = info ? (info.sets >= 20 ? 1 : info.sets >= 10 ? 0.7 : 0.4) : 0;
         const label = `${fmtDate(d, false)} · ${info ? t('{n} sets', { n: info.sets }) : t('Rest')}`;
-        cells += `<button onclick="document.getElementById('cal-info').textContent=${esc(JSON.stringify(label))}" class="aspect-square rounded-lg tap-feedback ${d === today ? 'ring-2 ring-white/70' : ''} ${future ? 'opacity-30' : ''}" style="background:${info ? `rgba(212,175,55,${lvl})` : 'rgba(128,128,128,0.14)'}" aria-label="${esc(label)}" title="${esc(label)}"></button>`;
+        cells += `<button data-on-click="document.getElementById('cal-info').textContent=@0" data-a-click="${hArgs(label)}" class="aspect-square rounded-lg tap-feedback ${d === today ? 'ring-2 ring-white/70' : ''} ${future ? 'opacity-30' : ''}" style="background:${info ? `rgba(212,175,55,${lvl})` : 'rgba(128,128,128,0.14)'}" aria-label="${esc(label)}" title="${esc(label)}"></button>`;
     }
     html += pCard(t('Last 5 weeks'), `<div class="grid grid-cols-7 gap-1.5 mb-1.5">${DAY_NAMES.map((_, i) => `<div class="text-center text-[12px] font-bold text-slate-400 truncate">${esc(dayShort(DAY_NAMES[(startIdx + i) % 7]))}</div>`).join('')}</div>
             <div class="grid grid-cols-7 gap-1.5" dir="ltr">${cells}</div>
@@ -276,7 +276,7 @@ const progressOverviewHTML = history => {
     Object.keys(history).forEach(k => recordsOf(history[k]).forEach(r => recs.push({ ...r, k })));
     recs.sort((a, b) => b.t - a.t);
     const recent = recs.filter(r => r.t >= today - 30 * DAY_MS).slice(0, 6);
-    html += pCard(`🏆 ${t('Records (last 30 days)')}`, recent.length ? recent.map(r => `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(nameOfKey(r.k, map))})" class="w-full flex items-center justify-between gap-2 py-2.5 border-b border-white/5 last:border-0 text-start tap-feedback">
+    html += pCard(`🏆 ${t('Records (last 30 days)')}`, recent.length ? recent.map(r => `<button data-on-click="window.appActions.openHistoryModal(@0,@1)" data-a-click="${hArgs(hStr(r.k), hStr(nameOfKey(r.k, map)))}" class="w-full flex items-center justify-between gap-2 py-2.5 border-b border-white/5 last:border-0 text-start tap-feedback">
                 <span class="min-w-0"><span class="ex-name block text-[14px] font-black text-white truncate">${esc(tx(nameOfKey(r.k, map)))}</span><span class="block text-[12px] font-bold text-slate-400 truncate">${esc(r.type === 'r' && r.unit === 's' ? t('Longest hold') : t(RECORD_LABEL[r.type]))} · ${esc(fmtDate(r.t, false))}</span></span>
                 <span class="text-[14px] font-black text-[#22c55e] shrink-0" dir="ltr">${r.v}${r.unit} <span class="text-[12px]">(+${r.plus})</span></span></button>`).join('')
         : `<p class="text-[12px] font-bold text-slate-400">${t('No new records yet. Add weight when the app says so and they will come.')}</p>`);
@@ -305,7 +305,7 @@ const progressExerciseListHTML = rows => {
     if (!shown.length) return `<div class="glass-card p-6 text-center text-[13px] font-bold text-slate-400">${t('No exercises match.')}</div>`;
     return `<div class="text-[12px] font-bold text-slate-400 mb-2 px-1">${t('{n} exercises', { n: shown.length })}</div>` + shown.map(r => {
         const tr = r.trend && TREND[r.trend];
-        return `<button onclick="window.appActions.openHistoryModal(${jsArg(r.k)},${jsArg(r.name)})" class="w-full glass-card p-4 mb-2.5 flex items-center gap-3 text-start tap-feedback">
+        return `<button data-on-click="window.appActions.openHistoryModal(@0,@1)" data-a-click="${hArgs(hStr(r.k), hStr(r.name))}" class="w-full glass-card p-4 mb-2.5 flex items-center gap-3 text-start tap-feedback">
                 <span class="flex-1 min-w-0">
                     <span class="ex-name block text-[15px] font-black text-white leading-tight">${esc(tx(r.name))}</span>
                     <span class="block text-[12px] font-bold text-slate-400 mt-0.5">${esc(tm(r.muscle))}${r.muscle ? ' · ' : ''}${t('{n} sessions', { n: r.n })} · ${esc(fmtDate(r.last, false))}</span>
@@ -323,10 +323,10 @@ const progressExercisesHTML = history => {
     const rows = progressExerciseRows(history);
     if (!rows.length) return pEmpty('dumbbell', t('No exercises yet'), t('Finish your first workout to see your progress here.'));
     const f = window.appState.pexF || 'all';
-    const chip = ([id, label]) => `<button onclick="window.appActions.progressFilter(${jsArg(id)})" class="shrink-0 inline-flex items-center gap-1.5 h-10 px-3.5 rounded-full text-[13px] font-bold tap-feedback border ${f === id ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${id === 'up' ? '<i data-lucide="arrow-up-circle" class="w-3.5 h-3.5"></i>' : ''}${esc(t(label))}</button>`;
+    const chip = ([id, label]) => `<button data-on-click="window.appActions.progressFilter(@0)" data-a-click="${hArgs(hStr(id))}" class="shrink-0 inline-flex items-center gap-1.5 h-10 px-3.5 rounded-full text-[13px] font-bold tap-feedback border ${f === id ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${id === 'up' ? '<i data-lucide="arrow-up-circle" class="w-3.5 h-3.5"></i>' : ''}${esc(t(label))}</button>`;
     return `<div class="relative mb-3">
                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                <input id="pex-search" type="search" autocomplete="off" value="${esc(window.appState.pexQ || '')}" placeholder="${esc(t('Search exercises'))}" oninput="window.appActions.progressSearch(this.value)" class="w-full bg-white/5 border border-white/10 rounded-2xl ps-11 pe-4 py-3.5 text-[14px] font-bold text-white outline-none focus:border-[#d4af37]">
+                <input id="pex-search" type="search" autocomplete="off" value="${esc(window.appState.pexQ || '')}" placeholder="${esc(t('Search exercises'))}" data-on-input="window.appActions.progressSearch(this.value)" class="w-full bg-white/5 border border-white/10 rounded-2xl ps-11 pe-4 py-3.5 text-[14px] font-bold text-white outline-none focus:border-[#d4af37]">
             </div>
             <div id="pex-chips" class="flex gap-2 overflow-x-auto scrollbar-hide pb-1 mb-3 -mx-1 px-1">${PEX_FILTERS.map(chip).join('')}</div>
             <div id="pex-list">${progressExerciseListHTML(rows)}</div>`;
@@ -359,7 +359,7 @@ const progressVolumeHTML = history => {
 // Body: body weight over time (the same log as Profile → Your profile); log today's weight here too
 const progressBodyHTML = () => {
     const b = getBody(), log = b.log || [];
-    const form = `<div class="flex gap-2 mt-4"><input id="pb-weight" type="text" inputmode="decimal" autocomplete="off" placeholder="${esc(t('Weight (kg)'))}" class="flex-1 min-w-0 bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-white text-center font-black outline-none focus:border-[#d4af37]" dir="ltr" onkeydown="if(event.key==='Enter')window.appActions.progressLogWeight()"><button onclick="window.appActions.progressLogWeight()" class="shrink-0 px-5 rounded-2xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback">${t('Save')}</button></div>`;
+    const form = `<div class="flex gap-2 mt-4"><input id="pb-weight" type="text" inputmode="decimal" autocomplete="off" placeholder="${esc(t('Weight (kg)'))}" class="flex-1 min-w-0 bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-white text-center font-black outline-none focus:border-[#d4af37]" dir="ltr" data-on-keydown="if(event.key==='Enter')window.appActions.progressLogWeight()"><button data-on-click="window.appActions.progressLogWeight()" class="shrink-0 px-5 rounded-2xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback">${t('Save')}</button></div>`;
     if (!log.length) return pEmpty('scale', t('Track your body weight'), t('Log your weight once a week, at the same time of day, to see how it changes.'), form);
     const last = log[log.length - 1], monthAgo = Date.now() - 30 * DAY_MS;
     const base = [...log].reverse().find(x => x.t <= monthAgo) || log[0], diff = round1(last.kg - base.kg);
@@ -393,7 +393,7 @@ const renderAnalytics = () => {
     const c = document.getElementById('workout-container');
     const activeTab = currentPTab(), idx = PTABS.findIndex(([id]) => id === activeTab);
     const prev = window.appState.aTabShown, from = PTABS.findIndex(([id]) => id === prev);
-    const seg = ([id, label, icon]) => `<button onclick="window.appActions.progressTab('${id}')" class="relative z-10 flex-1 min-w-0 flex flex-col items-center gap-1 py-2.5 rounded-[18px] tap-feedback transition-colors duration-300 ${activeTab === id ? 'text-black' : 'text-slate-400'}" aria-pressed="${activeTab === id}"><i data-lucide="${icon}" class="w-[18px] h-[18px]"></i><span class="text-[12px] font-bold truncate max-w-full px-0.5">${esc(t(label))}</span></button>`;
+    const seg = ([id, label, icon]) => `<button data-on-click="window.appActions.progressTab(@0)" data-a-click="${hArgs(hStr(id))}" class="relative z-10 flex-1 min-w-0 flex flex-col items-center gap-1 py-2.5 rounded-[18px] tap-feedback transition-colors duration-300 ${activeTab === id ? 'text-black' : 'text-slate-400'}" aria-pressed="${activeTab === id}"><i data-lucide="${icon}" class="w-[18px] h-[18px]"></i><span class="text-[12px] font-bold truncate max-w-full px-0.5">${esc(t(label))}</span></button>`;
     const tabsHTML = `<div id="progress-tabs" class="p-seg relative flex mb-4" role="tablist"><span class="p-seg-pill" style="--i:${from >= 0 ? from : idx}"></span>${PTABS.map(seg).join('')}</div>`;
     const contentHTML = activeTab === 'exercises' ? progressExercisesHTML(history)
         : activeTab === 'volume' ? progressVolumeHTML(history)
@@ -418,7 +418,7 @@ const checkInChip = () => {
     const r = getReadinessToday(), open = !!window.appState.ciOpen;
     if (!r && window.appState.ciSkipped === dateKey()) return '';
     const L = r ? READY[r.level] : null, c = L ? L.c : '#d4af37';
-    return `<button onclick="window.appActions.toggleCheckIn()" class="ci-chip self-start inline-flex items-center gap-1.5 h-10 px-3 rounded-xl border text-[12px] font-bold tap-feedback" style="color:${c};border-color:${c}55;background:${c}14" aria-expanded="${open}"><i data-lucide="${L ? L.i : 'activity'}" class="w-3.5 h-3.5"></i>${L ? `${t(L.t)} <span class="text-slate-400">• ${r.score}/6</span>` : t('How do you feel?')}<i data-lucide="chevron-${open ? 'up' : 'down'}" class="w-3 h-3 opacity-70"></i></button>`;
+    return `<button data-on-click="window.appActions.toggleCheckIn()" class="ci-chip self-start inline-flex items-center gap-1.5 h-10 px-3 rounded-xl border text-[12px] font-bold tap-feedback" style="color:${c};border-color:${c}55;background:${c}14" aria-expanded="${open}"><i data-lucide="${L ? L.i : 'activity'}" class="w-3.5 h-3.5"></i>${L ? `${t(L.t)} <span class="text-slate-400">• ${r.score}/6</span>` : t('How do you feel?')}<i data-lucide="chevron-${open ? 'up' : 'down'}" class="w-3 h-3 opacity-70"></i></button>`;
 };
 // Daily check-in card (opened from the button in today's day card)
 const checkInHTML = () => {
@@ -431,19 +431,19 @@ const checkInHTML = () => {
                     <div class="text-[12px] font-bold" style="color:${L.c}">${L.t} <span class="text-slate-400">• ${r.score}/6</span></div>
                     <div class="text-[12px] font-bold text-slate-400 leading-snug mt-0.5">${L.d}</div>
                 </div>
-                <button onclick="window.appActions.resetCheckIn()" class="text-slate-400 hover:text-white p-2 bg-white/5 rounded-lg tap-feedback shrink-0" aria-label="${esc(t('Change check-in'))}"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                <button data-on-click="window.appActions.resetCheckIn()" class="text-slate-400 hover:text-white p-2 bg-white/5 rounded-lg tap-feedback shrink-0" aria-label="${esc(t('Change check-in'))}"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
             </div>`;
     }
     if (window.appState.ciSkipped === dateKey()) return '';
     const draft = window.appState.ciDraft || {};
     const row = (key, label, opts) => `<div class="flex items-center justify-between gap-2 mt-3">
             <span class="text-[12px] font-bold text-slate-400 w-[70px] shrink-0">${t(label)}</span>
-            <div class="flex gap-1.5 flex-1">${opts.map((o, val) => `<button onclick="window.appActions.setCheckIn('${key}', ${val})" class="flex-1 py-2 rounded-lg text-[12px] font-extrabold tap-feedback border ${draft[key] === val ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-black/40 text-slate-300 border-white/10'}">${t(o)}</button>`).join('')}</div>
+            <div class="flex gap-1.5 flex-1">${opts.map((o, val) => `<button data-on-click="window.appActions.setCheckIn(@0, @1)" data-a-click="${hArgs(hStr(key), val)}" class="flex-1 py-2 rounded-lg text-[12px] font-extrabold tap-feedback border ${draft[key] === val ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-black/40 text-slate-300 border-white/10'}">${t(o)}</button>`).join('')}</div>
         </div>`;
     return `<div class="glass-card p-4 mb-4 border border-[#d4af37]/30">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4 text-[#d4af37]"></i><span class="text-[12px] font-bold text-white">${t('Daily Check-in')}</span></div>
-                <button onclick="window.appActions.skipCheckIn()" class="text-[12px] font-bold text-slate-400 hover:text-white tap-feedback">${t('Skip')}</button>
+                <button data-on-click="window.appActions.skipCheckIn()" class="text-[12px] font-bold text-slate-400 hover:text-white tap-feedback">${t('Skip')}</button>
             </div>
             <p class="text-[12px] font-bold text-slate-400 mt-1">${t("3 quick taps to adjust today's targets.")}</p>
             ${row('sleep', 'Sleep', ['Poor', 'OK', 'Great'])}

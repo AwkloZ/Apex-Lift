@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <!-- No zooming: pinch is blocked (iPhone ignores user-scalable=0), double-tap zoom is off in the CSS (touch-action) -->
-    <script>document.addEventListener('gesturestart', function (e) { e.preventDefault(); }); document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });</script>
+    <script src="no-zoom.js"></script>
     <meta name="theme-color" content="#050505">
     <meta name="description" content="Apex Lift Terms of Use">
     <title>Terms of Use · Apex Lift</title>
@@ -82,7 +82,7 @@ footer nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 1
 <body>
   <header class="bar"><div class="bar-in">
     <a class="logo" href="./" dir="ltr"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>APEX <span>LIFT</span></a>
-    <div class="seg" dir="ltr"><button id="b-en" onclick="show('en')">EN</button><button id="b-ar" onclick="show('ar')">عربي</button></div>
+    <div class="seg" dir="ltr"><button id="b-en">EN</button><button id="b-ar">عربي</button></div>
   </div></header>
 
   <div class="doc" id="en" lang="en" dir="ltr">
@@ -144,24 +144,7 @@ footer nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 1
     </main>
     <footer><nav><a href="./">العودة إلى التطبيق</a><a href="privacy.html#ar">سياسة الخصوصية</a></nav>© 2026 Apex Lift. جميع الحقوق محفوظة.</footer>
   </div>
-  <button class="top" id="top" onclick="scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></button>
-<script>
-    function show(l) {
-        ['en', 'ar'].forEach(function (x) {
-            document.getElementById(x).classList.toggle('hide', x !== l);
-            document.getElementById('b-' + x).classList.toggle('on', x === l);
-        });
-        document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
-        try { history.replaceState(null, '', '#' + l); } catch (e) {}
-    }
-    var saved = 'en';
-    try { saved = localStorage.getItem('workoutLang_rakan_final') === 'ar' ? 'ar' : 'en'; } catch (e) {}
-    var h = location.hash.slice(1);
-    if (h === 'ar' || h === 'en') saved = h; else if (/^(ar|en)-s\d+$/.test(h)) saved = h.slice(0, 2);
-    show(saved);
-    if (/^(ar|en)-s\d+$/.test(h)) setTimeout(function () { var e = document.getElementById(h); if (e) e.scrollIntoView(); }, 50);
-    var top = document.getElementById('top');
-    addEventListener('scroll', function () { top.classList.toggle('show', scrollY > 700); }, { passive: true });
-</script>
+  <button class="top" id="top" aria-label="Back to top"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></button>
+<script src="policy.js"></script>
 </body>
 </html>

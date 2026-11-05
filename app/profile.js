@@ -1,6 +1,6 @@
 // Apex Lift app (index.html), part 4 of 13: The Profile tab and its Account page.
 // The app/*.js files are plain scripts loaded in order by index.html; they share one scope, so a name declared in an
-// earlier file can be used in a later one (see app/README in CLAUDE.md). Keep the order in index.html and sw.js.
+// earlier file can be used in a later one (see "App files" in CLAUDE.md). Keep the order in index.html and sw.js.
 'use strict';
 
 // 👤 PROFILE. Tapping your photo opens Account: your information (name and date of birth can change; sex and height
@@ -27,8 +27,8 @@ const renderAccountSheet = () => {
             </div>
             <h3 class="pf-h">${t('Your information')}</h3>
             <div class="pf-group">
-                <button onclick="window.appActions.editName()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="user-round"></i></span><span class="pf-label">${t('Name')}</span><span class="pf-val truncate">${esc(u.displayName || '—')}</span><i data-lucide="pencil" class="pf-chev"></i></button>
-                <button onclick="window.appActions.editBirth()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="cake"></i></span><span class="pf-label">${t('Age')}${born ? `<span class="pf-sub">${t('Born {date}', { date: esc(born) })}</span>` : ''}</span><span class="pf-val">${age !== null ? `<span class="num">${age}</span>` : '—'}</span><i data-lucide="pencil" class="pf-chev"></i></button>
+                <button data-on-click="window.appActions.editName()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="user-round"></i></span><span class="pf-label">${t('Name')}</span><span class="pf-val truncate">${esc(u.displayName || '—')}</span><i data-lucide="pencil" class="pf-chev"></i></button>
+                <button data-on-click="window.appActions.editBirth()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="cake"></i></span><span class="pf-label">${t('Age')}${born ? `<span class="pf-sub">${t('Born {date}', { date: esc(born) })}</span>` : ''}</span><span class="pf-val">${age !== null ? `<span class="num">${age}</span>` : '—'}</span><i data-lucide="pencil" class="pf-chev"></i></button>
                 ${pfRow('users', t('Sex'), esc(sexL))}
                 ${pfRow('ruler', t('Height'), b.heightCm ? `<span class="num" dir="ltr">${b.heightCm} cm</span>` : '')}
             </div>
@@ -36,10 +36,10 @@ const renderAccountSheet = () => {
             <h3 class="pf-h">${t('Account')}</h3>
             <div class="pf-group mb-4">
                 ${pfRow(google ? 'log-in' : 'mail', t('Signed in with'), google ? 'Google' : t('Email'), !google && !u.emailVerified ? `<span class="text-[#f87171]">${t('Email not confirmed')}</span>` : '')}
-                ${!google && !u.emailVerified ? `<button onclick="window.appActions.resendVerify()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="mail-check"></i></span><span class="pf-label">${t('Send confirmation email')}</span><i data-lucide="chevron-right" class="pf-chev"></i></button>` : ''}
-                <button onclick="window.appActions.openBackups()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="history"></i></span><span class="pf-label">${t('Account backups')}<span class="pf-sub">${t('Go back to an earlier copy')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
-                <button onclick="window.appActions.cloudSignOut()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="log-out"></i></span><span class="pf-label">${t('Sign out')}</span></button>
-                <button onclick="window.appActions.cloudDelete()" class="pf-row is-danger tap-feedback"><span class="pf-ic"><i data-lucide="trash-2"></i></span><span class="pf-label">${t('Delete my account')}<span class="pf-sub">${t('Deletes your cloud data and your account')}</span></span></button>
+                ${!google && !u.emailVerified ? `<button data-on-click="window.appActions.resendVerify()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="mail-check"></i></span><span class="pf-label">${t('Send confirmation email')}</span><i data-lucide="chevron-right" class="pf-chev"></i></button>` : ''}
+                <button data-on-click="window.appActions.openBackups()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="history"></i></span><span class="pf-label">${t('Account backups')}<span class="pf-sub">${t('Go back to an earlier copy')}</span></span><i data-lucide="chevron-right" class="pf-chev"></i></button>
+                <button data-on-click="window.appActions.cloudSignOut()" class="pf-row tap-feedback"><span class="pf-ic"><i data-lucide="log-out"></i></span><span class="pf-label">${t('Sign out')}</span></button>
+                <button data-on-click="window.appActions.cloudDelete()" class="pf-row is-danger tap-feedback"><span class="pf-ic"><i data-lucide="trash-2"></i></span><span class="pf-label">${t('Delete my account')}<span class="pf-sub">${t('Deletes your cloud data and your account')}</span></span></button>
             </div>`;
     if (window.lucide) window.lucide.createIcons({ root: el });
 };
@@ -50,7 +50,7 @@ const openEdit = html => {
     const o = document.getElementById('edit-overlay');
     if (!o.classList.contains('flex') || o.classList.contains('opacity-0')) { openModal('edit-overlay', 'edit-box'); pushBack('edit', () => window.appActions.closeEdit()); }
 };
-const editHead = title => `<div class="flex items-center justify-between mb-4"><h3 class="text-[18px] font-black text-white">${title}</h3><button onclick="window.appActions.closeEdit()" class="w-11 h-11 -me-2 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button></div>`;
+const editHead = title => `<div class="flex items-center justify-between mb-4"><h3 class="text-[18px] font-black text-white">${title}</h3><button data-on-click="window.appActions.closeEdit()" class="w-11 h-11 -me-2 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button></div>`;
 const sheetOpen = id => document.getElementById(id).classList.contains('flex') && !document.getElementById(id).classList.contains('opacity-0');
 const renderProfile = () => {
     renderAccount();

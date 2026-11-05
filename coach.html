@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <!-- No zooming: pinch is blocked (iPhone ignores user-scalable=0), double-tap zoom is off in the CSS (touch-action) -->
-    <script>document.addEventListener('gesturestart', function (e) { e.preventDefault(); }); document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });</script>
+    <script src="no-zoom.js"></script>
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#12100d">
     <!-- Same theme as the Apex Lift app on this device (Account → Theme): dark, light or the phone's setting -->
-    <script>try { var th = localStorage.getItem('workoutTheme_rakan_final'); if (th === 'light' || (th === 'system' && matchMedia('(prefers-color-scheme: light)').matches)) { document.documentElement.setAttribute('data-theme', 'light'); document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f3f3f0'); } } catch (e) {}</script>
+    <script src="theme-boot.js"></script>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">

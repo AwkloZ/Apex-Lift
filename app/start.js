@@ -1,6 +1,6 @@
 // Apex Lift app (index.html), part 13 of 13: Arabic digits, then starting the app (first screen, settings, sign-in, offline copy). Loaded last.
 // The app/*.js files are plain scripts loaded in order by index.html; they share one scope, so a name declared in an
-// earlier file can be used in a later one (see app/README in CLAUDE.md). Keep the order in index.html and sw.js.
+// earlier file can be used in a later one (see "App files" in CLAUDE.md). Keep the order in index.html and sw.js.
 'use strict';
 
 // 🔢 ARABIC DIGITS: in Arabic, numbers shown on screen use ٠١٢٣٤٥٦٧٨٩ and the Arabic decimal mark (like iOS).

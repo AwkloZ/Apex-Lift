@@ -1,6 +1,6 @@
 // Apex Lift app (index.html), part 12 of 13: The welcome pages and sign-in gate, account backups and the one-time hints.
 // The app/*.js files are plain scripts loaded in order by index.html; they share one scope, so a name declared in an
-// earlier file can be used in a later one (see app/README in CLAUDE.md). Keep the order in index.html and sw.js.
+// earlier file can be used in a later one (see "App files" in CLAUDE.md). Keep the order in index.html and sw.js.
 'use strict';
 
 // 👋 WELCOME: intro pages you swipe through, then Google sign-in (required).
@@ -46,13 +46,13 @@ const updateWelcomeUI = () => {
     const gate = document.getElementById('welcome-gate');
     // the Terms and Privacy Policy are agreed in a pop-up after choosing Google or email (see needAgree)
     if (gate) gate.innerHTML = `${isSignedIn()
-            ? `<button id="welcome-continue" onclick="window.appActions.welcomeContinue()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback disabled:opacity-40 transition-opacity">${t('Continue')}</button>`
-            : `<button id="welcome-google" onclick="window.appActions.welcomeSignIn()" ${loading ? 'disabled' : ''} class="w-full py-4 rounded-2xl bg-white text-[#1f1f1f] text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity">${GOOGLE_G}${loading ? t('Signing in…') : t('Continue with Google')}</button>
-                   <button id="welcome-email" onclick="window.appActions.openEmail('in')" ${loading ? 'disabled' : ''} class="w-full mt-2.5 py-4 rounded-2xl bg-white/5 border border-white/15 text-white text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button>`}
+            ? `<button id="welcome-continue" data-on-click="window.appActions.welcomeContinue()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback disabled:opacity-40 transition-opacity">${t('Continue')}</button>`
+            : `<button id="welcome-google" data-on-click="window.appActions.welcomeSignIn()" ${loading ? 'disabled' : ''} class="w-full py-4 rounded-2xl bg-white text-[#1f1f1f] text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity">${GOOGLE_G}${loading ? t('Signing in…') : t('Continue with Google')}</button>
+                   <button id="welcome-email" data-on-click="window.appActions.openEmail('in')" ${loading ? 'disabled' : ''} class="w-full mt-2.5 py-4 rounded-2xl bg-white/5 border border-white/15 text-white text-[15px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-40 transition-opacity"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button>`}
                <p class="text-[12px] font-bold text-slate-400 text-center mt-4"><a href="terms.html" target="_blank" rel="noopener" class="underline underline-offset-2">${t('Terms of Use')}</a> · <a href="privacy.html" target="_blank" rel="noopener" class="underline underline-offset-2">${t('Privacy Policy')}</a></p>`;
     if (gate && !isSignedIn() && inAppBrowser()) gate.insertAdjacentHTML('afterbegin', inAppNoteHTML());
-    if (gate && !isSignedIn() && !requireSignIn()) gate.insertAdjacentHTML('beforeend', `<button id="welcome-later" onclick="window.appActions.welcomeLater()" class="w-full mt-3 py-3 text-[13px] font-bold text-slate-400 tap-feedback">${t('Not now')}</button>`);
-    document.getElementById('welcome-actions').innerHTML = last ? '' : `<div class="flex gap-3"><button onclick="window.appActions.welcomeGo(${W_SLIDES.length - 1})" class="px-5 py-4 rounded-2xl text-[13px] font-bold text-slate-400 tap-feedback">${t('Skip')}</button><button onclick="window.appActions.welcomeGo(${welcomeIdx + 1})" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button></div>`;
+    if (gate && !isSignedIn() && !requireSignIn()) gate.insertAdjacentHTML('beforeend', `<button id="welcome-later" data-on-click="window.appActions.welcomeLater()" class="w-full mt-3 py-3 text-[13px] font-bold text-slate-400 tap-feedback">${t('Not now')}</button>`);
+    document.getElementById('welcome-actions').innerHTML = last ? '' : `<div class="flex gap-3"><button data-on-click="window.appActions.welcomeGo(@0)" data-a-click="${hArgs(W_SLIDES.length - 1)}" class="px-5 py-4 rounded-2xl text-[13px] font-bold text-slate-400 tap-feedback">${t('Skip')}</button><button data-on-click="window.appActions.welcomeGo(@0)" data-a-click="${hArgs(welcomeIdx + 1)}" class="flex-1 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button></div>`;
     if (window.lucide) window.lucide.createIcons({ root: document.getElementById('welcome-overlay') });
 };
 // inside another app's browser: how to open Apex Lift in the phone's real browser, so the sign-in is kept
@@ -65,7 +65,7 @@ const inAppNoteHTML = () => {
                 <p class="text-[12px] font-bold text-slate-400 leading-snug mt-1">${t(ios ? "You're inside another app, which signs you out when it closes. Tap ••• or the share button, then Open in Safari." : "You're inside another app, which signs you out when it closes. Open Apex Lift in Chrome to stay signed in.")}</p></div></div>
             <div class="flex gap-2 mt-3">
                 ${ios ? '' : `<a href="intent://${esc(location.host + location.pathname)}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(url)};end" class="${btn}"><i data-lucide="external-link" class="w-4 h-4"></i>${t('Open in Chrome')}</a>`}
-                <button type="button" onclick="window.appActions.copyAppLink()" class="${btn}"><i data-lucide="copy" class="w-4 h-4"></i>${t('Copy link')}</button>
+                <button type="button" data-on-click="window.appActions.copyAppLink()" class="${btn}"><i data-lucide="copy" class="w-4 h-4"></i>${t('Copy link')}</button>
             </div></div>`;
 };
 Object.assign(window.appActions, {
@@ -170,7 +170,7 @@ const renderBackups = async () => {
         list.innerHTML = all.map(b => `<div class="flex items-center gap-3 px-5 py-3.5 border-b border-white/5">
                 <span class="w-10 h-10 rounded-full ${b.kind === 'auto' ? 'bg-white/5 text-slate-300' : 'bg-[#d4af37]/15 text-[#d4af37]'} flex items-center justify-center shrink-0"><i data-lucide="${b.kind === 'auto' ? 'clock' : b.kind === 'before-restore' || b.kind === 'before-import' ? 'rotate-ccw' : 'save'}" class="w-5 h-5"></i></span>
                 <div class="flex-1 min-w-0"><div class="text-[14px] font-black text-white">${esc(fmtDate(b.createdAt, true))}</div><div class="text-[12px] font-bold text-slate-400">${esc(kindLabel(b.kind))} · ${t('{n} workouts', { n: Number(b.workouts) || 0 })} · ${t('{n} exercises', { n: Number(b.exercises) || 0 })}</div></div>
-                <button onclick="window.appActions.restoreBackup(${jsArg(b.id)}, ${jsArg(fmtDate(b.createdAt, true))})" class="shrink-0 px-3.5 py-2 rounded-lg bg-white/5 border border-white/10 text-[12px] font-bold text-white tap-feedback">${t('Restore')}</button>
+                <button data-on-click="window.appActions.restoreBackup(@0, @1)" data-a-click="${hArgs(hStr(b.id), hStr(fmtDate(b.createdAt, true)))}" class="shrink-0 px-3.5 py-2 rounded-lg bg-white/5 border border-white/10 text-[12px] font-bold text-white tap-feedback">${t('Restore')}</button>
             </div>`).join('');
         if (window.lucide) window.lucide.createIcons({ root: list });
     } catch (e) {
@@ -243,8 +243,8 @@ Object.assign(window.appActions, {
                 <h3 id="agree-title" class="text-xl font-black text-white mb-2">${t('Before you continue')}</h3>
                 <p class="text-[13px] font-bold text-slate-400 leading-relaxed mb-5">${t('Review the Terms of Use and Privacy Policy to continue.')}</p>
                 <div class="space-y-2 mb-5 text-start">${link('terms.html', t('Terms of Use'))}${link('privacy.html', t('Privacy Policy'))}</div>
-                <button id="agree-yes" onclick="window.appActions.agreeYes()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-extrabold tap-feedback">${t('I agree, continue')}</button>
-                <button onclick="window.appActions.agreeNo()" class="w-full mt-2 py-3 text-[13px] font-bold text-slate-400 tap-feedback">${t('Cancel')}</button>
+                <button id="agree-yes" data-on-click="window.appActions.agreeYes()" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-extrabold tap-feedback">${t('I agree, continue')}</button>
+                <button data-on-click="window.appActions.agreeNo()" class="w-full mt-2 py-3 text-[13px] font-bold text-slate-400 tap-feedback">${t('Cancel')}</button>
             </div>`;
         if (window.lucide) window.lucide.createIcons({ root: box });
         const o = document.getElementById('agree-overlay');

@@ -9,10 +9,12 @@
 // When you add a NEW file to the app, add it to APP_FILES and change the version number below.
 // (require-sign-in.js is left out on purpose: it can be deleted, and a missing file in APP_FILES would break the install.
 //  It is still saved for offline use the first time the app loads it.)
-const CACHE = 'apex-lift-v84';
+const CACHE = 'apex-lift-v85';
 const APP_FILES = [
     './',
     'index.html',
+    'no-zoom.js',
+    'theme-boot.js',
     'style.css',
     'tailwind.css',
     'library.js',
@@ -21,6 +23,7 @@ const APP_FILES = [
     'firebase-config.js',
     'admin-utils.js',
     'app/core.js',
+    'app/handlers.js',
     'app/init.js',
     'app/render.js',
     'app/profile.js',
@@ -47,7 +50,8 @@ const APP_FILES = [
     'icons/icon-maskable-512.png',
     'icons/apple-touch-icon.png',
     'privacy.html',
-    'terms.html'
+    'terms.html',
+    'policy.js'
 ];
 const NETWORK_TIMEOUT_MS = 3000;
 

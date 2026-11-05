@@ -1,13 +1,46 @@
 // Apex Lift app (index.html), part 1 of 13: Language, data validation, storage, coach note and daily check-in: the basics every other file uses.
 // The app/*.js files are plain scripts loaded in order by index.html; they share one scope, so a name declared in an
-// earlier file can be used in a later one (see app/README in CLAUDE.md). Keep the order in index.html and sw.js.
+// earlier file can be used in a later one (see "App files" in CLAUDE.md). Keep the order in index.html and sw.js.
 'use strict';
 
 // esc: escapes any value for safe use inside HTML text or attributes; isObj: a plain object (admin-utils.js, shared)
 const { esc, isObj } = window.ApexAdminUtils;
-// Turns a value into a safe JS string argument for inline handlers, e.g. onclick="fn(${jsArg(name)})"
-// (handles names like "Farmer's Walk" and blocks code hidden in imported backups)
-const jsArg = v => esc(JSON.stringify(v === null || v === undefined ? '' : String(v)));
+// 👆 BUTTON ACTIONS without inline JavaScript (the site's security policy forbids inline scripts, so injected code can't run).
+// An element says what to do with data-on-<event>="code" (click, change, input, submit, keydown, focus, blur). The same code,
+// compiled ahead of time in app/handlers.js (built by: node tools/build-handlers.js), runs with this = that element, like
+// onclick="code" used to. Values that change (an id, a name) are never pasted into the code: they go in
+// data-a-<event>="${hArgs(a, b)}" and the code reads them as @0, @1, … e.g.
+//   <button data-on-click="window.appActions.openPlanDay(@0)" data-a-click="${hArgs(day.id)}">
+const APP_HANDLERS = {}; // code → function (this, event, a), filled by app/handlers.js
+// the values for data-a-<event>, as JSON escaped for an HTML attribute
+const hArgs = (...vals) => esc(JSON.stringify(vals));
+// a value as text (null / undefined → ''), for names and ids (handles names like "Farmer's Walk")
+const hStr = v => (v === null || v === undefined ? '' : String(v));
+(() => {
+    const run = (el, type, e) => {
+        const code = el.getAttribute('data-on-' + type), fn = APP_HANDLERS[code];
+        if (!fn) return console.warn(`No handler for data-on-${type}="${code}": run node tools/build-handlers.js`);
+        let a = [];
+        const raw = el.getAttribute('data-a-' + type);
+        if (raw) { try { a = JSON.parse(raw); } catch (x) { return console.warn('Bad data-a-' + type, raw); } }
+        // an error in one action is reported but doesn't stop the others (like separate onclick handlers)
+        try { if (fn.call(el, e, a) === false) e.preventDefault(); } // "return false" in the code, as in onclick
+        catch (x) { if (window.reportError) window.reportError(x); else setTimeout(() => { throw x; }); }
+    };
+    // bubbling events: each element on the event's path, from the target up (stopPropagation() in the code stops it).
+    // composedPath() is the path when the event started, so a parent still gets it after the code redraws the screen.
+    ['click', 'change', 'input', 'submit', 'keydown'].forEach(type => document.addEventListener(type, e => {
+        for (const el of e.composedPath()) {
+            if (el === document) break;
+            if (el.nodeType === 1 && el.hasAttribute('data-on-' + type)) run(el, type, e);
+            if (e.cancelBubble) break;
+        }
+    }));
+    // focus and blur don't bubble: only the element itself
+    'focus blur'.split(' ').forEach(type => document.addEventListener(type, e => {
+        const el = e.target; if (el && el.nodeType === 1 && el.hasAttribute('data-on-' + type)) run(el, type, e);
+    }, true));
+})();
 
 // 🌐 LANGUAGE (English / Arabic). Text is written in English in the code and wrapped in t('...');
 // the Arabic version comes from AR below. Exercise names stay in English in both languages.
@@ -264,7 +297,7 @@ const fmtW = w => (parseFloat(w) > 0 ? `${parseFloat(w)}kg` : 'BW');
 
 
 // Shown on the admin page (which version each user runs). Change it together with CACHE in sw.js.
-const APP_VERSION = '84';
+const APP_VERSION = '85';
 // How the setup questions ended: 'program', 'own', 'skip', or 'left:<step>' while they are not finished
 const SETUP_KEY = 'workoutSetup_rakan_final';
 
@@ -277,11 +310,11 @@ const coachCardHTML = () => {
     return `<div class="glass-card p-4 mb-4 border border-[#d4af37]/25">
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2 min-w-0"><i data-lucide="message-circle" class="w-4 h-4 text-[#d4af37] shrink-0"></i><span class="text-[12px] font-bold text-white truncate">${t('Message from your coach')}</span></div>
-                <button onclick="window.appActions.dismissCoach()" class="text-slate-400 hover:text-white p-2 bg-white/5 rounded-lg tap-feedback shrink-0" aria-label="${esc(t('Dismiss'))}"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <button data-on-click="window.appActions.dismissCoach()" class="text-slate-400 hover:text-white p-2 bg-white/5 rounded-lg tap-feedback shrink-0" aria-label="${esc(t('Dismiss'))}"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
             ${c.routine ? `<div class="text-[12px] font-bold text-[#d4af37] mt-2">${esc(t('New routine from your coach: {name}', { name: c.routine }))}</div>` : ''}
             ${c.note ? `<p class="text-[12px] font-bold text-slate-300 leading-snug mt-2" style="white-space:pre-wrap">${esc(c.note)}</p>` : ''}
-            ${getCoachLink() ? `<button onclick="window.appActions.openChat()" class="mt-3 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-bold tap-feedback flex items-center gap-2"><i data-lucide="message-circle" class="w-4 h-4"></i>${t('Reply')}</button>` : ''}
+            ${getCoachLink() ? `<button data-on-click="window.appActions.openChat()" class="mt-3 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-bold tap-feedback flex items-center gap-2"><i data-lucide="message-circle" class="w-4 h-4"></i>${t('Reply')}</button>` : ''}
         </div>`;
 };
 

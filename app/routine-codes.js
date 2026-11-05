@@ -1,6 +1,6 @@
 // Apex Lift app (index.html), part 10 of 13: Sharing a routine with an 8-letter code.
 // The app/*.js files are plain scripts loaded in order by index.html; they share one scope, so a name declared in an
-// earlier file can be used in a later one (see app/README in CLAUDE.md). Keep the order in index.html and sw.js.
+// earlier file can be used in a later one (see "App files" in CLAUDE.md). Keep the order in index.html and sw.js.
 'use strict';
 
 // 🔗 ROUTINE CODES: share one routine with a friend by an 8-letter code. The routine is copied to shared/{code}
@@ -38,19 +38,19 @@ const shareBody = (w, code) => `<p class="text-[13px] font-bold text-slate-400 m
             ${code ? `<div class="code-big" dir="ltr">${fmtCode(code)}</div>` : `<div class="flex items-center justify-center gap-2 h-[41px] text-[13px] font-bold text-slate-400"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>${t('Creating code…')}</div>`}
         </div>
         <div class="grid grid-cols-2 gap-2 mb-4">
-            <button onclick="window.appActions.copyCode(${jsArg(code)})" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="copy" class="w-4 h-4"></i>${t('Copy code')}</button>
-            <button onclick="window.appActions.sendCode(${jsArg(code)}, ${jsArg(t(w.name))})" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-bold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="share" class="w-4 h-4"></i>${t('Share')}</button>
+            <button data-on-click="window.appActions.copyCode(@0)" data-a-click="${hArgs(hStr(code))}" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="copy" class="w-4 h-4"></i>${t('Copy code')}</button>
+            <button data-on-click="window.appActions.sendCode(@0, @1)" data-a-click="${hArgs(hStr(code), hStr(t(w.name)))}" ${code ? '' : 'disabled'} class="py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-bold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="share" class="w-4 h-4"></i>${t('Share')}</button>
         </div>
         <p class="text-[12px] font-bold text-slate-400 leading-snug flex gap-2"><i data-lucide="lock" class="w-4 h-4 shrink-0"></i><span>${t('Only the routine is shared. Your workouts and details stay private.')}</span></p>`;
 const findBody = (code = '') => `<p class="text-[13px] font-bold text-slate-400 mb-4 leading-snug">${t('Type or paste the code a friend gave you.')}</p>
         <input id="code-in" type="text" value="${esc(code ? fmtCode(code) : '')}" maxlength="12" placeholder="ABCD-EFGH" autocomplete="off" autocapitalize="characters" spellcheck="false" dir="ltr" class="code-input"
-            oninput="window.appActions.codeTyped(this)" onkeydown="if(event.key==='Enter')window.appActions.codeFind()">
-        <button id="code-find" onclick="window.appActions.codeFind()" class="w-full mt-3 py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="search" class="w-4 h-4"></i>${t('Find routine')}</button>
+            data-on-input="window.appActions.codeTyped(this)" data-on-keydown="if(event.key==='Enter')window.appActions.codeFind()">
+        <button id="code-find" data-on-click="window.appActions.codeFind()" class="w-full mt-3 py-3.5 rounded-xl bg-[#d4af37] text-black text-[12px] font-extrabold tap-feedback flex items-center justify-center gap-2"><i data-lucide="search" class="w-4 h-4"></i>${t('Find routine')}</button>
         <div id="code-result" class="mt-4"></div>`;
 // After a code is found: the routine and Add only (the search is gone), with a small link back to it
 const foundBody = (code, wk) => `<div class="flex items-center justify-between gap-2 mb-3">
             <span class="flex items-center gap-2 text-[13px] font-bold text-[#22c55e]"><i data-lucide="check-circle" class="w-4 h-4"></i>${t('Routine found')} · <span class="text-slate-300" dir="ltr">${fmtCode(code)}</span></span>
-            <button onclick="window.appActions.openCodeSheet(${jsArg(code)})" class="shrink-0 text-[12px] font-bold text-slate-300 underline underline-offset-2 tap-feedback">${t('Use another code')}</button>
+            <button data-on-click="window.appActions.openCodeSheet(@0)" data-a-click="${hArgs(hStr(code))}" class="shrink-0 text-[12px] font-bold text-slate-300 underline underline-offset-2 tap-feedback">${t('Use another code')}</button>
         </div>${previewHTML(wk)}`;
 const previewHTML = wk => {
     const work = wk.schedule.filter(d => !d.isRest && d.exercises.length), exN = work.reduce((a, d) => a + d.exercises.length, 0), full = appData.weeks.length >= 5;
@@ -60,7 +60,7 @@ const previewHTML = wk => {
             <div class="space-y-1.5">${wk.schedule.map(d => `<div class="flex items-center gap-3 text-[13px]"><span class="w-10 shrink-0 font-black text-slate-400">${esc(dayShort(d.day))}</span><span class="flex-1 min-w-0 truncate font-bold ${d.isRest ? 'text-slate-400' : 'text-white'}">${esc(t(d.isRest ? (d.recoveryType === 'active' ? 'Active Rest' : 'Complete Rest') : d.title))}</span>${d.isRest ? '' : `<span class="shrink-0 text-[12px] font-bold text-slate-400">${t('{n} exercises', { n: d.exercises.length })}</span>`}</div>`).join('')}</div>
         </div>
         ${full ? `<p class="text-[12px] font-bold text-red-400 mt-3">${t('You have 5 routines, the maximum. Delete one in Plan first.')}</p>` : ''}
-        <button onclick="window.appActions.codeAdd()" ${full ? 'disabled' : ''} class="w-full mt-3 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add to my routines')}</button>`;
+        <button data-on-click="window.appActions.codeAdd()" ${full ? 'disabled' : ''} class="w-full mt-3 py-4 rounded-xl bg-[#d4af37] text-black text-[13px] font-extrabold tap-feedback flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add to my routines')}</button>`;
 };
 // a ?r=CODE link: remember it, clean the address bar, and open it once you're signed in
 try { const u = new URL(location.href), c = cleanCode(u.searchParams.get('r')); if (c) { sessionStorage.setItem(PENDING_CODE, c); u.searchParams.delete('r'); history.replaceState(history.state, '', u.pathname + u.search + u.hash); } } catch (e) {}

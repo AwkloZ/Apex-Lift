@@ -16,11 +16,22 @@ const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/cs
 // small text that is allowed: the week strip has 7 narrow columns
 const SMALL_OK = '.wk-wd, .wk-wo';
 
+// Content-Security-Policy per page, read from _headers (only on Main; app branches have no _headers)
+const CSP = {};
+if (fs.existsSync(path.join(ROOT, '_headers'))) {
+    let cur = null;
+    for (const line of fs.readFileSync(path.join(ROOT, '_headers'), 'utf8').split(/\r?\n/)) {
+        if (/^\//.test(line)) cur = line.trim();
+        else if (cur && /^\s+Content-Security-Policy:/.test(line)) CSP[cur] = line.replace(/^\s+Content-Security-Policy:\s*/, '').trim();
+    }
+}
 const serve = () => new Promise(res => {
     const s = http.createServer((req, rsp) => {
         const f = path.join(ROOT, decodeURIComponent(req.url.split('?')[0]).replace(/\/$/, '/index.html'));
         if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { rsp.writeHead(404); return rsp.end(); }
-        rsp.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream' });
+        // the page's Content-Security-Policy from _headers, as on Netlify (without the https upgrade, this server is http)
+        const csp = (CSP[req.url.split('?')[0]] || '').replace(/;\s*upgrade-insecure-requests/, '');
+        rsp.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream', ...(csp ? { 'Content-Security-Policy': csp } : {}) });
         fs.createReadStream(f).pipe(rsp);
     }).listen(0, () => res(s));
 });
@@ -42,7 +53,7 @@ const audit = smallOk => {
         if (caps.length && !el.closest('.logo-mark')) out.push(`typed capitals "${caps.join(' ')}": "${label(el)}"`);
         if (parseFloat(cs.fontSize) < 12 && !el.closest(smallOk)) out.push(`small text ${cs.fontSize}: "${label(el)}"`);
     }
-    for (const b of document.querySelectorAll('button, [role="button"], a[onclick]')) {
+    for (const b of document.querySelectorAll('button, [role="button"], a[data-on-click]')) {
         if (!shown(b) || !top(b)) continue;
         const r = b.getBoundingClientRect(), text = (b.innerText || '').trim();
         if (!text && !b.getAttribute('aria-label')) out.push(`icon button without a label: ${b.outerHTML.slice(0, 80)}`);
@@ -61,6 +72,8 @@ const audit = smallOk => {
     const fails = [];
     page.on('request', r => { if (/fonts\.(googleapis|gstatic)\.com/.test(r.url())) fails.push(`outside font request: ${r.url()}`); });
     page.on('pageerror', e => fails.push(`page error: ${e.message}`));
+    // inline code blocked by the security policy, or a data-on-* action missing from app/handlers.js
+    page.on('console', m => { if (/Content Security Policy|No handler for/.test(m.text())) fails.push(`console: ${m.text().slice(0, 200)}`); });
     await page.route('**/require-sign-in.js', r => r.fulfill({ status: 200, contentType: 'text/javascript', body: '' }));
     await page.route(/firebase|googleapis|gstatic|google\.com/, r => r.abort());
     await page.addInitScript(([lang, theme]) => {
@@ -87,7 +100,7 @@ const audit = smallOk => {
     await page.waitForTimeout(600);
     // on a rest day Today has no exercises: open the first training day of the week
     await shot('exercise', async () => { if (!(await page.$('.ex-card'))) await page.evaluate(() => [...document.querySelectorAll('.wk-day:not(.is-rest)')].find(b => b.offsetParent).click()); await page.waitForTimeout(400); await page.click('.ex-card'); });
-    await shot('workout', () => page.click('#ex-sheet-content button[onclick*="startWorkout"]'));
+    await shot('workout', () => page.click('#ex-sheet-content button[data-on-click*="startWorkout"]'));
     // tick off the first set: the row turns green and the rest timer shows
     await shot('rest', async () => { await page.fill('#aw-sets-container input[id^="aw-w-"]', '60'); await page.fill('#aw-sets-container input[id^="aw-rep-"]', '8'); await page.click('#aw-title'); });
     // save the workout: the summary shows, and Progress has data from now on

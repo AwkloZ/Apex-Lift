@@ -1,6 +1,6 @@
 // Apex Lift app (index.html), part 6 of 13: window.appActions: what buttons do (navigation, exercises, workouts, settings, setup).
 // The app/*.js files are plain scripts loaded in order by index.html; they share one scope, so a name declared in an
-// earlier file can be used in a later one (see app/README in CLAUDE.md). Keep the order in index.html and sw.js.
+// earlier file can be used in a later one (see "App files" in CLAUDE.md). Keep the order in index.html and sw.js.
 'use strict';
 
 // ⚙️ 5. GLOBAL ACTIONS
@@ -68,7 +68,7 @@ window.appActions = {
                 <div class="text-[12px] font-bold text-[#d4af37] min-w-0 truncate">${esc(tm(ex.muscle))}</div>
                 <div class="flex items-center gap-1.5 shrink-0 -me-1">
                     <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}" target="_blank" rel="noopener" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('How to do it (YouTube)'))}" title="${esc(t('How to do it (YouTube)'))}"><i data-lucide="circle-help" class="w-[18px] h-[18px]"></i></a>
-                    <button onclick="window.appActions.openHistoryModal(${jsArg(k)},${jsArg(ex.name)})" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
+                    <button data-on-click="window.appActions.openHistoryModal(@0,@1)" data-a-click="${hArgs(hStr(k), hStr(ex.name))}" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-300 flex items-center justify-center tap-feedback" aria-label="${esc(t('History'))}" title="${esc(t('History'))}"><i data-lucide="history" class="w-[18px] h-[18px]"></i></button>
                 </div>
                 </div>
                 <h3 class="ex-name ex-fit text-[24px] font-black text-white leading-tight mt-2.5 whitespace-nowrap overflow-hidden">${esc(tx(ex.name))}</h3>
@@ -83,7 +83,7 @@ window.appActions = {
                     ${prev.length ? `<table class="ex-last-tbl" dir="ltr"><thead><tr><th>#</th><th>${t('kg')}</th><th>${t(timed ? 'sec' : 'reps')}</th></tr></thead><tbody>${prev.map((x, k) => `<tr><td>${t('Set {n}', { n: k + 1 })}</td><td>${x.w > 0 ? x.w : t('BW')}</td><td>${x.r}</td></tr>`).join('')}</tbody></table>`
                     : `<div class="rounded-2xl bg-white/5 px-3.5 py-3 text-[13px] font-bold text-slate-400">${t('First time doing this exercise')}</div>`}
                 </div>`}
-                <button onclick="window.appActions.closeExSheet(); window.appActions.startWorkout(${day.id}, null, ${i})" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : full ? t('Log more sets') : shown > 0 ? t('Continue') : t('Start workout')}</button>
+                <button data-on-click="window.appActions.closeExSheet(); window.appActions.startWorkout(@0, null, @1)" data-a-click="${hArgs(day.id, i)}" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${isRun ? '<span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>' : '<i data-lucide="play" class="w-5 h-5 fill-current"></i>'}${isRun ? t('Continue workout') : full ? t('Log more sets') : shown > 0 ? t('Continue') : t('Start workout')}</button>
             </div>`;
         if (window.lucide) window.lucide.createIcons({ root: document.getElementById('ex-sheet-box') });
         openModal('ex-sheet-overlay', 'ex-sheet-box');
@@ -135,7 +135,7 @@ window.appActions = {
     closeHistoryModal: () => { popBack('history'); closeSheet('history-modal-overlay', 'history-modal-box'); },
     toggleHistoryEdit: () => { window.appState.historyEditMode=!window.appState.historyEditMode; const b=document.getElementById('history-edit-btn'); if(b){b.className=`w-11 h-11 shrink-0 flex items-center justify-center rounded-full tap-feedback transition-colors ${window.appState.historyEditMode?'text-[#d4af37] bg-[#d4af37]/10':'text-slate-300 bg-white/5'}`;} if(window.appState.openHistoryKey)window.appActions.refreshHistoryModal(window.appState.openHistoryKey); },
     refreshHistoryModal: (k) => { const c=document.getElementById('history-modal-content'), hA=StorageManager.getHistory()[k]||[]; if(!hA.length){c.innerHTML=`<div class="text-center p-10 text-slate-400 text-[12px] font-bold">${t('No records')}</div>`;return;} let html='',cG=''; const getDt=(h, fb=Date.now())=>{const t=logTime(h); return new Date(isNaN(t)?fb:t);}, sD=getDt(hA[0]); sD.setHours(0,0,0,0); [...hA].reverse().forEach((h,i)=>{const dt=getDt(h, sD.getTime()); dt.setHours(0,0,0,0); const dD=Math.max(0,Math.floor((dt.getTime()-sD.getTime())/86400000)), wN=Math.floor(dD/7)+1, cWS=new Date(sD.getTime()+((wN-1)*604800000)), cWE=new Date(cWS.getTime()+518400000), gN=`${t('Week {n}', { n: wN })} • ${fmtDayMonth(cWS)} - ${fmtDayMonth(cWE)}`; if(gN!==cG){html+=`<div class="text-[12px] font-bold text-[#d4af37] mt-4 mb-2 pl-1 border-b border-[#d4af37]/20 pb-1"><i data-lucide="calendar-days" class="w-3 h-3 inline mr-1 -mt-0.5"></i> ${esc(gN)}</div>`; cG=gN;}
-     html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[12px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[12px] text-slate-400">${t('kg')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[12px] text-slate-400">${h.u==='s'?t('sec'):t('reps')}</span></span>`:''}`}</span></div><span class="text-[12px] font-bold text-slate-400 mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button onclick="window.appActions.deleteHistoryRecord(${jsArg(k)}, ${hA.length-1-i})" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=exerciseStatsHTML(hA)+html; bindCharts(c); if(window.lucide) window.lucide.createIcons({root:c}); },
+     html+=`<div class="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 mb-2"><div class="flex flex-col"><div class="flex items-center"><span class="text-[15px] font-black text-white">${(h.ws || h.rpe) ? `<span class="text-[#d4af37]">${logSetDetails(h).map(x => `${x.w > 0 ? x.w : t('BW')}×${x.r}${h.u==='s'?'s':''}${x.rpe ? `<span class="text-[12px] text-slate-400">@${x.rpe}</span>` : ''}`).join(', ')}</span>` : `${parseFloat(h.w)>0?`${esc(h.w)} <span class="text-[12px] text-slate-400">${t('kg')}</span>`:t('BW')} ${h.s?`<span class="ml-2 text-[#d4af37]">${esc(Array.isArray(h.s) ? h.s.join(', ') : h.s)} <span class="text-[12px] text-slate-400">${h.u==='s'?t('sec'):t('reps')}</span></span>`:''}`}</span></div><span class="text-[12px] font-bold text-slate-400 mt-1">${esc(isNaN(logTime(h)) ? h.d : fmtDate(logTime(h)))} ${h.time ? `<span class="ml-2 text-[#22c55e]"><i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i> ${esc(h.time)}</span>` : ''}</span></div>${window.appState.historyEditMode?`<button data-on-click="window.appActions.deleteHistoryRecord(@0, @1)" data-a-click="${hArgs(hStr(k), hA.length-1-i)}" class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`; }); c.innerHTML=exerciseStatsHTML(hA)+html; bindCharts(c); if(window.lucide) window.lucide.createIcons({root:c}); },
     deleteHistoryRecord: (k, i) => window.appActions.showConfirm(t("Delete Record"), t("Remove this record?"), () => { let h=StorageManager.getHistory(); if(h[k]&&h[k][i]){const dl=getDeleted(); dl[k]=[...(dl[k]||[]), logSig(h[k][i])].slice(-200); setDeleted(dl); h[k].splice(i,1); StorageManager.setHistory(h); loggedWeights[k]=h[k].length?h[k][h[k].length-1].w:''; loggedReps[k]=h[k].length?h[k][h[k].length-1].s||'':''; StorageManager.set(loggedWeights); StorageManager.setReps(loggedReps); window.appActions.refreshHistoryModal(k); renderWorkout(); window.appActions.showToast(t("Deleted"),"error");} }, true),
     // ---------- Workout session: the whole day on one screen ----------
     // restore = a saved unfinished workout to bring back (minimized)
@@ -209,8 +209,8 @@ window.appActions = {
                     <div id="aw-rows-${e}" class="space-y-1.5"></div>
                     <div id="aw-note-${e}" class="hidden px-2 py-2 text-[12px] font-bold text-[#22c55e]"><i data-lucide="check" class="w-3.5 h-3.5 inline -mt-0.5"></i> ${t('Done this week')}</div>
                     <div class="flex gap-2 mt-2 px-1">
-                        <button onclick="window.appActions.removeSetRow(${e})" class="h-11 px-5 rounded-xl bg-white/5 border border-white/10 text-slate-300 tap-feedback" aria-label="${esc(t('Remove set'))}"><i data-lucide="minus" class="w-4 h-4"></i></button>
-                        <button onclick="window.appActions.addSetRow(${e})" class="flex-1 h-11 rounded-xl bg-white/5 border border-white/10 text-[13px] font-bold text-slate-200 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add set')}</button>
+                        <button data-on-click="window.appActions.removeSetRow(@0)" data-a-click="${hArgs(e)}" class="h-11 px-5 rounded-xl bg-white/5 border border-white/10 text-slate-300 tap-feedback" aria-label="${esc(t('Remove set'))}"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                        <button data-on-click="window.appActions.addSetRow(@0)" data-a-click="${hArgs(e)}" class="flex-1 h-11 rounded-xl bg-white/5 border border-white/10 text-[13px] font-bold text-slate-200 tap-feedback flex items-center justify-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i>${t('Add set')}</button>
                     </div>
                 </section>`).join('');
         if (rows && rows.length) rows.forEach(r => { if (S.exercises[r.e]) window.appActions.addSetRow(r.e, r, true); });
@@ -255,9 +255,9 @@ window.appActions = {
         box.insertAdjacentHTML('beforeend', `
                 <div class="aw-row grid items-center gap-1.5 px-2 py-1 rounded-xl transition-colors ${r.done ? 'is-done' : ''} ${r.logged ? 'is-logged' : ''}" data-i="${i}" data-e="${e}" data-done="${r.done ? 1 : 0}" ${r.logged ? 'data-logged="1"' : ''} id="aw-row-${i}" dir="ltr" style="grid-template-columns:${S.cols}">
                     <span class="num w-8 h-8 rounded-full ${r.done ? 'bg-[#22c55e] text-black' : 'bg-white/5 text-slate-300'} text-[16px] font-bold flex items-center justify-center" id="aw-num-${i}">${n}</span>
-                    <input id="aw-w-${i}" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.w)}" ${r.logged ? 'disabled' : ''} placeholder="${isBodyweight(ex.name) ? t('BW') : t('kg')}" onfocus="window.appActions.selectAll(this)" oninput="window.appActions.numInput(this, true)" class="${inCls} text-[#d4af37]">
-                    <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" ${r.logged ? 'disabled' : ''} placeholder="${ex.timed ? t('sec') : t('reps')}" onfocus="window.appActions.selectAll(this)" oninput="window.appActions.numInput(this, false)" onblur="window.appActions.repsChanged(${i})" onkeydown="if(event.key==='Enter')this.blur()" class="${inCls}">
-                    ${showRpe ? `<select id="aw-rpe-${i}" ${r.logged ? 'disabled' : ''} onchange="window.appActions.sessionChanged()" class="${inCls} appearance-none text-[14px]"><option value="">–</option>${[6,7,8,9,10].map(x => `<option value="${x}" ${String(r.rpe) === String(x) ? 'selected' : ''}>${x}</option>`).join('')}</select>` : ''}
+                    <input id="aw-w-${i}" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.w)}" ${r.logged ? 'disabled' : ''} placeholder="${isBodyweight(ex.name) ? t('BW') : t('kg')}" data-on-focus="window.appActions.selectAll(this)" data-on-input="window.appActions.numInput(this, true)" class="${inCls} text-[#d4af37]">
+                    <input id="aw-rep-${i}" type="text" inputmode="numeric" autocomplete="off" value="${esc(r.r)}" ${r.logged ? 'disabled' : ''} placeholder="${ex.timed ? t('sec') : t('reps')}" data-on-focus="window.appActions.selectAll(this)" data-on-input="window.appActions.numInput(this, false)" data-on-blur="window.appActions.repsChanged(@0)" data-a-blur="${hArgs(i)}" data-on-keydown="if(event.key==='Enter')this.blur()" class="${inCls}">
+                    ${showRpe ? `<select id="aw-rpe-${i}" ${r.logged ? 'disabled' : ''} data-on-change="window.appActions.sessionChanged()" class="${inCls} appearance-none text-[14px]"><option value="">–</option>${[6,7,8,9,10].map(x => `<option value="${x}" ${String(r.rpe) === String(x) ? 'selected' : ''}>${x}</option>`).join('')}</select>` : ''}
                 </div>`);
         document.getElementById(`aw-note-${e}`).classList.add('hidden');
         if (!building) { if (window.lucide) window.lucide.createIcons({ root: box }); window.appActions.updateSessionInfo(); saveSessionDraft(); }
@@ -547,11 +547,11 @@ window.appActions = {
         const isSel = (name, muscle) => P.sel.some(x => x.name === name && x.muscle === muscle);
         if (withChips) {
             document.getElementById('picker-chips').innerHTML = ['All', ...muscleOptions].map(m =>
-                `<button onclick="window.appActions.pickerMuscle(${jsArg(m)})" ${P.muscle === m ? 'data-on="1"' : ''} class="shrink-0 h-10 px-3.5 rounded-full text-[13px] font-bold tap-feedback border ${P.muscle === m ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${esc(m === 'All' ? t('All') : tm(m))}</button>`).join('');
+                `<button data-on-click="window.appActions.pickerMuscle(@0)" data-a-click="${hArgs(hStr(m))}" ${P.muscle === m ? 'data-on="1"' : ''} class="shrink-0 h-10 px-3.5 rounded-full text-[13px] font-bold tap-feedback border ${P.muscle === m ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'bg-white/5 text-slate-300 border-white/10'}">${esc(m === 'All' ? t('All') : tm(m))}</button>`).join('');
         }
         const row = x => {
             const sel = isSel(x.name, x.muscle), added = inDay.has(x.name);
-            return `<button onclick="window.appActions.pickerTap(${jsArg(x.name)}, ${jsArg(x.muscle)})" class="cv-row w-full flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 text-start tap-feedback ${sel ? 'bg-[#d4af37]/10' : ''}">
+            return `<button data-on-click="window.appActions.pickerTap(@0, @1)" data-a-click="${hArgs(hStr(x.name), hStr(x.muscle))}" class="cv-row w-full flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 text-start tap-feedback ${sel ? 'bg-[#d4af37]/10' : ''}">
                     <span class="min-w-0"><span class="ex-name block text-[14px] font-bold text-white truncate">${esc(tx(x.name))}${x.custom ? ` <span class="text-[12px] text-[#d4af37]">★</span>` : ''}</span><span class="block text-[12px] font-bold text-slate-400">${esc(tm(x.muscle))}${added ? ` • ${esc(t('In this day'))}` : ''}</span></span>
                     <span class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center border ${sel ? 'bg-[#d4af37] border-[#d4af37] text-black' : 'border-white/20 text-slate-400'}"><i data-lucide="${P.mode === 'replace' ? 'replace' : (sel ? 'check' : 'plus')}" class="w-4 h-4"></i></span>
                 </button>`;
@@ -568,7 +568,7 @@ window.appActions = {
             if (!items.some(x => x.name.toLowerCase() === q)) {
                 html += P.muscle === 'All'
                     ? `<div class="px-4 py-4 text-[12px] font-bold text-slate-400">${esc(t('Not in the list? Choose a muscle above, then add "{name}" as your own exercise.', { name: P.q.trim() }))}</div>`
-                    : `<button onclick="window.appActions.addCustomEx()" class="w-full flex items-center gap-3 px-4 py-4 text-start text-[#d4af37] font-bold text-[13px] tap-feedback"><i data-lucide="plus-circle" class="w-5 h-5"></i>${esc(t('Add "{name}" to {muscle}', { name: P.q.trim(), muscle: tm(P.muscle) }))}</button>`;
+                    : `<button data-on-click="window.appActions.addCustomEx()" class="w-full flex items-center gap-3 px-4 py-4 text-start text-[#d4af37] font-bold text-[13px] tap-feedback"><i data-lucide="plus-circle" class="w-5 h-5"></i>${esc(t('Add "{name}" to {muscle}', { name: P.q.trim(), muscle: tm(P.muscle) }))}</button>`;
             }
         } else if (P.muscle === 'All') {
             // Exercises already used in your routines first, then everything by muscle
@@ -611,7 +611,7 @@ window.appActions = {
         const label = 'px-0.5 mb-1.5 text-[12px] font-bold text-slate-400';
         const c = document.getElementById('swapsetup-content');
         c.innerHTML = `<div class="pop-head is-end">
-                    <button onclick="window.appActions.closeSwapSetup()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <button data-on-click="window.appActions.closeSwapSetup()" class="w-11 h-11 shrink-0 rounded-full bg-white/5 text-slate-400 flex items-center justify-center tap-feedback" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <div class="px-5">
                 <div class="text-[12px] font-bold text-[#d4af37]">${esc(tm(W.muscle))}</div>
@@ -619,13 +619,13 @@ window.appActions = {
                 <p class="text-[12px] font-bold text-slate-400 mt-1">${t('How many sets and reps for this exercise?')}</p>
                 <div class="${label} mt-4">${esc(t('Sets'))}</div>
                 <div class="flex items-center gap-3 rounded-2xl bg-white/5 p-2" dir="ltr">
-                    <button onclick="window.appActions.swapSetSets(-1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="−">−</button>
+                    <button data-on-click="window.appActions.swapSetSets(-1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="−">−</button>
                     <div class="flex-1 text-center text-[22px] font-black text-white tabular-nums num">${esc(W.sets)}</div>
-                    <button onclick="window.appActions.swapSetSets(1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="+">+</button>
+                    <button data-on-click="window.appActions.swapSetSets(1)" class="w-11 h-11 rounded-xl bg-white/5 text-2xl font-black text-white tap-feedback" aria-label="+">+</button>
                 </div>
                 <div class="${label} mt-3">${esc(t(isTimed(W.reps) ? 'Seconds per set' : 'Reps per set'))}</div>
-                <div class="grid grid-cols-4 gap-2" dir="ltr">${REPS_PRESETS.map(r => `<button onclick="window.appActions.swapSetReps(${jsArg(r)})" class="py-2.5 rounded-xl text-[12px] font-bold tap-feedback ${W.reps === r ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-white'}">${esc(fmtReps(r))}</button>`).join('')}</div>
-                <button onclick="window.appActions.swapSetupNext()" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button>
+                <div class="grid grid-cols-4 gap-2" dir="ltr">${REPS_PRESETS.map(r => `<button data-on-click="window.appActions.swapSetReps(@0)" data-a-click="${hArgs(hStr(r))}" class="py-2.5 rounded-xl text-[12px] font-bold tap-feedback ${W.reps === r ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-white'}">${esc(fmtReps(r))}</button>`).join('')}</div>
+                <button data-on-click="window.appActions.swapSetupNext()" class="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]">${t('Next')}<i data-lucide="${isAR ? 'arrow-left' : 'arrow-right'}" class="w-5 h-5"></i></button>
             </div>`;
         fitNames(c); if (window.lucide) window.lucide.createIcons({ root: c });
     },
@@ -766,7 +766,7 @@ window.appActions = {
     renameWeek: (id, v) => { const w=appData.weeks.find(x=>x.id===id); if(w)w.name=String(v||'').trim().slice(0,40)||t('Unnamed'); StorageManager.setPlan(appData); document.getElementById('active-week-label').innerText=t(appData.weeks.find(x=>x.id===currentWeekId).name); },
     editRoutineName: id => {
         const w = appData.weeks.find(x => x.id === id); if (!w) return;
-        openEdit(editHead(t('Rename routine')) + `<form onsubmit="event.preventDefault(); window.appActions.renameWeek(${jsArg(id)}, document.getElementById('edit-routine').value); window.appActions.closeEdit(); window.appActions.toggleRoutines(true)">
+        openEdit(editHead(t('Rename routine')) + `<form data-on-submit="event.preventDefault(); window.appActions.renameWeek(@0, document.getElementById('edit-routine').value); window.appActions.closeEdit(); window.appActions.toggleRoutines(true)" data-a-submit="${hArgs(hStr(id))}">
                 <input id="edit-routine" type="text" maxlength="40" value="${esc(t(w.name))}" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-white/30" dir="auto" aria-label="${esc(t('Rename routine'))}">
                 <button type="submit" class="w-full mt-4 py-4 rounded-xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Save')}</button></form>`);
         setTimeout(() => { const i = document.getElementById('edit-routine'); if (i) { i.focus(); i.select(); } }, 320);
@@ -809,13 +809,13 @@ restoreDefaults: () => { window.appActions.showConfirm(t("Reset app"),t("Your ro
         const W = window.appState.wiz, key = W.steps[W.step], b = getBody();
         // how far the setup got (for the admin page), until it is finished
         try { const sv = localStorage.getItem(SETUP_KEY); if (!sv || sv.startsWith('left:')) localStorage.setItem(SETUP_KEY, 'left:' + key); } catch (e) {}
-        const opt = (val, title, sub, icon, cur) => `<button onclick="window.appActions.wizChoose(${jsArg(key)}, ${jsArg(val)})" class="w-full flex items-center gap-4 p-4 mb-3 rounded-2xl border text-start tap-feedback ${cur === val ? 'bg-[#d4af37]/15 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
+        const opt = (val, title, sub, icon, cur) => `<button data-on-click="window.appActions.wizChoose(@0, @1)" data-a-click="${hArgs(hStr(key), hStr(val))}" class="w-full flex items-center gap-4 p-4 mb-3 rounded-2xl border text-start tap-feedback ${cur === val ? 'bg-[#d4af37]/15 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
                 ${icon ? `<span class="w-11 h-11 shrink-0 rounded-xl bg-black/40 flex items-center justify-center text-[#d4af37]"><i data-lucide="${icon}" class="w-5 h-5"></i></span>` : ''}
                 <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${title}</span>${sub ? `<span class="block text-[12px] font-bold text-slate-400 mt-0.5">${sub}</span>` : ''}</span>
                 <i data-lucide="chevron-right" class="w-5 h-5 text-slate-600 shrink-0"></i></button>`;
         const part = PROFILE_STEPS.includes(key) ? t('Your profile') : TRAINING_STEPS.includes(key) || key === 'start' ? t('Your training') : key === 'result' ? t('Your program') : '';
         const head = (title, sub) => `${part ? `<div class="text-[12px] font-bold text-[#d4af37] mb-2">${part}</div>` : ''}<h2 class="text-[26px] font-black text-white leading-tight mb-2">${title}</h2>${sub ? `<p class="text-[13px] font-bold text-slate-400 mb-6">${sub}</p>` : '<div class="mb-6"></div>'}`;
-        const next = (id, label = t('Next')) => `<button id="${id}" onclick="window.appActions.wizChoose(${jsArg(key)}, 'next')" class="w-full mt-6 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${label}</button>`;
+        const next = (id, label = t('Next')) => `<button id="${id}" data-on-click="window.appActions.wizChoose(@0, 'next')" data-a-click="${hArgs(hStr(key))}" class="w-full mt-6 py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${label}</button>`;
         const lastLabel = W.step === W.steps.length - 1 && W.mode === 'complete' ? t('Done') : t('Next');
         const big = 'w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 text-white text-[22px] font-black outline-none focus:border-[#d4af37] num';
         const lockNote = `<p class="flex items-center gap-1.5 text-[12px] font-bold text-slate-400 mt-4"><i data-lucide="lock" class="w-3.5 h-3.5 shrink-0"></i>${t("Date of birth, sex and height can't be changed after setup.")}</p>`;
@@ -852,14 +852,14 @@ restoreDefaults: () => { window.appActions.showConfirm(t("Reset app"),t("Your ro
             + ['SAT', 'SUN', 'MON'].map(d => opt(d, esc(dayLong(d)), '', 'calendar', StorageManager.getStartDay())).join('');
         if (key === 'result') {
             const rec = PROGRAMS.find(p => p.id === recommendProgram({ ...W, sex: getBody().sex })), pick = PROGRAMS.find(p => p.id === (W.pick || rec.id));
-            const card = (p, isRec) => `<button onclick="window.appActions.wizPick(${jsArg(p.id)})" class="w-full text-start p-4 mb-3 rounded-2xl border tap-feedback ${pick.id === p.id ? 'bg-[#d4af37]/10 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
+            const card = (p, isRec) => `<button data-on-click="window.appActions.wizPick(@0)" data-a-click="${hArgs(hStr(p.id))}" class="w-full text-start p-4 mb-3 rounded-2xl border tap-feedback ${pick.id === p.id ? 'bg-[#d4af37]/10 border-[#d4af37]' : 'bg-white/5 border-white/10'}">
                     <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} days', { n: p.days })}</span></span>
                     ${isRec ? `<span class="inline-block mt-1 text-[12px] font-bold text-[#22c55e]">★ ${t('Recommended for you')}</span>` : ''}
                     <span class="block text-[12px] font-bold text-slate-400 mt-1">${esc(t(p.desc))}</span>${pick.id === p.id ? programPreviewHTML(p) : ''}</button>`;
             // the program made for you, or an empty week to fill in yourself
             body = head(t('Your program'), t('Tap a program to see its week.')) + card(rec, true)
-                + `<button onclick="window.appActions.wizFinish('own')" class="w-full py-3.5 mb-3 rounded-xl bg-white/5 border border-white/10 text-[13px] font-bold text-white tap-feedback flex items-center justify-center gap-2"><i data-lucide="pencil-ruler" class="w-4 h-4 text-slate-400"></i>${t("I'll build my own")}</button>`
-                + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#12100d]"><button onclick="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Start with this program')}</button>
+                + `<button data-on-click="window.appActions.wizFinish('own')" class="w-full py-3.5 mb-3 rounded-xl bg-white/5 border border-white/10 text-[13px] font-bold text-white tap-feedback flex items-center justify-center gap-2"><i data-lucide="pencil-ruler" class="w-4 h-4 text-slate-400"></i>${t("I'll build my own")}</button>`
+                + `<div class="sticky bottom-0 pt-3 pb-1 bg-[#12100d]"><button data-on-click="window.appActions.wizFinish('program')" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Start with this program')}</button>
                        <p class="text-[12px] font-bold text-slate-400 text-center mt-2">${t('You can change any day or exercise later in Plan.')}</p></div>`;
         }
         const dots = W.steps.map((_, i) => `<span class="h-1.5 rounded-full transition-all ${i === W.step ? 'w-6 bg-[#d4af37]' : i < W.step ? 'w-3 bg-[#d4af37]/50' : 'w-3 bg-white/15'}"></span>`).join('');
@@ -867,7 +867,7 @@ restoreDefaults: () => { window.appActions.showConfirm(t("Reset app"),t("Your ro
                 <div class="flex items-center justify-between py-4 shrink-0">
                     ${backBtn('window.appActions.wizBack()', t('Go back'), W.step === 0 ? 'invisible' : '')}
                     <div class="flex gap-1.5 flex-wrap justify-center max-w-[70%]" dir="ltr">${dots}</div>
-                    <button onclick="window.appActions.closeWizard()" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.firstRun ? 'invisible' : ''}" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <button data-on-click="window.appActions.closeWizard()" class="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-slate-300 tap-feedback ${W.firstRun ? 'invisible' : ''}" aria-label="${esc(t('Close'))}"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <div class="flex-1 fade-in">${body}</div>`;
         if (window.lucide) window.lucide.createIcons({ root: document.getElementById('onboarding-box') });
@@ -971,11 +971,11 @@ restoreDefaults: () => { window.appActions.showConfirm(t("Reset app"),t("Your ro
         const list = document.getElementById('programs-list'), pick = PROGRAMS.find(p => p.id === window.appState.progPick);
         document.getElementById('programs-title').innerText = pick ? t('Program preview') : t('Programs');
         if (!pick) {
-            list.innerHTML = `<button onclick="window.appActions.closePrograms(); setTimeout(window.appActions.openAI, 320)" class="w-[calc(100%-2rem)] mx-4 mb-3 p-4 rounded-2xl border bg-white/5 border-white/10 text-start tap-feedback flex items-center gap-3">
+            list.innerHTML = `<button data-on-click="window.appActions.closePrograms(); setTimeout(window.appActions.openAI, 320)" class="w-[calc(100%-2rem)] mx-4 mb-3 p-4 rounded-2xl border bg-white/5 border-white/10 text-start tap-feedback flex items-center gap-3">
                     <span class="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-[#d4af37] shrink-0"><i data-lucide="sparkles" class="w-5 h-5"></i></span>
                     <span class="flex-1 min-w-0"><span class="block text-[16px] font-black text-white">${t('Build with Apex Coach')}</span><span class="block text-[12px] font-bold text-slate-400 mt-1">${t('Tell it what you want: it builds a program from your answers and workouts.')}</span></span>
                     <i data-lucide="${isAR ? 'chevron-left' : 'chevron-right'}" class="w-5 h-5 text-slate-400 shrink-0"></i>
-                </button>` + PROGRAMS.map(p => `<button onclick="window.appActions.previewProgram(${jsArg(p.id)})" class="w-[calc(100%-2rem)] mx-4 mb-3 p-4 rounded-2xl border bg-white/5 border-white/10 text-start tap-feedback flex items-center gap-3">
+                </button>` + PROGRAMS.map(p => `<button data-on-click="window.appActions.previewProgram(@0)" data-a-click="${hArgs(hStr(p.id))}" class="w-[calc(100%-2rem)] mx-4 mb-3 p-4 rounded-2xl border bg-white/5 border-white/10 text-start tap-feedback flex items-center gap-3">
                     <span class="flex-1 min-w-0">
                         <span class="flex items-center justify-between gap-2"><span class="text-[16px] font-black text-white">${esc(t(p.name))}</span><span class="text-[12px] font-bold text-slate-400 shrink-0">${t('{n} days', { n: p.days })}${p.eq === 'db' ? ' · ' + t('Dumbbells only') : ''}</span></span>
                         <span class="block text-[12px] font-bold text-slate-400 mt-1">${esc(t(p.desc))}</span>
@@ -985,9 +985,9 @@ restoreDefaults: () => { window.appActions.showConfirm(t("Reset app"),t("Your ro
                 </button>`).join('') + `<p class="mx-6 mb-6 text-[12px] font-bold text-slate-400">${t('Your current routine and all your history are kept.')}</p>`;
         } else {
             const exp = window.appState.progExp || 'mid', sched = programSchedule(pick, exp), full = appData.weeks.length >= 5;
-            const lvl = (v, l) => `<button onclick="window.appActions.setProgramLevel(${jsArg(v)})" class="flex-1 py-2 rounded-xl text-[12px] font-bold tap-feedback ${exp === v ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300'}">${t(l)}</button>`;
+            const lvl = (v, l) => `<button data-on-click="window.appActions.setProgramLevel(@0)" data-a-click="${hArgs(hStr(v))}" class="flex-1 py-2 rounded-xl text-[12px] font-bold tap-feedback ${exp === v ? 'bg-[#d4af37] text-black' : 'bg-white/5 text-slate-300'}">${t(l)}</button>`;
             list.innerHTML = `<div class="px-4 pb-4">
-                    <button onclick="window.appActions.previewProgram(null)" class="flex items-center gap-1 mb-3 text-[12px] font-bold text-slate-400 tap-feedback"><i data-lucide="${isAR ? 'chevron-right' : 'chevron-left'}" class="w-4 h-4"></i>${t('All programs')}</button>
+                    <button data-on-click="window.appActions.previewProgram(null)" class="flex items-center gap-1 mb-3 text-[12px] font-bold text-slate-400 tap-feedback"><i data-lucide="${isAR ? 'chevron-right' : 'chevron-left'}" class="w-4 h-4"></i>${t('All programs')}</button>
                     <h2 class="text-[24px] font-black text-white leading-tight">${esc(t(pick.name))}</h2>
                     <p class="text-[13px] font-bold text-slate-400 mt-1">${esc(t(pick.desc))}</p>
                     <div class="text-[12px] font-bold text-slate-300 mt-2">${t('{n} training days', { n: pick.days })} · ${pick.eq === 'db' ? t('Dumbbells only') : t('Full gym')}</div>
@@ -998,7 +998,7 @@ restoreDefaults: () => { window.appActions.showConfirm(t("Reset app"),t("Your ro
                 </div>
                 <div class="sticky bottom-0 bg-[#111] border-t border-white/10 px-4 pt-3" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
                     <p class="text-[12px] font-bold text-slate-400 mb-2 text-center">${full ? t('It replaces your current routine. Your history is kept.') : t('It is added as a new routine. Your current routine and history are kept.')}</p>
-                    <button onclick="window.appActions.useProgram(${jsArg(pick.id)})" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><i data-lucide="check" class="w-5 h-5"></i>${t('Use this program')}</button>
+                    <button data-on-click="window.appActions.useProgram(@0)" data-a-click="${hArgs(hStr(pick.id))}" class="w-full py-4 rounded-2xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(212,175,55,0.35)]"><i data-lucide="check" class="w-5 h-5"></i>${t('Use this program')}</button>
                 </div>`;
         }
         list.scrollTop = 0;

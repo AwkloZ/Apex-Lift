@@ -1,6 +1,6 @@
 // Apex Lift app (index.html), part 8 of 13: Google sign-in, cloud sync, the coach plan and presence (Firebase).
 // The app/*.js files are plain scripts loaded in order by index.html; they share one scope, so a name declared in an
-// earlier file can be used in a later one (see app/README in CLAUDE.md). Keep the order in index.html and sw.js.
+// earlier file can be used in a later one (see "App files" in CLAUDE.md). Keep the order in index.html and sw.js.
 'use strict';
 
 // ☁️ CLOUD BACKUP & SYNC (optional): sign in with Google; data is kept in Firebase (Firestore).
@@ -387,15 +387,15 @@ const renderAccount = () => {
         el.innerHTML = `<div class="glass-card p-5 border border-white/10">
                 <div class="flex items-center gap-3 mb-3"><span class="w-11 h-11 rounded-full bg-[#d4af37]/15 text-[#d4af37] flex items-center justify-center shrink-0"><i data-lucide="cloud" class="w-6 h-6"></i></span>
                 <div><div class="text-[16px] font-black text-white">${t('Back up & sync')}</div><div class="text-[12px] font-bold text-slate-400 leading-snug">${t('Sign in to keep your workouts safe in the cloud and use them on any phone.')}</div></div></div>
-                <button onclick="window.appActions.cloudSignIn()" ${Cloud.status === 'loading' ? 'disabled' : ''} class="w-full py-3.5 rounded-xl bg-white text-[#1f1f1f] text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-60">${GOOGLE_G}${Cloud.status === 'loading' ? t('Signing in…') : t('Continue with Google')}</button>
-                <button onclick="window.appActions.openEmail('in')" class="w-full mt-2 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button></div>`;
+                <button data-on-click="window.appActions.cloudSignIn()" ${Cloud.status === 'loading' ? 'disabled' : ''} class="w-full py-3.5 rounded-xl bg-white text-[#1f1f1f] text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback disabled:opacity-60">${GOOGLE_G}${Cloud.status === 'loading' ? t('Signing in…') : t('Continue with Google')}</button>
+                <button data-on-click="window.appActions.openEmail('in')" class="w-full mt-2 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white text-[14px] font-bold flex items-center justify-center gap-3 tap-feedback"><i data-lucide="mail" class="w-5 h-5"></i>${t('Continue with email')}</button></div>`;
     } else {
         const name = u.displayName || u.name || '', email = u.email || '', photo = u.photoURL || u.photo || '';
         // sync runs by itself: nothing is shown while it works, only when it can't
         const st = { offline: ['bg-slate-400', t('Offline')], error: ['bg-red-500', t('Sync problem')] }[Cloud.status];
         // the whole card opens Account (personal details and account settings)
         el.innerHTML = `<div class="glass-card border border-white/10">
-                <button onclick="window.appActions.openAccount()" ${Cloud.user ? '' : 'disabled'} class="w-full px-4 py-3.5 flex items-center gap-3 text-start tap-feedback" aria-label="${esc(t('Account'))}">
+                <button data-on-click="window.appActions.openAccount()" ${Cloud.user ? '' : 'disabled'} class="w-full px-4 py-3.5 flex items-center gap-3 text-start tap-feedback" aria-label="${esc(t('Account'))}">
                     ${avatarHTML(u, 'w-11 h-11 text-[18px]')}
                     <span class="min-w-0 flex-1">
                         <span class="block text-[16px] font-black text-white truncate leading-tight">${esc(name || email)}</span>
@@ -418,7 +418,7 @@ Object.assign(window.appActions, {
     closeEdit: () => { popBack('edit'); if (document.activeElement) document.activeElement.blur(); closeModal('edit-overlay', 'edit-box'); },
     editName: () => {
         if (!Cloud.user) return;
-        openEdit(editHead(t('Name')) + `<form onsubmit="event.preventDefault(); window.appActions.saveName(document.getElementById('edit-name').value)">
+        openEdit(editHead(t('Name')) + `<form data-on-submit="event.preventDefault(); window.appActions.saveName(document.getElementById('edit-name').value)">
                 <input id="edit-name" type="text" autocomplete="name" maxlength="60" value="${esc(Cloud.user.displayName || '')}" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-white/30" dir="auto" aria-label="${esc(t('Name'))}">
                 <button type="submit" class="w-full mt-4 py-4 rounded-xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Save')}</button></form>`);
         setTimeout(() => { const i = document.getElementById('edit-name'); if (i) { i.focus(); i.select(); } }, 320);
@@ -427,7 +427,7 @@ Object.assign(window.appActions, {
     editBirth: () => {
         const b = getBody(), n = new Date(), iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         const max = iso(new Date(n.getFullYear() - MIN_AGE, n.getMonth(), n.getDate())), min = iso(new Date(n.getFullYear() - 100, 0, 1));
-        openEdit(editHead(t('Date of birth')) + `<form onsubmit="event.preventDefault(); window.appActions.saveBirth(document.getElementById('edit-birth').value)">
+        openEdit(editHead(t('Date of birth')) + `<form data-on-submit="event.preventDefault(); window.appActions.saveBirth(document.getElementById('edit-birth').value)">
                 <input id="edit-birth" type="date" min="${min}" max="${max}" value="${esc(b.birthDate || '')}" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-white text-[16px] font-bold outline-none focus:border-white/30 num" dir="ltr" aria-label="${esc(t('Date of birth'))}">
                 <button type="submit" class="w-full mt-4 py-4 rounded-xl bg-[#d4af37] text-black text-[14px] font-black tap-feedback">${t('Save')}</button></form>`);
     },
